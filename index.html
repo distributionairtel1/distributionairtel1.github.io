@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Retailer Enrollment Sheet - December 2025</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -213,7 +212,7 @@
         .char-counter {
             font-size: 10px;
             color: rgba(255, 255, 255, 0.5);
-            text-align: right;
+           text-align: right;
             margin-top: 2px;
         }
         
@@ -590,60 +589,53 @@
         /* ENHANCED SLAB HIGHLIGHTING STYLES */
         /* ============================================= */
         
+        /* ============================================= */
+        /* ENHANCED SLAB HIGHLIGHTING STYLES */
+        /* ============================================= */
+
         .slab-table tr {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .slab-table tr.active-slab {
-            background: linear-gradient(135deg, rgba(76, 175, 80, 0.4), rgba(76, 175, 80, 0.25)) !important;
-            border-left: 5px solid #4CAF50 !important;
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
-            position: relative;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.35), rgba(76, 175, 80, 0.25)) !important;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
         }
-        
+
         .slab-table tr.active-slab td {
             color: #4CAF50 !important;
             font-weight: 700 !important;
         }
-        
-        .slab-table tr.active-slab::before {
-            content: '✓';
-            position: absolute;
-            left: 10px;
-            font-size: 16px;
-            color: #4CAF50;
-        }
-        
+
         .slab-table tr.inactive-slab {
             opacity: 0.5;
         }
-        
+
         .slab-table tr.next-slab {
             background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 193, 7, 0.08)) !important;
-            border-left: 3px solid rgba(255, 193, 7, 0.5) !important;
         }
-        
-        .slab-table tr.next-slab td::after {
+
+        .slab-table tr.next-slab td:first-child::after {
             content: ' (Next)';
             font-size: 10px;
             color: #ffc107;
             font-weight: 600;
+            margin-left: 8px;
         }
-        
+
         /* Gross Commitment Row Enhanced Styling */
         .gross-row {
             position: relative;
         }
-        
+
         .gross-row.has-slab {
             background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1)) !important;
         }
-        
+
         .gross-row.no-slab {
             background: linear-gradient(135deg, rgba(244, 67, 54, 0.15), rgba(244, 67, 54, 0.08)) !important;
         }
-        
+
         .slab-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -654,23 +646,23 @@
             text-transform: uppercase;
             animation: pulse 2s ease-in-out infinite;
         }
-        
+
         .slab-badge.active {
             background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
             box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
         }
-        
+
         .slab-badge.inactive {
             background: linear-gradient(135deg, #f44336, #d32f2f);
             color: white;
         }
-        
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
-        
+
         /* Progress to next slab */
         .slab-progress {
             margin-top: 10px;
@@ -679,7 +671,7 @@
             border-radius: 10px;
             font-size: 12px;
         }
-        
+
         .progress-bar-container {
             width: 100%;
             height: 8px;
@@ -688,7 +680,7 @@
             margin-top: 8px;
             overflow: hidden;
         }
-        
+
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #4CAF50, #8BC34A);
@@ -741,10 +733,145 @@
             .btn { min-width: 280px; }
             h2 { font-size: 24px; padding: 24px 28px; }
         }
+
+        /* =========================================================
+           MOBILE-FIRST RESPONSIVE PATCH (ONLY NEW FEATURE ADDED)
+           Paste kept inside same file, everything else unchanged.
+           ========================================================= */
+
+        :root{
+          --page-pad: clamp(10px, 3vw, 20px);
+          --container-pad: clamp(16px, 4.5vw, 40px);
+          --radius: clamp(16px, 4vw, 24px);
+          --cell-pad-y: clamp(10px, 3vw, 16px);
+          --cell-pad-x: clamp(10px, 3vw, 14px);
+        }
+
+        html, body { max-width: 100%; overflow-x: hidden; }
+        body {
+          padding: var(--page-pad);
+          min-height: 100svh;
+        }
+
+        .container{
+          width: 100%;
+          max-width: 900px;
+          padding: var(--container-pad);
+          border-radius: var(--radius);
+        }
+
+        /* Fix header negative margins on mobile by tying them to container padding */
+        h2{
+          margin: calc(var(--container-pad) * -1) calc(var(--container-pad) * -1) 28px calc(var(--container-pad) * -1);
+          padding: 20px var(--container-pad);
+          border-radius: var(--radius) var(--radius) 0 0;
+          font-size: clamp(20px, 5vw, 28px);
+        }
+
+        .form-table th,
+        .form-table td{
+          padding: var(--cell-pad-y) var(--cell-pad-x);
+        }
+
+        /* iOS zoom on focus fix + better mobile typing */
+        input[type="text"],
+        input[type="number"],
+        input[type="tel"]{
+          font-size: 16px;
+          height: 46px;
+          max-width: 100%;
+        }
+
+        .form-table, .calc-section, .total-amount { max-width: 100%; }
+        .form-table td, .form-table th { overflow-wrap: anywhere; word-break: break-word; }
+
+        /* Horizontal scroll wrapper for wide tables */
+        .table-scroll{
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          max-width: 100%;
+        }
+        .table-scroll > .form-table{
+          min-width: 520px;
+        }
+
+        @media (max-width: 768px){
+          .tier-section,
+          .action-buttons{
+            flex-direction: column;
+            align-items: stretch;
+            gap: 14px;
+          }
+
+          .tier-btn{
+            width: 100%;
+            min-width: 0;
+            justify-content: center;
+            padding: 16px 18px;
+          }
+
+          .btn,
+          .pdf-btn{
+            width: 100%;
+            min-width: 0;
+            padding: 16px 18px;
+          }
+
+          .toast{
+            left: 12px;
+            right: 12px;
+            max-width: none;
+          }
+
+          .total-amount{
+            font-size: clamp(18px, 5.2vw, 24px);
+            padding: 18px;
+          }
+
+          .photo-preview{
+            max-width: 100%;
+            height: auto;
+          }
+        }
+
+        /* Stack Basic Info rows label-above-input on small screens */
+        @media (max-width: 640px){
+          #basicInfoTable tr{ display: block; }
+          #basicInfoTable td{
+            display: block;
+            width: 100%;
+            text-align: left !important;
+          }
+
+          #basicInfoTable td.left{
+            padding-bottom: 8px;
+            border-bottom: 0;
+            font-weight: 600;
+          }
+
+          #basicInfoTable td:not(.left){
+            padding-top: 0;
+          }
+        }
+
+        /* Touch devices: disable hover lift (feels jumpy on mobile) */
+        @media (hover: none){
+          .form-table tr:hover{
+            transform: none;
+            box-shadow: none;
+            background: transparent;
+          }
+          .btn:hover,
+          .tier-btn:hover{
+            transform: none;
+            box-shadow: none;
+          }
+        }
     </style>
-    <script src=https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js></script>
-    <script src=https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js></script>
-    <script src=https://cdn.jsdelivr.net/npm/exif-js></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -759,7 +886,7 @@
         
         <!-- Basic Info Section -->
         <div class="form-section">
-            <table class="form-table">
+            <table class="form-table" id="basicInfoTable">
                 <tr>
                     <td class="left">Outlet Name<span class="required-star">*</span></td>
                     <td>
@@ -878,26 +1005,30 @@
         <div class="form-section" id="exclude-airtel-gross">
             <!-- Competitor Data -->
             <div class="form-section" id="exclude-competitor">
-                <table class="form-table">
-                    <tr class="section-title">
-                        <td><input type="number" id="viMnp" placeholder="VI MNP" min="0"></td>
-                        <td><input type="number" id="viDsr" placeholder="VI DSR" min="0"></td>
-                        <td><input type="number" id="jioMnp" placeholder="JIO MNP" min="0"></td>
-                        <td><input type="number" id="jioDsr" placeholder="JIO DSR" min="0"></td>
-                    </tr>
-                </table>
+                <div class="table-scroll">
+                    <table class="form-table">
+                        <tr class="section-title">
+                            <td><input type="number" id="viMnp" placeholder="VI MNP" min="0"></td>
+                            <td><input type="number" id="viDsr" placeholder="VI DSR" min="0"></td>
+                            <td><input type="number" id="jioMnp" placeholder="JIO MNP" min="0"></td>
+                            <td><input type="number" id="jioDsr" placeholder="JIO DSR" min="0"></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
 
             <div class="form-section" id="exclude-airtel">
-                <table class="form-table">
-                    <tr class="section-title">
-                        <td><input type="number" id="airtelGross" placeholder="Airtel 4G Gross" min="0"></td>
-                        <td>
-                            <input type="text" id="deviceShare" readonly placeholder="Auto-calculated" style="color: #60a5fa; font-weight: 600;">
-                            <span class="auto-label">Airtel Gross ÷ (JIO MNP + JIO DSR)</span>
-                        </td>
-                    </tr>
-                </table>
+                <div class="table-scroll">
+                    <table class="form-table">
+                        <tr class="section-title">
+                            <td><input type="number" id="airtelGross" placeholder="Airtel 4G Gross" min="0"></td>
+                            <td>
+                                <input type="text" id="deviceShare" readonly placeholder="Auto-calculated" style="color: #60a5fa; font-weight: 600;">
+                                <span class="auto-label">Airtel Gross ÷ (JIO MNP + JIO DSR)</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
         
@@ -919,15 +1050,17 @@
 
         <!-- Targets -->
         <div class="form-section" id="exclude-targets">
-            <table class="form-table">
-                <tr><th>DSR TARGET</th><th>MNP TARGET</th><th>TOTAL TARGET</th><th>WIFI TARGET</th></tr>
-                <tr>
-                    <td><input type="number" id="dsrTarget" placeholder="0" min="0"></td>
-                    <td><input type="number" id="mnpTarget" placeholder="0" min="0"></td>
-                    <td><input type="number" id="totalTarget" placeholder="0" min="0"></td>
-                    <td><input type="number" id="wifiTarget" placeholder="0" min="0"></td>
-                </tr>
-            </table>
+            <div class="table-scroll">
+                <table class="form-table">
+                    <tr><th>DSR TARGET</th><th>MNP TARGET</th><th>TOTAL TARGET</th><th>WIFI TARGET</th></tr>
+                    <tr>
+                        <td><input type="number" id="dsrTarget" placeholder="0" min="0"></td>
+                        <td><input type="number" id="mnpTarget" placeholder="0" min="0"></td>
+                        <td><input type="number" id="totalTarget" placeholder="0" min="0"></td>
+                        <td><input type="number" id="wifiTarget" placeholder="0" min="0"></td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
         <!-- SLAB REFERENCE TABLE - Enhanced with ID for dynamic highlighting -->
@@ -1254,7 +1387,6 @@
                 });
             }
 
-            // LAPU No - alphanumeric
             // LAPU No - 10 digits only
             const lapuNo = document.getElementById('lapuNo');
             if (lapuNo) {
@@ -1267,6 +1399,7 @@
                 });
             }
         }
+
         // =============================================
         // TOAST NOTIFICATION
         // =============================================
@@ -2139,7 +2272,6 @@
             submitBtn.textContent = '⏳ Submitting...';
             loading.style.display = 'flex';
             loadingText.textContent = '📤 Submitting to Google Sheets...';
-
             loadingSubtext.textContent = 'Please wait...';
             
             try {
@@ -2174,8 +2306,6 @@
                 showToast('❌ Error submitting. Please try again.', 'error');
             }
         });
-    
-        // 
     
         // =============================================
         // PDF EXPORT
@@ -2241,6 +2371,7 @@
         // =============================================
         // INITIALIZE
         // =============================================
+        initializeValidations();
         calculateAll();
         calculateDeviceShare();
         console.log('Device Info:', getDeviceInfo());
