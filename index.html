@@ -2246,7 +2246,7 @@
                 return;
             }
             
-            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbz9Km1bp8RhdUEa4LbH_rSTimCONjj1uodB2ZZHM0Qye5xPoYkmoe_7qv_MjLRPZZkRig/exec') {
                 const data = collectFormData();
                 alert(
                     `✅ ENROLLMENT DATA READY!\n\n` +
@@ -2258,7 +2258,7 @@
                     `📊 Device Share: ${data.deviceShare}\n` +
                     `📍 Location: ${data.geoLocation || 'Not available'}\n` +
                     `🕒 Time: ${data.photoTimestamp}\n\n` +
-                    `⚠️ Configure GOOGLE_SCRIPT_URL to save to Google Sheets`
+                    `⚠️ Configuring`
                 );
                 return;
             }
@@ -2271,7 +2271,7 @@
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Submitting...';
             loading.style.display = 'flex';
-            loadingText.textContent = '📤 Submitting to Google Sheets...';
+            loadingText.textContent = '📤 Submitting Data to Server...';
             loadingSubtext.textContent = 'Please wait...';
             
             try {
