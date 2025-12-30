@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -134,7 +135,7 @@
             letter-spacing: 0.5px;
         }
         
-        input[type="text"], input[type="number"] { 
+        input[type="text"], input[type="number"], input[type="tel"] { 
             width: 100%; 
             height: 48px; 
             background: linear-gradient(145deg, rgba(55, 55, 75, 0.8), rgba(70, 70, 90, 0.8)); 
@@ -161,6 +162,67 @@
             cursor: not-allowed; 
             background: linear-gradient(145deg, rgba(100, 100, 120, 0.15), rgba(120, 120, 140, 0.1)) !important; 
             color: #fff !important;
+        }
+        
+        /* Validation Styles */
+        input.invalid {
+            border-color: #ef4444 !important;
+            background: linear-gradient(145deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.08)) !important;
+            animation: shake 0.3s ease-in-out;
+        }
+        
+        input.valid {
+            border-color: #22c55e !important;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-size: 11px;
+            margin-top: 4px;
+            display: none;
+            text-align: left;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .input-hint {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+            text-align: left;
+        }
+        
+        .required-star {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+        
+        .char-counter {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: right;
+            margin-top: 2px;
+        }
+        
+        .char-counter.complete {
+            color: #22c55e;
+        }
+        
+        .char-counter.error {
+            color: #ef4444;
         }
         
         .calc-section { 
@@ -515,9 +577,160 @@
             background: linear-gradient(135deg, #3b82f6, #2563eb);
         }
         
+        .toast.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* ============================================= */
+        /* ENHANCED SLAB HIGHLIGHTING STYLES */
+        /* ============================================= */
+        
+        .slab-table tr {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .slab-table tr.active-slab {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.4), rgba(76, 175, 80, 0.25)) !important;
+            border-left: 5px solid #4CAF50 !important;
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+            position: relative;
+        }
+        
+        .slab-table tr.active-slab td {
+            color: #4CAF50 !important;
+            font-weight: 700 !important;
+        }
+        
+        .slab-table tr.active-slab::before {
+            content: '✓';
+            position: absolute;
+            left: 10px;
+            font-size: 16px;
+            color: #4CAF50;
+        }
+        
+        .slab-table tr.inactive-slab {
+            opacity: 0.5;
+        }
+        
+        .slab-table tr.next-slab {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 193, 7, 0.08)) !important;
+            border-left: 3px solid rgba(255, 193, 7, 0.5) !important;
+        }
+        
+        .slab-table tr.next-slab td::after {
+            content: ' (Next)';
+            font-size: 10px;
+            color: #ffc107;
+            font-weight: 600;
+        }
+        
+        /* Gross Commitment Row Enhanced Styling */
+        .gross-row {
+            position: relative;
+        }
+        
+        .gross-row.has-slab {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1)) !important;
+        }
+        
+        .gross-row.no-slab {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.15), rgba(244, 67, 54, 0.08)) !important;
+        }
+        
+        .slab-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 8px;
+            text-transform: uppercase;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .slab-badge.active {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .slab-badge.inactive {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Progress to next slab */
+        .slab-progress {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: linear-gradient(135deg, rgba(30, 30, 45, 0.9), rgba(45, 45, 60, 0.9));
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        /* Validation Summary Box */
+        .validation-summary {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .validation-summary.show {
+            display: block;
+            animation: shake 0.3s ease-in-out;
+        }
+        
+        .validation-summary h4 {
+            color: #ef4444;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .validation-summary ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .validation-summary li {
+            color: #fca5a5;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+        
+        .validation-summary li::before {
+            content: '⚠️ ';
         }
         
         @media (max-width: 768px) { 
@@ -529,10 +742,9 @@
             h2 { font-size: 24px; padding: 24px 28px; }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- EXIF.js library for cross-platform EXIF extraction -->
-    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js></script>
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js></script>
+    <script src=https://cdn.jsdelivr.net/npm/exif-js></script>
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -548,11 +760,53 @@
         <!-- Basic Info Section -->
         <div class="form-section">
             <table class="form-table">
-                <tr><td class="left">Outlet Name</td><td><input type="text" id="outletName" placeholder="Enter outlet name"></td></tr>
-                <tr><td class="left">Outlet Lapu No</td><td><input type="text" id="lapuNo" placeholder="Enter LAPU number"></td></tr>
-                <tr><td class="left">FSE Contact No</td><td><input type="text" id="fseContact" placeholder="Enter FSE contact"></td></tr>
-                <tr><td class="left">TSM/SE Name and Contact No</td><td><input type="text" id="tsmContact" placeholder="Enter TSM/SE details"></td></tr>
+                <tr>
+                    <td class="left">Outlet Name<span class="required-star">*</span></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="text" id="outletName" placeholder="Enter outlet name (alphabets only)" data-validation="name" required>
+                            <div class="input-hint">Only alphabets and spaces allowed</div>
+                            <div class="error-message" id="outletName-error">Please enter a valid name (alphabets only)</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Lapu No<span class="required-star">*</span></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="tel" id="lapuNo" placeholder="Enter 10-digit LAPU number" maxlength="10" data-validation="phone" required>
+                            <div class="input-hint">10 digits only</div>
+                            <div class="error-message" id="lapuNo-error">Please enter a valid 10-digit LAPU number</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">FSE Contact No<span class="required-star">*</span></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="tel" id="fseContact" placeholder="Enter 10-digit mobile number" maxlength="10" data-validation="phone" required inputmode="numeric">
+                            <div class="char-counter" id="fseContact-counter">0/10 digits</div>
+                            <div class="error-message" id="fseContact-error">Please enter a valid 10-digit mobile number</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">TSM/SE Contact No<span class="required-star">*</span></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="tel" id="tsmContact" placeholder="Enter 10-digit mobile number" maxlength="10" data-validation="phone" required inputmode="numeric">
+                            <div class="char-counter" id="tsmContact-counter">0/10 digits</div>
+                            <div class="error-message" id="tsmContact-error">Please enter a valid 10-digit mobile number</div>
+                        </div>
+                    </td>
+                </tr>
             </table>
+        </div>
+
+        <!-- Validation Summary -->
+        <div class="validation-summary" id="validationSummary">
+            <h4>⚠️ Please fix the following errors:</h4>
+            <ul id="validationErrors"></ul>
         </div>
 
         <!-- Margin Scheme -->
@@ -583,8 +837,19 @@
                 <tr><th>Items</th><th>Count</th><th>Amount</th></tr>
                 <tr><td class="left">DSR OTF - Rs.135</td><td><input type="number" id="dsrCount" placeholder="0" min="0"></td><td><input type="text" id="dsrAmount" readonly class="total-display"></td></tr>
                 <tr><td class="left">MNP OTF - Rs.235</td><td><input type="number" id="mnpCount" placeholder="0" min="0"></td><td><input type="text" id="mnpAmount" readonly class="total-display"></td></tr>
-                <tr class="gross-row slab-highlight">
-                    <td class="left">GROSS COMMITMENT<br><span class="auto-label">Slab Rate × MNP Count</span></td>
+                <tr class="gross-row slab-highlight" id="grossRow">
+                    <td class="left">
+                        GROSS COMMITMENT
+                        <span id="slabBadge" class="slab-badge inactive">No Slab</span>
+                        <br>
+                        <span class="auto-label" id="slabLabel">Slab Rate × MNP Count</span>
+                        <div class="slab-progress" id="slabProgress" style="display: none;">
+                            <span id="progressText"></span>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </td>
                     <td><input type="text" id="grossCount" readonly class="auto-calc"></td>
                     <td><input type="text" id="grossAmount" readonly class="total-display slab-highlight"></td>
                 </tr>
@@ -609,28 +874,33 @@
         </table>
 
         <div class="total-amount" id="totalAmount">Total Amount Rs. 0</div>
-<div class="form-section" id="exclude-airtel-gross">
-        <!-- Competitor Data -->
-        <div class="form-section" id="exclude-competitor">
-            <table class="form-table">
-                <tr class="section-title">
-                    <td><input type="text" id="viMnp" placeholder="VI MNP"></td>
-                    <td><input type="text" id="viDsr" placeholder="VI DSR"></td>
-                    <td><input type="text" id="jioMnp" placeholder="JIO MNP"></td>
-                    <td><input type="text" id="jioDsr" placeholder="JIO DSR"></td>
-                </tr>
-            </table>
-        </div>
+        
+        <div class="form-section" id="exclude-airtel-gross">
+            <!-- Competitor Data -->
+            <div class="form-section" id="exclude-competitor">
+                <table class="form-table">
+                    <tr class="section-title">
+                        <td><input type="number" id="viMnp" placeholder="VI MNP" min="0"></td>
+                        <td><input type="number" id="viDsr" placeholder="VI DSR" min="0"></td>
+                        <td><input type="number" id="jioMnp" placeholder="JIO MNP" min="0"></td>
+                        <td><input type="number" id="jioDsr" placeholder="JIO DSR" min="0"></td>
+                    </tr>
+                </table>
+            </div>
 
-        <div class="form-section" id="exclude-airtel">
-            <table class="form-table">
-                <tr class="section-title">
-                    <td><input type="text" id="airtelGross" placeholder="Airtel 4g Gross"></td>
-                    <td><input type="text" id="deviceShare" placeholder="Device Share" style="color: #60a5fa;"></td>
-                </tr>
-            </table>
+            <div class="form-section" id="exclude-airtel">
+                <table class="form-table">
+                    <tr class="section-title">
+                        <td><input type="number" id="airtelGross" placeholder="Airtel 4G Gross" min="0"></td>
+                        <td>
+                            <input type="text" id="deviceShare" readonly placeholder="Auto-calculated" style="color: #60a5fa; font-weight: 600;">
+                            <span class="auto-label">Airtel Gross ÷ (JIO MNP + JIO DSR)</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
-    </div>
+        
         <!-- Tier Selection -->
         <div class="tier-section">
             <label class="tier-btn tier-platinum">
@@ -660,15 +930,15 @@
             </table>
         </div>
 
-        <!-- SLAB REFERENCE TABLE -->
+        <!-- SLAB REFERENCE TABLE - Enhanced with ID for dynamic highlighting -->
         <div class="form-section">
-            <table class="form-table">
+            <table class="form-table slab-table" id="slabTable">
                 <tr><th>Gross Target SLAB</th><th>INCENTIVE (PER MNP)</th></tr>
-                <tr><td>10</td><td>₹75/MNP</td></tr>
-                <tr><td>20</td><td>₹125/MNP</td></tr>
-                <tr><td>30</td><td>₹150/MNP</td></tr>
-                <tr><td>40</td><td>₹175/MNP</td></tr>
-                <tr class="slab-highlight"><td>50+</td><td class="slab-highlight">₹200/MNP</td></tr>
+                <tr id="slab-10"><td>10</td><td>₹75/MNP</td></tr>
+                <tr id="slab-20"><td>20</td><td>₹125/MNP</td></tr>
+                <tr id="slab-30"><td>30</td><td>₹150/MNP</td></tr>
+                <tr id="slab-40"><td>40</td><td>₹175/MNP</td></tr>
+                <tr id="slab-50"><td>50+</td><td>₹200/MNP</td></tr>
             </table>
         </div>
 
@@ -691,9 +961,7 @@
         // =============================================
         // GOOGLE SHEETS CONFIGURATION
         // =============================================
-        // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
-        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
-        // Example: const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw.../exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9Km1bp8RhdUEa4LbH_rSTimCONjj1uodB2ZZHM0Qye5xPoYkmoe_7qv_MjLRPZZkRig/exec';
         
         let capturedPhoto = null;
         let geoLocation = null;
@@ -702,8 +970,303 @@
         let photoTimestamp = null;
         let selectedTier = null;
         let originalFile = null;
-        let preCaptureLoctaion = null;
+        let preCaptureLocation = null;
 
+        // =============================================
+        // VALIDATION RULES
+        // =============================================
+        const validationRules = {
+            name: {
+                pattern: /^[A-Za-z\s]+$/,
+                message: 'Only alphabets and spaces allowed',
+                minLength: 2,
+                maxLength: 100
+            },
+            phone: {
+                pattern: /^[6-9][0-9]{9}$/,
+                message: 'Enter valid 10-digit mobile number (starting with 6-9)',
+                exactLength: 10
+            },
+            alphanumeric: {
+                pattern: /^[A-Za-z0-9\s\-]+$/,
+                message: 'Only alphanumeric characters allowed',
+                minLength: 1
+            }
+        };
+
+        // =============================================
+        // VALIDATION FUNCTIONS
+        // =============================================
+        function validateField(input) {
+            const validationType = input.dataset.validation;
+            const value = input.value.trim();
+            const errorElement = document.getElementById(`${input.id}-error`);
+            
+            let isValid = true;
+            let errorMessage = '';
+
+            if (!value && input.hasAttribute('required')) {
+                isValid = false;
+                errorMessage = 'This field is required';
+            } else if (value && validationType && validationRules[validationType]) {
+                const rule = validationRules[validationType];
+                
+                // Check pattern
+                if (rule.pattern && !rule.pattern.test(value)) {
+                    isValid = false;
+                    errorMessage = rule.message;
+                }
+                
+                // Check exact length (for phone)
+                if (rule.exactLength && value.length !== rule.exactLength) {
+                    isValid = false;
+                    errorMessage = `Must be exactly ${rule.exactLength} digits`;
+                }
+                
+                // Check min length
+                if (rule.minLength && value.length < rule.minLength) {
+                    isValid = false;
+                    errorMessage = `Minimum ${rule.minLength} characters required`;
+                }
+            }
+
+            // Update UI
+            input.classList.remove('valid', 'invalid');
+            if (value) {
+                input.classList.add(isValid ? 'valid' : 'invalid');
+            }
+            
+            if (errorElement) {
+                errorElement.textContent = errorMessage;
+                errorElement.classList.toggle('show', !isValid && (value || input.hasAttribute('required')));
+            }
+
+            return isValid;
+        }
+
+        function validateAllFields() {
+            const requiredFields = [
+                { id: 'outletName', label: 'Outlet Name' },
+                { id: 'lapuNo', label: 'Outlet Lapu No' },
+                { id: 'fseContact', label: 'FSE Contact No' },
+                { id: 'tsmContact', label: 'TSM/SE Contact No' }
+            ];
+
+            const errors = [];
+            let allValid = true;
+
+            requiredFields.forEach(field => {
+                const input = document.getElementById(field.id);
+                if (input) {
+                    const value = input.value.trim();
+                    const isValid = validateField(input);
+                    
+                    if (!isValid) {
+                        allValid = false;
+                        if (!value) {
+                            errors.push(`${field.label} is required`);
+                        } else {
+                            const validationType = input.dataset.validation;
+                            if (validationType && validationRules[validationType]) {
+                                errors.push(`${field.label}: ${validationRules[validationType].message}`);
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Show/hide validation summary
+            const summary = document.getElementById('validationSummary');
+            const errorList = document.getElementById('validationErrors');
+            
+            if (errors.length > 0) {
+                errorList.innerHTML = errors.map(e => `<li>${e}</li>`).join('');
+                summary.classList.add('show');
+            } else {
+                summary.classList.remove('show');
+            }
+
+            return allValid;
+        }
+
+        // =============================================
+        // INPUT RESTRICTION FUNCTIONS
+        // =============================================
+        function restrictToAlphabets(input) {
+            input.addEventListener('input', function(e) {
+                // Remove any non-alphabet characters except spaces
+                const cursorPos = this.selectionStart;
+                const oldValue = this.value;
+                this.value = this.value.replace(/[^A-Za-z\s]/g, '');
+                
+                // Adjust cursor position if characters were removed
+                if (oldValue.length !== this.value.length) {
+                    const diff = oldValue.length - this.value.length;
+                    this.setSelectionRange(cursorPos - diff, cursorPos - diff);
+                }
+            });
+            
+            input.addEventListener('keypress', function(e) {
+                const char = String.fromCharCode(e.keyCode || e.which);
+                if (!/[A-Za-z\s]/.test(char)) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Prevent paste of invalid characters
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const cleanedText = pastedText.replace(/[^A-Za-z\s]/g, '');
+                document.execCommand('insertText', false, cleanedText);
+            });
+        }
+
+        function restrictToNumbers(input) {
+            const counterId = `${input.id}-counter`;
+            const counterElement = document.getElementById(counterId);
+            
+            function updateCounter() {
+                const length = input.value.length;
+                if (counterElement) {
+                    counterElement.textContent = `${length}/10 digits`;
+                    counterElement.classList.remove('complete', 'error');
+                    if (length === 10) {
+                        counterElement.classList.add('complete');
+                    } else if (length > 0 && length < 10) {
+                        counterElement.classList.add('error');
+                    }
+                }
+            }
+            
+            input.addEventListener('input', function(e) {
+                // Remove any non-numeric characters
+                const cursorPos = this.selectionStart;
+                const oldValue = this.value;
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Limit to 10 digits
+                if (this.value.length > 10) {
+                    this.value = this.value.slice(0, 10);
+                }
+                
+                updateCounter();
+                
+                // Auto-validate when 10 digits reached
+                if (this.value.length === 10) {
+                    validateField(this);
+                }
+            });
+            
+            input.addEventListener('keypress', function(e) {
+                const char = String.fromCharCode(e.keyCode || e.which);
+                if (!/[0-9]/.test(char)) {
+                    e.preventDefault();
+                    return;
+                }
+                // Prevent if already 10 digits
+                if (this.value.length >= 10) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Prevent paste of invalid characters
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const cleanedText = pastedText.replace(/[^0-9]/g, '').slice(0, 10 - this.value.length);
+                
+                // Insert at cursor position
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                const currentValue = this.value;
+                const newValue = currentValue.slice(0, start) + cleanedText + currentValue.slice(end);
+                this.value = newValue.slice(0, 10);
+                
+                updateCounter();
+            });
+            
+            // Initialize counter
+            updateCounter();
+        }
+
+        function restrictToAlphanumeric(input) {
+            input.addEventListener('input', function(e) {
+                // Remove special characters except spaces and hyphens
+                const cursorPos = this.selectionStart;
+                const oldValue = this.value;
+                this.value = this.value.replace(/[^A-Za-z0-9\s\-]/g, '');
+            });
+            
+            input.addEventListener('keypress', function(e) {
+                const char = String.fromCharCode(e.keyCode || e.which);
+                if (!/[A-Za-z0-9\s\-]/.test(char)) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Prevent paste of invalid characters
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const cleanedText = pastedText.replace(/[^A-Za-z0-9\s\-]/g, '');
+                document.execCommand('insertText', false, cleanedText);
+            });
+        }
+
+        // =============================================
+        // INITIALIZE VALIDATIONS
+        // =============================================
+        function initializeValidations() {
+            // Outlet Name - alphabets only
+            const outletName = document.getElementById('outletName');
+            if (outletName) {
+                restrictToAlphabets(outletName);
+                outletName.addEventListener('blur', () => validateField(outletName));
+                outletName.addEventListener('input', () => {
+                    if (outletName.classList.contains('invalid')) {
+                        validateField(outletName);
+                    }
+                });
+            }
+
+            // FSE Contact - 10 digits only
+            const fseContact = document.getElementById('fseContact');
+            if (fseContact) {
+                restrictToNumbers(fseContact);
+                fseContact.addEventListener('blur', () => validateField(fseContact));
+                fseContact.addEventListener('input', () => {
+                    if (fseContact.classList.contains('invalid') || fseContact.value.length === 10) {
+                        validateField(fseContact);
+                    }
+                });
+            }
+
+            // TSM Contact - 10 digits only
+            const tsmContact = document.getElementById('tsmContact');
+            if (tsmContact) {
+                restrictToNumbers(tsmContact);
+                tsmContact.addEventListener('blur', () => validateField(tsmContact));
+                tsmContact.addEventListener('input', () => {
+                    if (tsmContact.classList.contains('invalid') || tsmContact.value.length === 10) {
+                        validateField(tsmContact);
+                    }
+                });
+            }
+
+            // LAPU No - alphanumeric
+            // LAPU No - 10 digits only
+            const lapuNo = document.getElementById('lapuNo');
+            if (lapuNo) {
+                restrictToNumbers(lapuNo);
+                lapuNo.addEventListener('blur', () => validateField(lapuNo));
+                lapuNo.addEventListener('input', () => {
+                    if (lapuNo.classList.contains('invalid') || lapuNo.value.length === 10) {
+                        validateField(lapuNo);
+                    }
+                });
+            }
+        }
         // =============================================
         // TOAST NOTIFICATION
         // =============================================
@@ -718,11 +1281,10 @@
             
             setTimeout(() => toast.remove(), duration);
         }
-
+    
         // =============================================
         // DEVICE DETECTION
         // =============================================
-        
         function getDeviceInfo() {
             const ua = navigator.userAgent;
             const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
@@ -739,11 +1301,10 @@
                 userAgent: ua
             };
         }
-
+    
         // =============================================
-        // DEVICE LOCATION (iOS Compatible - Primary Method)
+        // DEVICE LOCATION
         // =============================================
-        
         function getDeviceLocation() {
             return new Promise((resolve) => {
                 if (!navigator.geolocation) {
@@ -774,11 +1335,10 @@
                 );
             });
         }
-
+    
         // =============================================
-        // EXIF EXTRACTION (Fallback for Android/Desktop)
+        // EXIF EXTRACTION FUNCTIONS
         // =============================================
-        
         function extractGPSFromImage(file) {
             return new Promise((resolve) => {
                 const device = getDeviceInfo();
@@ -811,7 +1371,7 @@
                 }
             });
         }
-
+    
         function extractWithEXIFJS(file) {
             return new Promise((resolve) => {
                 try {
@@ -828,8 +1388,6 @@
                                     const lonRef = EXIF.getTag(this, 'GPSLongitudeRef');
                                     const altitude = EXIF.getTag(this, 'GPSAltitude');
                                     const dateTime = EXIF.getTag(this, 'DateTimeOriginal') || EXIF.getTag(this, 'DateTime');
-                                    
-                                    console.log('EXIF.js raw data:', { lat, latRef, lon, lonRef, altitude, dateTime });
                                     
                                     if (lat && lon && latRef && lonRef) {
                                         const latitude = convertToDecimal(lat, latRef);
@@ -848,13 +1406,11 @@
                                         resolve(null);
                                     }
                                 } catch (e) {
-                                    console.log('EXIF.js getData error:', e);
                                     URL.revokeObjectURL(objectUrl);
                                     resolve(null);
                                 }
                             });
                         } catch (e) {
-                            console.log('EXIF.js error:', e);
                             URL.revokeObjectURL(objectUrl);
                             resolve(null);
                         }
@@ -872,12 +1428,11 @@
                     }, 10000);
                     
                 } catch (e) {
-                    console.log('extractWithEXIFJS error:', e);
                     resolve(null);
                 }
             });
         }
-
+    
         function convertToDecimal(dmsArray, ref) {
             if (!dmsArray || dmsArray.length < 3) return 0;
             
@@ -901,7 +1456,7 @@
             
             return decimal;
         }
-
+    
         function extractManually(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -912,7 +1467,6 @@
                         const view = new DataView(buffer);
                         
                         if (view.getUint16(0, false) !== 0xFFD8) {
-                            console.log('Not a JPEG file');
                             resolve(null);
                             return;
                         }
@@ -947,7 +1501,6 @@
                         
                         resolve(null);
                     } catch (e) {
-                        console.log('Manual extraction error:', e);
                         resolve(null);
                     }
                 };
@@ -956,7 +1509,7 @@
                 reader.readAsArrayBuffer(file);
             });
         }
-
+    
         function parseEXIFSegment(view, start) {
             try {
                 if (view.getUint32(start, false) !== 0x45786966) return null;
@@ -975,7 +1528,7 @@
                 return null;
             }
         }
-
+    
         function findTagValue(view, ifdOffset, tagId, littleEndian, tiffOffset) {
             try {
                 const entries = view.getUint16(ifdOffset, littleEndian);
@@ -991,7 +1544,7 @@
             } catch (e) {}
             return null;
         }
-
+    
         function parseGPSData(view, gpsOffset, littleEndian, tiffOffset) {
             try {
                 const entries = view.getUint16(gpsOffset, littleEndian);
@@ -1037,7 +1590,7 @@
             } catch (e) {}
             return null;
         }
-
+    
         function readRational3(view, offset, littleEndian) {
             const values = [];
             for (let i = 0; i < 3; i++) {
@@ -1047,17 +1600,16 @@
             }
             return values;
         }
-
+    
         function dmsToDecimal(dms, ref) {
             let dd = dms[0] + dms[1] / 60 + dms[2] / 3600;
             if (ref === 'S' || ref === 'W') dd = -dd;
             return dd;
         }
-
+    
         // =============================================
         // DISPLAY GPS INFO
         // =============================================
-        
         function displayGPSInfo(gpsData, source) {
             const geoInfo = document.getElementById('geoInfo');
             const debugInfo = document.getElementById('debugInfo');
@@ -1079,8 +1631,6 @@
                     ${gpsData.timestamp ? `<strong>Photo Time:</strong> ${gpsData.timestamp}<br>` : ''}
                     <small>✅ Location extracted directly from photo metadata (${gpsData.method})</small>
                 `;
-                
-                debugInfo.innerHTML = `Method: ${gpsData.method} | Raw: ${JSON.stringify(gpsData)}`;
                 
             } else if (source === 'device' && gpsData) {
                 geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
@@ -1118,11 +1668,62 @@
             geoInfo.style.display = 'block';
             photoSection.style.display = 'block';
         }
-
+    
         // =============================================
-        // SLAB & CALCULATION
+        // DEVICE SHARE CALCULATION
+        // =============================================
+        function calculateDeviceShare() {
+            const airtelGross = parseFloat(document.getElementById('airtelGross').value) || 0;
+            const jioMnp = parseFloat(document.getElementById('jioMnp').value) || 0;
+            const jioDsr = parseFloat(document.getElementById('jioDsr').value) || 0;
+            
+            const jioTotal = jioMnp + jioDsr;
+            const deviceShareInput = document.getElementById('deviceShare');
+            
+            if (jioTotal === 0) {
+                if (airtelGross > 0) {
+                    deviceShareInput.value = '∞ (No JIO)';
+                    deviceShareInput.style.color = '#4CAF50';
+                } else {
+                    deviceShareInput.value = 'N/A';
+                    deviceShareInput.style.color = '#888';
+                }
+            } else {
+                const deviceShare = airtelGross / jioTotal;
+                
+                if (deviceShare >= 1) {
+                    deviceShareInput.value = deviceShare.toFixed(2) + '';
+                    deviceShareInput.style.color = '#4CAF50';
+                } else if (deviceShare >= 0.5) {
+                    deviceShareInput.value = deviceShare.toFixed(2) + '';
+                    deviceShareInput.style.color = '#ffc107';
+                } else {
+                    deviceShareInput.value = deviceShare.toFixed(2) + '';
+                    deviceShareInput.style.color = '#f44336';
+                }
+            }
+            
+            console.log('Device Share Calculation:', {
+                airtelGross,
+                jioMnp,
+                jioDsr,
+                jioTotal,
+                deviceShare: jioTotal > 0 ? (airtelGross / jioTotal).toFixed(2) : 'N/A'
+            });
+        }
+    
+        // =============================================
+        // ENHANCED SLAB RATE FUNCTIONS
         // =============================================
         
+        const SLAB_THRESHOLDS = [
+            { min: 50, rate: 200, label: '50+', id: 'slab-50' },
+            { min: 40, rate: 175, label: '40', id: 'slab-40' },
+            { min: 30, rate: 150, label: '30', id: 'slab-30' },
+            { min: 20, rate: 125, label: '20', id: 'slab-20' },
+            { min: 10, rate: 75, label: '10', id: 'slab-10' }
+        ];
+    
         function getSlabRate(grossCount) {
             if (grossCount >= 50) return 200;
             if (grossCount >= 40) return 175;
@@ -1131,7 +1732,115 @@
             if (grossCount >= 10) return 75;
             return 0;
         }
-
+    
+        function getSlabInfo(grossCount) {
+            for (let i = 0; i < SLAB_THRESHOLDS.length; i++) {
+                if (grossCount >= SLAB_THRESHOLDS[i].min) {
+                    const nextSlab = i > 0 ? SLAB_THRESHOLDS[i - 1] : null;
+                    return {
+                        rate: SLAB_THRESHOLDS[i].rate,
+                        label: SLAB_THRESHOLDS[i].label,
+                        id: SLAB_THRESHOLDS[i].id,
+                        index: SLAB_THRESHOLDS.length - 1 - i,
+                        nextSlab: nextSlab,
+                        neededForNext: nextSlab ? nextSlab.min - grossCount : 0,
+                        isMaxSlab: i === 0
+                    };
+                }
+            }
+            
+            return {
+                rate: 0,
+                label: 'Below 10',
+                id: null,
+                index: -1,
+                nextSlab: SLAB_THRESHOLDS[SLAB_THRESHOLDS.length - 1],
+                neededForNext: 10 - grossCount,
+                isMaxSlab: false
+            };
+        }
+    
+        function highlightActiveSlab(slabInfo) {
+            const slabTable = document.getElementById('slabTable');
+            if (!slabTable) return;
+            
+            const rows = slabTable.querySelectorAll('tr');
+            rows.forEach(row => {
+                row.classList.remove('active-slab', 'inactive-slab', 'next-slab');
+            });
+            
+            SLAB_THRESHOLDS.forEach((slab, index) => {
+                const row = document.getElementById(slab.id);
+                if (!row) return;
+                
+                if (slab.id === slabInfo.id) {
+                    row.classList.add('active-slab');
+                } else if (slabInfo.nextSlab && slab.id === slabInfo.nextSlab.id) {
+                    row.classList.add('next-slab');
+                } else if (slab.rate > slabInfo.rate) {
+                    row.classList.add('inactive-slab');
+                }
+            });
+        }
+    
+        function updateGrossRowStyling(slabInfo, mnpCount) {
+            const grossRow = document.getElementById('grossRow');
+            const slabBadge = document.getElementById('slabBadge');
+            const slabLabel = document.getElementById('slabLabel');
+            const slabProgress = document.getElementById('slabProgress');
+            const progressText = document.getElementById('progressText');
+            const progressBar = document.getElementById('progressBar');
+            
+            if (slabInfo.rate > 0) {
+                grossRow.classList.add('has-slab');
+                grossRow.classList.remove('no-slab');
+                slabBadge.classList.add('active');
+                slabBadge.classList.remove('inactive');
+                slabBadge.textContent = `₹${slabInfo.rate}/MNP`;
+            } else {
+                grossRow.classList.remove('has-slab');
+                grossRow.classList.add('no-slab');
+                slabBadge.classList.remove('active');
+                slabBadge.classList.add('inactive');
+                slabBadge.textContent = 'No Slab';
+            }
+            
+            if (slabInfo.rate > 0) {
+                slabLabel.innerHTML = `
+                    <strong>Slab ${slabInfo.label}</strong> → ₹${slabInfo.rate} × ${mnpCount} MNP = 
+                    <strong style="color: #4CAF50;">₹${(slabInfo.rate * mnpCount).toLocaleString('en-IN')}</strong>
+                `;
+            } else {
+                slabLabel.textContent = 'Need minimum 10 Gross to unlock slab incentive';
+            }
+            
+            if (!slabInfo.isMaxSlab && slabInfo.nextSlab) {
+                slabProgress.style.display = 'block';
+                progressText.innerHTML = `<span style="color: #ffc107;">🎯 ${slabInfo.neededForNext} more for ₹${slabInfo.nextSlab.rate}/MNP slab</span>`;
+                
+                let progressPercent = 0;
+                if (slabInfo.rate === 0) {
+                    progressPercent = (10 - slabInfo.neededForNext) / 10 * 100;
+                } else {
+                    const currentMin = SLAB_THRESHOLDS.find(s => s.rate === slabInfo.rate).min;
+                    const nextMin = slabInfo.nextSlab.min;
+                    const range = nextMin - currentMin;
+                    const current = nextMin - slabInfo.neededForNext - currentMin;
+                    progressPercent = (current / range) * 100;
+                }
+                progressBar.style.width = `${Math.max(0, Math.min(100, progressPercent))}%`;
+            } else if (slabInfo.isMaxSlab) {
+                slabProgress.style.display = 'block';
+                progressText.innerHTML = `<span style="color: #4CAF50;">🏆 Maximum slab achieved!</span>`;
+                progressBar.style.width = '100%';
+            } else {
+                slabProgress.style.display = 'none';
+            }
+        }
+    
+        // =============================================
+        // MAIN CALCULATION FUNCTION
+        // =============================================
         function calculateAll() {
             const dsrCount = parseInt(document.getElementById('dsrCount').value) || 0;
             const mnpCount = parseInt(document.getElementById('mnpCount').value) || 0;
@@ -1141,35 +1850,55 @@
             const lapuTertiary = parseInt(document.getElementById('lapuTertiary').value) || 0;
             const mnpDays = parseInt(document.getElementById('mnpDays').value) || 0;
             const wifiDays = parseInt(document.getElementById('wifiDays').value) || 0;
-
+    
             document.getElementById('dsrAmount').value = (dsrCount * 135).toLocaleString('en-IN');
             document.getElementById('mnpAmount').value = (mnpCount * 235).toLocaleString('en-IN');
-
+    
             const grossCount = dsrCount + mnpCount;
-            const slabRate = getSlabRate(grossCount);
+            const slabInfo = getSlabInfo(grossCount);
+            const slabRate = slabInfo.rate;
             const grossCommitmentAmount = mnpCount * slabRate;
+            
             document.getElementById('grossCount').value = grossCount;
             document.getElementById('grossAmount').value = grossCommitmentAmount.toLocaleString('en-IN');
-
+            
+            highlightActiveSlab(slabInfo);
+            updateGrossRowStyling(slabInfo, mnpCount);
+    
             const tertiaryAmount = lapuTertiary * 0.039;
             const mnpDaysAmount = (lapuTertiary / 30 * 0.014) * mnpDays;
             const wifiDaysAmount = (lapuTertiary / 30 * 0.015) * wifiDays;
             document.getElementById('tertiaryAmount').value = tertiaryAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
             document.getElementById('mnpDaysAmount').value = mnpDaysAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
             document.getElementById('wifiDaysAmount').value = wifiDaysAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
-
+    
             document.getElementById('wifiAmount').value = (wifiCount * 150).toLocaleString('en-IN');
             document.getElementById('apbAmount').value = (apbCount * 45).toLocaleString('en-IN');
             document.getElementById('simexAmount').value = (simexCount * 50).toLocaleString('en-IN');
-
-            const total = grossCommitmentAmount + (wifiCount * 150) + (apbCount * 45) + (simexCount * 50) + tertiaryAmount + mnpDaysAmount + wifiDaysAmount;
+    
+            const total = grossCommitmentAmount + 
+                         (wifiCount * 150) + 
+                         (apbCount * 45) + 
+                         (simexCount * 50) + 
+                         tertiaryAmount + 
+                         mnpDaysAmount + 
+                         wifiDaysAmount;
+            
             document.getElementById('totalAmount').textContent = `Total Amount Rs. ${Math.round(total).toLocaleString('en-IN')}`;
+            
+            console.log('Calculation Summary:', {
+                grossCount,
+                slabInfo,
+                slabRate,
+                mnpCount,
+                grossCommitmentAmount,
+                total
+            });
         }
-
+    
         // =============================================
-        // CAMERA CAPTURE (iOS COMPATIBLE)
+        // CAMERA CAPTURE
         // =============================================
-        
         document.getElementById('captureBtn').addEventListener('click', async function() {
             const device = getDeviceInfo();
             const loading = document.getElementById('loadingOverlay');
@@ -1205,13 +1934,6 @@
                 const file = this.files[0];
                 originalFile = file;
                 
-                console.log('File info:', {
-                    name: file.name,
-                    type: file.type,
-                    size: file.size,
-                    lastModified: new Date(file.lastModified).toLocaleString()
-                });
-                
                 const fileTime = file.lastModified;
                 const currentTime = Date.now();
                 const timeDiff = currentTime - fileTime;
@@ -1234,8 +1956,6 @@
                 
                 try {
                     let locationAfterCapture = await getDeviceLocation();
-                    console.log('Location after capture:', locationAfterCapture);
-                    
                     let bestLocation = locationAfterCapture || locationBeforeCapture;
                     
                     const reader = new FileReader();
@@ -1248,9 +1968,7 @@
                         photoPreview.style.display = 'block';
                         document.getElementById('photoSection').style.display = 'block';
                         
-                        console.log('Attempting EXIF GPS extraction...');
                         const exifGPS = await extractGPSFromImage(file);
-                        console.log('EXIF GPS result:', exifGPS);
                         
                         if (exifGPS) {
                             displayGPSInfo(exifGPS, 'exif');
@@ -1280,11 +1998,10 @@
             
             setTimeout(() => input.click(), 150);
         });
-
+    
         // =============================================
         // TIER SELECTION
         // =============================================
-        
         document.querySelectorAll('input[name="tier"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 selectedTier = this.value;
@@ -1294,22 +2011,27 @@
                 this.closest('.tier-btn').classList.add('active');
             });
         });
-
+    
         // =============================================
-        // INPUT LISTENERS
+        // INPUT LISTENERS - Main Calculation
         // =============================================
-        
         ['dsrCount', 'mnpCount', 'wifiCount', 'apbCount', 'simexCount', 'lapuTertiary', 'mnpDays', 'wifiDays'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', calculateAll);
         });
-
+    
         // =============================================
-        // COLLECT FORM DATA FOR GOOGLE SHEETS
+        // INPUT LISTENERS - Device Share Calculation
         // =============================================
-        
+        ['airtelGross', 'jioMnp', 'jioDsr'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', calculateDeviceShare);
+        });
+    
+        // =============================================
+        // COLLECT FORM DATA
+        // =============================================
         function collectFormData() {
-            // Parse coordinates
             let latitude = '';
             let longitude = '';
             if (geoLocation) {
@@ -1321,110 +2043,89 @@
             }
             
             return {
-                // Basic Info
                 outletName: document.getElementById('outletName').value || '',
                 lapuNo: document.getElementById('lapuNo').value || '',
                 fseContact: document.getElementById('fseContact').value || '',
                 tsmContact: document.getElementById('tsmContact').value || '',
-                
-                // Counts & Amounts
                 dsrCount: document.getElementById('dsrCount').value || '0',
                 dsrAmount: document.getElementById('dsrAmount').value || '0',
                 mnpCount: document.getElementById('mnpCount').value || '0',
                 mnpAmount: document.getElementById('mnpAmount').value || '0',
                 grossCount: document.getElementById('grossCount').value || '0',
                 grossAmount: document.getElementById('grossAmount').value || '0',
-                
-                // Margin Calculations
                 lapuTertiary: document.getElementById('lapuTertiary').value || '0',
                 tertiaryAmount: document.getElementById('tertiaryAmount').value || '0',
                 mnpDays: document.getElementById('mnpDays').value || '0',
                 mnpDaysAmount: document.getElementById('mnpDaysAmount').value || '0',
                 wifiDays: document.getElementById('wifiDays').value || '0',
                 wifiDaysAmount: document.getElementById('wifiDaysAmount').value || '0',
-                
-                // Additional Items
                 wifiCount: document.getElementById('wifiCount').value || '0',
                 wifiAmount: document.getElementById('wifiAmount').value || '0',
                 apbCount: document.getElementById('apbCount').value || '0',
                 apbAmount: document.getElementById('apbAmount').value || '0',
                 simexCount: document.getElementById('simexCount').value || '0',
                 simexAmount: document.getElementById('simexAmount').value || '0',
-                
-                // Total
                 totalAmount: document.getElementById('totalAmount').textContent.replace('Total Amount Rs. ', ''),
-                
-                // Tier
                 tier: selectedTier || '',
-                
-                // Targets
                 dsrTarget: document.getElementById('dsrTarget').value || '0',
                 mnpTarget: document.getElementById('mnpTarget').value || '0',
                 totalTarget: document.getElementById('totalTarget').value || '0',
                 wifiTarget: document.getElementById('wifiTarget').value || '0',
-                
-                // Competitor Data
-                viMnp: document.getElementById('viMnp').value || '',
-                viDsr: document.getElementById('viDsr').value || '',
-                jioMnp: document.getElementById('jioMnp').value || '',
-                jioDsr: document.getElementById('jioDsr').value || '',
-                airtelGross: document.getElementById('airtelGross').value || '',
-                deviceShare: document.getElementById('deviceShare').value || '',
-                
-                // GPS Data
+                viMnp: document.getElementById('viMnp').value || '0',
+                viDsr: document.getElementById('viDsr').value || '0',
+                jioMnp: document.getElementById('jioMnp').value || '0',
+                jioDsr: document.getElementById('jioDsr').value || '0',
+                airtelGross: document.getElementById('airtelGross').value || '0',
+                deviceShare: document.getElementById('deviceShare').value || 'N/A',
                 latitude: latitude,
                 longitude: longitude,
                 geoLocation: geoLocation || '',
                 geoSource: geoSource || '',
                 geoAccuracy: geoAccuracy || '',
-                
-                // Photo Data
                 photoTimestamp: photoTimestamp || '',
                 photoBase64: capturedPhoto || '',
-                
-                // Meta
                 userAgent: navigator.userAgent,
                 submissionTime: new Date().toISOString()
             };
         }
-
+    
         // =============================================
         // SUBMIT TO GOOGLE SHEETS
         // =============================================
-        
         document.getElementById('submitBtn').addEventListener('click', async function() {
-            if (!capturedPhoto) {
-                alert('⚠️ Please capture a photo before submitting!');
+            // Validate all fields first
+            const isValid = validateAllFields();
+            
+            if (!isValid) {
+                showToast('⚠️ Please fix the validation errors before submitting', 'warning', 4000);
+                // Scroll to validation summary
+                document.getElementById('validationSummary').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
             
-            // Check if Google Script URL is configured
-            if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL_HERE' || !GOOGLE_SCRIPT_URL) {
-                // Fallback to original alert if not configured
-                const data = {
-                    outlet: document.getElementById('outletName').value || 'N/A',
-                    lapu: document.getElementById('lapuNo').value || 'N/A',
-                    fse: document.getElementById('fseContact').value || 'N/A',
-                    tsm: document.getElementById('tsmContact').value || 'N/A',
-                    gross: document.getElementById('grossAmount').value || '0',
-                    total: document.getElementById('totalAmount').textContent,
-                    tier: selectedTier ? selectedTier.toUpperCase() : 'Not Selected',
-                    location: geoLocation || 'Not available',
-                    source: geoSource ? geoSource.toUpperCase() : 'N/A',
-                    time: photoTimestamp
-                };
-                
+            if (!capturedPhoto) {
+                showToast('⚠️ Please capture a photo before submitting!', 'warning', 4000);
+                return;
+            }
+            
+            if (!selectedTier) {
+                showToast('⚠️ Please select a tier (Platinum/Gold/Executive) before submitting!', 'warning', 4000);
+                return;
+            }
+            
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
+                const data = collectFormData();
                 alert(
-                    `✅ ENROLLMENT SUBMITTED!\n\n` +
-                    `🏪 Outlet: ${data.outlet}\n` +
-                    `📱 LAPU: ${data.lapu}\n` +
-                    `👤 Tier: ${data.tier}\n` +
-                    `💰 Gross: Rs. ${data.gross}\n` +
-                    `💎 ${data.total}\n` +
-                    `📍 Location: ${data.location}\n` +
-                    `🔍 Source: ${data.source}\n` +
-                    `🕒 Time: ${data.time}\n\n` +
-                    `⚠️ Note: Configure GOOGLE_SCRIPT_URL to save to Google Sheets`
+                    `✅ ENROLLMENT DATA READY!\n\n` +
+                    `🏪 Outlet: ${data.outletName || 'N/A'}\n` +
+                    `📱 LAPU: ${data.lapuNo || 'N/A'}\n` +
+                    `👤 Tier: ${data.tier ? data.tier.toUpperCase() : 'Not Selected'}\n` +
+                    `💰 Gross: Rs. ${data.grossAmount || '0'}\n` +
+                    `💎 Total Amount Rs. ${data.totalAmount}\n` +
+                    `📊 Device Share: ${data.deviceShare}\n` +
+                    `📍 Location: ${data.geoLocation || 'Not available'}\n` +
+                    `🕒 Time: ${data.photoTimestamp}\n\n` +
+                    `⚠️ Configure GOOGLE_SCRIPT_URL to save to Google Sheets`
                 );
                 return;
             }
@@ -1434,35 +2135,32 @@
             const loadingText = document.getElementById('loadingText');
             const loadingSubtext = document.getElementById('loadingSubtext');
             
-            // Disable button and show loading
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Submitting...';
             loading.style.display = 'flex';
             loadingText.textContent = '📤 Submitting to Google Sheets...';
+
             loadingSubtext.textContent = 'Please wait...';
             
             try {
                 const formData = collectFormData();
                 console.log('Submitting data:', formData);
                 
-                // Send to Google Sheets
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'text/plain',
                     },
                     body: JSON.stringify(formData)
                 });
                 
-                // Success (no-cors doesn't return response, assume success)
                 loading.style.display = 'none';
                 submitBtn.disabled = false;
                 submitBtn.textContent = '✅ Submitted!';
                 
                 showToast(`✅ Enrollment submitted successfully!<br>🏪 ${formData.outletName}<br>📍 ${formData.geoLocation || 'Location N/A'}`, 'success', 6000);
                 
-                // Reset button text after 3 seconds
                 setTimeout(() => {
                     submitBtn.textContent = 'Submit';
                 }, 3000);
@@ -1476,7 +2174,9 @@
                 showToast('❌ Error submitting. Please try again.', 'error');
             }
         });
-
+    
+        // 
+    
         // =============================================
         // PDF EXPORT
         // =============================================
@@ -1484,10 +2184,10 @@
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
             const container = document.querySelector('.container');
-
+    
             const excludeIds = ['exclude-competitor', 'exclude-airtel', 'exclude-targets'];
             const hidden = [];
-
+    
             excludeIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -1495,53 +2195,54 @@
                     el.style.display = 'none';
                 }
             });
-
+    
             const buttons = document.querySelector('.action-buttons');
             if (buttons) buttons.style.display = 'none';
-
+    
             const canvas = await html2canvas(container, {
                 scale: 2,
                 useCORS: true,
                 backgroundColor: '#1a1a2e'
             });
-
+    
             const imgData = canvas.toDataURL('image/jpeg', 0.9);
-
+    
             const pageWidth = 210;
             const pageHeight = 297;
             const margin = 10;
-
+    
             const usableWidth = pageWidth - margin * 2;
             const usableHeight = pageHeight - margin * 2;
-
+    
             const imgWidth = usableWidth;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
+    
             let heightLeft = imgHeight;
             let position = margin;
-
+    
             pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
             heightLeft -= usableHeight;
-
+    
             while (heightLeft > 0) {
                 position = heightLeft - imgHeight + margin;
                 pdf.addPage();
                 pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
                 heightLeft -= usableHeight;
             }
-
+    
             hidden.forEach(h => h.el.style.display = h.display);
             if (buttons) buttons.style.display = '';
-
+    
             const outlet = document.getElementById('outletName').value || 'Retailer';
             const date = new Date().toISOString().slice(0, 10);
             pdf.save(`Enrollment_${outlet.replace(/\s+/g, '_')}_${date}.pdf`);
         });
-   
-        // Initialize
+    
+        // =============================================
+        // INITIALIZE
+        // =============================================
         calculateAll();
-        
-        // Log device info for debugging
+        calculateDeviceShare();
         console.log('Device Info:', getDeviceInfo());
     </script>
 </body>
