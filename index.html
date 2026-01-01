@@ -1478,12 +1478,11 @@
                 console.log('Device:', device);
                 
                 if (device.isIOS) {
-        getDeviceLocation().then(location => {
-            resolve(location);
-        });
-        return;
-    }
-
+                    getDeviceLocation().then(location => {
+                        resolve(location);
+                    });
+                    return;
+                }
                 
                 if (typeof EXIF !== 'undefined') {
                     extractWithEXIFJS(file).then(result => {
