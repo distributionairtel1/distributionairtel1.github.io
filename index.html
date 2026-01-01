@@ -456,6 +456,10 @@
             border-left-color: #ff9800;
         }
         
+        .geo-info.ios-source {
+            border-left-color: #007AFF;
+        }
+        
         .geo-info.no-source {
             border-left-color: #f44336;
         }
@@ -482,6 +486,11 @@
         
         .geo-badge.device {
             background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+        
+        .geo-badge.ios {
+            background: linear-gradient(135deg, #007AFF, #0056b3);
             color: white;
         }
         
@@ -584,10 +593,6 @@
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        
-        /* ============================================= */
-        /* ENHANCED SLAB HIGHLIGHTING STYLES */
-        /* ============================================= */
         
         /* ============================================= */
         /* ENHANCED SLAB HIGHLIGHTING STYLES */
@@ -725,6 +730,31 @@
             content: '⚠️ ';
         }
         
+        /* iOS Location Status Banner */
+        .location-status-banner {
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.2), rgba(0, 122, 255, 0.1));
+            border: 1px solid rgba(0, 122, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 13px;
+        }
+        
+        .location-status-banner.active {
+            display: block;
+        }
+        
+        .location-status-banner.success {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1));
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+        
+        .location-status-banner.error {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.1));
+            border-color: rgba(244, 67, 54, 0.3);
+        }
+        
         @media (max-width: 768px) { 
             .container { margin: 15px; padding: 28px; }
             .form-table { font-size: 13px; }
@@ -735,8 +765,7 @@
         }
 
         /* =========================================================
-           MOBILE-FIRST RESPONSIVE PATCH (ONLY NEW FEATURE ADDED)
-           Paste kept inside same file, everything else unchanged.
+           MOBILE-FIRST RESPONSIVE PATCH
            ========================================================= */
 
         :root{
@@ -760,7 +789,6 @@
           border-radius: var(--radius);
         }
 
-        /* Fix header negative margins on mobile by tying them to container padding */
         h2{
           margin: calc(var(--container-pad) * -1) calc(var(--container-pad) * -1) 28px calc(var(--container-pad) * -1);
           padding: 20px var(--container-pad);
@@ -773,7 +801,6 @@
           padding: var(--cell-pad-y) var(--cell-pad-x);
         }
 
-        /* iOS zoom on focus fix + better mobile typing */
         input[type="text"],
         input[type="number"],
         input[type="tel"]{
@@ -785,7 +812,6 @@
         .form-table, .calc-section, .total-amount { max-width: 100%; }
         .form-table td, .form-table th { overflow-wrap: anywhere; word-break: break-word; }
 
-        /* Horizontal scroll wrapper for wide tables */
         .table-scroll{
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
@@ -834,7 +860,6 @@
           }
         }
 
-        /* Stack Basic Info rows label-above-input on small screens */
         @media (max-width: 640px){
           #basicInfoTable tr{ display: block; }
           #basicInfoTable td{
@@ -854,7 +879,6 @@
           }
         }
 
-        /* Touch devices: disable hover lift (feels jumpy on mobile) */
         @media (hover: none){
           .form-table tr:hover{
             transform: none;
@@ -883,6 +907,11 @@
 
     <div class="container">
         <h2>Retailer Enrollment Sheet - December 2025</h2>
+        
+        <!-- Location Status Banner for iOS -->
+        <div class="location-status-banner" id="locationStatusBanner">
+            <span id="locationStatusText"></span>
+        </div>
         
         <!-- Basic Info Section -->
         <div class="form-section">
@@ -1063,7 +1092,7 @@
             </div>
         </div>
 
-        <!-- SLAB REFERENCE TABLE - Enhanced with ID for dynamic highlighting -->
+        <!-- SLAB REFERENCE TABLE -->
         <div class="form-section">
             <table class="form-table slab-table" id="slabTable">
                 <tr><th>Gross Target SLAB</th><th>INCENTIVE (PER MNP)</th></tr>
@@ -1103,7 +1132,11 @@
         let photoTimestamp = null;
         let selectedTier = null;
         let originalFile = null;
-        let preCaptureLocation = null;
+        
+        // iOS Location Tracking Variables
+        let iOSLocationWatchId = null;
+        let cachedIOSLocation = null;
+        let locationPermissionGranted = false;
 
         // =============================================
         // VALIDATION RULES
@@ -1144,26 +1177,22 @@
             } else if (value && validationType && validationRules[validationType]) {
                 const rule = validationRules[validationType];
                 
-                // Check pattern
                 if (rule.pattern && !rule.pattern.test(value)) {
                     isValid = false;
                     errorMessage = rule.message;
                 }
                 
-                // Check exact length (for phone)
                 if (rule.exactLength && value.length !== rule.exactLength) {
                     isValid = false;
                     errorMessage = `Must be exactly ${rule.exactLength} digits`;
                 }
                 
-                // Check min length
                 if (rule.minLength && value.length < rule.minLength) {
                     isValid = false;
                     errorMessage = `Minimum ${rule.minLength} characters required`;
                 }
             }
 
-            // Update UI
             input.classList.remove('valid', 'invalid');
             if (value) {
                 input.classList.add(isValid ? 'valid' : 'invalid');
@@ -1208,7 +1237,6 @@
                 }
             });
 
-            // Show/hide validation summary
             const summary = document.getElementById('validationSummary');
             const errorList = document.getElementById('validationErrors');
             
@@ -1227,12 +1255,10 @@
         // =============================================
         function restrictToAlphabets(input) {
             input.addEventListener('input', function(e) {
-                // Remove any non-alphabet characters except spaces
                 const cursorPos = this.selectionStart;
                 const oldValue = this.value;
                 this.value = this.value.replace(/[^A-Za-z\s]/g, '');
                 
-                // Adjust cursor position if characters were removed
                 if (oldValue.length !== this.value.length) {
                     const diff = oldValue.length - this.value.length;
                     this.setSelectionRange(cursorPos - diff, cursorPos - diff);
@@ -1246,7 +1272,6 @@
                 }
             });
             
-            // Prevent paste of invalid characters
             input.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
@@ -1273,19 +1298,16 @@
             }
             
             input.addEventListener('input', function(e) {
-                // Remove any non-numeric characters
                 const cursorPos = this.selectionStart;
                 const oldValue = this.value;
                 this.value = this.value.replace(/[^0-9]/g, '');
                 
-                // Limit to 10 digits
                 if (this.value.length > 10) {
                     this.value = this.value.slice(0, 10);
                 }
                 
                 updateCounter();
                 
-                // Auto-validate when 10 digits reached
                 if (this.value.length === 10) {
                     validateField(this);
                 }
@@ -1297,19 +1319,16 @@
                     e.preventDefault();
                     return;
                 }
-                // Prevent if already 10 digits
                 if (this.value.length >= 10) {
                     e.preventDefault();
                 }
             });
             
-            // Prevent paste of invalid characters
             input.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
                 const cleanedText = pastedText.replace(/[^0-9]/g, '').slice(0, 10 - this.value.length);
                 
-                // Insert at cursor position
                 const start = this.selectionStart;
                 const end = this.selectionEnd;
                 const currentValue = this.value;
@@ -1319,39 +1338,13 @@
                 updateCounter();
             });
             
-            // Initialize counter
             updateCounter();
-        }
-
-        function restrictToAlphanumeric(input) {
-            input.addEventListener('input', function(e) {
-                // Remove special characters except spaces and hyphens
-                const cursorPos = this.selectionStart;
-                const oldValue = this.value;
-                this.value = this.value.replace(/[^A-Za-z0-9\s\-]/g, '');
-            });
-            
-            input.addEventListener('keypress', function(e) {
-                const char = String.fromCharCode(e.keyCode || e.which);
-                if (!/[A-Za-z0-9\s\-]/.test(char)) {
-                    e.preventDefault();
-                }
-            });
-            
-            // Prevent paste of invalid characters
-            input.addEventListener('paste', function(e) {
-                e.preventDefault();
-                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-                const cleanedText = pastedText.replace(/[^A-Za-z0-9\s\-]/g, '');
-                document.execCommand('insertText', false, cleanedText);
-            });
         }
 
         // =============================================
         // INITIALIZE VALIDATIONS
         // =============================================
         function initializeValidations() {
-            // Outlet Name - alphabets only
             const outletName = document.getElementById('outletName');
             if (outletName) {
                 restrictToAlphabets(outletName);
@@ -1363,7 +1356,6 @@
                 });
             }
 
-            // FSE Contact - 10 digits only
             const fseContact = document.getElementById('fseContact');
             if (fseContact) {
                 restrictToNumbers(fseContact);
@@ -1375,7 +1367,6 @@
                 });
             }
 
-            // TSM Contact - 10 digits only
             const tsmContact = document.getElementById('tsmContact');
             if (tsmContact) {
                 restrictToNumbers(tsmContact);
@@ -1387,7 +1378,6 @@
                 });
             }
 
-            // LAPU No - 10 digits only
             const lapuNo = document.getElementById('lapuNo');
             if (lapuNo) {
                 restrictToNumbers(lapuNo);
@@ -1434,9 +1424,182 @@
                 userAgent: ua
             };
         }
+        
+        // =============================================
+        // LOCATION STATUS BANNER
+        // =============================================
+        function updateLocationBanner(status, message) {
+            const banner = document.getElementById('locationStatusBanner');
+            const text = document.getElementById('locationStatusText');
+            
+            banner.classList.remove('success', 'error');
+            banner.classList.add('active', status);
+            text.innerHTML = message;
+        }
+        
+        function hideLocationBanner() {
+            const banner = document.getElementById('locationStatusBanner');
+            banner.classList.remove('active');
+        }
     
         // =============================================
-        // DEVICE LOCATION
+        // iOS SPECIFIC LOCATION HANDLING
+        // =============================================
+        
+        // Start continuous location tracking for iOS
+        function startIOSLocationWatch() {
+            const device = getDeviceInfo();
+            if (!device.isIOS) return Promise.resolve(null);
+            
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    console.log('Geolocation not supported');
+                    resolve(null);
+                    return;
+                }
+                
+                console.log('Starting iOS location watch...');
+                
+                // Clear any existing watch
+                if (iOSLocationWatchId !== null) {
+                    navigator.geolocation.clearWatch(iOSLocationWatchId);
+                }
+                
+                let resolved = false;
+                let attempts = 0;
+                const maxAttempts = 5;
+                
+                const successHandler = (position) => {
+                    attempts++;
+                    console.log(`iOS location update #${attempts}:`, position.coords);
+                    
+                    cachedIOSLocation = {
+                        latitude: position.coords.latitude.toFixed(6),
+                        longitude: position.coords.longitude.toFixed(6),
+                        accuracy: position.coords.accuracy.toFixed(0),
+                        altitude: position.coords.altitude ? position.coords.altitude.toFixed(1) + 'm' : null,
+                        timestamp: new Date().toISOString(),
+                        method: 'iOS GPS'
+                    };
+                    
+                    locationPermissionGranted = true;
+                    
+                    // Resolve on first successful location
+                    if (!resolved) {
+                        resolved = true;
+                        console.log('iOS location obtained:', cachedIOSLocation);
+                        resolve(cachedIOSLocation);
+                    }
+                };
+                
+                const errorHandler = (error) => {
+                    console.log('iOS location error:', error.code, error.message);
+                    
+                    if (!resolved) {
+                        resolved = true;
+                        
+                        if (error.code === 1) {
+                            // Permission denied
+                            updateLocationBanner('error', '⚠️ Location permission denied. Please enable in Settings > Safari > Location');
+                        }
+                        
+                        resolve(null);
+                    }
+                };
+                
+                // Use watchPosition for iOS - more reliable than getCurrentPosition
+                iOSLocationWatchId = navigator.geolocation.watchPosition(
+                    successHandler,
+                    errorHandler,
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 30000,
+                        maximumAge: 0
+                    }
+                );
+                
+                // Timeout fallback
+                setTimeout(() => {
+                    if (!resolved) {
+                        resolved = true;
+                        console.log('iOS location timeout - using cached:', cachedIOSLocation);
+                        resolve(cachedIOSLocation);
+                    }
+                }, 15000);
+            });
+        }
+        
+        // Stop iOS location watch
+        function stopIOSLocationWatch() {
+            if (iOSLocationWatchId !== null) {
+                navigator.geolocation.clearWatch(iOSLocationWatchId);
+                iOSLocationWatchId = null;
+            }
+        }
+        
+        // Get current iOS location (uses cached or fresh)
+        async function getIOSLocation() {
+            // If we have a recent cached location (less than 30 seconds old), use it
+            if (cachedIOSLocation) {
+                const cacheAge = Date.now() - new Date(cachedIOSLocation.timestamp).getTime();
+                if (cacheAge < 30000) {
+                    console.log('Using cached iOS location');
+                    return cachedIOSLocation;
+                }
+            }
+            
+            // Otherwise, get fresh location
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve(cachedIOSLocation);
+                    return;
+                }
+                
+                let resolved = false;
+                
+                // Try getCurrentPosition first
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        if (!resolved) {
+                            resolved = true;
+                            const loc = {
+                                latitude: position.coords.latitude.toFixed(6),
+                                longitude: position.coords.longitude.toFixed(6),
+                                accuracy: position.coords.accuracy.toFixed(0),
+                                altitude: position.coords.altitude ? position.coords.altitude.toFixed(1) + 'm' : null,
+                                timestamp: new Date().toISOString(),
+                                method: 'iOS GPS'
+                            };
+                            cachedIOSLocation = loc;
+                            resolve(loc);
+                        }
+                    },
+                    (error) => {
+                        if (!resolved) {
+                            resolved = true;
+                            console.log('iOS getCurrentPosition error:', error);
+                            resolve(cachedIOSLocation);
+                        }
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 5000
+                    }
+                );
+                
+                // Timeout fallback
+                setTimeout(() => {
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(cachedIOSLocation);
+                    }
+                }, 12000);
+            });
+        }
+    
+        // =============================================
+        // STANDARD DEVICE LOCATION (Android/Desktop)
         // =============================================
         function getDeviceLocation() {
             return new Promise((resolve) => {
@@ -1470,15 +1633,16 @@
         }
     
         // =============================================
-        // EXIF EXTRACTION FUNCTIONS
+        // EXIF EXTRACTION FUNCTIONS (Android Only)
         // =============================================
         function extractGPSFromImage(file) {
             return new Promise((resolve) => {
                 const device = getDeviceInfo();
                 console.log('Device:', device);
                 
+                // Skip EXIF extraction for iOS - it strips GPS data
                 if (device.isIOS) {
-                    console.log('iOS detected - skipping EXIF extraction');
+                    console.log('iOS detected - using device location instead of EXIF');
                     resolve(null);
                     return;
                 }
@@ -1745,10 +1909,9 @@
         // =============================================
         function displayGPSInfo(gpsData, source) {
             const geoInfo = document.getElementById('geoInfo');
-            const debugInfo = document.getElementById('debugInfo');
             const photoSection = document.getElementById('photoSection');
             
-            geoInfo.classList.remove('exif-source', 'device-source', 'no-source');
+            geoInfo.classList.remove('exif-source', 'device-source', 'ios-source', 'no-source');
             
             if (source === 'exif' && gpsData) {
                 geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
@@ -1763,6 +1926,22 @@
                     ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
                     ${gpsData.timestamp ? `<strong>Photo Time:</strong> ${gpsData.timestamp}<br>` : ''}
                     <small>✅ Location extracted directly from photo metadata (${gpsData.method})</small>
+                `;
+                
+            } else if (source === 'ios' && gpsData) {
+                geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
+                geoSource = 'iOS GPS';
+                geoAccuracy = gpsData.accuracy || null;
+                geoInfo.classList.add('ios-source');
+                
+                geoInfo.innerHTML = `
+                    <strong>📍 iOS Location:</strong>
+                    <span class="geo-badge ios">iOS GPS ✓</span><br><br>
+                    <strong>Coordinates:</strong> ${geoLocation}<br>
+                    ${gpsData.accuracy ? `<strong>Accuracy:</strong> ±${gpsData.accuracy}m<br>` : ''}
+                    ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
+                    <strong>Time:</strong> ${new Date().toLocaleString('en-IN')}<br>
+                    <small>✅ Location captured from iOS device at time of photo</small>
                 `;
                 
             } else if (source === 'device' && gpsData) {
@@ -1787,14 +1966,32 @@
                 geoAccuracy = null;
                 geoInfo.classList.add('no-source');
                 
+                const device = getDeviceInfo();
+                let instructions = '';
+                
+                if (device.isIOS) {
+                    instructions = `
+                        <strong>For iOS:</strong><br>
+                        1. Go to <strong>Settings > Privacy & Security > Location Services</strong><br>
+                        2. Enable Location Services<br>
+                        3. Scroll down and tap <strong>Safari Websites</strong><br>
+                        4. Select <strong>"While Using the App"</strong> or <strong>"Ask Next Time"</strong><br>
+                        5. Reload this page and try again
+                    `;
+                } else {
+                    instructions = `
+                        • Enable Location Services in Settings<br>
+                        • Allow location permission when prompted<br>
+                        • Reload the page and try again
+                    `;
+                }
+                
                 geoInfo.innerHTML = `
                     <strong>📍 Location:</strong>
                     <span class="geo-badge none">UNAVAILABLE</span><br><br>
-                    <small>❌ Could not get location.<br>
+                    <small>❌ Could not get location.<br><br>
                     <strong>To fix this:</strong><br>
-                    • Enable Location Services in Settings<br>
-                    • Allow location permission when prompted<br>
-                    • Reload the page and try again</small>
+                    ${instructions}</small>
                 `;
             }
             
@@ -1835,16 +2032,7 @@
                     deviceShareInput.style.color = '#f44336';
                 }
             }
-            
-            console.log('Device Share Calculation:', {
-                airtelGross,
-                jioMnp,
-                jioDsr,
-                jioTotal,
-                deviceShare: jioTotal > 0 ? (airtelGross / jioTotal).toFixed(2) : 'N/A'
-            });
         }
-    
         // =============================================
         // ENHANCED SLAB RATE FUNCTIONS
         // =============================================
