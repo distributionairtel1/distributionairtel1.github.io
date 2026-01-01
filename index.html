@@ -2051,7 +2051,16 @@
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
-            
+
+            const ua = navigator.userAgent;
+            const isAndroid = /Android/i.test(ua);
+            const isIOS = /iPad|iPhone|iPod/i.test(ua);
+
+            // Force camera ONLY on Android
+            if (isAndroid && !isIOS) {
+                input.capture = 'environment';
+            }
+
             if (device.isMobile) {
                 input.setAttribute('capture', 'environment');
             }
