@@ -1158,26 +1158,22 @@
             } else if (value && validationType && validationRules[validationType]) {
                 const rule = validationRules[validationType];
                 
-                // Check pattern
                 if (rule.pattern && !rule.pattern.test(value)) {
                     isValid = false;
                     errorMessage = rule.message;
                 }
                 
-                // Check exact length (for phone)
                 if (rule.exactLength && value.length !== rule.exactLength) {
                     isValid = false;
                     errorMessage = `Must be exactly ${rule.exactLength} digits`;
                 }
                 
-                // Check min length
                 if (rule.minLength && value.length < rule.minLength) {
                     isValid = false;
                     errorMessage = `Minimum ${rule.minLength} characters required`;
                 }
             }
     
-            // Update UI
             input.classList.remove('valid', 'invalid');
             if (value) {
                 input.classList.add(isValid ? 'valid' : 'invalid');
@@ -1222,7 +1218,6 @@
                 }
             });
     
-            // Show/hide validation summary
             const summary = document.getElementById('validationSummary');
             const errorList = document.getElementById('validationErrors');
             
@@ -1241,12 +1236,10 @@
         // =============================================
         function restrictToAlphabets(input) {
             input.addEventListener('input', function(e) {
-                // Remove any non-alphabet characters except spaces
                 const cursorPos = this.selectionStart;
                 const oldValue = this.value;
                 this.value = this.value.replace(/[^A-Za-z\s]/g, '');
                 
-                // Adjust cursor position if characters were removed
                 if (oldValue.length !== this.value.length) {
                     const diff = oldValue.length - this.value.length;
                     this.setSelectionRange(cursorPos - diff, cursorPos - diff);
@@ -1260,7 +1253,6 @@
                 }
             });
             
-            // Prevent paste of invalid characters
             input.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
@@ -1287,19 +1279,16 @@
             }
             
             input.addEventListener('input', function(e) {
-                // Remove any non-numeric characters
                 const cursorPos = this.selectionStart;
                 const oldValue = this.value;
                 this.value = this.value.replace(/[^0-9]/g, '');
                 
-                // Limit to 10 digits
                 if (this.value.length > 10) {
                     this.value = this.value.slice(0, 10);
                 }
                 
                 updateCounter();
                 
-                // Auto-validate when 10 digits reached
                 if (this.value.length === 10) {
                     validateField(this);
                 }
@@ -1311,19 +1300,16 @@
                     e.preventDefault();
                     return;
                 }
-                // Prevent if already 10 digits
                 if (this.value.length >= 10) {
                     e.preventDefault();
                 }
             });
             
-            // Prevent paste of invalid characters
             input.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
                 const cleanedText = pastedText.replace(/[^0-9]/g, '').slice(0, 10 - this.value.length);
                 
-                // Insert at cursor position
                 const start = this.selectionStart;
                 const end = this.selectionEnd;
                 const currentValue = this.value;
@@ -1333,13 +1319,11 @@
                 updateCounter();
             });
             
-            // Initialize counter
             updateCounter();
         }
     
         function restrictToAlphanumeric(input) {
             input.addEventListener('input', function(e) {
-                // Remove special characters except spaces and hyphens
                 const cursorPos = this.selectionStart;
                 const oldValue = this.value;
                 this.value = this.value.replace(/[^A-Za-z0-9\s\-]/g, '');
@@ -1352,7 +1336,6 @@
                 }
             });
             
-            // Prevent paste of invalid characters
             input.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
@@ -1365,7 +1348,6 @@
         // INITIALIZE VALIDATIONS
         // =============================================
         function initializeValidations() {
-            // Outlet Name - alphabets only
             const outletName = document.getElementById('outletName');
             if (outletName) {
                 restrictToAlphabets(outletName);
@@ -1377,7 +1359,6 @@
                 });
             }
     
-            // FSE Contact - 10 digits only
             const fseContact = document.getElementById('fseContact');
             if (fseContact) {
                 restrictToNumbers(fseContact);
@@ -1389,7 +1370,6 @@
                 });
             }
     
-            // TSM Contact - 10 digits only
             const tsmContact = document.getElementById('tsmContact');
             if (tsmContact) {
                 restrictToNumbers(tsmContact);
@@ -1401,7 +1381,6 @@
                 });
             }
     
-            // LAPU No - 10 digits only
             const lapuNo = document.getElementById('lapuNo');
             if (lapuNo) {
                 restrictToNumbers(lapuNo);
@@ -1441,7 +1420,6 @@
             const isIOSChrome = /CriOS/.test(ua);
             const isIOSSafari = isIOS && isSafari;
             
-            // Check iOS version
             let iOSVersion = 0;
             if (isIOS) {
                 const match = ua.match(/OS (\d+)_/);
@@ -1450,7 +1428,6 @@
                 }
             }
             
-            // Check if secure context
             const isSecure = window.isSecureContext || 
                              window.location.protocol === 'https:' || 
                              window.location.hostname === 'localhost' || 
@@ -1474,74 +1451,53 @@
         }
     
         // =============================================
-        // NEW PRECISE LOCATION METHOD
+        // PRECISE LOCATION METHOD (Returns Promise)
         // =============================================
- // =============================================
-// PRECISE LOCATION METHOD (Returns Promise)
-// =============================================
-function getPreciseLocationPromise() {
-    return new Promise((resolve, reject) => {
-        const latInput = document.getElementById('latitude');
-        const lonInput = document.getElementById('longitude');
-        const accInput = document.getElementById('locAccuracy');
-
-        if (!navigator.geolocation) {
-            showToast('❌ Geolocation is not supported by this browser.', 'error', 5000);
-            reject(new Error('Geolocation not supported'));
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const coords = position.coords;
-                const latitude = coords.latitude.toFixed(6);
-                const longitude = coords.longitude.toFixed(6);
-                const accuracy = coords.accuracy.toFixed(0);
-
-                if (latInput) latInput.value = latitude;
-                if (lonInput) lonInput.value = longitude;
-                if (accInput) accInput.value = accuracy;
-
-                // Update global variables
-                geoLocation = `${latitude}, ${longitude}`;
-                geoSource = 'Device GPS';
-                geoAccuracy = `${accuracy}m`;
-
-                resolve({
-                    latitude: latitude,
-                    longitude: longitude,
-                    accuracy: accuracy + 'm',
-                    method: 'Device GPS'
-                });
-            },
-            (error) => {
-                console.error("Geolocation error:", error);
-                let errorMessage = "";
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMessage = "Permission denied. Enable location in browser settings.";
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        errorMessage = "Location information is unavailable.";
-                        break;
-                    case error.TIMEOUT:
-                        errorMessage = "Location request timed out. Try again.";
-                        break;
-                    default:
-                        errorMessage = "Unknown error occurred while fetching location.";
-                        break;
+        function getPreciseLocationPromise() {
+            return new Promise((resolve, reject) => {
+                const latInput = document.getElementById('latitude');
+                const lonInput = document.getElementById('longitude');
+                const accInput = document.getElementById('locAccuracy');
+    
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation not supported'));
+                    return;
                 }
-                showToast(`❌ ${errorMessage}`, 'error', 5000);
-                reject(new Error(errorMessage));
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
-            }
-        );
-    });
-}
+    
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const coords = position.coords;
+                        const latitude = coords.latitude.toFixed(6);
+                        const longitude = coords.longitude.toFixed(6);
+                        const accuracy = coords.accuracy.toFixed(0);
+    
+                        if (latInput) latInput.value = latitude;
+                        if (lonInput) lonInput.value = longitude;
+                        if (accInput) accInput.value = accuracy;
+    
+                        geoLocation = `${latitude}, ${longitude}`;
+                        geoSource = 'Device GPS';
+                        geoAccuracy = `${accuracy}m`;
+    
+                        resolve({
+                            latitude: latitude,
+                            longitude: longitude,
+                            accuracy: accuracy + 'm',
+                            method: 'Device GPS'
+                        });
+                    },
+                    (error) => {
+                        console.error("Geolocation error:", error);
+                        reject(error);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 0
+                    }
+                );
+            });
+        }
     
         // =============================================
         // DISPLAY GPS INFO
@@ -1594,8 +1550,8 @@ function getPreciseLocationPromise() {
                 geoInfo.innerHTML = `
                     <strong>📍 Location:</strong>
                     <span class="geo-badge none">NOT CAPTURED</span><br><br>
-                    <small>❌ Location not captured yet.<br>
-                    <strong>Click "Get Location" button to capture your GPS coordinates.</strong></small>
+                    <small>❌ Location not captured.<br>
+                    <strong>Please ensure location permission is enabled.</strong></small>
                 `;
             }
             
@@ -2104,197 +2060,130 @@ function getPreciseLocationPromise() {
         }
     
         // =============================================
-        // iOS CAMERA CAPTURE FUNCTION
+        // CAMERA CAPTURE HANDLER (iOS COMPATIBLE)
         // =============================================
-        function createFileInput() {
+        async function handleCameraCapture() {
             const device = getDeviceInfo();
-            const input = document.createElement('input');
+            const loading = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            const loadingSubtext = document.getElementById('loadingSubtext');
             
+            console.log('Starting camera capture, device:', device);
+            
+            // ========== iOS FIX: Open camera FIRST (synchronously) ==========
+            const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             
-            // iOS-specific handling
             if (device.isIOS) {
-                // Use 'camera' for iOS - this gives option to choose camera or gallery
                 input.setAttribute('capture', 'camera');
             } else if (device.isMobile) {
                 input.setAttribute('capture', 'environment');
             }
             
-            // Style for iOS compatibility
-            input.style.cssText = 'position:absolute;top:-9999px;left:-9999px;opacity:0;';
+            input.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+            document.body.appendChild(input);
             
-            return input;
-        }
-    
-// =============================================
-// CAMERA CAPTURE HANDLER (WITH LOCATION)
-// =============================================
-async function handleCameraCapture() {
-    const device = getDeviceInfo();
-    const loading = document.getElementById('loadingOverlay');
-    const loadingText = document.getElementById('loadingText');
-    const loadingSubtext = document.getElementById('loadingSubtext');
-    
-    console.log('Starting camera capture with location, device:', device);
-    
-    // ========== STEP 1: GET LOCATION FIRST ==========
-    loading.style.display = 'flex';
-    loadingText.textContent = '📍 Getting precise location...';
-    loadingSubtext.textContent = 'Please allow location access if prompted';
-    
-    let locationData = null;
-    try {
-        locationData = await getPreciseLocationPromise();
-        console.log('Location captured:', locationData);
-        displayGPSInfo(locationData, 'device');
-        showToast(`📍 Location captured! Accuracy: ±${locationData.accuracy}`, 'success', 2000);
-    } catch (locError) {
-        console.error('Location error:', locError);
-        loading.style.display = 'none';
-        
-        const proceed = confirm(
-            '⚠️ Could not get your location.\n\n' +
-            'Do you want to continue capturing photo without location?\n\n' +
-            'Click OK to continue, or Cancel to try again.'
-        );
-        
-        if (!proceed) {
-            return;
-        }
-    }
-    
-    // ========== STEP 2: CAPTURE PHOTO ==========
-    loading.style.display = 'none';
-    
-    // Create and trigger file input
-    const input = createFileInput();
-    document.body.appendChild(input);
-    
-    // Promise-based file handling
-    const filePromise = new Promise((resolve, reject) => {
-        let resolved = false;
-        
-        input.onchange = function(e) {
-            resolved = true;
-            if (this.files && this.files[0]) {
-                resolve(this.files[0]);
-            } else {
-                reject(new Error('No file selected'));
-            }
-        };
-        
-        // For iOS: detect if user cancelled by checking focus
-        const checkCancel = () => {
-            setTimeout(() => {
-                if (!resolved && (!input.files || input.files.length === 0)) {
-                    cleanup();
+            // Handle file selection
+            input.onchange = async function() {
+                if (!this.files || !this.files[0]) {
+                    console.log('No file selected');
+                    if (input.parentNode) document.body.removeChild(input);
+                    return;
                 }
-            }, 500);
-        };
-        
-        window.addEventListener('focus', checkCancel, { once: true });
-        
-        function cleanup() {
-            if (input.parentNode) {
-                document.body.removeChild(input);
-            }
-        }
-        
-        setTimeout(() => {
-            if (!resolved) {
-                cleanup();
-            }
-        }, 120000);
-    });
-    
-    // Trigger the file input
-    if (device.isIOS) {
-        await new Promise(r => setTimeout(r, 100));
-        input.click();
-    } else {
-        setTimeout(() => input.click(), 50);
-    }
-    
-    try {
-        const file = await filePromise;
-        originalFile = file;
-        
-        // Check if photo is from gallery
-        const fileTime = file.lastModified;
-        const currentTime = Date.now();
-        const timeDiff = currentTime - fileTime;
-        
-        if (timeDiff > 120000) {
-            const usePhoto = confirm(
-                '⚠️ This photo appears to be from your gallery.\n\n' +
-                'For accurate tracking, please capture a NEW photo.\n\n' +
-                'Click OK to use this photo anyway, or Cancel to take a new one.'
-            );
-            if (!usePhoto) {
-                if (input.parentNode) {
-                    document.body.removeChild(input);
+                
+                const file = this.files[0];
+                originalFile = file;
+                console.log('File selected:', file.name);
+                
+                // ========== NOW get location (after camera) ==========
+                loading.style.display = 'flex';
+                loadingText.textContent = '📍 Getting your location...';
+                loadingSubtext.textContent = 'Please wait...';
+                
+                let locationData = null;
+                try {
+                    locationData = await getPreciseLocationPromise();
+                    console.log('Location captured:', locationData);
+                } catch (locError) {
+                    console.error('Location error:', locError);
+                    // Continue without location
                 }
-                return;
-            }
+                
+                // ========== Process photo ==========
+                loadingText.textContent = '📸 Processing photo...';
+                loadingSubtext.textContent = 'Almost done...';
+                
+                // Check if photo is from gallery
+                const fileTime = file.lastModified;
+                const currentTime = Date.now();
+                const timeDiff = currentTime - fileTime;
+                
+                if (timeDiff > 120000) {
+                    loading.style.display = 'none';
+                    const usePhoto = confirm(
+                        '⚠️ This photo appears to be from your gallery.\n\n' +
+                        'For accurate tracking, please capture a NEW photo.\n\n' +
+                        'Click OK to use this photo anyway, or Cancel to take a new one.'
+                    );
+                    if (!usePhoto) {
+                        if (input.parentNode) document.body.removeChild(input);
+                        return;
+                    }
+                    loading.style.display = 'flex';
+                }
+                
+                // Read the file
+                const reader = new FileReader();
+                
+                reader.onload = async function(e) {
+                    capturedPhoto = e.target.result;
+                    photoTimestamp = new Date().toLocaleString('en-IN');
+                    
+                    const photoPreview = document.getElementById('photoPreview');
+                    photoPreview.src = capturedPhoto;
+                    photoPreview.style.display = 'block';
+                    document.getElementById('photoSection').style.display = 'block';
+                    
+                    // Try to extract EXIF GPS (skip on iOS)
+                    let exifGPS = null;
+                    if (!device.isIOS) {
+                        exifGPS = await extractGPSFromImage(file);
+                    }
+                    
+                    // Priority: Device GPS > EXIF GPS
+                    if (locationData) {
+                        displayGPSInfo(locationData, 'device');
+                    } else if (exifGPS) {
+                        displayGPSInfo(exifGPS, 'exif');
+                    } else {
+                        displayGPSInfo(null, null);
+                    }
+                    
+                    loading.style.display = 'none';
+                    
+                    const successMsg = locationData 
+                        ? '📸 Photo + GPS captured!' 
+                        : '📸 Photo captured (no GPS)';
+                    showToast(successMsg, 'success', 3000);
+                    
+                    // Cleanup
+                    if (input.parentNode) document.body.removeChild(input);
+                };
+                
+                reader.onerror = function() {
+                    loading.style.display = 'none';
+                    showToast('❌ Error reading image file', 'error');
+                    if (input.parentNode) document.body.removeChild(input);
+                };
+                
+                reader.readAsDataURL(file);
+            };
+            
+            // ========== MUST be synchronous - no await before this! ==========
+            input.click();
         }
-        
-        loading.style.display = 'flex';
-        loadingText.textContent = '📸 Processing photo...';
-        loadingSubtext.textContent = 'Please wait...';
-        
-        // Read the file
-        const reader = new FileReader();
-        
-        reader.onload = async function(e) {
-            capturedPhoto = e.target.result;
-            photoTimestamp = new Date().toLocaleString('en-IN');
-            
-            const photoPreview = document.getElementById('photoPreview');
-            photoPreview.src = capturedPhoto;
-            photoPreview.style.display = 'block';
-            document.getElementById('photoSection').style.display = 'block';
-            
-            // Try to extract EXIF GPS (skip on iOS)
-            let exifGPS = null;
-            if (!device.isIOS) {
-                exifGPS = await extractGPSFromImage(file);
-            }
-            
-            // Priority: Device GPS > EXIF GPS
-            if (locationData) {
-                displayGPSInfo(locationData, 'device');
-            } else if (exifGPS) {
-                displayGPSInfo(exifGPS, 'exif');
-            } else {
-                displayGPSInfo(null, null);
-            }
-            
-            loading.style.display = 'none';
-            
-            const successMsg = locationData 
-                ? '📸 Photo captured with GPS location!' 
-                : '📸 Photo captured (no location)';
-            showToast(successMsg, 'success', 3000);
-        };
-        
-        reader.onerror = function() {
-            loading.style.display = 'none';
-            showToast('❌ Error reading image file', 'error');
-        };
-        
-        reader.readAsDataURL(file);
-        
-    } catch (error) {
-        console.log('Camera capture cancelled or error:', error.message);
-        loading.style.display = 'none';
-    }
     
-    // Final cleanup
-    if (input.parentNode) {
-        document.body.removeChild(input);
-    }
-}
         // =============================================
         // CAMERA CAPTURE BUTTON EVENT
         // =============================================
@@ -2398,12 +2287,10 @@ async function handleCameraCapture() {
         // SUBMIT TO GOOGLE SHEETS
         // =============================================
         document.getElementById('submitBtn').addEventListener('click', async function() {
-            // Validate all fields first
             const isValid = validateAllFields();
             
             if (!isValid) {
                 showToast('⚠️ Please fix the validation errors before submitting', 'warning', 4000);
-                // Scroll to validation summary
                 document.getElementById('validationSummary').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
@@ -2419,7 +2306,7 @@ async function handleCameraCapture() {
             }
             
             if (!geoLocation) {
-                showToast('⚠️ Please capture your location using the "Get Location" button!', 'warning', 4000);
+                showToast('⚠️ Location not captured. Please try capturing photo again!', 'warning', 4000);
                 return;
             }
             
@@ -2564,7 +2451,6 @@ async function handleCameraCapture() {
         // SWIFT APP INTEGRATION (iOS App Support)
         // =============================================
         ;(function() {
-            // This will be filled by the Swift app
             window.injectedLocation = null;
     
             window.swiftGPSReady = function(lat, lon, acc) {
@@ -2587,7 +2473,6 @@ async function handleCameraCapture() {
                 showToast('Real GPS captured successfully!', 'success', 4000);
             };
     
-            // Auto-detect if Swift already sent location
             const check = setInterval(() => {
                 if (window.injectedLocation) {
                     clearInterval(check);
@@ -2599,11 +2484,10 @@ async function handleCameraCapture() {
                 }
             }, 700);
     
-            // Fallback message for users who open in Safari
             if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !navigator.userAgent.includes('SwiftApp')) {
                 setTimeout(() => {
                     if (!window.injectedLocation && !geoLocation) {
-                        showToast('📍 Click "Get Location" button to capture GPS', 'info', 5000);
+                        showToast('📍 Tap "Capture Photo" to get GPS + Photo', 'info', 5000);
                     }
                 }, 4000);
             }
