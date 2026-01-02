@@ -166,75 +166,104 @@
     </form>
 
     <!-- ============ Geolocation Script ============ -->
-    <script>
-        (function () {
-            const btnGetLocation = document.getElementById('btnGetLocation');
-            const statusLabel   = document.getElementById('locationStatus');
-            const latInput      = document.getElementById('latitude');
-            const lonInput      = document.getElementById('longitude');
-            const accInput      = document.getElementById('locAccuracy');
+   <script>
+(function () {
+    const btnGetLocation = document.getElementById('btnGetLocation');
+    const statusLabel   = document.getElementById('locationStatus');
+    const latInput      = document.getElementById('latitude');
+    const lonInput      = document.getElementById('longitude');
+    const accInput      = document.getElementById('locAccuracy');
 
-            function setStatus(message) {
-                if (statusLabel) {
-                    statusLabel.textContent = message;
+    let watchId = null;
+    let bestPosition = null;
+    const DESIRED_ACCURACY = 20; // meters - adjust if needed
+    const MAX_WAIT_TIME = 10000; // 10 seconds
+
+    function setStatus(message) {
+        if (statusLabel) {
+            statusLabel.textContent = message;
+        }
+    }
+
+    function updateBestPosition(position) {
+        const coords = position.coords;
+        if (!bestPosition || coords.accuracy < bestPosition.coords.accuracy) {
+            bestPosition = position;
+        }
+    }
+
+    function handleSuccess(position) {
+        updateBestPosition(position);
+
+        const bestCoords = bestPosition.coords;
+        const statusMsg = Best accuracy: ${bestCoords.accuracy.toFixed(0)}m (${bestCoords.latitude.toFixed(6)}, ${bestCoords.longitude.toFixed(6)});
+
+        // Fill inputs with best position
+        if (latInput)  latInput.value  = bestCoords.latitude.toFixed(6);
+        if (lonInput)  lonInput.value  = bestCoords.longitude.toFixed(6);
+        if (accInput)  accInput.value  = bestCoords.accuracy.toFixed(0);
+
+        setStatus(statusMsg);
+
+        // Auto-stop if good enough
+        if (bestCoords.accuracy <= DESIRED_ACCURACY) {
+            stopLocationWatch();
+        }
+    }
+
+    function handleError(error) {
+        console.error("Geolocation error:", error);
+        setStatus("Error: " + error.message);
+    }
+
+    function startLocationWatch() {
+        if (!navigator.geolocation) {
+            setStatus("Geolocation not supported.");
+            return;
+        }
+
+        if (watchId) {
+            navigator.geolocation.clearWatch(watchId);
+        }
+
+        bestPosition = null;
+        setStatus("Monitoring GPS for best accuracy… (10s max)");
+
+        // Watch continuously for improvements
+        watchId = navigator.geolocation.watchPosition(
+            handleSuccess,
+            handleError,
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            }
+        );
+
+        // Auto-stop after max time
+        setTimeout(() => {
+            if (watchId) {
+                stopLocationWatch();
+                if (bestPosition) {
+                    handleSuccess(bestPosition);
+                } else {
+                    setStatus("No good fix found. Try outdoors.");
                 }
             }
+        }, MAX_WAIT_TIME);
+    }
 
-            function handleSuccess(position) {
-                const coords = position.coords;
+    function stopLocationWatch() {
+        if (watchId) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+        }
+    }
 
-                if (latInput)  latInput.value  = coords.latitude.toFixed(6);
-                if (lonInput)  lonInput.value  = coords.longitude.toFixed(6);
-                if (accInput)  accInput.value  = coords.accuracy.toFixed(0);
-
-                setStatus(
-                    "Location captured. Accuracy ≈ " +
-                    coords.accuracy.toFixed(0) +
-                    " meters."
-                );
-            }
-
-            function handleError(error) {
-                console.error("Geolocation error:", error);
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        setStatus("Permission denied. Enable location in browser settings.");
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        setStatus("Location information is unavailable.");
-                        break;
-                    case error.TIMEOUT:
-                        setStatus("Location request timed out. Try again.");
-                        break;
-                    default:
-                        setStatus("Unknown error occurred while fetching location.");
-                        break;
-                }
-            }
-
-            function getPreciseLocation() {
-                if (!navigator.geolocation) {
-                    setStatus("Geolocation is not supported by this browser.");
-                    return;
-                }
-
-                setStatus("Fetching precise location…");
-
-                navigator.geolocation.getCurrentPosition(
-                    handleSuccess,
-                    handleError,
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 0
-                    }
-                );
-            }
-
-            if (btnGetLocation) {
-                btnGetLocation.addEventListener("click", getPreciseLocation);
-            }
-        })();
-    </script>
+    if (btnGetLocation) {
+        btnGetLocation.addEventListener("click", startLocationWatch);
+    }
+})();
+</script>
 </body>
 </html>
