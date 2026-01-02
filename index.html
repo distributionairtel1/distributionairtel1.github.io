@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Airtel Calculator With Location</title>
+    <title>Airtel Calculator With Precise Location</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <style>
@@ -70,23 +70,25 @@
 
         /* Location UI */
         .location-section {
-            border: 1px solid #ccc;
-            padding: 8px 10px;
-            margin: 10px 0;
-            background-color: #f9f9f9;
+            border: 2px solid #007bff;
+            padding: 10px 12px;
+            margin: 12px 0;
+            background-color: #f0f8ff;
             font-size: 13px;
+            border-radius: 4px;
         }
 
         .location-status {
             font-size: 12px;
-            color: #555;
-            margin-top: 4px;
+            color: #0066cc;
+            margin-top: 6px;
+            font-weight: 500;
         }
 
         .location-row {
             display: flex;
             gap: 8px;
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
         .location-row > div {
@@ -100,10 +102,10 @@
 </head>
 <body>
 
-    <h1>Airtel Outlet Form (With Location)</h1>
+    <h1>Airtel Outlet Form (Precise Location)</h1>
 
     <form id="airtelForm">
-        <!-- ============ Basic Outlet Details (example) ============ -->
+        <!-- ============ Basic Outlet Details ============ -->
         <div class="section">
             <div class="section-title">Outlet Details</div>
 
@@ -120,9 +122,9 @@
             <input type="tel" id="tsmContact" name="tsmContact" maxlength="10" placeholder="TSM/SE Contact" />
         </div>
 
-        <!-- ============ User Location Section (NEW) ============ -->
+        <!-- ============ PRECISE LOCATION (Enhanced) ============ -->
         <div class="location-section">
-            <strong>User Location</strong>
+            <strong>📍 User Location (GPS)</strong>
             <div class="location-row">
                 <div>
                     <label for="latitude">Latitude</label><br />
@@ -137,17 +139,16 @@
                     <input type="text" id="locAccuracy" name="locAccuracy" readonly />
                 </div>
             </div>
-
             <button type="button" id="btnGetLocation">
-                Get Precise Location
+                🎯 Get Precise Location (GPS)
             </button>
 
             <div class="location-status" id="locationStatus">
-                Location not fetched yet.
+                Tap button to capture GPS location (monitors for 10s, picks best fix).
             </div>
         </div>
 
-        <!-- ============ Example Scheme Section (simplified) ============ -->
+        <!-- ============ Scheme Section (Sample) ============ -->
         <div class="section">
             <div class="section-title">Scheme & Margins (Sample)</div>
 
@@ -162,108 +163,109 @@
         </div>
 
         <!-- ============ Submit ============ -->
-        <button type="submit">Submit</button>
+        <button type="submit">Submit Form</button>
     </form>
 
-    <!-- ============ Geolocation Script ============ -->
-   <script>
-(function () {
-    const btnGetLocation = document.getElementById('btnGetLocation');
-    const statusLabel   = document.getElementById('locationStatus');
-    const latInput      = document.getElementById('latitude');
-    const lonInput      = document.getElementById('longitude');
-    const accInput      = document.getElementById('locAccuracy');
+    <!-- ============ ENHANCED GEOLOCATION SCRIPT ============ -->
+    <script>
+        (function () {
+            const btnGetLocation = document.getElementById('btnGetLocation');
+            const statusLabel   = document.getElementById('locationStatus');
+            const latInput      = document.getElementById('latitude');
+            const lonInput      = document.getElementById('longitude');
+            const accInput      = document.getElementById('locAccuracy');
 
-    let watchId = null;
-    let bestPosition = null;
-    const DESIRED_ACCURACY = 20; // meters - adjust if needed
-    const MAX_WAIT_TIME = 10000; // 10 seconds
+            let watchId = null;
+            let bestPosition = null;
+            const DESIRED_ACCURACY = 20; // meters
+            const MAX_WAIT_TIME = 10000; // 10 seconds
 
-    function setStatus(message) {
-        if (statusLabel) {
-            statusLabel.textContent = message;
-        }
-    }
-
-    function updateBestPosition(position) {
-        const coords = position.coords;
-        if (!bestPosition || coords.accuracy < bestPosition.coords.accuracy) {
-            bestPosition = position;
-        }
-    }
-
-    function handleSuccess(position) {
-        updateBestPosition(position);
-
-        const bestCoords = bestPosition.coords;
-        const statusMsg = Best accuracy: ${bestCoords.accuracy.toFixed(0)}m (${bestCoords.latitude.toFixed(6)}, ${bestCoords.longitude.toFixed(6)});
-
-        // Fill inputs with best position
-        if (latInput)  latInput.value  = bestCoords.latitude.toFixed(6);
-        if (lonInput)  lonInput.value  = bestCoords.longitude.toFixed(6);
-        if (accInput)  accInput.value  = bestCoords.accuracy.toFixed(0);
-
-        setStatus(statusMsg);
-
-        // Auto-stop if good enough
-        if (bestCoords.accuracy <= DESIRED_ACCURACY) {
-            stopLocationWatch();
-        }
-    }
-
-    function handleError(error) {
-        console.error("Geolocation error:", error);
-        setStatus("Error: " + error.message);
-    }
-
-    function startLocationWatch() {
-        if (!navigator.geolocation) {
-            setStatus("Geolocation not supported.");
-            return;
-        }
-
-        if (watchId) {
-            navigator.geolocation.clearWatch(watchId);
-        }
-
-        bestPosition = null;
-        setStatus("Monitoring GPS for best accuracy… (10s max)");
-
-        // Watch continuously for improvements
-        watchId = navigator.geolocation.watchPosition(
-            handleSuccess,
-            handleError,
-            {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
-            }
-        );
-
-        // Auto-stop after max time
-        setTimeout(() => {
-            if (watchId) {
-                stopLocationWatch();
-                if (bestPosition) {
-                    handleSuccess(bestPosition);
-                } else {
-                    setStatus("No good fix found. Try outdoors.");
+            function setStatus(message) {
+                if (statusLabel) {
+                    statusLabel.textContent = message;
                 }
             }
-        }, MAX_WAIT_TIME);
-    }
 
-    function stopLocationWatch() {
-        if (watchId) {
-            navigator.geolocation.clearWatch(watchId);
-            watchId = null;
-        }
-    }
+            function updateBestPosition(position) {
+                const coords = position.coords;
+                if (!bestPosition || coords.accuracy < bestPosition.coords.accuracy) {
+                    bestPosition = position;
+                }
+            }
 
-    if (btnGetLocation) {
-        btnGetLocation.addEventListener("click", startLocationWatch);
-    }
-})();
-</script>
+            function handleSuccess(position) {
+                updateBestPosition(position);
+
+                const bestCoords = bestPosition.coords;
+                const statusMsg = ✅ Best accuracy: ${bestCoords.accuracy.toFixed(0)}m (${bestCoords.latitude.toFixed(6)}, ${bestCoords.longitude.toFixed(6)});
+
+                // Fill inputs
+                if (latInput)  latInput.value  = bestCoords.latitude.toFixed(6);
+                if (lonInput)  lonInput.value  = bestCoords.longitude.toFixed(6);
+                if (accInput)  accInput.value  = bestCoords.accuracy.toFixed(0);
+
+                setStatus(statusMsg);
+
+                // Auto-stop if good enough
+                if (bestCoords.accuracy <= DESIRED_ACCURACY) {
+                    stopLocationWatch();
+                }
+            }
+
+            function handleError(error) {
+                console.error("Geolocation error:", error);
+                setStatus("❌ Error: " + error.message);
+            }
+
+            function startLocationWatch() {
+                if (!navigator.geolocation) {
+                    setStatus("❌ Geolocation not supported.");
+                    return;
+                }
+
+                if (watchId) {
+                    navigator.geolocation.clearWatch(watchId);
+                }
+
+                bestPosition = null;
+                setStatus("🔄 Monitoring GPS for best accuracy… (10s max)");
+
+                // Continuous watch for improvements
+                watchId = navigator.geolocation.watchPosition(
+                    handleSuccess,
+                    handleError,
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+
+                // Auto-stop after max time
+                setTimeout(() => {
+                    if (watchId) {
+                        stopLocationWatch();
+                        if (bestPosition) {
+                            handleSuccess(bestPosition);
+
+    } else {
+                            setStatus("⚠️ No good GPS fix. Try outdoors or near window.");
+                        }
+                    }
+                }, MAX_WAIT_TIME);
+            }
+
+            function stopLocationWatch() {
+                if (watchId) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
+                }
+            }
+
+            if (btnGetLocation) {
+                btnGetLocation.addEventListener("click", startLocationWatch);
+            }
+        })();
+    </script>
 </body>
 </html>
