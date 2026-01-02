@@ -867,6 +867,18 @@
             box-shadow: none;
           }
         }
+        .geo-badge.ip {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+    }
+
+        .ip-source {
+        border-left: 4px solid #ff9800 !important;
+        background: rgba(255, 152, 0, 0.1) !important;
+    }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1104,7 +1116,8 @@
         let selectedTier = null;
         let originalFile = null;
         let preCaptureLocation = null;
-
+        let watchId = null;
+    
         // =============================================
         // VALIDATION RULES
         // =============================================
@@ -1126,7 +1139,7 @@
                 minLength: 1
             }
         };
-
+    
         // =============================================
         // VALIDATION FUNCTIONS
         // =============================================
@@ -1137,7 +1150,7 @@
             
             let isValid = true;
             let errorMessage = '';
-
+    
             if (!value && input.hasAttribute('required')) {
                 isValid = false;
                 errorMessage = 'This field is required';
@@ -1162,7 +1175,7 @@
                     errorMessage = `Minimum ${rule.minLength} characters required`;
                 }
             }
-
+    
             // Update UI
             input.classList.remove('valid', 'invalid');
             if (value) {
@@ -1173,10 +1186,10 @@
                 errorElement.textContent = errorMessage;
                 errorElement.classList.toggle('show', !isValid && (value || input.hasAttribute('required')));
             }
-
+    
             return isValid;
         }
-
+    
         function validateAllFields() {
             const requiredFields = [
                 { id: 'outletName', label: 'Outlet Name' },
@@ -1184,10 +1197,10 @@
                 { id: 'fseContact', label: 'FSE Contact No' },
                 { id: 'tsmContact', label: 'TSM/SE Contact No' }
             ];
-
+    
             const errors = [];
             let allValid = true;
-
+    
             requiredFields.forEach(field => {
                 const input = document.getElementById(field.id);
                 if (input) {
@@ -1207,7 +1220,7 @@
                     }
                 }
             });
-
+    
             // Show/hide validation summary
             const summary = document.getElementById('validationSummary');
             const errorList = document.getElementById('validationErrors');
@@ -1218,10 +1231,10 @@
             } else {
                 summary.classList.remove('show');
             }
-
+    
             return allValid;
         }
-
+    
         // =============================================
         // INPUT RESTRICTION FUNCTIONS
         // =============================================
@@ -1254,7 +1267,7 @@
                 document.execCommand('insertText', false, cleanedText);
             });
         }
-
+    
         function restrictToNumbers(input) {
             const counterId = `${input.id}-counter`;
             const counterElement = document.getElementById(counterId);
@@ -1322,7 +1335,7 @@
             // Initialize counter
             updateCounter();
         }
-
+    
         function restrictToAlphanumeric(input) {
             input.addEventListener('input', function(e) {
                 // Remove special characters except spaces and hyphens
@@ -1346,7 +1359,7 @@
                 document.execCommand('insertText', false, cleanedText);
             });
         }
-
+    
         // =============================================
         // INITIALIZE VALIDATIONS
         // =============================================
@@ -1362,7 +1375,7 @@
                     }
                 });
             }
-
+    
             // FSE Contact - 10 digits only
             const fseContact = document.getElementById('fseContact');
             if (fseContact) {
@@ -1374,7 +1387,7 @@
                     }
                 });
             }
-
+    
             // TSM Contact - 10 digits only
             const tsmContact = document.getElementById('tsmContact');
             if (tsmContact) {
@@ -1386,7 +1399,7 @@
                     }
                 });
             }
-
+    
             // LAPU No - 10 digits only
             const lapuNo = document.getElementById('lapuNo');
             if (lapuNo) {
@@ -1399,7 +1412,7 @@
                 });
             }
         }
-
+    
         // =============================================
         // TOAST NOTIFICATION
         // =============================================
@@ -1416,57 +1429,223 @@
         }
     
         // =============================================
-        // DEVICE DETECTION
+        // DEVICE DETECTION (ENHANCED FOR iOS)
         // =============================================
         function getDeviceInfo() {
             const ua = navigator.userAgent;
             const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
             const isAndroid = /Android/.test(ua);
-            const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua);
-            const isChrome = /Chrome/.test(ua);
+            const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua);
+            const isChrome = /Chrome/.test(ua) || /CriOS/.test(ua);
+            const isIOSChrome = /CriOS/.test(ua);
+            const isIOSSafari = isIOS && isSafari;
+            
+            // Check iOS version
+            let iOSVersion = 0;
+            if (isIOS) {
+                const match = ua.match(/OS (\d+)_/);
+                if (match) {
+                    iOSVersion = parseInt(match[1], 10);
+                }
+            }
+            
+            // Check if secure context
+            const isSecure = window.isSecureContext || 
+                             window.location.protocol === 'https:' || 
+                             window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1';
             
             return {
                 isIOS,
                 isAndroid,
                 isSafari,
                 isChrome,
+                isIOSChrome,
+                isIOSSafari,
+                iOSVersion,
                 isMobile: isIOS || isAndroid,
-                userAgent: ua
+                userAgent: ua,
+                isSecureContext: isSecure,
+                protocol: window.location.protocol,
+                hostname: window.location.hostname,
+                supportsGeolocation: 'geolocation' in navigator
             };
         }
     
         // =============================================
-        // DEVICE LOCATION
+        // IP-BASED GEOLOCATION FALLBACK (Works on HTTP)
         // =============================================
-        function getDeviceLocation() {
-            return new Promise((resolve) => {
-                if (!navigator.geolocation) {
-                    console.log('Geolocation not supported');
-                    resolve(null);
-                    return;
-                }
-                
-                navigator.geolocation.getCurrentPosition(
-                    pos => {
-                        resolve({
-                            latitude: pos.coords.latitude.toFixed(6),
-                            longitude: pos.coords.longitude.toFixed(6),
-                            accuracy: pos.coords.accuracy.toFixed(0),
-                            altitude: pos.coords.altitude ? pos.coords.altitude.toFixed(1) + 'm' : null,
-                            method: 'Device GPS'
-                        });
-                    },
-                    err => {
-                        console.log('Geolocation error:', err.code, err.message);
-                        resolve(null);
-                    },
-                    { 
-                        enableHighAccuracy: true, 
-                        timeout: 20000, 
-                        maximumAge: 0 
+        async function getIPBasedLocation() {
+            const services = [
+                {
+                    url: 'https://ipapi.co/json/',
+                    parse: (data) => ({
+                        latitude: data.latitude,
+                        longitude: data.longitude,
+                        accuracy: 'City-level (~1-5km)',
+                        city: data.city,
+                        region: data.region,
+                        country: data.country_name
+                    })
+                },
+                {
+                    url: 'https://ip-api.com/json/?fields=status,lat,lon,city,regionName,country',
+                    parse: (data) => {
+                        if (data.status === 'success') {
+                            return {
+                                latitude: data.lat,
+                                longitude: data.lon,
+                                accuracy: 'City-level (~1-5km)',
+                                city: data.city,
+                                region: data.regionName,
+                                country: data.country
+                            };
+                        }
+                        return null;
                     }
-                );
-            });
+                },
+                {
+                    url: 'https://ipwho.is/',
+                    parse: (data) => {
+                        if (data.success) {
+                            return {
+                                latitude: data.latitude,
+                                longitude: data.longitude,
+                                accuracy: 'City-level (~1-5km)',
+                                city: data.city,
+                                region: data.region,
+                                country: data.country
+                            };
+                        }
+                        return null;
+                    }
+                }
+            ];
+            
+            for (const service of services) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+                    
+                    const response = await fetch(service.url, {
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        const result = service.parse(data);
+                        if (result && result.latitude && result.longitude) {
+                            console.log('IP location obtained from:', service.url);
+                            return result;
+                        }
+                    }
+                } catch (e) {
+                    console.log('IP service failed:', service.url, e.message);
+                    continue;
+                }
+            }
+            
+            return null;
+        }
+    
+        // =============================================
+        // ENHANCED DEVICE LOCATION FOR HTTPS
+        // =============================================
+        async function getDeviceLocation() {
+            const device = getDeviceInfo();
+            
+            console.log('Getting location, device info:', device);
+            
+            // Check if geolocation is available
+            if (!navigator.geolocation) {
+                console.log('Geolocation not supported, trying IP fallback');
+                return await getIPLocationFallback();
+            }
+            
+            // For HTTPS, prioritize high-precision GPS
+            if (device.isSecureContext) {
+                try {
+                    const gpsLocation = await new Promise((resolve, reject) => {
+                        const options = {
+                            enableHighAccuracy: true,
+                            timeout: 30000, // Increased timeout for better accuracy on HTTPS
+                            maximumAge: 0    // Always get fresh location on HTTPS
+                        };
+                        
+                        navigator.geolocation.getCurrentPosition(
+                            pos => {
+                                resolve({
+                                    latitude: pos.coords.latitude.toFixed(8), // Higher precision for HTTPS
+                                    longitude: pos.coords.longitude.toFixed(8),
+                                    accuracy: pos.coords.accuracy ? pos.coords.accuracy.toFixed(1) + 'm' : 'Unknown',
+                                    altitude: pos.coords.altitude ? pos.coords.altitude.toFixed(1) + 'm' : null,
+                                    altitudeAccuracy: pos.coords.altitudeAccuracy ? pos.coords.altitudeAccuracy.toFixed(1) + 'm' : null,
+                                    heading: pos.coords.heading || null,
+                                    speed: pos.coords.speed || null,
+                                    timestamp: new Date(pos.timestamp).toISOString(),
+                                    method: 'High-Precision GPS'
+                                });
+                            },
+                            err => {
+                                reject(err);
+                            },
+                            options
+                        );
+                    });
+                    
+                    console.log('High-precision GPS location obtained:', gpsLocation);
+                    return gpsLocation;
+                    
+                } catch (gpsError) {
+                    console.log('GPS failed:', gpsError.code, gpsError.message);
+                    
+                    // Handle specific error cases
+                    if (gpsError.code === 1) {
+                        showToast('⚠️ Please allow location permission and reload', 'error', 5000);
+                    } else if (gpsError.code === 2) {
+                        showToast('⚠️ Location unavailable. Using approximate location...', 'warning', 3000);
+                    } else if (gpsError.code === 3) {
+                        showToast('⚠️ Location timeout. Using approximate location...', 'warning', 3000);
+                    }
+                    
+                    // GPS failed, try IP fallback
+                    return await getIPLocationFallback();
+                }
+            } else {
+                // Non-secure context, use IP directly
+                console.log('Non-HTTPS - using IP-based location');
+                showToast('📍 Using approximate location (IP-based)', 'info', 3000);
+                return await getIPLocationFallback();
+            }
+        }
+    
+        // =============================================
+        // IP LOCATION FALLBACK HANDLER
+        // =============================================
+        async function getIPLocationFallback() {
+            console.log('Attempting IP-based location...');
+            
+            try {
+                const ipLocation = await getIPBasedLocation();
+                
+                if (ipLocation) {
+                    console.log('IP location obtained:', ipLocation);
+                    return {
+                        latitude: ipLocation.latitude.toString(),
+                        longitude: ipLocation.longitude.toString(),
+                        accuracy: ipLocation.accuracy,
+                        city: ipLocation.city,
+                        region: ipLocation.region,
+                        method: 'IP Geolocation'
+                    };
+                }
+            } catch (e) {
+                console.log('IP location failed:', e);
+            }
+            
+            return null;
         }
     
         // =============================================
@@ -1741,14 +1920,14 @@
         }
     
         // =============================================
-        // DISPLAY GPS INFO
+        // DISPLAY GPS INFO (ENHANCED FOR HTTPS)
         // =============================================
         function displayGPSInfo(gpsData, source) {
             const geoInfo = document.getElementById('geoInfo');
             const debugInfo = document.getElementById('debugInfo');
             const photoSection = document.getElementById('photoSection');
             
-            geoInfo.classList.remove('exif-source', 'device-source', 'no-source');
+            geoInfo.classList.remove('exif-source', 'device-source', 'no-source', 'ip-source');
             
             if (source === 'exif' && gpsData) {
                 geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
@@ -1767,19 +1946,48 @@
                 
             } else if (source === 'device' && gpsData) {
                 geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
-                geoSource = 'Device';
+                geoSource = gpsData.method || 'Device';
                 geoAccuracy = gpsData.accuracy || null;
-                geoInfo.classList.add('device-source');
                 
-                geoInfo.innerHTML = `
-                    <strong>📍 Device Location:</strong>
-                    <span class="geo-badge device">DEVICE GPS ✓</span><br><br>
-                    <strong>Coordinates:</strong> ${geoLocation}<br>
-                    ${gpsData.accuracy ? `<strong>Accuracy:</strong> ±${gpsData.accuracy}m<br>` : ''}
-                    ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
-                    <strong>Time:</strong> ${new Date().toLocaleString('en-IN')}<br>
-                    <small>✅ Location captured at time of photo</small>
-                `;
+                // Check if it's high-precision GPS (HTTPS) or IP-based
+                if (gpsData.method === 'High-Precision GPS') {
+                    geoInfo.classList.add('device-source');
+                    
+                    geoInfo.innerHTML = `
+                        <strong>🛰️ High-Precision GPS:</strong>
+                        <span class="geo-badge device">GPS LOCKED ✓</span><br><br>
+                        <strong>Coordinates:</strong> ${geoLocation}<br>
+                        <strong>Accuracy:</strong> ±${gpsData.accuracy}<br>
+                        ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
+                        ${gpsData.altitudeAccuracy ? `<strong>Alt. Accuracy:</strong> ±${gpsData.altitudeAccuracy}<br>` : ''}
+                        ${gpsData.timestamp ? `<strong>GPS Time:</strong> ${new Date(gpsData.timestamp).toLocaleString('en-IN')}<br>` : ''}
+                        <small>✅ High-precision GPS location captured</small>
+                    `;
+                } else if (gpsData.method === 'IP Geolocation') {
+                    geoInfo.classList.add('ip-source');
+                    
+                    geoInfo.innerHTML = `
+                        <strong>📍 Approximate Location:</strong>
+                        <span class="geo-badge ip">IP LOCATION ⚡</span><br><br>
+                        <strong>Coordinates:</strong> ${geoLocation}<br>
+                        <strong>Accuracy:</strong> ${gpsData.accuracy}<br>
+                        ${gpsData.city ? `<strong>City:</strong> ${gpsData.city}, ${gpsData.region}<br>` : ''}
+                        <strong>Time:</strong> ${new Date().toLocaleString('en-IN')}<br>
+                        <small>⚠️ Approximate location based on IP address</small>
+                    `;
+                } else {
+                    geoInfo.classList.add('device-source');
+                    
+                    geoInfo.innerHTML = `
+                        <strong>📍 Device Location:</strong>
+                        <span class="geo-badge device">DEVICE GPS ✓</span><br><br>
+                        <strong>Coordinates:</strong> ${geoLocation}<br>
+                        ${gpsData.accuracy ? `<strong>Accuracy:</strong> ±${gpsData.accuracy}<br>` : ''}
+                        ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
+                        <strong>Time:</strong> ${new Date().toLocaleString('en-IN')}<br>
+                        <small>✅ Location captured at time of photo</small>
+                    `;
+                }
                 
             } else {
                 geoLocation = null;
@@ -1787,15 +1995,34 @@
                 geoAccuracy = null;
                 geoInfo.classList.add('no-source');
                 
-                geoInfo.innerHTML = `
-                    <strong>📍 Location:</strong>
-                    <span class="geo-badge none">UNAVAILABLE</span><br><br>
-                    <small>❌ Could not get location.<br>
-                    <strong>To fix this:</strong><br>
-                    • Enable Location Services in Settings<br>
-                    • Allow location permission when prompted<br>
-                    • Reload the page and try again</small>
-                `;
+                const device = getDeviceInfo();
+                let helpText = '';
+                
+                if (device.isIOS) {
+                    helpText = `
+                        <strong>📍 Location:</strong>
+                        <span class="geo-badge none">UNAVAILABLE</span><br><br>
+                        <small>❌ Could not get location.<br>
+                        <strong>To fix this:</strong><br>
+                        • Go to <strong>Settings > Privacy > Location Services</strong><br>
+                        • Enable Location Services for Safari/Chrome<br>
+                        • Allow location permission when prompted<br>
+                        • Reload the page and try again</small>
+                    `;
+                } else {
+                    helpText = `
+                        <strong>📍 Location:</strong>
+                        <span class="geo-badge none">UNAVAILABLE</span><br><br>
+                        <small>❌ Could not get location.<br>
+                        <strong>To fix this:</strong><br>
+                        • Enable Location Services in Settings<br>
+                        • Allow location permission when prompted<br>
+                        • Check your internet connection<br>
+                        • Reload the page and try again</small>
+                    `;
+                }
+                
+                geoInfo.innerHTML = helpText;
             }
             
             geoInfo.style.display = 'block';
@@ -2030,43 +2257,139 @@
         }
     
         // =============================================
-        // CAMERA CAPTURE
+        // iOS CAMERA CAPTURE FUNCTION
         // =============================================
-        document.getElementById('captureBtn').addEventListener('click', async function() {
+        function createFileInput() {
+            const device = getDeviceInfo();
+            const input = document.createElement('input');
+            
+            input.type = 'file';
+            input.accept = 'image/*';
+            
+            // iOS-specific handling
+            if (device.isIOS) {
+                // Use 'camera' for iOS - this gives option to choose camera or gallery
+                input.setAttribute('capture', 'camera');
+            } else if (device.isMobile) {
+                input.setAttribute('capture', 'environment');
+            }
+            
+            // Style for iOS compatibility
+            input.style.cssText = 'position:absolute;top:-9999px;left:-9999px;opacity:0;';
+            
+            return input;
+        }
+    
+        // =============================================
+        // ENHANCED CAMERA CAPTURE WITH PRECISE GPS
+        // =============================================
+        async function handleCameraCapture() {
             const device = getDeviceInfo();
             const loading = document.getElementById('loadingOverlay');
             const loadingText = document.getElementById('loadingText');
             const loadingSubtext = document.getElementById('loadingSubtext');
             
+            console.log('Starting camera capture, device:', device);
+            
+            // Get location first - with enhanced precision for HTTPS
             loading.style.display = 'flex';
-            loadingText.textContent = '📍 Getting your location...';
-            loadingSubtext.textContent = 'Please allow location access when prompted';
+            loadingText.textContent = device.isSecureContext ? '🛰️ Acquiring GPS lock...' : '📍 Getting your location...';
+            loadingSubtext.textContent = device.isSecureContext ? 'Getting precise coordinates' : 'Please wait...';
+            
+            // Start watching position for continuous updates on HTTPS
+            let currentLocation = null;
+            if (device.isSecureContext && navigator.geolocation) {
+                watchId = navigator.geolocation.watchPosition(
+                    (position) => {
+                        currentLocation = {
+                            latitude: position.coords.latitude.toFixed(8),
+                            longitude: position.coords.longitude.toFixed(8),
+                            accuracy: position.coords.accuracy ? position.coords.accuracy.toFixed(1) + 'm' : 'Unknown',
+                            altitude: position.coords.altitude ? position.coords.altitude.toFixed(1) + 'm' : null,
+                            method: 'High-Precision GPS'
+                        };
+                        console.log('Position updated:', currentLocation);
+                    },
+                    (error) => {
+                        console.error('Watch position error:', error);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+            }
             
             let locationBeforeCapture = await getDeviceLocation();
             console.log('Location before capture:', locationBeforeCapture);
             
             loading.style.display = 'none';
             
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            
-            if (device.isMobile) {
-                input.setAttribute('capture', 'environment');
-            }
-            
-            input.style.display = 'none';
+            // Create and trigger file input
+            const input = createFileInput();
             document.body.appendChild(input);
             
-            input.onchange = async function() {
-                if (!this.files || !this.files[0]) {
-                    document.body.removeChild(input);
-                    return;
+            // Promise-based file handling
+            const filePromise = new Promise((resolve, reject) => {
+                let resolved = false;
+                
+                input.onchange = function(e) {
+                    resolved = true;
+                    if (this.files && this.files[0]) {
+                        resolve(this.files[0]);
+                    } else {
+                        reject(new Error('No file selected'));
+                    }
+                };
+                
+                // For iOS: detect if user cancelled by checking focus
+                const checkCancel = () => {
+                    setTimeout(() => {
+                        if (!resolved && (!input.files || input.files.length === 0)) {
+                            // User probably cancelled
+                            cleanup();
+                        }
+                    }, 500);
+                };
+                
+                window.addEventListener('focus', checkCancel, { once: true });
+                
+                // Cleanup function
+                function cleanup() {
+                    if (input.parentNode) {
+                        document.body.removeChild(input);
+                    }
+                    // Stop watching position
+                    if (watchId !== null && navigator.geolocation) {
+                        navigator.geolocation.clearWatch(watchId);
+                        watchId = null;
+                    }
                 }
                 
-                const file = this.files[0];
+                // Timeout cleanup
+                setTimeout(() => {
+                    if (!resolved) {
+                        cleanup();
+                    }
+                }, 120000); // 2 minute timeout
+            });
+            
+            // Trigger the file input with proper timing for iOS
+            if (device.isIOS) {
+                // iOS needs a slight delay
+                await new Promise(r => setTimeout(r, 100));
+                input.click();
+            } else {
+                setTimeout(() => input.click(), 50);
+            }
+            
+            try {
+                const file = await filePromise;
+                
                 originalFile = file;
                 
+                // Check if photo is from gallery
                 const fileTime = file.lastModified;
                 const currentTime = Date.now();
                 const timeDiff = currentTime - fileTime;
@@ -2078,58 +2401,97 @@
                         'Click OK to use this photo anyway, or Cancel to take a new one.'
                     );
                     if (!usePhoto) {
-                        document.body.removeChild(input);
+                        // Stop watching position
+                        if (watchId !== null && navigator.geolocation) {
+                            navigator.geolocation.clearWatch(watchId);
+                            watchId = null;
+                        }
+                        if (input.parentNode) {
+                            document.body.removeChild(input);
+                        }
                         return;
                     }
                 }
                 
                 loading.style.display = 'flex';
                 loadingText.textContent = '📸 Processing photo...';
-                loadingSubtext.textContent = 'Extracting location data';
+                loadingSubtext.textContent = device.isSecureContext ? 'Finalizing GPS coordinates' : 'Extracting location data';
                 
-                try {
-                    let locationAfterCapture = await getDeviceLocation();
-                    let bestLocation = locationAfterCapture || locationBeforeCapture;
-                    
-                    const reader = new FileReader();
-                    reader.onload = async function(e) {
-                        capturedPhoto = e.target.result;
-                        photoTimestamp = new Date().toLocaleString('en-IN');
-                        
-                        const photoPreview = document.getElementById('photoPreview');
-                        photoPreview.src = capturedPhoto;
-                        photoPreview.style.display = 'block';
-                        document.getElementById('photoSection').style.display = 'block';
-                        
-                        const exifGPS = await extractGPSFromImage(file);
-                        
-                        if (exifGPS) {
-                            displayGPSInfo(exifGPS, 'exif');
-                        } else if (bestLocation) {
-                            displayGPSInfo(bestLocation, 'device');
-                        } else {
-                            displayGPSInfo(null, null);
-                        }
-                        
-                        loading.style.display = 'none';
-                    };
-                    
-                    reader.onerror = function() {
-                        loading.style.display = 'none';
-                        alert('Error reading image file');
-                    };
-                    
-                    reader.readAsDataURL(file);
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    loading.style.display = 'none';
+                // Get location after capture (use watched location if available)
+                let locationAfterCapture = currentLocation || await getDeviceLocation();
+                let bestLocation = locationAfterCapture || locationBeforeCapture;
+                
+                // Stop watching position
+                if (watchId !== null && navigator.geolocation) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
                 }
                 
-                document.body.removeChild(input);
-            };
+                // Read the file
+                const reader = new FileReader();
+                
+                reader.onload = async function(e) {
+                    capturedPhoto = e.target.result;
+                    photoTimestamp = new Date().toLocaleString('en-IN');
+                    
+                    const photoPreview = document.getElementById('photoPreview');
+                    photoPreview.src = capturedPhoto;
+                    photoPreview.style.display = 'block';
+                    document.getElementById('photoSection').style.display = 'block';
+                    
+                    // Try to extract EXIF GPS (skip on iOS)
+                    let exifGPS = null;
+                    if (!device.isIOS) {
+                        exifGPS = await extractGPSFromImage(file);
+                    }
+                    
+                    // On HTTPS, prioritize high-precision device GPS
+                    if (device.isSecureContext && bestLocation && bestLocation.method === 'High-Precision GPS') {
+                        displayGPSInfo(bestLocation, 'device');
+                    } else if (exifGPS) {
+                        displayGPSInfo(exifGPS, 'exif');
+                    } else if (bestLocation) {
+                        displayGPSInfo(bestLocation, 'device');
+                    } else {
+                        displayGPSInfo(null, null);
+                    }
+                    
+                    loading.style.display = 'none';
+                    const message = device.isSecureContext && bestLocation && bestLocation.method === 'High-Precision GPS' 
+                        ? '📸 Photo captured with precise GPS location!' 
+                        : '📸 Photo captured successfully!';
+                    showToast(message, 'success', 3000);
+                };
+                
+                reader.onerror = function() {
+                    loading.style.display = 'none';
+                    showToast('❌ Error reading image file', 'error');
+                };
+                
+                reader.readAsDataURL(file);
+                
+            } catch (error) {
+                console.log('Camera capture cancelled or error:', error.message);
+                loading.style.display = 'none';
+            }
             
-            setTimeout(() => input.click(), 150);
+            // Final cleanup
+            if (watchId !== null && navigator.geolocation) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            if (input.parentNode) {
+                document.body.removeChild(input);
+            }
+        }
+    
+        // =============================================
+        // CAMERA CAPTURE BUTTON EVENT
+        // =============================================
+        document.getElementById('captureBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleCameraCapture();
         });
     
         // =============================================
@@ -2369,12 +2731,46 @@
         });
     
         // =============================================
-        // INITIALIZE
+        // REQUEST LOCATION PERMISSION ON LOAD (HTTPS)
         // =============================================
-        initializeValidations();
-        calculateAll();
-        calculateDeviceShare();
-        console.log('Device Info:', getDeviceInfo());
+        async function requestLocationPermission() {
+            const device = getDeviceInfo();
+            
+            // Only on HTTPS
+            if (device.isSecureContext && device.supportsGeolocation) {
+                try {
+                    console.log('Pre-requesting location permission for precise GPS...');
+                    const location = await getDeviceLocation();
+                    if (location) {
+                        console.log('Location permission granted, GPS ready');
+                        preCaptureLocation = location;
+                        if (location.method === 'High-Precision GPS') {
+                            showToast('✅ GPS ready for precise tracking', 'success', 2000);
+                        }
+                    }
+                } catch (e) {
+                    console.log('Location permission not granted yet:', e);
+                }
+            }
+        }
+    
+        // =============================================
+        // INITIALIZE WITH ENHANCED GPS
+        // =============================================
+        window.addEventListener('DOMContentLoaded', async () => {
+            initializeValidations();
+            calculateAll();
+            calculateDeviceShare();
+            
+            const device = getDeviceInfo();
+            console.log('Device Info:', device);
+            console.log('Running on HTTPS:', device.isSecureContext);
+            
+            // Request location permission early on HTTPS
+            if (device.isSecureContext) {
+                await requestLocationPermission();
+            }
+        });
     </script>
 </body>
 </html>
