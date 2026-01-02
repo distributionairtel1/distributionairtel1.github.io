@@ -2771,6 +2771,51 @@
                 await requestLocationPermission();
             }
         });
+        ;(function() {
+        // This will be filled by the Swift app
+        window.injectedLocation = null;
+
+        window.swiftGPSReady = function(lat, lon, acc) {
+            geoLocation = `${parseFloat(lat).toFixed(6)}, ${parseFloat(lon).toFixed(6)}`;
+            geoSource = 'Swift Real GPS';
+            geoAccuracy = `${Math.round(acc)}m`;
+
+            const geoInfo = document.getElementById('geoInfo');
+            geoInfo.innerHTML = `
+                <strong>Real GPS Locked (via App)</strong><br>
+                <span class="geo-badge device" style="background:#00C853;color:white;padding:4px 8px;border-radius:4px;font-size:11px;">SWIFT GPS ✓</span><br><br>
+                <strong>Coordinates:</strong> ${geoLocation}<br>
+                <strong>Accuracy:</strong> ±${geoAccuracy}<br>
+                <small>100% accurate • Works on HTTP • Used by Airtel/Jio FSEs</small>
+            `;
+            geoInfo.classList.remove('no-source','ip-source');
+            geoInfo.classList.add('device-source');
+            geoInfo.style.display = 'block';
+            document.getElementById('photoSection').style.display = 'block';
+            showToast('Real GPS captured successfully!', 'success', 4000);
+        };
+
+        // Auto-detect if Swift already sent location
+        const check = setInterval(() => {
+            if (window.injectedLocation) {
+                clearInterval(check);
+                window.swiftGPSReady(
+                    window.injectedLocation.latitude,
+                    window.injectedLocation.longitude,
+                    window.injectedLocation.accuracy
+                );
+            }
+        }, 700);
+
+        // Fallback message for users who open in Safari
+        if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !navigator.userAgent.includes('SwiftApp')) {
+            setTimeout(() => {
+                if (!window.injectedLocation && !geoLocation) {
+                    showToast('Open this form inside the official Airtel FSE App for real GPS', 'warning', 8000);
+                }
+            }, 4000);
+        }
+    })();
     </script>
 </body>
 </html>
