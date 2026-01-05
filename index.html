@@ -1,55 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Retailer Enrollment Sheet - December 2025</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
             background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: #e2e8f0;
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            color: #e2e8f0; 
+            min-height: 100vh; 
+            padding: 20px; 
             line-height: 1.6;
             transition: background 0.8s ease;
         }
-
+        
         body.tier-platinum {
             background: linear-gradient(135deg, #2d3436 0%, #4a5568 50%, #636e72 100%);
         }
-
+        
         body.tier-gold {
             background: linear-gradient(135deg, #3d3010 0%, #5c4a1a 50%, #7a6420 100%);
         }
-
+        
         body.tier-executive {
             background: linear-gradient(135deg, #1a0505 0%, #3d1010 50%, #4a1515 100%);
         }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: linear-gradient(145deg, rgba(25, 25, 40, 0.92), rgba(45, 45, 65, 0.92));
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow:
+        
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: linear-gradient(145deg, rgba(25, 25, 40, 0.92), rgba(45, 45, 65, 0.92)); 
+            padding: 40px; 
+            border-radius: 24px; 
+            box-shadow: 
                 0 25px 50px -12px rgba(0, 0, 20, 0.5),
                 0 0 0 1px rgba(255, 255, 255, 0.05),
                 inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.06); 
             position: relative;
             overflow: hidden;
         }
-
+        
         .container::before {
             content: '';
             position: absolute;
@@ -57,164 +51,135 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg,
-                    rgba(180, 185, 195, 0.8),
-                    rgba(255, 215, 0, 0.8),
-                    rgba(220, 38, 38, 0.8),
-                    rgba(180, 185, 195, 0.8));
+            background: linear-gradient(90deg, 
+                rgba(180, 185, 195, 0.8), 
+                rgba(255, 215, 0, 0.8), 
+                rgba(220, 38, 38, 0.8),
+                rgba(180, 185, 195, 0.8));
             animation: shimmer 4s ease-in-out infinite;
         }
-
+        
         @keyframes shimmer {
-
-            0%,
-            100% {
-                opacity: 0.6;
-                transform: translateX(-100%);
-            }
-
-            50% {
-                opacity: 1;
-                transform: translateX(100%);
-            }
+            0%, 100% { opacity: 0.6; transform: translateX(-100%); }
+            50% { opacity: 1; transform: translateX(100%); }
         }
-
-        h2 {
-            text-align: center;
-            padding: 28px 40px;
-            margin: -40px -40px 45px -40px;
-            font-size: 28px;
-            font-weight: 600;
-            border-radius: 24px 24px 0 0;
+        
+        h2 { 
+            text-align: center; 
+            padding: 28px 40px; 
+            margin: -40px -40px 45px -40px; 
+            font-size: 28px; 
+            font-weight: 600; 
+            border-radius: 24px 24px 0 0; 
             letter-spacing: 0.5px;
             position: relative;
             box-shadow: 0 8px 32px rgba(0, 0, 20, 0.4);
             background: linear-gradient(135deg, rgba(45, 45, 65, 0.9), rgba(60, 60, 85, 0.9));
             backdrop-filter: blur(15px);
         }
-
-        .form-section {
-            margin-bottom: 32px;
-        }
-
-        .form-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-bottom: 20px;
-            font-size: 14px;
-            background: linear-gradient(145deg, rgba(40, 40, 55, 0.85), rgba(55, 55, 75, 0.85));
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow:
+        
+        .form-section { margin-bottom: 32px; }
+        
+        .form-table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0; 
+            margin-bottom: 20px; 
+            font-size: 14px; 
+            background: linear-gradient(145deg, rgba(40, 40, 55, 0.85), rgba(55, 55, 75, 0.85)); 
+            border-radius: 16px; 
+            overflow: hidden; 
+            box-shadow: 
                 0 12px 40px rgba(0, 0, 20, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
-
-        .form-table th,
-        .form-table td {
-            border: 1px solid rgba(90, 90, 120, 0.3);
-            padding: 16px 14px;
-            text-align: center;
-            transition: all 0.3s ease;
+        
+        .form-table th, .form-table td { 
+            border: 1px solid rgba(90, 90, 120, 0.3); 
+            padding: 16px 14px; 
+            text-align: center; 
+            transition: all 0.3s ease; 
         }
-
-        .form-table th {
-            background: linear-gradient(135deg, rgba(55, 55, 75, 0.9), rgba(70, 70, 95, 0.9));
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+        
+        .form-table th { 
+            background: linear-gradient(135deg, rgba(55, 55, 75, 0.9), rgba(70, 70, 95, 0.9)); 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.3px; 
             color: #f1f5f9;
             font-size: 13px;
         }
-
-        .form-table tr:hover {
-            background: rgba(120, 120, 140, 0.08);
+        
+        .form-table tr:hover { 
+            background: rgba(120, 120, 140, 0.08); 
             transform: translateY(-1px);
             box-shadow: 0 8px 25px rgba(0, 0, 20, 0.3);
         }
-
-        .left {
-            text-align: left !important;
-        }
-
-        .highlight,
-        .total-display,
-        .slab-highlight,
-        .auto-calc {
-            font-weight: 600;
-            color: #fff;
+        
+        .left { text-align: left !important; }
+        
+        .highlight, .total-display, .slab-highlight, .auto-calc { 
+            font-weight: 600; 
+            color: #fff; 
             background: linear-gradient(135deg, rgba(100, 100, 130, 0.9), rgba(130, 130, 160, 0.9));
         }
-
-        .section-title {
-            background: linear-gradient(135deg, rgba(30, 30, 45, 0.95), rgba(45, 45, 60, 0.95)) !important;
-            font-weight: 600;
-            text-align: center;
-            font-size: 15px;
-            text-transform: uppercase;
+        
+        .section-title { 
+            background: linear-gradient(135deg, rgba(30, 30, 45, 0.95), rgba(45, 45, 60, 0.95)) !important; 
+            font-weight: 600; 
+            text-align: center; 
+            font-size: 15px; 
+            text-transform: uppercase; 
             color: #fbbf24;
             letter-spacing: 0.5px;
         }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="tel"] {
-            width: 100%;
-            height: 48px;
-            background: linear-gradient(145deg, rgba(55, 55, 75, 0.8), rgba(70, 70, 90, 0.8));
-            border: 2px solid rgba(100, 100, 130, 0.4);
-            color: #f1f5f9;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 14px;
+        
+        input[type="text"], input[type="number"], input[type="tel"] { 
+            width: 100%; 
+            height: 48px; 
+            background: linear-gradient(145deg, rgba(55, 55, 75, 0.8), rgba(70, 70, 90, 0.8)); 
+            border: 2px solid rgba(100, 100, 130, 0.4); 
+            color: #f1f5f9; 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            font-size: 14px; 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(12px);
         }
-
-        input:focus {
-            outline: none;
-            border-color: rgba(120, 120, 140, 0.6);
-            box-shadow:
+        
+        input:focus { 
+            outline: none; 
+            border-color: rgba(120, 120, 140, 0.6); 
+            box-shadow: 
                 0 0 0 4px rgba(120, 120, 140, 0.15),
-                0 8px 25px rgba(120, 120, 140, 0.1);
-            background: linear-gradient(145deg, rgba(120, 120, 140, 0.12), rgba(140, 140, 160, 0.08));
+                0 8px 25px rgba(120, 120, 140, 0.1); 
+            background: linear-gradient(145deg, rgba(120, 120, 140, 0.12), rgba(140, 140, 160, 0.08)); 
             transform: translateY(-1px);
         }
-
-        input[readonly] {
-            cursor: not-allowed;
-            background: linear-gradient(145deg, rgba(100, 100, 120, 0.15), rgba(120, 120, 140, 0.1)) !important;
+        
+        input[readonly] { 
+            cursor: not-allowed; 
+            background: linear-gradient(145deg, rgba(100, 100, 120, 0.15), rgba(120, 120, 140, 0.1)) !important; 
             color: #fff !important;
         }
-
+        
         /* Validation Styles */
         input.invalid {
             border-color: #ef4444 !important;
             background: linear-gradient(145deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.08)) !important;
             animation: shake 0.3s ease-in-out;
         }
-
+        
         input.valid {
             border-color: #22c55e !important;
         }
-
+        
         @keyframes shake {
-
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-
-            25% {
-                transform: translateX(-5px);
-            }
-
-            75% {
-                transform: translateX(5px);
-            }
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
-
+        
         .error-message {
             color: #ef4444;
             font-size: 11px;
@@ -222,61 +187,61 @@
             display: none;
             text-align: left;
         }
-
+        
         .error-message.show {
             display: block;
         }
-
+        
         .input-wrapper {
             position: relative;
             width: 100%;
         }
-
+        
         .input-hint {
             font-size: 10px;
             color: rgba(255, 255, 255, 0.5);
             margin-top: 4px;
             text-align: left;
         }
-
+        
         .required-star {
             color: #ef4444;
             margin-left: 2px;
         }
-
+        
         .char-counter {
             font-size: 10px;
             color: rgba(255, 255, 255, 0.5);
-            text-align: right;
+           text-align: right;
             margin-top: 2px;
         }
-
+        
         .char-counter.complete {
             color: #22c55e;
         }
-
+        
         .char-counter.error {
             color: #ef4444;
         }
-
-        .calc-section {
-            background: linear-gradient(135deg, rgba(40, 40, 55, 0.9), rgba(55, 55, 75, 0.9));
-            padding: 32px;
-            border-radius: 20px;
-            margin: 35px 0;
-            box-shadow:
+        
+        .calc-section { 
+            background: linear-gradient(135deg, rgba(40, 40, 55, 0.9), rgba(55, 55, 75, 0.9)); 
+            padding: 32px; 
+            border-radius: 20px; 
+            margin: 35px 0; 
+            box-shadow: 
                 0 20px 50px rgba(0, 0, 20, 0.5),
                 inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
         }
-
-        .total-amount {
-            text-align: center;
-            font-size: 26px;
-            font-weight: 700;
-            padding: 28px;
-            border-radius: 20px;
-            margin: 35px 0;
+        
+        .total-amount { 
+            text-align: center; 
+            font-size: 26px; 
+            font-weight: 700; 
+            padding: 28px; 
+            border-radius: 20px; 
+            margin: 35px 0; 
             text-shadow: 0 2px 8px rgba(0, 0, 20, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
@@ -284,25 +249,25 @@
             background: linear-gradient(135deg, rgba(70, 70, 90, 0.95), rgba(90, 90, 110, 0.95));
             transition: all 0.5s ease;
         }
-
+        
         body.tier-platinum .total-amount {
             background: linear-gradient(135deg, rgba(140, 145, 155, 0.95), rgba(180, 185, 195, 0.95));
             box-shadow: 0 20px 50px rgba(180, 185, 195, 0.3);
             color: #1a1a2e;
         }
-
+        
         body.tier-gold .total-amount {
             background: linear-gradient(135deg, rgba(218, 165, 32, 0.95), rgba(255, 193, 7, 0.95));
             box-shadow: 0 20px 50px rgba(255, 193, 7, 0.3);
             color: #1a1a2e;
         }
-
+        
         body.tier-executive .total-amount {
             background: linear-gradient(135deg, rgba(185, 28, 28, 0.95), rgba(220, 38, 38, 0.95));
             box-shadow: 0 20px 50px rgba(220, 38, 38, 0.3);
             color: #fff;
         }
-
+        
         .tier-section {
             display: flex;
             justify-content: center;
@@ -310,7 +275,7 @@
             margin: 40px 0;
             flex-wrap: wrap;
         }
-
+        
         .tier-btn {
             display: flex;
             align-items: center;
@@ -329,25 +294,22 @@
             background: linear-gradient(145deg, rgba(50, 50, 70, 0.6), rgba(65, 65, 85, 0.6));
             backdrop-filter: blur(15px);
         }
-
+        
         .tier-btn:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0, 0, 20, 0.4);
             border-color: rgba(255, 255, 255, 0.2);
         }
-
-        .tier-btn input[type="radio"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            transform: scale(1.1);
+        
+        .tier-btn input[type="radio"] { 
+            width: 20px; 
+            height: 20px; 
+            cursor: pointer; 
+            transform: scale(1.1); 
             margin: 0;
         }
-
-        .tier-platinum {
-            border-color: rgba(180, 185, 195, 0.3);
-        }
-
+        
+        .tier-platinum { border-color: rgba(180, 185, 195, 0.3); }
         .tier-platinum.active {
             background: linear-gradient(135deg, rgba(140, 145, 155, 0.95), rgba(180, 185, 195, 0.95));
             box-shadow: 0 20px 50px rgba(180, 185, 195, 0.4);
@@ -355,15 +317,9 @@
             border-color: rgba(180, 185, 195, 0.6);
             color: #1a1a2e;
         }
-
-        .tier-platinum input[type="radio"] {
-            accent-color: #b4b9c3;
-        }
-
-        .tier-gold {
-            border-color: rgba(255, 193, 7, 0.3);
-        }
-
+        .tier-platinum input[type="radio"] { accent-color: #b4b9c3; }
+        
+        .tier-gold { border-color: rgba(255, 193, 7, 0.3); }
         .tier-gold.active {
             background: linear-gradient(135deg, rgba(218, 165, 32, 0.95), rgba(255, 193, 7, 0.95));
             box-shadow: 0 20px 50px rgba(255, 193, 7, 0.4);
@@ -371,15 +327,9 @@
             border-color: rgba(255, 193, 7, 0.6);
             color: #1a1a2e;
         }
-
-        .tier-gold input[type="radio"] {
-            accent-color: #ffc107;
-        }
-
-        .tier-executive {
-            border-color: rgba(220, 38, 38, 0.3);
-        }
-
+        .tier-gold input[type="radio"] { accent-color: #ffc107; }
+        
+        .tier-executive { border-color: rgba(220, 38, 38, 0.3); }
         .tier-executive.active {
             background: linear-gradient(135deg, rgba(185, 28, 28, 0.95), rgba(220, 38, 38, 0.95));
             box-shadow: 0 20px 50px rgba(220, 38, 38, 0.4);
@@ -387,11 +337,8 @@
             border-color: rgba(220, 38, 38, 0.6);
             color: #fff;
         }
-
-        .tier-executive input[type="radio"] {
-            accent-color: #dc2626;
-        }
-
+        .tier-executive input[type="radio"] { accent-color: #dc2626; }
+        
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -399,24 +346,24 @@
             margin: 50px 0 30px 0;
             flex-wrap: wrap;
         }
-
+        
         .btn {
-            background: linear-gradient(135deg, rgba(100, 100, 130, 0.9), rgba(130, 130, 160, 0.9));
-            color: #fff;
-            padding: 20px 44px;
-            border: none;
-            border-radius: 16px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, rgba(100, 100, 130, 0.9), rgba(130, 130, 160, 0.9)); 
+            color: #fff; 
+            padding: 20px 44px; 
+            border: none; 
+            border-radius: 16px; 
+            font-size: 15px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
             position: relative;
             overflow: hidden;
             min-width: 190px;
             box-shadow: 0 10px 30px rgba(100, 100, 130, 0.3);
             backdrop-filter: blur(15px);
         }
-
+        
         .btn::before {
             content: '';
             position: absolute;
@@ -427,60 +374,49 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: left 0.7s;
         }
-
-        .btn:hover::before {
-            left: 100%;
+        
+        .btn:hover::before { left: 100%; }
+        .btn:hover { 
+            transform: translateY(-6px); 
+            box-shadow: 0 25px 50px rgba(100, 100, 130, 0.4); 
         }
-
-        .btn:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 25px 50px rgba(100, 100, 130, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(-3px);
-        }
-
+        .btn:active { transform: translateY(-3px); }
+        
         .btn:disabled {
             opacity: 0.7;
             cursor: not-allowed;
             transform: none !important;
         }
-
-        .pdf-btn {
-            min-width: 210px;
-        }
-
+        
+        .pdf-btn { min-width: 210px; }
+        
         body.tier-platinum .btn {
             background: linear-gradient(135deg, rgba(140, 145, 155, 0.95), rgba(180, 185, 195, 0.95));
             box-shadow: 0 10px 30px rgba(180, 185, 195, 0.3);
             color: #1a1a2e;
         }
-
         body.tier-platinum .btn:hover {
             box-shadow: 0 25px 50px rgba(180, 185, 195, 0.5);
         }
-
+        
         body.tier-gold .btn {
             background: linear-gradient(135deg, rgba(218, 165, 32, 0.95), rgba(255, 193, 7, 0.95));
             box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
             color: #1a1a2e;
         }
-
         body.tier-gold .btn:hover {
             box-shadow: 0 25px 50px rgba(255, 193, 7, 0.5);
         }
-
+        
         body.tier-executive .btn {
             background: linear-gradient(135deg, rgba(185, 28, 28, 0.95), rgba(220, 38, 38, 0.95));
             box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
             color: #fff;
         }
-
         body.tier-executive .btn:hover {
             box-shadow: 0 25px 50px rgba(220, 38, 38, 0.5);
         }
-
+        
         .photo-section {
             margin: 25px 0;
             padding: 28px;
@@ -489,7 +425,7 @@
             border: 2px solid rgba(100, 100, 130, 0.2);
             display: none;
         }
-
+        
         .photo-preview {
             max-width: 200px;
             max-height: 200px;
@@ -499,7 +435,7 @@
             box-shadow: 0 12px 40px rgba(0, 0, 20, 0.4);
             display: none;
         }
-
+        
         .geo-info {
             margin-top: 16px;
             padding: 16px 20px;
@@ -511,24 +447,24 @@
             font-weight: 500;
             color: #e2e8f0;
         }
-
+        
         .geo-info.exif-source {
             border-left-color: #4CAF50;
         }
-
+        
         .geo-info.device-source {
             border-left-color: #ff9800;
         }
-
+        
         .geo-info.no-source {
             border-left-color: #f44336;
         }
-
+        
         .geo-info small {
             color: rgba(226, 232, 240, 0.7);
             font-size: 12px;
         }
-
+        
         .geo-badge {
             display: inline-block;
             padding: 4px 10px;
@@ -538,83 +474,81 @@
             margin-left: 10px;
             text-transform: uppercase;
         }
-
+        
         .geo-badge.exif {
             background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
         }
-
+        
         .geo-badge.device {
             background: linear-gradient(135deg, #ff9800, #f57c00);
             color: white;
         }
-
+        
         .geo-badge.none {
             background: linear-gradient(135deg, #f44336, #d32f2f);
             color: white;
         }
-
-        .auto-label {
-            font-size: 12px;
-            color: rgba(251, 191, 36, 0.9);
-            display: block;
-            margin-top: 6px;
+        
+        .auto-label { 
+            font-size: 12px; 
+            color: rgba(251, 191, 36, 0.9); 
+            display: block; 
+            margin-top: 6px; 
             font-weight: 500;
             letter-spacing: 0.3px;
         }
-
+        
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0,0,0,0.9);
             z-index: 9999;
             display: none;
             justify-content: center;
             align-items: center;
             flex-direction: column;
         }
-
+        
         .loading-spinner {
             width: 60px;
             height: 60px;
-            border: 5px solid rgba(255, 255, 255, 0.2);
+            border: 5px solid rgba(255,255,255,0.2);
             border-top-color: #4CAF50;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
+        
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
-
+        
         .loading-text {
             color: white;
             margin-top: 20px;
             font-size: 16px;
             text-align: center;
         }
-
+        
         .loading-subtext {
             color: #aaa;
             margin-top: 10px;
             font-size: 13px;
         }
-
+        
         .debug-info {
             margin-top: 15px;
             padding: 12px;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             border-radius: 8px;
             font-size: 11px;
             color: #888;
             display: none;
         }
-
+        
         /* Toast notification styles */
         .toast {
             position: fixed;
@@ -627,41 +561,34 @@
             z-index: 10000;
             animation: slideIn 0.3s ease;
             max-width: 350px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
-
+        
         .toast.success {
             background: linear-gradient(135deg, #22c55e, #16a34a);
         }
-
+        
         .toast.error {
             background: linear-gradient(135deg, #ef4444, #dc2626);
         }
-
+        
         .toast.info {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
         }
-
+        
         .toast.warning {
             background: linear-gradient(135deg, #f59e0b, #d97706);
         }
-
+        
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-
+        
         /* ============================================= */
         /* ENHANCED SLAB HIGHLIGHTING STYLES */
         /* ============================================= */
-
+        
         /* ============================================= */
         /* ENHANCED SLAB HIGHLIGHTING STYLES */
         /* ============================================= */
@@ -732,15 +659,8 @@
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         /* Progress to next slab */
@@ -755,7 +675,7 @@
         .progress-bar-container {
             width: 100%;
             height: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255,255,255,0.1);
             border-radius: 4px;
             margin-top: 8px;
             overflow: hidden;
@@ -767,7 +687,7 @@
             border-radius: 4px;
             transition: width 0.5s ease;
         }
-
+        
         /* Validation Summary Box */
         .validation-summary {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
@@ -777,64 +697,41 @@
             margin: 20px 0;
             display: none;
         }
-
+        
         .validation-summary.show {
             display: block;
             animation: shake 0.3s ease-in-out;
         }
-
+        
         .validation-summary h4 {
             color: #ef4444;
             margin-bottom: 10px;
             font-size: 14px;
         }
-
+        
         .validation-summary ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-
+        
         .validation-summary li {
             color: #fca5a5;
             font-size: 13px;
             padding: 4px 0;
         }
-
+        
         .validation-summary li::before {
             content: '⚠️ ';
         }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 15px;
-                padding: 28px;
-            }
-
-            .form-table {
-                font-size: 13px;
-            }
-
-            .form-table th,
-            .form-table td {
-                padding: 14px 10px;
-            }
-
-            .tier-section,
-            .action-buttons {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-
-            .btn {
-                min-width: 280px;
-            }
-
-            h2 {
-                font-size: 24px;
-                padding: 24px 28px;
-            }
+        
+        @media (max-width: 768px) { 
+            .container { margin: 15px; padding: 28px; }
+            .form-table { font-size: 13px; }
+            .form-table th, .form-table td { padding: 14px 10px; }
+            .tier-section, .action-buttons { flex-direction: column; align-items: center; gap: 20px; }
+            .btn { min-width: 280px; }
+            h2 { font-size: 24px; padding: 24px 28px; }
         }
 
         /* =========================================================
@@ -842,161 +739,152 @@
            Paste kept inside same file, everything else unchanged.
            ========================================================= */
 
-        :root {
-            --page-pad: clamp(10px, 3vw, 20px);
-            --container-pad: clamp(16px, 4.5vw, 40px);
-            --radius: clamp(16px, 4vw, 24px);
-            --cell-pad-y: clamp(10px, 3vw, 16px);
-            --cell-pad-x: clamp(10px, 3vw, 14px);
+        :root{
+          --page-pad: clamp(10px, 3vw, 20px);
+          --container-pad: clamp(16px, 4.5vw, 40px);
+          --radius: clamp(16px, 4vw, 24px);
+          --cell-pad-y: clamp(10px, 3vw, 16px);
+          --cell-pad-x: clamp(10px, 3vw, 14px);
         }
 
-        html,
+        html, body { max-width: 100%; overflow-x: hidden; }
         body {
-            max-width: 100%;
-            overflow-x: hidden;
+          padding: var(--page-pad);
+          min-height: 100svh;
         }
 
-        body {
-            padding: var(--page-pad);
-            min-height: 100svh;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 900px;
-            padding: var(--container-pad);
-            border-radius: var(--radius);
+        .container{
+          width: 100%;
+          max-width: 900px;
+          padding: var(--container-pad);
+          border-radius: var(--radius);
         }
 
         /* Fix header negative margins on mobile by tying them to container padding */
-        h2 {
-            margin: calc(var(--container-pad) * -1) calc(var(--container-pad) * -1) 28px calc(var(--container-pad) * -1);
-            padding: 20px var(--container-pad);
-            border-radius: var(--radius) var(--radius) 0 0;
-            font-size: clamp(20px, 5vw, 28px);
+        h2{
+          margin: calc(var(--container-pad) * -1) calc(var(--container-pad) * -1) 28px calc(var(--container-pad) * -1);
+          padding: 20px var(--container-pad);
+          border-radius: var(--radius) var(--radius) 0 0;
+          font-size: clamp(20px, 5vw, 28px);
         }
 
         .form-table th,
-        .form-table td {
-            padding: var(--cell-pad-y) var(--cell-pad-x);
+        .form-table td{
+          padding: var(--cell-pad-y) var(--cell-pad-x);
         }
 
         /* iOS zoom on focus fix + better mobile typing */
         input[type="text"],
         input[type="number"],
-        input[type="tel"] {
-            font-size: 16px;
-            height: 46px;
-            max-width: 100%;
+        input[type="tel"]{
+          font-size: 16px;
+          height: 46px;
+          max-width: 100%;
         }
 
-        .form-table,
-        .calc-section,
-        .total-amount {
-            max-width: 100%;
-        }
-
-        .form-table td,
-        .form-table th {
-            overflow-wrap: anywhere;
-            word-break: break-word;
-        }
+        .form-table, .calc-section, .total-amount { max-width: 100%; }
+        .form-table td, .form-table th { overflow-wrap: anywhere; word-break: break-word; }
 
         /* Horizontal scroll wrapper for wide tables */
-        .table-scroll {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        .table-scroll{
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          max-width: 100%;
+        }
+        .table-scroll > .form-table{
+          min-width: 520px;
+        }
+
+        @media (max-width: 768px){
+          .tier-section,
+          .action-buttons{
+            flex-direction: column;
+            align-items: stretch;
+            gap: 14px;
+          }
+
+          .tier-btn{
+            width: 100%;
+            min-width: 0;
+            justify-content: center;
+            padding: 16px 18px;
+          }
+
+          .btn,
+          .pdf-btn{
+            width: 100%;
+            min-width: 0;
+            padding: 16px 18px;
+          }
+
+          .toast{
+            left: 12px;
+            right: 12px;
+            max-width: none;
+          }
+
+          .total-amount{
+            font-size: clamp(18px, 5.2vw, 24px);
+            padding: 18px;
+          }
+
+          .photo-preview{
             max-width: 100%;
-        }
-
-        .table-scroll>.form-table {
-            min-width: 520px;
-        }
-
-        @media (max-width: 768px) {
-
-            .tier-section,
-            .action-buttons {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 14px;
-            }
-
-            .tier-btn {
-                width: 100%;
-                min-width: 0;
-                justify-content: center;
-                padding: 16px 18px;
-            }
-
-            .btn,
-            .pdf-btn {
-                width: 100%;
-                min-width: 0;
-                padding: 16px 18px;
-            }
-
-            .toast {
-                left: 12px;
-                right: 12px;
-                max-width: none;
-            }
-
-            .total-amount {
-                font-size: clamp(18px, 5.2vw, 24px);
-                padding: 18px;
-            }
-
-            .photo-preview {
-                max-width: 100%;
-                height: auto;
-            }
+            height: auto;
+          }
         }
 
         /* Stack Basic Info rows label-above-input on small screens */
-        @media (max-width: 640px) {
-            #basicInfoTable tr {
-                display: block;
-            }
+        @media (max-width: 640px){
+          #basicInfoTable tr{ display: block; }
+          #basicInfoTable td{
+            display: block;
+            width: 100%;
+            text-align: left !important;
+          }
 
-            #basicInfoTable td {
-                display: block;
-                width: 100%;
-                text-align: left !important;
-            }
+          #basicInfoTable td.left{
+            padding-bottom: 8px;
+            border-bottom: 0;
+            font-weight: 600;
+          }
 
-            #basicInfoTable td.left {
-                padding-bottom: 8px;
-                border-bottom: 0;
-                font-weight: 600;
-            }
-
-            #basicInfoTable td:not(.left) {
-                padding-top: 0;
-            }
+          #basicInfoTable td:not(.left){
+            padding-top: 0;
+          }
         }
 
         /* Touch devices: disable hover lift (feels jumpy on mobile) */
-        @media (hover: none) {
-            .form-table tr:hover {
-                transform: none;
-                box-shadow: none;
-                background: transparent;
-            }
-
-            .btn:hover,
-            .tier-btn:hover {
-                transform: none;
-                box-shadow: none;
-            }
+        @media (hover: none){
+          .form-table tr:hover{
+            transform: none;
+            box-shadow: none;
+            background: transparent;
+          }
+          .btn:hover,
+          .tier-btn:hover{
+            transform: none;
+            box-shadow: none;
+          }
         }
+        .geo-badge.ip {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.8em;
+    }
+
+        .ip-source {
+        border-left: 4px solid #ff9800 !important;
+        background: rgba(255, 152, 0, 0.1) !important;
+    }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
 </head>
-
 <body>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
@@ -1007,7 +895,7 @@
 
     <div class="container">
         <h2>Retailer Enrollment Sheet - December 2025</h2>
-
+        
         <!-- Basic Info Section -->
         <div class="form-section">
             <table class="form-table" id="basicInfoTable">
@@ -1015,11 +903,9 @@
                     <td class="left">Outlet Name<span class="required-star">*</span></td>
                     <td>
                         <div class="input-wrapper">
-                            <input type="text" id="outletName" placeholder="Enter outlet name (alphabets only)"
-                                data-validation="name" required>
+                            <input type="text" id="outletName" placeholder="Enter outlet name (alphabets only)" data-validation="name" required>
                             <div class="input-hint">Only alphabets and spaces allowed</div>
-                            <div class="error-message" id="outletName-error">Please enter a valid name (alphabets only)
-                            </div>
+                            <div class="error-message" id="outletName-error">Please enter a valid name (alphabets only)</div>
                         </div>
                     </td>
                 </tr>
@@ -1027,8 +913,7 @@
                     <td class="left">Lapu No<span class="required-star">*</span></td>
                     <td>
                         <div class="input-wrapper">
-                            <input type="tel" id="lapuNo" placeholder="Enter 10-digit LAPU number" maxlength="10"
-                                data-validation="phone" required>
+                            <input type="tel" id="lapuNo" placeholder="Enter 10-digit LAPU number" maxlength="10" data-validation="phone" required>
                             <div class="input-hint">10 digits only</div>
                             <div class="error-message" id="lapuNo-error">Please enter a valid 10-digit LAPU number</div>
                         </div>
@@ -1038,11 +923,9 @@
                     <td class="left">FSE Contact No<span class="required-star">*</span></td>
                     <td>
                         <div class="input-wrapper">
-                            <input type="tel" id="fseContact" placeholder="Enter 10-digit mobile number" maxlength="10"
-                                data-validation="phone" required inputmode="numeric">
+                            <input type="tel" id="fseContact" placeholder="Enter 10-digit mobile number" maxlength="10" data-validation="phone" required inputmode="numeric">
                             <div class="char-counter" id="fseContact-counter">0/10 digits</div>
-                            <div class="error-message" id="fseContact-error">Please enter a valid 10-digit mobile number
-                            </div>
+                            <div class="error-message" id="fseContact-error">Please enter a valid 10-digit mobile number</div>
                         </div>
                     </td>
                 </tr>
@@ -1050,11 +933,9 @@
                     <td class="left">TSM/SE Contact No<span class="required-star">*</span></td>
                     <td>
                         <div class="input-wrapper">
-                            <input type="tel" id="tsmContact" placeholder="Enter 10-digit mobile number" maxlength="10"
-                                data-validation="phone" required inputmode="numeric">
+                            <input type="tel" id="tsmContact" placeholder="Enter 10-digit mobile number" maxlength="10" data-validation="phone" required inputmode="numeric">
                             <div class="char-counter" id="tsmContact-counter">0/10 digits</div>
-                            <div class="error-message" id="tsmContact-error">Please enter a valid 10-digit mobile number
-                            </div>
+                            <div class="error-message" id="tsmContact-error">Please enter a valid 10-digit mobile number</div>
                         </div>
                     </td>
                 </tr>
@@ -1070,80 +951,31 @@
         <!-- Margin Scheme -->
         <div class="form-section">
             <table class="form-table">
-                <tr>
-                    <th>Scheme</th>
-                    <th>Margin</th>
-                    <th>Gate</th>
-                </tr>
-                <tr>
-                    <td class="left">Base Margins</td>
-                    <td>3.90%</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td class="left">MNP Participation</td>
-                    <td>1.40%</td>
-                    <td>1 MNP / Day</td>
-                </tr>
-                <tr>
-                    <td class="left">WIFI Participation</td>
-                    <td>1.50%</td>
-                    <td>1 WIFI / Day</td>
-                </tr>
-                <tr class="highlight">
-                    <td class="left">Total Margin</td>
-                    <td>6.80%</td>
-                    <td>-</td>
-                </tr>
+                <tr><th>Scheme</th><th>Margin</th><th>Gate</th></tr>
+                <tr><td class="left">Base Margins</td><td>3.90%</td><td>-</td></tr>
+                <tr><td class="left">MNP Participation</td><td>1.40%</td><td>1 MNP / Day</td></tr>
+                <tr><td class="left">WIFI Participation</td><td>1.50%</td><td>1 WIFI / Day</td></tr>
+                <tr class="highlight"><td class="left">Total Margin</td><td>6.80%</td><td>-</td></tr>
             </table>
         </div>
 
         <!-- OTF Section -->
         <div class="form-section">
             <table class="form-table">
-                <tr class="section-title">
-                    <td colspan="3">OTF</td>
-                </tr>
-                <tr>
-                    <th>FRC</th>
-                    <th>DSR</th>
-                    <th>MNP</th>
-                </tr>
-                <tr>
-                    <td>349</td>
-                    <td>135</td>
-                    <td>235</td>
-                </tr>
-                <tr>
-                    <td>449</td>
-                    <td>135</td>
-                    <td>235</td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="left" style="text-align: center; font-weight: 600;">SIMEX – Rs.50 Per SIMEX
-                    </td>
-                </tr>
+                <tr class="section-title"><td colspan="3">OTF</td></tr>
+                <tr><th>FRC</th><th>DSR</th><th>MNP</th></tr>
+                <tr><td>349</td><td>135</td><td>235</td></tr>
+                <tr><td>449</td><td>135</td><td>235</td></tr>
+                <tr><td colspan="3" class="left" style="text-align: center; font-weight: 600;">SIMEX – Rs.50 Per SIMEX</td></tr>
             </table>
         </div>
 
         <!-- Main Calculation Section -->
         <div class="calc-section">
             <table class="form-table">
-                <tr>
-                    <th>Items</th>
-                    <th>Count</th>
-                    <th>Amount</th>
-                </tr>
-                <tr>
-                    <td class="left">DSR OTF - Rs.135</td>
-                    <td><input type="number" id="dsrCount" placeholder="0" min="0"></td>
-                    <td><input type="text" id="dsrAmount" readonly class="total-display"></td>
-                </tr>
-                <tr>
-                    <td class="left">MNP OTF - Rs.235</td>
-                    <td><input type="number" id="mnpCount" placeholder="0" min="0"></td>
-                    <td><input type="text" id="mnpAmount" readonly class="total-display"></td>
-                </tr>
+                <tr><th>Items</th><th>Count</th><th>Amount</th></tr>
+                <tr><td class="left">DSR OTF - Rs.135</td><td><input type="number" id="dsrCount" placeholder="0" min="0"></td><td><input type="text" id="dsrAmount" readonly class="total-display"></td></tr>
+                <tr><td class="left">MNP OTF - Rs.235</td><td><input type="number" id="mnpCount" placeholder="0" min="0"></td><td><input type="text" id="mnpAmount" readonly class="total-display"></td></tr>
                 <tr class="gross-row slab-highlight" id="grossRow">
                     <td class="left">
                         GROSS COMMITMENT
@@ -1166,48 +998,22 @@
         <!-- Margin Calculations -->
         <div class="form-section">
             <table class="form-table">
-                <tr class="section-title">
-                    <td colspan="3">Margin Calculations</td>
-                </tr>
-                <tr>
-                    <td class="left">Lapu Tertiary</td>
-                    <td><input type="number" id="lapuTertiary" placeholder="0" min="0"></td>
-                    <td><input type="text" id="tertiaryAmount" readonly class="total-display"></td>
-                </tr>
-                <tr>
-                    <td class="left">MNP Days</td>
-                    <td><input type="number" id="mnpDays" placeholder="0" min="0"></td>
-                    <td><input type="text" id="mnpDaysAmount" readonly class="total-display"></td>
-                </tr>
-                <tr>
-                    <td class="left">WiFi Days</td>
-                    <td><input type="number" id="wifiDays" placeholder="0" min="0"></td>
-                    <td><input type="text" id="wifiDaysAmount" readonly class="total-display"></td>
-                </tr>
+                <tr class="section-title"><td colspan="3">Margin Calculations</td></tr>
+                <tr><td class="left">Lapu Tertiary</td><td><input type="number" id="lapuTertiary" placeholder="0" min="0"></td><td><input type="text" id="tertiaryAmount" readonly class="total-display"></td></tr>
+                <tr><td class="left">MNP Days</td><td><input type="number" id="mnpDays" placeholder="0" min="0"></td><td><input type="text" id="mnpDaysAmount" readonly class="total-display"></td></tr>
+                <tr><td class="left">WiFi Days</td><td><input type="number" id="wifiDays" placeholder="0" min="0"></td><td><input type="text" id="wifiDaysAmount" readonly class="total-display"></td></tr>
             </table>
         </div>
 
         <!-- Additional Items -->
         <table class="form-table">
-            <tr>
-                <td class="left">WIFI</td>
-                <td><input type="number" id="wifiCount" placeholder="0" min="0"></td>
-                <td><input type="text" id="wifiAmount" readonly class="total-display"></td>
-            </tr>
-            <tr>
-                <td class="left">APB SBA</td>
-                <td><input type="number" id="apbCount" placeholder="0" min="0"></td>
-                <td><input type="text" id="apbAmount" readonly class="total-display"></td>
-            </tr>
-            <tr>
-                <td class="left">SIMEX</td>
-                <td><input type="number" id="simexCount" placeholder="0" min="0"></td>
-                <td><input type="text" id="simexAmount" readonly class="total-display"></td>
-            </tr>
+            <tr><td class="left">WIFI</td><td><input type="number" id="wifiCount" placeholder="0" min="0"></td><td><input type="text" id="wifiAmount" readonly class="total-display"></td></tr>
+            <tr><td class="left">APB SBA</td><td><input type="number" id="apbCount" placeholder="0" min="0"></td><td><input type="text" id="apbAmount" readonly class="total-display"></td></tr>
+            <tr><td class="left">SIMEX</td><td><input type="number" id="simexCount" placeholder="0" min="0"></td><td><input type="text" id="simexAmount" readonly class="total-display"></td></tr>
         </table>
 
         <div class="total-amount" id="totalAmount">Total Amount Rs. 0</div>
-
+        
         <div class="form-section" id="exclude-airtel-gross">
             <!-- Competitor Data -->
             <div class="form-section" id="exclude-competitor">
@@ -1229,8 +1035,7 @@
                         <tr class="section-title">
                             <td><input type="number" id="airtelGross" placeholder="Airtel 4G Gross" min="0"></td>
                             <td>
-                                <input type="text" id="deviceShare" readonly placeholder="Auto-calculated"
-                                    style="color: #60a5fa; font-weight: 600;">
+                                <input type="text" id="deviceShare" readonly placeholder="Auto-calculated" style="color: #60a5fa; font-weight: 600;">
                                 <span class="auto-label">Airtel Gross ÷ (JIO MNP + JIO DSR)</span>
                             </td>
                         </tr>
@@ -1238,7 +1043,7 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- Tier Selection -->
         <div class="tier-section">
             <label class="tier-btn tier-platinum">
@@ -1259,12 +1064,7 @@
         <div class="form-section" id="exclude-targets">
             <div class="table-scroll">
                 <table class="form-table">
-                    <tr>
-                        <th>DSR TARGET</th>
-                        <th>MNP TARGET</th>
-                        <th>TOTAL TARGET</th>
-                        <th>WIFI TARGET</th>
-                    </tr>
+                    <tr><th>DSR TARGET</th><th>MNP TARGET</th><th>TOTAL TARGET</th><th>WIFI TARGET</th></tr>
                     <tr>
                         <td><input type="number" id="dsrTarget" placeholder="0" min="0"></td>
                         <td><input type="number" id="mnpTarget" placeholder="0" min="0"></td>
@@ -1278,30 +1078,12 @@
         <!-- SLAB REFERENCE TABLE - Enhanced with ID for dynamic highlighting -->
         <div class="form-section">
             <table class="form-table slab-table" id="slabTable">
-                <tr>
-                    <th>Gross Target SLAB</th>
-                    <th>INCENTIVE (PER MNP)</th>
-                </tr>
-                <tr id="slab-10">
-                    <td>10</td>
-                    <td>₹75/MNP</td>
-                </tr>
-                <tr id="slab-20">
-                    <td>20</td>
-                    <td>₹125/MNP</td>
-                </tr>
-                <tr id="slab-30">
-                    <td>30</td>
-                    <td>₹150/MNP</td>
-                </tr>
-                <tr id="slab-40">
-                    <td>40</td>
-                    <td>₹175/MNP</td>
-                </tr>
-                <tr id="slab-50">
-                    <td>50+</td>
-                    <td>₹200/MNP</td>
-                </tr>
+                <tr><th>Gross Target SLAB</th><th>INCENTIVE (PER MNP)</th></tr>
+                <tr id="slab-10"><td>10</td><td>₹75/MNP</td></tr>
+                <tr id="slab-20"><td>20</td><td>₹125/MNP</td></tr>
+                <tr id="slab-30"><td>30</td><td>₹150/MNP</td></tr>
+                <tr id="slab-40"><td>40</td><td>₹175/MNP</td></tr>
+                <tr id="slab-50"><td>50+</td><td>₹200/MNP</td></tr>
             </table>
         </div>
 
@@ -1311,7 +1093,10 @@
             <div id="geoInfo" class="geo-info"></div>
             <div id="debugInfo" class="debug-info"></div>
         </div>
-
+        <input type="hidden" id="latitude">
+        <input type="hidden" id="longitude">
+        <input type="hidden" id="locAccuracy">
+        <span id="locationStatus" style="display:none;"></span>
         <!-- Action Buttons -->
         <div class="action-buttons">
             <button id="captureBtn" class="btn photo-btn">Capture Photo</button>
@@ -1325,7 +1110,7 @@
         //  CONFIGURATION
         // =============================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9Km1bp8RhdUEa4LbH_rSTimCONjj1uodB2ZZHM0Qye5xPoYkmoe_7qv_MjLRPZZkRig/exec';
-
+        
         let capturedPhoto = null;
         let geoLocation = null;
         let geoSource = null;
@@ -1333,8 +1118,7 @@
         let photoTimestamp = null;
         let selectedTier = null;
         let originalFile = null;
-        let preCaptureLocation = null;
-
+    
         // =============================================
         // VALIDATION RULES
         // =============================================
@@ -1356,7 +1140,7 @@
                 minLength: 1
             }
         };
-
+    
         // =============================================
         // VALIDATION FUNCTIONS
         // =============================================
@@ -1364,49 +1148,45 @@
             const validationType = input.dataset.validation;
             const value = input.value.trim();
             const errorElement = document.getElementById(`${input.id}-error`);
-
+            
             let isValid = true;
             let errorMessage = '';
-
+    
             if (!value && input.hasAttribute('required')) {
                 isValid = false;
                 errorMessage = 'This field is required';
             } else if (value && validationType && validationRules[validationType]) {
                 const rule = validationRules[validationType];
-
-                // Check pattern
+                
                 if (rule.pattern && !rule.pattern.test(value)) {
                     isValid = false;
                     errorMessage = rule.message;
                 }
-
-                // Check exact length (for phone)
+                
                 if (rule.exactLength && value.length !== rule.exactLength) {
                     isValid = false;
                     errorMessage = `Must be exactly ${rule.exactLength} digits`;
                 }
-
-                // Check min length
+                
                 if (rule.minLength && value.length < rule.minLength) {
                     isValid = false;
                     errorMessage = `Minimum ${rule.minLength} characters required`;
                 }
             }
-
-            // Update UI
+    
             input.classList.remove('valid', 'invalid');
             if (value) {
                 input.classList.add(isValid ? 'valid' : 'invalid');
             }
-
+            
             if (errorElement) {
                 errorElement.textContent = errorMessage;
                 errorElement.classList.toggle('show', !isValid && (value || input.hasAttribute('required')));
             }
-
+    
             return isValid;
         }
-
+    
         function validateAllFields() {
             const requiredFields = [
                 { id: 'outletName', label: 'Outlet Name' },
@@ -1414,16 +1194,16 @@
                 { id: 'fseContact', label: 'FSE Contact No' },
                 { id: 'tsmContact', label: 'TSM/SE Contact No' }
             ];
-
+    
             const errors = [];
             let allValid = true;
-
+    
             requiredFields.forEach(field => {
                 const input = document.getElementById(field.id);
                 if (input) {
                     const value = input.value.trim();
                     const isValid = validateField(input);
-
+                    
                     if (!isValid) {
                         allValid = false;
                         if (!value) {
@@ -1437,58 +1217,54 @@
                     }
                 }
             });
-
-            // Show/hide validation summary
+    
             const summary = document.getElementById('validationSummary');
             const errorList = document.getElementById('validationErrors');
-
+            
             if (errors.length > 0) {
                 errorList.innerHTML = errors.map(e => `<li>${e}</li>`).join('');
                 summary.classList.add('show');
             } else {
                 summary.classList.remove('show');
             }
-
+    
             return allValid;
         }
-
+    
         // =============================================
         // INPUT RESTRICTION FUNCTIONS
         // =============================================
         function restrictToAlphabets(input) {
-            input.addEventListener('input', function (e) {
-                // Remove any non-alphabet characters except spaces
+            input.addEventListener('input', function(e) {
                 const cursorPos = this.selectionStart;
                 const oldValue = this.value;
                 this.value = this.value.replace(/[^A-Za-z\s]/g, '');
-
-                // Adjust cursor position if characters were removed
+                
                 if (oldValue.length !== this.value.length) {
                     const diff = oldValue.length - this.value.length;
                     this.setSelectionRange(cursorPos - diff, cursorPos - diff);
                 }
             });
-
-            input.addEventListener('keypress', function (e) {
+            
+            input.addEventListener('keypress', function(e) {
                 const char = String.fromCharCode(e.keyCode || e.which);
                 if (!/[A-Za-z\s]/.test(char)) {
                     e.preventDefault();
                 }
             });
-
-            // Prevent paste of invalid characters
-            input.addEventListener('paste', function (e) {
+            
+            input.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
                 const cleanedText = pastedText.replace(/[^A-Za-z\s]/g, '');
                 document.execCommand('insertText', false, cleanedText);
             });
         }
-
+    
         function restrictToNumbers(input) {
             const counterId = `${input.id}-counter`;
             const counterElement = document.getElementById(counterId);
-
+            
             function updateCounter() {
                 const length = input.value.length;
                 if (counterElement) {
@@ -1501,87 +1277,77 @@
                     }
                 }
             }
-
-            input.addEventListener('input', function (e) {
-                // Remove any non-numeric characters
+            
+            input.addEventListener('input', function(e) {
                 const cursorPos = this.selectionStart;
                 const oldValue = this.value;
                 this.value = this.value.replace(/[^0-9]/g, '');
-
-                // Limit to 10 digits
+                
                 if (this.value.length > 10) {
                     this.value = this.value.slice(0, 10);
                 }
-
+                
                 updateCounter();
-
-                // Auto-validate when 10 digits reached
+                
                 if (this.value.length === 10) {
                     validateField(this);
                 }
             });
-
-            input.addEventListener('keypress', function (e) {
+            
+            input.addEventListener('keypress', function(e) {
                 const char = String.fromCharCode(e.keyCode || e.which);
                 if (!/[0-9]/.test(char)) {
                     e.preventDefault();
                     return;
                 }
-                // Prevent if already 10 digits
                 if (this.value.length >= 10) {
                     e.preventDefault();
                 }
             });
-
-            // Prevent paste of invalid characters
-            input.addEventListener('paste', function (e) {
+            
+            input.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
                 const cleanedText = pastedText.replace(/[^0-9]/g, '').slice(0, 10 - this.value.length);
-
-                // Insert at cursor position
+                
                 const start = this.selectionStart;
                 const end = this.selectionEnd;
                 const currentValue = this.value;
                 const newValue = currentValue.slice(0, start) + cleanedText + currentValue.slice(end);
                 this.value = newValue.slice(0, 10);
-
+                
                 updateCounter();
             });
-
-            // Initialize counter
+            
             updateCounter();
         }
-
+    
         function restrictToAlphanumeric(input) {
-            input.addEventListener('input', function (e) {
-                // Remove special characters except spaces and hyphens
+            input.addEventListener('input', function(e) {
                 const cursorPos = this.selectionStart;
                 const oldValue = this.value;
                 this.value = this.value.replace(/[^A-Za-z0-9\s\-]/g, '');
             });
-
-            input.addEventListener('keypress', function (e) {
+            
+            input.addEventListener('keypress', function(e) {
                 const char = String.fromCharCode(e.keyCode || e.which);
                 if (!/[A-Za-z0-9\s\-]/.test(char)) {
                     e.preventDefault();
                 }
             });
-
-            // Prevent paste of invalid characters
-            input.addEventListener('paste', function (e) {
+            
+            input.addEventListener('paste', function(e) {
                 e.preventDefault();
                 const pastedText = (e.clipboardData || window.clipboardData).getData('text');
                 const cleanedText = pastedText.replace(/[^A-Za-z0-9\s\-]/g, '');
                 document.execCommand('insertText', false, cleanedText);
             });
         }
-
+    
         // =============================================
         // INITIALIZE VALIDATIONS
         // =============================================
         function initializeValidations() {
-            // Outlet Name - alphabets only
             const outletName = document.getElementById('outletName');
             if (outletName) {
                 restrictToAlphabets(outletName);
@@ -1592,8 +1358,7 @@
                     }
                 });
             }
-
-            // FSE Contact - 10 digits only
+    
             const fseContact = document.getElementById('fseContact');
             if (fseContact) {
                 restrictToNumbers(fseContact);
@@ -1604,8 +1369,7 @@
                     }
                 });
             }
-
-            // TSM Contact - 10 digits only
+    
             const tsmContact = document.getElementById('tsmContact');
             if (tsmContact) {
                 restrictToNumbers(tsmContact);
@@ -1616,8 +1380,7 @@
                     }
                 });
             }
-
-            // LAPU No - 10 digits only
+    
             const lapuNo = document.getElementById('lapuNo');
             if (lapuNo) {
                 restrictToNumbers(lapuNo);
@@ -1629,22 +1392,22 @@
                 });
             }
         }
-
+    
         // =============================================
         // TOAST NOTIFICATION
         // =============================================
         function showToast(message, type = 'info', duration = 5000) {
             const existing = document.querySelector('.toast');
             if (existing) existing.remove();
-
+            
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.innerHTML = message;
             document.body.appendChild(toast);
-
+            
             setTimeout(() => toast.remove(), duration);
         }
-
+    
         // =============================================
         // DEVICE DETECTION
         // =============================================
@@ -1652,53 +1415,152 @@
             const ua = navigator.userAgent;
             const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
             const isAndroid = /Android/.test(ua);
-            const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua);
-            const isChrome = /Chrome/.test(ua);
-
+            const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua);
+            const isChrome = /Chrome/.test(ua) || /CriOS/.test(ua);
+            const isIOSChrome = /CriOS/.test(ua);
+            const isIOSSafari = isIOS && isSafari;
+            
+            let iOSVersion = 0;
+            if (isIOS) {
+                const match = ua.match(/OS (\d+)_/);
+                if (match) {
+                    iOSVersion = parseInt(match[1], 10);
+                }
+            }
+            
+            const isSecure = window.isSecureContext || 
+                             window.location.protocol === 'https:' || 
+                             window.location.hostname === 'localhost' || 
+                             window.location.hostname === '127.0.0.1';
+            
             return {
                 isIOS,
                 isAndroid,
                 isSafari,
                 isChrome,
+                isIOSChrome,
+                isIOSSafari,
+                iOSVersion,
                 isMobile: isIOS || isAndroid,
-                userAgent: ua
+                userAgent: ua,
+                isSecureContext: isSecure,
+                protocol: window.location.protocol,
+                hostname: window.location.hostname,
+                supportsGeolocation: 'geolocation' in navigator
             };
         }
-
+    
         // =============================================
-        // DEVICE LOCATION
+        // PRECISE LOCATION METHOD (Returns Promise)
         // =============================================
-        function getDeviceLocation() {
-            return new Promise((resolve) => {
+        function getPreciseLocationPromise() {
+            return new Promise((resolve, reject) => {
+                const latInput = document.getElementById('latitude');
+                const lonInput = document.getElementById('longitude');
+                const accInput = document.getElementById('locAccuracy');
+    
                 if (!navigator.geolocation) {
-                    console.log('Geolocation not supported');
-                    resolve(null);
+                    reject(new Error('Geolocation not supported'));
                     return;
                 }
-
+    
                 navigator.geolocation.getCurrentPosition(
-                    pos => {
+                    (position) => {
+                        const coords = position.coords;
+                        const latitude = coords.latitude.toFixed(6);
+                        const longitude = coords.longitude.toFixed(6);
+                        const accuracy = coords.accuracy.toFixed(0);
+    
+                        if (latInput) latInput.value = latitude;
+                        if (lonInput) lonInput.value = longitude;
+                        if (accInput) accInput.value = accuracy;
+    
+                        geoLocation = `${latitude}, ${longitude}`;
+                        geoSource = 'Device GPS';
+                        geoAccuracy = `${accuracy}m`;
+    
                         resolve({
-                            latitude: pos.coords.latitude.toFixed(6),
-                            longitude: pos.coords.longitude.toFixed(6),
-                            accuracy: pos.coords.accuracy.toFixed(0),
-                            altitude: pos.coords.altitude ? pos.coords.altitude.toFixed(1) + 'm' : null,
+                            latitude: latitude,
+                            longitude: longitude,
+                            accuracy: accuracy + 'm',
                             method: 'Device GPS'
                         });
                     },
-                    err => {
-                        console.log('Geolocation error:', err.code, err.message);
-                        resolve(null);
+                    (error) => {
+                        console.error("Geolocation error:", error);
+                        reject(error);
                     },
                     {
                         enableHighAccuracy: true,
-                        timeout: 20000,
+                        timeout: 15000,
                         maximumAge: 0
                     }
                 );
             });
         }
-
+    
+        // =============================================
+        // DISPLAY GPS INFO
+        // =============================================
+        function displayGPSInfo(gpsData, source) {
+            const geoInfo = document.getElementById('geoInfo');
+            const photoSection = document.getElementById('photoSection');
+            
+            if (!geoInfo) return;
+            
+            geoInfo.classList.remove('exif-source', 'device-source', 'no-source', 'ip-source');
+            
+            if (source === 'exif' && gpsData) {
+                geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
+                geoSource = 'EXIF';
+                geoAccuracy = null;
+                geoInfo.classList.add('exif-source');
+                
+                geoInfo.innerHTML = `
+                    <strong>📍 GPS from Photo:</strong> 
+                    <span class="geo-badge exif">PHOTO EXIF ✓</span><br><br>
+                    <strong>Coordinates:</strong> ${geoLocation}<br>
+                    ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
+                    ${gpsData.timestamp ? `<strong>Photo Time:</strong> ${gpsData.timestamp}<br>` : ''}
+                    <small>✅ Location extracted directly from photo metadata (${gpsData.method})</small>
+                `;
+                
+            } else if (source === 'device' && gpsData) {
+                geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
+                geoSource = gpsData.method || 'Device GPS';
+                geoAccuracy = gpsData.accuracy || null;
+                
+                geoInfo.classList.add('device-source');
+                
+                geoInfo.innerHTML = `
+                    <strong>🛰️ GPS Location Captured:</strong>
+                    <span class="geo-badge device">GPS LOCKED ✓</span><br><br>
+                    <strong>Coordinates:</strong> ${geoLocation}<br>
+                    <strong>Accuracy:</strong> ±${gpsData.accuracy}<br>
+                    <strong>Time:</strong> ${new Date().toLocaleString('en-IN')}<br>
+                    <small>✅ Precise location captured successfully</small>
+                `;
+                
+            } else {
+                geoLocation = null;
+                geoSource = null;
+                geoAccuracy = null;
+                geoInfo.classList.add('no-source');
+                
+                geoInfo.innerHTML = `
+                    <strong>📍 Location:</strong>
+                    <span class="geo-badge none">NOT CAPTURED</span><br><br>
+                    <small>❌ Location not captured.<br>
+                    <strong>Please ensure location permission is enabled.</strong></small>
+                `;
+            }
+            
+            geoInfo.style.display = 'block';
+            if (photoSection) {
+                photoSection.style.display = 'block';
+            }
+        }
+    
         // =============================================
         // EXIF EXTRACTION FUNCTIONS
         // =============================================
@@ -1706,14 +1568,13 @@
             return new Promise((resolve) => {
                 const device = getDeviceInfo();
                 console.log('Device:', device);
-
+                
                 if (device.isIOS) {
-                    getDeviceLocation().then(location => {
-                        resolve(location);
-                    });
+                    console.log('iOS detected - skipping EXIF extraction');
+                    resolve(null);
                     return;
                 }
-
+                
                 if (typeof EXIF !== 'undefined') {
                     extractWithEXIFJS(file).then(result => {
                         if (result) {
@@ -1735,16 +1596,16 @@
                 }
             });
         }
-
+    
         function extractWithEXIFJS(file) {
             return new Promise((resolve) => {
                 try {
                     const img = document.createElement('img');
                     const objectUrl = URL.createObjectURL(file);
-
-                    img.onload = function () {
+                    
+                    img.onload = function() {
                         try {
-                            EXIF.getData(img, function () {
+                            EXIF.getData(img, function() {
                                 try {
                                     const lat = EXIF.getTag(this, 'GPSLatitude');
                                     const latRef = EXIF.getTag(this, 'GPSLatitudeRef');
@@ -1752,11 +1613,11 @@
                                     const lonRef = EXIF.getTag(this, 'GPSLongitudeRef');
                                     const altitude = EXIF.getTag(this, 'GPSAltitude');
                                     const dateTime = EXIF.getTag(this, 'DateTimeOriginal') || EXIF.getTag(this, 'DateTime');
-
+                                    
                                     if (lat && lon && latRef && lonRef) {
                                         const latitude = convertToDecimal(lat, latRef);
                                         const longitude = convertToDecimal(lon, lonRef);
-
+                                        
                                         URL.revokeObjectURL(objectUrl);
                                         resolve({
                                             latitude: latitude.toFixed(6),
@@ -1779,29 +1640,29 @@
                             resolve(null);
                         }
                     };
-
-                    img.onerror = function () {
+                    
+                    img.onerror = function() {
                         URL.revokeObjectURL(objectUrl);
                         resolve(null);
                     };
-
+                    
                     img.src = objectUrl;
-
+                    
                     setTimeout(() => {
                         URL.revokeObjectURL(objectUrl);
                     }, 10000);
-
+                    
                 } catch (e) {
                     resolve(null);
                 }
             });
         }
-
+    
         function convertToDecimal(dmsArray, ref) {
             if (!dmsArray || dmsArray.length < 3) return 0;
-
+            
             let degrees, minutes, seconds;
-
+            
             if (typeof dmsArray[0] === 'object' && dmsArray[0].numerator !== undefined) {
                 degrees = dmsArray[0].numerator / dmsArray[0].denominator;
                 minutes = dmsArray[1].numerator / dmsArray[1].denominator;
@@ -1811,41 +1672,41 @@
                 minutes = parseFloat(dmsArray[1]) || 0;
                 seconds = parseFloat(dmsArray[2]) || 0;
             }
-
+            
             let decimal = degrees + (minutes / 60) + (seconds / 3600);
-
+            
             if (ref === 'S' || ref === 'W') {
                 decimal = -decimal;
             }
-
+            
             return decimal;
         }
-
+    
         function extractManually(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
-
-                reader.onload = function (e) {
+                
+                reader.onload = function(e) {
                     try {
                         const buffer = e.target.result;
                         const view = new DataView(buffer);
-
+                        
                         if (view.getUint16(0, false) !== 0xFFD8) {
                             resolve(null);
                             return;
                         }
-
+                        
                         let offset = 2;
                         const length = Math.min(view.byteLength, 65536);
-
+                        
                         while (offset < length) {
                             if (view.getUint8(offset) !== 0xFF) {
                                 offset++;
                                 continue;
                             }
-
+                            
                             const marker = view.getUint8(offset + 1);
-
+                            
                             if (marker === 0xE1) {
                                 const exifData = parseEXIFSegment(view, offset + 4);
                                 if (exifData) {
@@ -1856,70 +1717,70 @@
                                     return;
                                 }
                             }
-
+                            
                             if (marker === 0xD9 || marker === 0xDA) break;
-
+                            
                             const segmentLength = view.getUint16(offset + 2, false);
                             offset += 2 + segmentLength;
                         }
-
+                        
                         resolve(null);
                     } catch (e) {
                         resolve(null);
                     }
                 };
-
+                
                 reader.onerror = () => resolve(null);
                 reader.readAsArrayBuffer(file);
             });
         }
-
+    
         function parseEXIFSegment(view, start) {
             try {
                 if (view.getUint32(start, false) !== 0x45786966) return null;
-
+                
                 const tiffOffset = start + 6;
                 const littleEndian = view.getUint16(tiffOffset, false) === 0x4949;
-
+                
                 const ifd0Offset = view.getUint32(tiffOffset + 4, littleEndian) + tiffOffset;
-
+                
                 const gpsIFDPointer = findTagValue(view, ifd0Offset, 0x8825, littleEndian, tiffOffset);
                 if (!gpsIFDPointer) return null;
-
+                
                 const gpsOffset = gpsIFDPointer + tiffOffset;
                 return parseGPSData(view, gpsOffset, littleEndian, tiffOffset);
             } catch (e) {
                 return null;
             }
         }
-
+    
         function findTagValue(view, ifdOffset, tagId, littleEndian, tiffOffset) {
             try {
                 const entries = view.getUint16(ifdOffset, littleEndian);
-
+                
                 for (let i = 0; i < entries; i++) {
                     const entryOffset = ifdOffset + 2 + (i * 12);
                     const tag = view.getUint16(entryOffset, littleEndian);
-
+                    
                     if (tag === tagId) {
                         return view.getUint32(entryOffset + 8, littleEndian);
                     }
                 }
-            } catch (e) { }
+            } catch (e) {}
             return null;
         }
-
+    
         function parseGPSData(view, gpsOffset, littleEndian, tiffOffset) {
             try {
                 const entries = view.getUint16(gpsOffset, littleEndian);
-
+                
                 let lat = null, latRef = null, lon = null, lonRef = null, alt = null;
-
+                
                 for (let i = 0; i < entries; i++) {
                     const entryOffset = gpsOffset + 2 + (i * 12);
                     const tag = view.getUint16(entryOffset, littleEndian);
                     const valueOffset = view.getUint32(entryOffset + 8, littleEndian);
-
+                    
                     switch (tag) {
                         case 0x0001:
                             latRef = String.fromCharCode(view.getUint8(entryOffset + 8));
@@ -1940,21 +1801,21 @@
                             break;
                     }
                 }
-
+                
                 if (lat && lon && latRef && lonRef) {
                     const latitude = dmsToDecimal(lat, latRef);
                     const longitude = dmsToDecimal(lon, lonRef);
-
+                    
                     return {
                         latitude: latitude.toFixed(6),
                         longitude: longitude.toFixed(6),
                         altitude: alt ? alt + 'm' : null
                     };
                 }
-            } catch (e) { }
+            } catch (e) {}
             return null;
         }
-
+    
         function readRational3(view, offset, littleEndian) {
             const values = [];
             for (let i = 0; i < 3; i++) {
@@ -1964,75 +1825,13 @@
             }
             return values;
         }
-
+    
         function dmsToDecimal(dms, ref) {
             let dd = dms[0] + dms[1] / 60 + dms[2] / 3600;
             if (ref === 'S' || ref === 'W') dd = -dd;
             return dd;
         }
-
-        // =============================================
-        // DISPLAY GPS INFO
-        // =============================================
-        function displayGPSInfo(gpsData, source) {
-            const geoInfo = document.getElementById('geoInfo');
-            const debugInfo = document.getElementById('debugInfo');
-            const photoSection = document.getElementById('photoSection');
-
-            geoInfo.classList.remove('exif-source', 'device-source', 'no-source');
-
-            if (source === 'exif' && gpsData) {
-                geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
-                geoSource = 'EXIF';
-                geoAccuracy = null;
-                geoInfo.classList.add('exif-source');
-
-                geoInfo.innerHTML = `
-                    <strong>📍 GPS from Photo:</strong> 
-                    <span class="geo-badge exif">PHOTO EXIF ✓</span><br><br>
-                    <strong>Coordinates:</strong> ${geoLocation}<br>
-                    ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
-                    ${gpsData.timestamp ? `<strong>Photo Time:</strong> ${gpsData.timestamp}<br>` : ''}
-                    <small>✅ Location extracted directly from photo metadata (${gpsData.method})</small>
-                `;
-
-            } else if (source === 'device' && gpsData) {
-                geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
-                geoSource = 'Device';
-                geoAccuracy = gpsData.accuracy || null;
-                geoInfo.classList.add('device-source');
-
-                geoInfo.innerHTML = `
-                    <strong>📍 Device Location:</strong>
-                    <span class="geo-badge device">DEVICE GPS ✓</span><br><br>
-                    <strong>Coordinates:</strong> ${geoLocation}<br>
-                    ${gpsData.accuracy ? `<strong>Accuracy:</strong> ±${gpsData.accuracy}m<br>` : ''}
-                    ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
-                    <strong>Time:</strong> ${new Date().toLocaleString('en-IN')}<br>
-                    <small>✅ Location captured at time of photo</small>
-                `;
-
-            } else {
-                geoLocation = null;
-                geoSource = null;
-                geoAccuracy = null;
-                geoInfo.classList.add('no-source');
-
-                geoInfo.innerHTML = `
-                    <strong>📍 Location:</strong>
-                    <span class="geo-badge none">UNAVAILABLE</span><br><br>
-                    <small>❌ Could not get location.<br>
-                    <strong>To fix this:</strong><br>
-                    • Enable Location Services in Settings<br>
-                    • Allow location permission when prompted<br>
-                    • Reload the page and try again</small>
-                `;
-            }
-
-            geoInfo.style.display = 'block';
-            photoSection.style.display = 'block';
-        }
-
+    
         // =============================================
         // DEVICE SHARE CALCULATION
         // =============================================
@@ -2040,10 +1839,10 @@
             const airtelGross = parseFloat(document.getElementById('airtelGross').value) || 0;
             const jioMnp = parseFloat(document.getElementById('jioMnp').value) || 0;
             const jioDsr = parseFloat(document.getElementById('jioDsr').value) || 0;
-
+            
             const jioTotal = jioMnp + jioDsr;
             const deviceShareInput = document.getElementById('deviceShare');
-
+            
             if (jioTotal === 0) {
                 if (airtelGross > 0) {
                     deviceShareInput.value = '∞ (No JIO)';
@@ -2054,7 +1853,7 @@
                 }
             } else {
                 const deviceShare = airtelGross / jioTotal;
-
+                
                 if (deviceShare >= 1) {
                     deviceShareInput.value = deviceShare.toFixed(2) + '';
                     deviceShareInput.style.color = '#4CAF50';
@@ -2066,7 +1865,7 @@
                     deviceShareInput.style.color = '#f44336';
                 }
             }
-
+            
             console.log('Device Share Calculation:', {
                 airtelGross,
                 jioMnp,
@@ -2075,11 +1874,11 @@
                 deviceShare: jioTotal > 0 ? (airtelGross / jioTotal).toFixed(2) : 'N/A'
             });
         }
-
+    
         // =============================================
         // ENHANCED SLAB RATE FUNCTIONS
         // =============================================
-
+        
         const SLAB_THRESHOLDS = [
             { min: 50, rate: 200, label: '50+', id: 'slab-50' },
             { min: 40, rate: 175, label: '40', id: 'slab-40' },
@@ -2087,7 +1886,7 @@
             { min: 20, rate: 125, label: '20', id: 'slab-20' },
             { min: 10, rate: 75, label: '10', id: 'slab-10' }
         ];
-
+    
         function getSlabRate(grossCount) {
             if (grossCount >= 50) return 200;
             if (grossCount >= 40) return 175;
@@ -2096,7 +1895,7 @@
             if (grossCount >= 10) return 75;
             return 0;
         }
-
+    
         function getSlabInfo(grossCount) {
             for (let i = 0; i < SLAB_THRESHOLDS.length; i++) {
                 if (grossCount >= SLAB_THRESHOLDS[i].min) {
@@ -2112,7 +1911,7 @@
                     };
                 }
             }
-
+            
             return {
                 rate: 0,
                 label: 'Below 10',
@@ -2123,20 +1922,20 @@
                 isMaxSlab: false
             };
         }
-
+    
         function highlightActiveSlab(slabInfo) {
             const slabTable = document.getElementById('slabTable');
             if (!slabTable) return;
-
+            
             const rows = slabTable.querySelectorAll('tr');
             rows.forEach(row => {
                 row.classList.remove('active-slab', 'inactive-slab', 'next-slab');
             });
-
+            
             SLAB_THRESHOLDS.forEach((slab, index) => {
                 const row = document.getElementById(slab.id);
                 if (!row) return;
-
+                
                 if (slab.id === slabInfo.id) {
                     row.classList.add('active-slab');
                 } else if (slabInfo.nextSlab && slab.id === slabInfo.nextSlab.id) {
@@ -2146,7 +1945,7 @@
                 }
             });
         }
-
+    
         function updateGrossRowStyling(slabInfo, mnpCount) {
             const grossRow = document.getElementById('grossRow');
             const slabBadge = document.getElementById('slabBadge');
@@ -2154,7 +1953,7 @@
             const slabProgress = document.getElementById('slabProgress');
             const progressText = document.getElementById('progressText');
             const progressBar = document.getElementById('progressBar');
-
+            
             if (slabInfo.rate > 0) {
                 grossRow.classList.add('has-slab');
                 grossRow.classList.remove('no-slab');
@@ -2168,7 +1967,7 @@
                 slabBadge.classList.add('inactive');
                 slabBadge.textContent = 'No Slab';
             }
-
+            
             if (slabInfo.rate > 0) {
                 slabLabel.innerHTML = `
                     <strong>Slab ${slabInfo.label}</strong> → ₹${slabInfo.rate} × ${mnpCount} MNP = 
@@ -2177,11 +1976,11 @@
             } else {
                 slabLabel.textContent = 'Need minimum 10 Gross to unlock slab incentive';
             }
-
+            
             if (!slabInfo.isMaxSlab && slabInfo.nextSlab) {
                 slabProgress.style.display = 'block';
                 progressText.innerHTML = `<span style="color: #ffc107;">🎯 ${slabInfo.neededForNext} more for ₹${slabInfo.nextSlab.rate}/MNP slab</span>`;
-
+                
                 let progressPercent = 0;
                 if (slabInfo.rate === 0) {
                     progressPercent = (10 - slabInfo.neededForNext) / 10 * 100;
@@ -2201,7 +2000,7 @@
                 slabProgress.style.display = 'none';
             }
         }
-
+    
         // =============================================
         // MAIN CALCULATION FUNCTION
         // =============================================
@@ -2214,42 +2013,42 @@
             const lapuTertiary = parseInt(document.getElementById('lapuTertiary').value) || 0;
             const mnpDays = parseInt(document.getElementById('mnpDays').value) || 0;
             const wifiDays = parseInt(document.getElementById('wifiDays').value) || 0;
-
+    
             document.getElementById('dsrAmount').value = (dsrCount * 135).toLocaleString('en-IN');
             document.getElementById('mnpAmount').value = (mnpCount * 235).toLocaleString('en-IN');
-
+    
             const grossCount = dsrCount + mnpCount;
             const slabInfo = getSlabInfo(grossCount);
             const slabRate = slabInfo.rate;
             const grossCommitmentAmount = mnpCount * slabRate;
-
+            
             document.getElementById('grossCount').value = grossCount;
             document.getElementById('grossAmount').value = grossCommitmentAmount.toLocaleString('en-IN');
-
+            
             highlightActiveSlab(slabInfo);
             updateGrossRowStyling(slabInfo, mnpCount);
-
+    
             const tertiaryAmount = lapuTertiary * 0.039;
             const mnpDaysAmount = (lapuTertiary / 30 * 0.014) * mnpDays;
             const wifiDaysAmount = (lapuTertiary / 30 * 0.015) * wifiDays;
             document.getElementById('tertiaryAmount').value = tertiaryAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
             document.getElementById('mnpDaysAmount').value = mnpDaysAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
             document.getElementById('wifiDaysAmount').value = wifiDaysAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
-
+    
             document.getElementById('wifiAmount').value = (wifiCount * 150).toLocaleString('en-IN');
             document.getElementById('apbAmount').value = (apbCount * 45).toLocaleString('en-IN');
             document.getElementById('simexAmount').value = (simexCount * 50).toLocaleString('en-IN');
-
-            const total = grossCommitmentAmount +
-                (wifiCount * 150) +
-                (apbCount * 45) +
-                (simexCount * 50) +
-                tertiaryAmount +
-                mnpDaysAmount +
-                wifiDaysAmount;
-
+    
+            const total = grossCommitmentAmount + 
+                         (wifiCount * 150) + 
+                         (apbCount * 45) + 
+                         (simexCount * 50) + 
+                         tertiaryAmount + 
+                         mnpDaysAmount + 
+                         wifiDaysAmount;
+            
             document.getElementById('totalAmount').textContent = `Total Amount Rs. ${Math.round(total).toLocaleString('en-IN')}`;
-
+            
             console.log('Calculation Summary:', {
                 grossCount,
                 slabInfo,
@@ -2259,174 +2058,146 @@
                 total
             });
         }
-
+    
         // =============================================
-        // CAMERA CAPTURE
+        // CAMERA CAPTURE HANDLER (iOS COMPATIBLE)
         // =============================================
-
-        document.getElementById('captureBtn').addEventListener('click', () => {
-
-            const ua = navigator.userAgent;
-            const isIOS = /iPad|iPhone|iPod/i.test(ua);
-            const isAndroid = /Android/i.test(ua);
-
-            // 1) Request location FIRST on iOS (inside user gesture)
-            if (isIOS && navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    pos => {
-                        geoLocation = {
-                            latitude: pos.coords.latitude.toFixed(6),
-                            longitude: pos.coords.longitude.toFixed(6),
-                            accuracy: pos.coords.accuracy.toFixed(0),
-                            method: 'Device GPS'
-                        };
-                    },
-                    () => { },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0
-                    }
-                );
-            }
-
-            // 2) Open camera / picker immediately (do not await)
+        async function handleCameraCapture() {
+            const device = getDeviceInfo();
+            const loading = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            const loadingSubtext = document.getElementById('loadingSubtext');
+            
+            console.log('Starting camera capture, device:', device);
+            
+            // ========== iOS FIX: Open camera FIRST (synchronously) ==========
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
-
-            if (isAndroid && !isIOS) {
-                input.capture = 'environment';
+            
+            if (device.isIOS) {
+                input.setAttribute('capture', 'camera');
+            } else if (device.isMobile) {
+                input.setAttribute('capture', 'environment');
             }
-
-            input.onchange = function () {
-                const file = this.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = e => {
-                    capturedPhoto = e.target.result;
-                    document.getElementById('photoPreview').src = capturedPhoto;
-                    document.getElementById('photoSection').style.display = 'block';
-
-                    extractGPSFromImage(file).then(exifGPS => {
-                        if (exifGPS) {
-                            displayGPSInfo(exifGPS, 'EXIF');
-                        } else if (geoLocation) {
-                            displayGPSInfo(geoLocation, 'DEVICE');
-                        } else {
-                            displayGPSInfo(null, null);
-                        }
-                    });
-                };
-                reader.readAsDataURL(file);
-            };
-
-            input.click();
-        });
-        const loading = document.getElementById('loadingOverlay');
-        const loadingText = document.getElementById('loadingText');
-        const loadingSubtext = document.getElementById('loadingSubtext');
-
-        loading.style.display = 'flex';
-        loadingText.textContent = '📍 Getting your location...';
-        loadingSubtext.textContent = 'Please allow location access when prompted';
-
-        let locationBeforeCapture = await getDeviceLocation();
-        console.log('Location before capture:', locationBeforeCapture);
-
-        loading.style.display = 'none';
-
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-
-        if (device.isMobile) {
-            input.setAttribute('capture', 'environment');
-        }
-
-        input.style.display = 'none';
-        document.body.appendChild(input);
-
-        input.onchange = async function () {
-            if (!this.files || !this.files[0]) {
-                document.body.removeChild(input);
-                return;
-            }
-
-            const file = this.files[0];
-            originalFile = file;
-
-            const fileTime = file.lastModified;
-            const currentTime = Date.now();
-            const timeDiff = currentTime - fileTime;
-
-            if (timeDiff > 120000) {
-                const usePhoto = confirm(
-                    '⚠️ This photo appears to be from your gallery.\n\n' +
-                    'For accurate location tracking, please capture a NEW photo.\n\n' +
-                    'Click OK to use this photo anyway, or Cancel to take a new one.'
-                );
-                if (!usePhoto) {
-                    document.body.removeChild(input);
+            
+            input.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+            document.body.appendChild(input);
+            
+            // Handle file selection
+            input.onchange = async function() {
+                if (!this.files || !this.files[0]) {
+                    console.log('No file selected');
+                    if (input.parentNode) document.body.removeChild(input);
                     return;
                 }
-            }
-
-            loading.style.display = 'flex';
-            loadingText.textContent = '📸 Processing photo...';
-            loadingSubtext.textContent = 'Extracting location data';
-
-            try {
-                let locationAfterCapture = await getDeviceLocation();
-                let bestLocation = locationAfterCapture || locationBeforeCapture;
-
+                
+                const file = this.files[0];
+                originalFile = file;
+                console.log('File selected:', file.name);
+                
+                // ========== NOW get location (after camera) ==========
+                loading.style.display = 'flex';
+                loadingText.textContent = '📍 Getting your location...';
+                loadingSubtext.textContent = 'Please wait...';
+                
+                let locationData = null;
+                try {
+                    locationData = await getPreciseLocationPromise();
+                    console.log('Location captured:', locationData);
+                } catch (locError) {
+                    console.error('Location error:', locError);
+                    // Continue without location
+                }
+                
+                // ========== Process photo ==========
+                loadingText.textContent = '📸 Processing photo...';
+                loadingSubtext.textContent = 'Almost done...';
+                
+                // Check if photo is from gallery
+                const fileTime = file.lastModified;
+                const currentTime = Date.now();
+                const timeDiff = currentTime - fileTime;
+                
+                if (timeDiff > 120000) {
+                    loading.style.display = 'none';
+                    const usePhoto = confirm(
+                        '⚠️ This photo appears to be from your gallery.\n\n' +
+                        'For accurate tracking, please capture a NEW photo.\n\n' +
+                        'Click OK to use this photo anyway, or Cancel to take a new one.'
+                    );
+                    if (!usePhoto) {
+                        if (input.parentNode) document.body.removeChild(input);
+                        return;
+                    }
+                    loading.style.display = 'flex';
+                }
+                
+                // Read the file
                 const reader = new FileReader();
-                reader.onload = async function (e) {
+                
+                reader.onload = async function(e) {
                     capturedPhoto = e.target.result;
                     photoTimestamp = new Date().toLocaleString('en-IN');
-
+                    
                     const photoPreview = document.getElementById('photoPreview');
                     photoPreview.src = capturedPhoto;
                     photoPreview.style.display = 'block';
                     document.getElementById('photoSection').style.display = 'block';
-
-                    const exifGPS = await extractGPSFromImage(file);
-
-                    if (exifGPS) {
+                    
+                    // Try to extract EXIF GPS (skip on iOS)
+                    let exifGPS = null;
+                    if (!device.isIOS) {
+                        exifGPS = await extractGPSFromImage(file);
+                    }
+                    
+                    // Priority: Device GPS > EXIF GPS
+                    if (locationData) {
+                        displayGPSInfo(locationData, 'device');
+                    } else if (exifGPS) {
                         displayGPSInfo(exifGPS, 'exif');
-                    } else if (bestLocation) {
-                        displayGPSInfo(bestLocation, 'device');
                     } else {
                         displayGPSInfo(null, null);
                     }
-
+                    
                     loading.style.display = 'none';
+                    
+                    const successMsg = locationData 
+                        ? '📸 Photo + GPS captured!' 
+                        : '📸 Photo captured (no GPS)';
+                    showToast(successMsg, 'success', 3000);
+                    
+                    // Cleanup
+                    if (input.parentNode) document.body.removeChild(input);
                 };
-
-                reader.onerror = function () {
+                
+                reader.onerror = function() {
                     loading.style.display = 'none';
-                    alert('Error reading image file');
+                    showToast('❌ Error reading image file', 'error');
+                    if (input.parentNode) document.body.removeChild(input);
                 };
-
+                
                 reader.readAsDataURL(file);
-
-            } catch (error) {
-                console.error('Error:', error);
-                loading.style.display = 'none';
-            }
-
-            document.body.removeChild(input);
-        };
-
-        setTimeout(() => input.click(), 150);
+            };
+            
+            // ========== MUST be synchronous - no await before this! ==========
+            input.click();
+        }
     
-
+        // =============================================
+        // CAMERA CAPTURE BUTTON EVENT
+        // =============================================
+        document.getElementById('captureBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleCameraCapture();
+        });
+    
         // =============================================
         // TIER SELECTION
         // =============================================
         document.querySelectorAll('input[name="tier"]').forEach(radio => {
-            radio.addEventListener('change', function () {
+            radio.addEventListener('change', function() {
                 selectedTier = this.value;
                 document.body.classList.remove('tier-platinum', 'tier-gold', 'tier-executive');
                 document.querySelectorAll('.tier-btn').forEach(btn => btn.classList.remove('active'));
@@ -2434,7 +2205,7 @@
                 this.closest('.tier-btn').classList.add('active');
             });
         });
-
+    
         // =============================================
         // INPUT LISTENERS - Main Calculation
         // =============================================
@@ -2442,7 +2213,7 @@
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', calculateAll);
         });
-
+    
         // =============================================
         // INPUT LISTENERS - Device Share Calculation
         // =============================================
@@ -2450,7 +2221,7 @@
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', calculateDeviceShare);
         });
-
+    
         // =============================================
         // COLLECT FORM DATA
         // =============================================
@@ -2464,7 +2235,7 @@
                     longitude = coords[1].trim();
                 }
             }
-
+            
             return {
                 outletName: document.getElementById('outletName').value || '',
                 lapuNo: document.getElementById('lapuNo').value || '',
@@ -2511,31 +2282,34 @@
                 submissionTime: new Date().toISOString()
             };
         }
-
+    
         // =============================================
         // SUBMIT TO GOOGLE SHEETS
         // =============================================
-        document.getElementById('submitBtn').addEventListener('click', async function () {
-            // Validate all fields first
+        document.getElementById('submitBtn').addEventListener('click', async function() {
             const isValid = validateAllFields();
-
+            
             if (!isValid) {
                 showToast('⚠️ Please fix the validation errors before submitting', 'warning', 4000);
-                // Scroll to validation summary
                 document.getElementById('validationSummary').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
-
+            
             if (!capturedPhoto) {
                 showToast('⚠️ Please capture a photo before submitting!', 'warning', 4000);
                 return;
             }
-
+            
             if (!selectedTier) {
                 showToast('⚠️ Please select a tier (Platinum/Gold/Executive) before submitting!', 'warning', 4000);
                 return;
             }
-
+            
+            if (!geoLocation) {
+                showToast('⚠️ Location not captured. Please try capturing photo again!', 'warning', 4000);
+                return;
+            }
+            
             if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
                 const data = collectFormData();
                 alert(
@@ -2552,22 +2326,22 @@
                 );
                 return;
             }
-
+            
             const submitBtn = document.getElementById('submitBtn');
             const loading = document.getElementById('loadingOverlay');
             const loadingText = document.getElementById('loadingText');
             const loadingSubtext = document.getElementById('loadingSubtext');
-
+            
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Submitting...';
             loading.style.display = 'flex';
             loadingText.textContent = '📤 Submitting Data to Server...';
             loadingSubtext.textContent = 'Please wait...';
-
+            
             try {
                 const formData = collectFormData();
                 console.log('Submitting data:', formData);
-
+                
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -2576,27 +2350,27 @@
                     },
                     body: JSON.stringify(formData)
                 });
-
+                
                 loading.style.display = 'none';
                 submitBtn.disabled = false;
                 submitBtn.textContent = '✅ Submitted!';
-
+                
                 showToast(`✅ Enrollment submitted successfully!<br>🏪 ${formData.outletName}<br>📍 ${formData.geoLocation || 'Location N/A'}`, 'success', 6000);
-
+                
                 setTimeout(() => {
                     submitBtn.textContent = 'Submit';
                 }, 3000);
-
+                
             } catch (error) {
                 console.error('Submit error:', error);
                 loading.style.display = 'none';
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit';
-
+                
                 showToast('❌ Error submitting. Please try again.', 'error');
             }
         });
-
+    
         // =============================================
         // PDF EXPORT
         // =============================================
@@ -2604,10 +2378,10 @@
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
             const container = document.querySelector('.container');
-
+    
             const excludeIds = ['exclude-competitor', 'exclude-airtel', 'exclude-targets'];
             const hidden = [];
-
+    
             excludeIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -2615,57 +2389,109 @@
                     el.style.display = 'none';
                 }
             });
-
+    
             const buttons = document.querySelector('.action-buttons');
             if (buttons) buttons.style.display = 'none';
-
+    
             const canvas = await html2canvas(container, {
                 scale: 2,
                 useCORS: true,
                 backgroundColor: '#1a1a2e'
             });
-
+    
             const imgData = canvas.toDataURL('image/jpeg', 0.9);
-
+    
             const pageWidth = 210;
             const pageHeight = 297;
             const margin = 10;
-
+    
             const usableWidth = pageWidth - margin * 2;
             const usableHeight = pageHeight - margin * 2;
-
+    
             const imgWidth = usableWidth;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
+    
             let heightLeft = imgHeight;
             let position = margin;
-
+    
             pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
             heightLeft -= usableHeight;
-
+    
             while (heightLeft > 0) {
                 position = heightLeft - imgHeight + margin;
                 pdf.addPage();
                 pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
                 heightLeft -= usableHeight;
             }
-
+    
             hidden.forEach(h => h.el.style.display = h.display);
             if (buttons) buttons.style.display = '';
-
+    
             const outlet = document.getElementById('outletName').value || 'Retailer';
             const date = new Date().toISOString().slice(0, 10);
             pdf.save(`Enrollment_${outlet.replace(/\s+/g, '_')}_${date}.pdf`);
         });
-
+    
         // =============================================
         // INITIALIZE
         // =============================================
-        initializeValidations();
-        calculateAll();
-        calculateDeviceShare();
-        console.log('Device Info:', getDeviceInfo());
+        window.addEventListener('DOMContentLoaded', async () => {
+            initializeValidations();
+            calculateAll();
+            calculateDeviceShare();
+            
+            const device = getDeviceInfo();
+            console.log('Device Info:', device);
+            
+            // Show initial location status
+            displayGPSInfo(null, null);
+        });
+    
+        // =============================================
+        // SWIFT APP INTEGRATION (iOS App Support)
+        // =============================================
+        ;(function() {
+            window.injectedLocation = null;
+    
+            window.swiftGPSReady = function(lat, lon, acc) {
+                geoLocation = `${parseFloat(lat).toFixed(6)}, ${parseFloat(lon).toFixed(6)}`;
+                geoSource = 'Swift Real GPS';
+                geoAccuracy = `${Math.round(acc)}m`;
+    
+                const geoInfo = document.getElementById('geoInfo');
+                geoInfo.innerHTML = `
+                    <strong>Real GPS Locked (via App)</strong><br>
+                    <span class="geo-badge device" style="background:#00C853;color:white;padding:4px 8px;border-radius:4px;font-size:11px;">SWIFT GPS ✓</span><br><br>
+                    <strong>Coordinates:</strong> ${geoLocation}<br>
+                    <strong>Accuracy:</strong> ±${geoAccuracy}<br>
+                    <small>100% accurate • Works on HTTP • Used by Airtel/Jio FSEs</small>
+                `;
+                geoInfo.classList.remove('no-source','ip-source');
+                geoInfo.classList.add('device-source');
+                geoInfo.style.display = 'block';
+                document.getElementById('photoSection').style.display = 'block';
+                showToast('Real GPS captured successfully!', 'success', 4000);
+            };
+    
+            const check = setInterval(() => {
+                if (window.injectedLocation) {
+                    clearInterval(check);
+                    window.swiftGPSReady(
+                        window.injectedLocation.latitude,
+                        window.injectedLocation.longitude,
+                        window.injectedLocation.accuracy
+                    );
+                }
+            }, 700);
+    
+            if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !navigator.userAgent.includes('SwiftApp')) {
+                setTimeout(() => {
+                    if (!window.injectedLocation && !geoLocation) {
+                        showToast('📍 Tap "Capture Photo" to get GPS + Photo', 'info', 5000);
+                    }
+                }, 4000);
+            }
+        })();
     </script>
 </body>
-
 </html>
