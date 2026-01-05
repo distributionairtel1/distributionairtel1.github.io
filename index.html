@@ -751,6 +751,12 @@
                 transform: none;
             }
         }
+        button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -975,14 +981,84 @@
         <!-- Action Buttons -->
         <div class="action-buttons">
             <button id="captureBtn" class="btn photo-btn">Capture Photo</button>
-            <button id="submitBtn" class="btn">Submit</button>
-            <button id="pdfBtn" class="btn pdf-btn">Download</button>
+            <button id="submitBtn" class="btn photo-btn">Submit Data</button>
+            <button id="pdfBtn" disabled class="btn photo-btn">Download & Share PDF</button>
+            
         </div>
     </div>
 <!-- </body>
 </html> -->
 
 <script>
+document.getElementById('submitBtn').addEventListener('click', function () {
+
+// 🔹 1. Tier validation
+if (!selectedTier) {
+    alert('Please select a Tier before submitting.');
+    return;
+}
+
+// 🔹 2. Validate ALL text fields
+const textFields = document.querySelectorAll(
+    'input[type="text"]:not([disabled])'
+);
+
+for (const field of textFields) {
+    if (!field.value.trim()) {
+        alert('Please fill all text fields before submitting.');
+        field.focus();
+        return;
+    }
+}
+
+// 🔹 3. Validate ALL number fields
+const numberFields = document.querySelectorAll(
+    'input[type="number"]:not([disabled])'
+);
+
+for (const field of numberFields) {
+    if (field.value === '' || isNaN(field.value)) {
+        alert('Please fill all numeric fields before submitting.');
+        field.focus();
+        return;
+    }
+}
+
+// 🔹 4. PHOTO validation
+if (!capturedPhoto) {
+    alert('Please capture a photo before submitting.');
+    return;
+}
+
+// 🔹 5. LOCATION validation
+if (!geoLocation) {
+    alert('Please allow location access and capture GPS before submitting.');
+    return;
+}
+
+// ✅ ALL VALIDATIONS PASSED
+isFormSubmitted = true;
+
+const pdfBtn = document.getElementById('pdfBtn');
+pdfBtn.disabled = false;
+
+alert('Data, photo, and location verified. You can now download & share the PDF.');
+});
+document.getElementById('pdfBtn').addEventListener('click', async function () {
+
+if (!isFormSubmitted) {
+    alert('Please submit all required data before downloading the PDF.');
+    return;
+}
+
+// 🔽 YOUR EXISTING PDF GENERATION CODE
+});
+function checkReadyForSubmit() {
+    document.getElementById('submitBtn').disabled = !(
+        capturedPhoto && geoLocation
+    );
+}
+
     // =============================================
     //  CONFIGURATION
     // =============================================
