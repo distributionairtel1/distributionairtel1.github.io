@@ -973,9 +973,9 @@
         
         <!-- Action Buttons -->
         <div class="action-buttons">
-            <button id="captureBtn" class="btn photo-btn">📷 Photo</button>
-            <button id="submitBtn" class="btn">✓ Submit</button>
-            <button id="pdfBtn" class="btn pdf-btn">📄 PDF</button>
+            <button id="captureBtn" class="btn photo-btn">Capture Photo</button>
+            <button id="submitBtn" class="btn">Submit</button>
+            <button id="pdfBtn" class="btn pdf-btn">Download</button>
         </div>
     </div>
 <!-- </body>
@@ -1398,7 +1398,7 @@
                 <strong>Coordinates:</strong> ${geoLocation}<br>
                 ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
                 ${gpsData.timestamp ? `<strong>Photo Time:</strong> ${gpsData.timestamp}<br>` : ''}
-                <small>✅ Location extracted directly from photo metadata (${gpsData.method})</small>
+                <small>Location extracted directly from photo metadata (${gpsData.method})</small>
             `;
             
         } else if (source === 'device' && gpsData) {
@@ -1414,7 +1414,7 @@
                 <strong>Coordinates:</strong> ${geoLocation}<br>
                 <strong>Accuracy:</strong> ±${gpsData.accuracy}<br>
                 <strong>Time:</strong> ${new Date().toLocaleString('en-IN')}<br>
-                <small>✅ Precise location captured successfully</small>
+                <small>Precise location captured successfully</small>
             `;
             
         } else {
@@ -1426,7 +1426,7 @@
             geoInfo.innerHTML = `
                 <strong>📍 Location:</strong>
                 <span class="geo-badge none">NOT CAPTURED</span><br><br>
-                <small>❌ Location not captured.<br>
+                <small> Location not captured.<br>
                 <strong>Please ensure location permission is enabled.</strong></small>
             `;
         }
