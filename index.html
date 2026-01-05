@@ -2058,15 +2058,51 @@
                 total
             });
         }
-    
+    // =============================================
+// iOS CHROME GPS FIX (NEW CODE)
+// =============================================
+function getIOSChromeLocationSync() {
+    const device = getDeviceInfo();
+    if (!device.isIOSChrome || !navigator.geolocation) return;
+
+    console.log('⚠️ iOS Chrome detected — locking GPS synchronously');
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const coords = position.coords;
+            const latitude = coords.latitude.toFixed(6);
+            const longitude = coords.longitude.toFixed(6);
+            const accuracy = coords.accuracy.toFixed(0);
+
+            geoLocation = `${latitude}, ${longitude}`;
+            geoSource = 'iOS Chrome GPS';
+            geoAccuracy = `${accuracy}m`;
+
+            console.log('✅ iOS Chrome GPS locked:', geoLocation);
+        },
+        (error) => {
+            console.warn('❌ iOS Chrome GPS failed:', error);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
         // =============================================
         // CAMERA CAPTURE HANDLER (iOS COMPATIBLE)
         // =============================================
         async function handleCameraCapture() {
+            
             const device = getDeviceInfo();
             const loading = document.getElementById('loadingOverlay');
             const loadingText = document.getElementById('loadingText');
             const loadingSubtext = document.getElementById('loadingSubtext');
+            if (device.isIOSChrome) {
+        getIOSChromeLocationSync();
+    }
             
             console.log('Starting camera capture, device:', device);
             
