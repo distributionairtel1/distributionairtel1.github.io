@@ -909,8 +909,8 @@
                         <tr class="section-title">
                             <td><input type="number" id="airtelGross" placeholder="Airtel 4G Gross" min="0"></td>
                             <td>
-                                <input type="text" id="deviceShare" readonly placeholder="Auto-calc" style="color: #60a5fa; font-weight: 600;">
-                                <span class="auto-label">Airtel ÷ (JIO MNP + DSR)</span>
+                                <input type="text" id="deviceShare" readonly placeholder="" style="color: #60a5fa; font-weight: 600;">
+                                <span class="auto-label">Device Share</span>
                             </td>
                         </tr>
                     </table>
@@ -942,7 +942,7 @@
                     <tr>
                         <td><input type="number" id="dsrTarget" placeholder="0" min="0"></td>
                         <td><input type="number" id="mnpTarget" placeholder="0" min="0"></td>
-                        <td><input type="number" id="totalTarget" placeholder="0" min="0"></td>
+                        <td><input type="number" id="totalTarget" readonly></td>
                         <td><input type="number" id="wifiTarget" placeholder="0" min="0"></td>
                     </tr>
                 </table>
@@ -976,9 +976,8 @@
         <div class="action-buttons">
             <button id="captureBtn" class="btn photo-btn">Capture Photo</button>
             <button id="submitBtn" class="btn">Submit</button>
-            <button id="pdfBtn" class="btn">Download PDF</button>
-            <button id="sharePdfBtn" class="btn">Download & Share</button>
-                    </div>
+            <button id="pdfBtn" class="btn pdf-btn">Download</button>
+        </div>
     </div>
 <!-- </body>
 </html> -->
@@ -1726,7 +1725,7 @@
                 deviceShareInput.value = '∞ (No JIO)';
                 deviceShareInput.style.color = '#4CAF50';
             } else {
-                deviceShareInput.value = 'N/A';
+                deviceShareInput.value = '';
                 deviceShareInput.style.color = '#888';
             }
         } else {
@@ -2248,26 +2247,34 @@
             showToast('❌ Error submitting. Please try again.', 'error');
         }
     });
+    function autoCalcTotalTarget() {
+    const dsr = parseInt(document.getElementById('dsrTarget').value) || 0;
+    const mnp = parseInt(document.getElementById('mnpTarget').value) || 0;
 
-    document.getElementById('pdfBtn').addEventListener('click', async () => {
-    await generatePdf(false);
-    showToast('PDF Downloaded Successfully!', 'success');
-});
+    document.getElementById('totalTarget').value = dsr + mnp;
+}
 
-document.getElementById('sharePdfBtn').addEventListener('click', async () => {
-    await generatePdf(true);
-});
+// Trigger calculation on typing
+document.getElementById('dsrTarget').addEventListener('input', autoCalcTotalTarget);
+document.getElementById('mnpTarget').addEventListener('input', autoCalcTotalTarget);
 
-async function generatePdf(shareAfter = false) {
+ // =============================================
+// CLEAN PDF EXPORT - HEADERS ONLY HIGHLIGHTED
+// =============================================
+document.getElementById('pdfBtn').addEventListener('click', async function () {
 
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-
+const { jsPDF } = window.jspdf;
+const pdf = new jsPDF('p', 'mm', 'a4');
+    
+    // Page dimensions
     const pageWidth = 210;
     const pageHeight = 297;
     const margin = 12;
     const contentWidth = pageWidth - (margin * 2);
-
+    
+    // =============================================
+    // TIER COLOR PALETTES
+    // =============================================
     const tierPalettes = {
         platinum: {
             primary: [45, 52, 54],
@@ -2310,7 +2317,6 @@ async function generatePdf(shareAfter = false) {
             badge: [39, 174, 96]
         }
     };
-
     function getPalette() {
         if (selectedTier === 'platinum') return tierPalettes.platinum;
         if (selectedTier === 'gold') return tierPalettes.gold;
@@ -2318,142 +2324,592 @@ async function generatePdf(shareAfter = false) {
         return tierPalettes.default;
     }
 
+    // 🔹 MOD 1: SIGNATURE OWNER BY TIER
+    function getSignatureOwner() {
+        if (selectedTier === 'platinum') return 'ZBM';
+        if (selectedTier === 'gold') return 'ZSM';
+        if (selectedTier === 'executive') return 'TSM';
+        return 'FSE';
+    }
+
     const palette = getPalette();
     let yPos = margin;
 
-    /* ================= HEADERS / TABLE HELPERS ================= */
-
-    function addLuxuryHeader(title, subtitle) {
+    // =============================================
+    // HELPER FUNCTIONS
+    // =============================================
+    
+    // Main page header - COLORED
+    function addLuxuryHeader(title, subtitle, y) {
         pdf.setFillColor(...palette.headerBg);
         pdf.rect(0, 0, pageWidth, 22, 'F');
+        
         pdf.setFillColor(...palette.accent);
         pdf.rect(0, 22, pageWidth, 1.5, 'F');
-
+        
         pdf.setTextColor(...palette.text);
-        pdf.setFontSize(15).setFont('helvetica', 'bold');
+        pdf.setFontSize(15);
+        pdf.setFont('helvetica', 'bold');
         pdf.text(title, pageWidth / 2, 10, { align: 'center' });
-
-        pdf.setFontSize(10).setFont('helvetica', 'normal');
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
         pdf.text(subtitle, pageWidth / 2, 17, { align: 'center' });
-
+        
+        if (selectedTier) {
+            const badgeText = selectedTier.toUpperCase();
+            const badgeWidth = 28;
+            pdf.setFillColor(...palette.badge);
+            pdf.roundedRect(pageWidth - margin - badgeWidth, 5, badgeWidth, 8, 2, 2, 'F');
+            pdf.setTextColor(...palette.text);
+            pdf.setFontSize(7);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(badgeText, pageWidth - margin - badgeWidth / 2, 10.5, { align: 'center' });
+        }
+        
         return 28;
     }
-
+    
+    // Section title - COLORED
     function addSectionTitle(text, y) {
+        const sectionHeight = 7;
         pdf.setFillColor(...palette.primary);
-        pdf.rect(margin, y, contentWidth, 7, 'F');
+        pdf.rect(margin, y, contentWidth, sectionHeight, 'F');
+        
         pdf.setFillColor(...palette.accent);
-        pdf.rect(margin, y, 3, 7, 'F');
+        pdf.rect(margin, y, 3, sectionHeight, 'F');
+        
         pdf.setTextColor(...palette.text);
-        pdf.setFontSize(9).setFont('helvetica', 'bold');
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'bold');
         pdf.text(text, margin + 7, y + 5);
-        return y + 8;
+        
+        return y + sectionHeight + 1;
     }
-
-    function addThreeColumnRow(c1, c2, c3, y, header = false) {
-        const w = contentWidth / 3;
-        pdf.setFillColor(header ? palette.secondary : [255,255,255]);
-        pdf.setTextColor(header ? palette.text : palette.darkText);
-        pdf.rect(margin, y, contentWidth, 7, 'F');
+    
+    // Two column data row - NO COLOR (plain white)
+    function addTableRow(label, value, y) {
+        const rowHeight = 7;
+        const labelWidth = contentWidth * 0.55;
+        
+        // Plain white background
+        pdf.setFillColor(255, 255, 255);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+        
+        // Border
         pdf.setDrawColor(...palette.borderColor);
-        pdf.rect(margin, y, contentWidth, 7, 'S');
-        pdf.line(margin + w, y, margin + w, y + 7);
-        pdf.line(margin + w*2, y, margin + w*2, y + 7);
-        pdf.setFontSize(8).setFont('helvetica', header ? 'bold' : 'normal');
-        pdf.text(String(c1), margin + w*0.5, y + 5, { align:'center' });
-        pdf.text(String(c2), margin + w*1.5, y + 5, { align:'center' });
-        pdf.text(String(c3), margin + w*2.5, y + 5, { align:'center' });
-        return y + 7;
+        pdf.setLineWidth(0.2);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+        pdf.line(margin + labelWidth, y, margin + labelWidth, y + rowHeight);
+        
+        // Text
+        pdf.setTextColor(...palette.darkText);
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(String(label), margin + 3, y + 4.8);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(String(value), margin + labelWidth + 3, y + 4.8);
+        
+        return y + rowHeight;
     }
-
+    
+    // Three column row - Header COLORED, Data plain
+    function addThreeColumnRow(col1, col2, col3, y, isHeader = false) {
+        const rowHeight = 7;
+        const colWidth = contentWidth / 3;
+        
+        if (isHeader) {
+            pdf.setFillColor(...palette.secondary);
+            pdf.setTextColor(...palette.text);
+        } else {
+            pdf.setFillColor(255, 255, 255);
+            pdf.setTextColor(...palette.darkText);
+        }
+        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+        
+        // Borders
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.setLineWidth(0.2);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+        pdf.line(margin + colWidth, y, margin + colWidth, y + rowHeight);
+        pdf.line(margin + colWidth * 2, y, margin + colWidth * 2, y + rowHeight);
+        
+        // Text
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
+        pdf.text(String(col1), margin + colWidth * 0.5, y + 4.8, { align: 'center' });
+        pdf.text(String(col2), margin + colWidth * 1.5, y + 4.8, { align: 'center' });
+        pdf.text(String(col3), margin + colWidth * 2.5, y + 4.8, { align: 'center' });
+        
+        return y + rowHeight;
+    }
+    
+    // Four column row - Header COLORED, Data plain
+    function addFourColumnRow(col1, col2, col3, col4, y, isHeader = false) {
+        const rowHeight = 7;
+        const colWidth = contentWidth / 4;
+        
+        if (isHeader) {
+            pdf.setFillColor(...palette.secondary);
+            pdf.setTextColor(...palette.text);
+        } else {
+            pdf.setFillColor(255, 255, 255);
+            pdf.setTextColor(...palette.darkText);
+        }
+        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+        
+        // Borders
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.setLineWidth(0.2);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+        for (let i = 1; i < 4; i++) {
+            pdf.line(margin + colWidth * i, y, margin + colWidth * i, y + rowHeight);
+        }
+        
+        // Text
+        pdf.setFontSize(7);
+        pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
+        pdf.text(String(col1), margin + colWidth * 0.5, y + 4.8, { align: 'center' });
+        pdf.text(String(col2), margin + colWidth * 1.5, y + 4.8, { align: 'center' });
+        pdf.text(String(col3), margin + colWidth * 2.5, y + 4.8, { align: 'center' });
+        pdf.text(String(col4), margin + colWidth * 3.5, y + 4.8, { align: 'center' });
+        
+        return y + rowHeight;
+    }
+    
+    // Total box - COLORED (this is like a header/summary)
     function addTotalBox(text, y) {
+        const boxHeight = 12;
+        
         pdf.setFillColor(...palette.primary);
-        pdf.roundedRect(margin, y, contentWidth, 12, 2, 2, 'F');
+        pdf.roundedRect(margin, y, contentWidth, boxHeight, 2, 2, 'F');
+        
         pdf.setTextColor(...palette.text);
-        pdf.setFontSize(12).setFont('helvetica','bold');
-        pdf.text(text, pageWidth/2, y+8, {align:'center'});
-        return y + 15;
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(text.toUpperCase(), pageWidth / 2, y + 7.5, { align: 'center' });
+        
+        return y + boxHeight + 3;
     }
-
-    /* ================= PAGE 1 ================= */
-
-    yPos = addLuxuryHeader('RETAILER ENROLLMENT SHEET', 'December 2025');
-
+    
+    // Gross commitment row - Plain (no highlight)
+    function addGrossCommitmentRow(label, count, amount, y) {
+        const rowHeight = 8;
+        const colWidth = contentWidth / 3;
+        
+        // Plain white background
+        pdf.setFillColor(255, 255, 255);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+        
+        // Borders
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.setLineWidth(0.2);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+        pdf.line(margin + colWidth, y, margin + colWidth, y + rowHeight);
+        pdf.line(margin + colWidth * 2, y, margin + colWidth * 2, y + rowHeight);
+        
+        // Text - bold for emphasis
+        pdf.setTextColor(...palette.darkText);
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(String(label), margin + colWidth * 0.5, y + 5.5, { align: 'center' });
+        pdf.text(String(count), margin + colWidth * 1.5, y + 5.5, { align: 'center' });
+        pdf.text('Rs. ' + String(amount), margin + colWidth * 2.5, y + 5.5, { align: 'center' });
+        
+        return y + rowHeight + 2;
+    }
+    
+    // Slab table - Only header COLORED
+    function addSlabTable(y) {
+        const slabData = [
+            { target: '10', incentive: 'Rs.75/MNP', min: 10 },
+            { target: '20', incentive: 'Rs.125/MNP', min: 20 },
+            { target: '30', incentive: 'Rs.150/MNP', min: 30 },
+            { target: '40', incentive: 'Rs.175/MNP', min: 40 },
+            { target: '50+', incentive: 'Rs.200/MNP', min: 50 }
+        ];
+        
+        const currentGross = parseInt(document.getElementById('grossCount').value) || 0;
+        const slabColWidth = contentWidth / 2;
+        const rowHeight = 6;
+        
+        // Header - COLORED
+        pdf.setFillColor(...palette.secondary);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.setLineWidth(0.2);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+        pdf.line(margin + slabColWidth, y, margin + slabColWidth, y + rowHeight);
+        
+        pdf.setTextColor(...palette.text);
+        pdf.setFontSize(7);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('GROSS TARGET', margin + slabColWidth * 0.5, y + 4.2, { align: 'center' });
+        pdf.text('INCENTIVE (PER MNP)', margin + slabColWidth * 1.5, y + 4.2, { align: 'center' });
+        y += rowHeight;
+        
+        // Data rows - Plain white
+        slabData.forEach((slab, index) => {
+            let isActive = false;
+            
+            if (slab.target === '50+' && currentGross >= 50) {
+                isActive = true;
+            } else if (slab.target !== '50+') {
+                const slabMin = slab.min;
+                const nextSlabMin = slabData[index + 1] ? slabData[index + 1].min : 999;
+                if (currentGross >= slabMin && currentGross < nextSlabMin) {
+                    isActive = true;
+                }
+            }
+            
+            // Plain white background for all rows
+            pdf.setFillColor(255, 255, 255);
+            pdf.setTextColor(...palette.darkText);
+            
+            pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+            pdf.setDrawColor(...palette.borderColor);
+            pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+            pdf.line(margin + slabColWidth, y, margin + slabColWidth, y + rowHeight);
+            
+            pdf.setFontSize(7);
+            pdf.setFont('helvetica', isActive ? 'bold' : 'normal');
+            
+            const activeIndicator = isActive ? ' (Current)' : '';
+            pdf.text(slab.target, margin + slabColWidth * 0.5, y + 4.2, { align: 'center' });
+            pdf.text(slab.incentive + activeIndicator, margin + slabColWidth * 1.5, y + 4.2, { align: 'center' });
+            
+            y += rowHeight;
+        });
+        
+        return y + 2;
+    }
+    
+    // Page footer
+    function addPageFooter(pageNum, totalPages) {
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.setLineWidth(0.3);
+        pdf.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+        
+        pdf.setFontSize(7);
+        pdf.setTextColor(130, 130, 130);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text('Page ' + pageNum + ' of ' + totalPages, margin, pageHeight - 7);
+        pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), pageWidth / 2, pageHeight - 7, { align: 'center' });
+        
+        const docId = 'ENR-' + Date.now().toString(36).toUpperCase();
+        pdf.text(docId, pageWidth - margin, pageHeight - 7, { align: 'right' });
+    }
+    
+    // =============================================
+    // PAGE 1 - MAIN INFORMATION
+    // =============================================
+    
+    yPos = addLuxuryHeader('RETAILER ENROLLMENT SHEET', 'December 2025', yPos);
+    
+    // SECTION 1: RETAILER INFORMATION
     yPos = addSectionTitle('RETAILER INFORMATION', yPos);
-    yPos = addThreeColumnRow('Outlet', document.getElementById('outletName').value || '-', '', yPos);
-
+    
+    const outletName = document.getElementById('outletName').value || '-';
+    const lapuNo = document.getElementById('lapuNo').value || '-';
+    const fseContact = document.getElementById('fseContact').value || '-';
+    const tsmContact = document.getElementById('tsmContact').value || '-';
+    
+    yPos = addTableRow('Outlet Name', outletName, yPos);
+    yPos = addTableRow('Lapu No', lapuNo, yPos);
+    yPos = addTableRow('FSE Contact No', fseContact, yPos);
+    yPos = addTableRow('TSM/SE Contact No', tsmContact, yPos);
+    
+    yPos += 3;
+    
+    // SECTION 2: MARGIN SCHEME
+    yPos = addSectionTitle('MARGIN SCHEME', yPos);
+    yPos = addThreeColumnRow('Scheme', 'Margin', 'Gate', yPos, true);
+    yPos = addThreeColumnRow('Base Margins', '3.90%', '-', yPos);
+    yPos = addThreeColumnRow('MNP Participation', '1.40%', '1 MNP/Day', yPos);
+    yPos = addThreeColumnRow('WIFI Participation', '1.50%', '1 WIFI/Day', yPos);
+    yPos = addThreeColumnRow('TOTAL MARGIN', '6.80%', '-', yPos);
+    
+    yPos += 3;
+    
+    // SECTION 3: OTF RATES
+    yPos = addSectionTitle('OTF RATES', yPos);
+    yPos = addThreeColumnRow('FRC', 'DSR', 'MNP', yPos, true);
+    yPos = addThreeColumnRow('349', 'Rs.135', 'Rs.235', yPos);
+    yPos = addThreeColumnRow('449', 'Rs.135', 'Rs.235', yPos);
+    
+    // SIMEX row - plain
+    pdf.setFillColor(255, 255, 255);
+    pdf.rect(margin, yPos, contentWidth, 7, 'F');
+    pdf.setDrawColor(...palette.borderColor);
+    pdf.rect(margin, yPos, contentWidth, 7, 'S');
+    pdf.setTextColor(...palette.darkText);
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('SIMEX - Rs.50 Per SIMEX', pageWidth / 2, yPos + 4.8, { align: 'center' });
+    yPos += 10;
+    
+    // SECTION 4: OTF CALCULATIONS
     yPos = addSectionTitle('OTF CALCULATIONS', yPos);
-    yPos = addThreeColumnRow('Item','Count','Amount',yPos,true);
-
-    yPos = addThreeColumnRow(
-        'DSR',
-        document.getElementById('dsrCount').value || 0,
-        document.getElementById('dsrAmount').value || 0,
-        yPos
-    );
-
-    yPos = addThreeColumnRow(
-        'MNP',
-        document.getElementById('mnpCount').value || 0,
-        document.getElementById('mnpAmount').value || 0,
-        yPos
-    );
-
-    yPos = addTotalBox(
-        document.getElementById('totalAmount').textContent || 'Total Rs. 0',
-        yPos
-    );
-
+    yPos = addThreeColumnRow('Item', 'Count', 'Amount (Rs.)', yPos, true);
+    
+    const dsrCount = document.getElementById('dsrCount').value || '0';
+    const dsrAmount = document.getElementById('dsrAmount').value || '0';
+    const mnpCount = document.getElementById('mnpCount').value || '0';
+    const mnpAmount = document.getElementById('mnpAmount').value || '0';
+    const grossCount = document.getElementById('grossCount').value || '0';
+    const grossAmount = document.getElementById('grossAmount').value || '0';
+    
+    yPos = addThreeColumnRow('DSR OTF (Rs.135)', dsrCount, dsrAmount, yPos);
+    yPos = addThreeColumnRow('MNP OTF (Rs.235)', mnpCount, mnpAmount, yPos);
+    yPos = addGrossCommitmentRow('GROSS COMMITMENT', grossCount, grossAmount, yPos);
+    
+    // SECTION 5: MARGIN CALCULATIONS
+    yPos = addSectionTitle('MARGIN CALCULATIONS', yPos);
+    yPos = addThreeColumnRow('Item', 'Value', 'Amount (Rs.)', yPos, true);
+    
+    const lapuTertiary = document.getElementById('lapuTertiary').value || '0';
+    const tertiaryAmount = document.getElementById('tertiaryAmount').value || '0';
+    const mnpDays = document.getElementById('mnpDays').value || '0';
+    const mnpDaysAmount = document.getElementById('mnpDaysAmount').value || '0';
+    const wifiDays = document.getElementById('wifiDays').value || '0';
+    const wifiDaysAmount = document.getElementById('wifiDaysAmount').value || '0';
+    
+    yPos = addThreeColumnRow('Lapu Tertiary (3.9%)', lapuTertiary, tertiaryAmount, yPos);
+    yPos = addThreeColumnRow('MNP Days (1.4%)', mnpDays, mnpDaysAmount, yPos);
+    yPos = addThreeColumnRow('WiFi Days (1.5%)', wifiDays, wifiDaysAmount, yPos);
+    
+    yPos += 3;
+    
+    // SECTION 6: ADDITIONAL ITEMS
+    yPos = addSectionTitle('ADDITIONAL ITEMS', yPos);
+    yPos = addThreeColumnRow('Item', 'Count', 'Amount (Rs.)', yPos, true);
+    
+    const wifiCount = document.getElementById('wifiCount').value || '0';
+    const wifiAmount = document.getElementById('wifiAmount').value || '0';
+    const apbCount = document.getElementById('apbCount').value || '0';
+    const apbAmount = document.getElementById('apbAmount').value || '0';
+    const simexCount = document.getElementById('simexCount').value || '0';
+    const simexAmount = document.getElementById('simexAmount').value || '0';
+    
+    yPos = addThreeColumnRow('WIFI (Rs.150)', wifiCount, wifiAmount, yPos);
+    yPos = addThreeColumnRow('APB SBA (Rs.45)', apbCount, apbAmount, yPos);
+    yPos = addThreeColumnRow('SIMEX (Rs.50)', simexCount, simexAmount, yPos);
+    
+    yPos += 3;
+    
+    // TOTAL AMOUNT BOX
+    const totalText = document.getElementById('totalAmount').textContent || 'Total Amount Rs. 0';
+    yPos = addTotalBox(totalText, yPos);
+    
+    addPageFooter(1, 2);
+    
+    // =============================================
+    // PAGE 2 - VERIFICATION & SIGNATURES
+    // =============================================
     pdf.addPage();
+    yPos = margin;
 
-    /* ================= PAGE 2 ================= */
-
+    // Header
     pdf.setFillColor(...palette.headerBg);
-    pdf.rect(0,0,pageWidth,14,'F');
+    pdf.rect(0, 0, pageWidth, 14, 'F');
     pdf.setFillColor(...palette.accent);
-    pdf.rect(0,14,pageWidth,1,'F');
-    pdf.setTextColor(...palette.text);
-    pdf.setFontSize(11).setFont('helvetica','bold');
-    pdf.text('VERIFICATION & SIGNATURE', pageWidth/2, 9, {align:'center'});
+    pdf.rect(0, 14, pageWidth, 1, 'F');
 
-    /* ================= SAVE / SHARE ================= */
+    pdf.setTextColor(...palette.text);
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('VERIFICATION & AUTHORIZATION', pageWidth / 2, 9, { align: 'center' });
+
+    yPos = 20;
+    // SECTION: PHOTO & LOCATION
+    yPos = addSectionTitle('PHOTO & LOCATION VERIFICATION', yPos);
+    
+    const photoBoxWidth = 55;
+    const photoBoxHeight = 55;
+    const infoStartX = margin + photoBoxWidth + 8;
+    const infoWidth = contentWidth - photoBoxWidth - 8;
+    
+    // Photo container - plain
+    pdf.setDrawColor(...palette.borderColor);
+    pdf.setLineWidth(0.5);
+    pdf.setFillColor(255, 255, 255);
+    pdf.rect(margin, yPos, photoBoxWidth, photoBoxHeight, 'FD');
+    
+    if (capturedPhoto) {
+        try {
+            pdf.addImage(capturedPhoto, 'JPEG', margin + 2, yPos + 2, photoBoxWidth - 4, photoBoxHeight - 4);
+        } catch (e) {
+            pdf.setTextColor(150, 150, 150);
+            pdf.setFontSize(9);
+            pdf.text('Photo Error', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2, { align: 'center' });
+        }
+    } else {
+        pdf.setTextColor(150, 150, 150);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'italic');
+        pdf.text('No Photo', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 - 3, { align: 'center' });
+        pdf.text('Captured', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 + 4, { align: 'center' });
+    }
+    
+    // Photo info section - plain white
+    pdf.setFillColor(255, 255, 255);
+    pdf.setDrawColor(...palette.borderColor);
+    pdf.rect(infoStartX, yPos, infoWidth, photoBoxHeight, 'FD');
+    
+    let infoY = yPos + 8;
+    
+    pdf.setTextColor(...palette.darkText);
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('CAPTURE TIMESTAMP:', infoStartX + 4, infoY);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(photoTimestamp || new Date().toLocaleString('en-IN'), infoStartX + 4, infoY + 5);
+    
+    infoY += 15;
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('GPS COORDINATES:', infoStartX + 4, infoY);
+    pdf.setFont('helvetica', 'normal');
+    
+    if (geoLocation) {
+        pdf.setTextColor(...palette.darkText);
+        pdf.text(geoLocation, infoStartX + 4, infoY + 5);
+        pdf.setFontSize(7);
+        pdf.text('Source: ' + (geoSource || 'Device GPS'), infoStartX + 4, infoY + 10);
+        
+        infoY += 18;
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Status: VERIFIED', infoStartX + 4, infoY);
+    } else {
+        pdf.setTextColor(150, 150, 150);
+        pdf.text('Location not available', infoStartX + 4, infoY + 5);
+    }
+    
+    yPos += photoBoxHeight + 5;
+    
+    const dsrTarget = parseInt(document.getElementById('dsrTarget').value) || 0;
+    const mnpTarget = parseInt(document.getElementById('mnpTarget').value) || 0;
+    const wifiTarget = parseInt(document.getElementById('wifiTarget').value) || 0;
+
+    // 🔹 MOD 3: TOTAL FORMULA
+    const totalTarget = dsrTarget + mnpTarget;
+
+    yPos = addSectionTitle('MONTHLY TARGETS', yPos);
+    yPos = addFourColumnRow('DSR', 'MNP', 'TOTAL', 'WIFI', yPos, true);
+    yPos = addFourColumnRow(dsrTarget, mnpTarget, totalTarget, wifiTarget, yPos);
+
+    yPos += 5;
+
+    // SECTION: DECLARATION
+    yPos = addSectionTitle('DECLARATION', yPos);
+    
+    pdf.setFillColor(255, 255, 255);
+    pdf.setDrawColor(...palette.borderColor);
+    pdf.rect(margin, yPos, contentWidth, 14, 'FD');
+    
+    pdf.setTextColor(...palette.darkText);
+    pdf.setFontSize(7);
+    pdf.setFont('helvetica', 'normal');
+    const declaration = 'I hereby confirm that all information provided above is accurate and complete. I agree to comply with the terms and conditions of the retailer enrollment program for the December 2025 period.';
+    const splitDeclaration = pdf.splitTextToSize(declaration, contentWidth - 8);
+    pdf.text(splitDeclaration, margin + 4, yPos + 5);
+    
+    yPos += 17;
+
+
+    
+    // SECTION: SIGNATURES
+    yPos = addSectionTitle('SIGNATURES', yPos);
+
+    const sigBoxWidth = (contentWidth - 6) / 2;
+    const sigBoxHeight = 32;
+
+    // Retailer signature
+    pdf.setFillColor(255, 255, 255);
+    pdf.setDrawColor(...palette.borderColor);
+    pdf.rect(margin, yPos, sigBoxWidth, sigBoxHeight, 'FD');
+
+    pdf.setTextColor(...palette.darkText);
+    pdf.setFontSize(7);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('RETAILER SIGNATURE', margin + 4, yPos + 5);
+
+    // Authorized signature (tier-based)
+    const owner = getSignatureOwner();
+    const ownerX = margin + sigBoxWidth + 6;
+
+    pdf.setFillColor(255, 255, 255);
+    pdf.rect(ownerX, yPos, sigBoxWidth, sigBoxHeight, 'FD');
+
+    pdf.setTextColor(...palette.darkText);
+    pdf.setFontSize(7);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(owner + ' SIGNATURE', ownerX + 4, yPos + 5);
+
+    yPos += sigBoxHeight + 8;
+         // Tier text
+             if (selectedTier) {
+        pdf.setTextColor(...palette.darkText);
+        pdf.setFontSize(6);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(selectedTier.toUpperCase() + ' TIER ENROLLMENT', pageWidth - margin, yPos + 1, { align: 'right' });
+    }
+    yPos += 5;
+    // 🔹 MOD 2: CUT LINE WITH SCISSORS
+    pdf.setDrawColor(150, 150, 150);
+    pdf.setLineWidth(0.3);
+    pdf.setLineDashPattern([2, 2], 0);
+    pdf.line(margin, yPos, pageWidth - margin, yPos);
+    pdf.setLineDashPattern([], 0);
+
+    pdf.setFontSize(10);
+    pdf.text('✂', pageWidth / 2, yPos - 1, { align: 'center' });
+
+    yPos += 8;
+
+
+    // SECTION: SLAB REFERENCE
+    yPos = addSectionTitle('GROSS TARGET SLAB REFERENCE', yPos);
+    yPos = addSlabTable(yPos);
+    
+    addPageFooter(2, 2);
+    
+    // =============================================
+    // SAVE PDF
+    // =============================================
 
     const outlet = document.getElementById('outletName').value || 'Retailer';
     const tierSuffix = selectedTier ? '_' + selectedTier.toUpperCase() : '';
-    const dateStr = new Date().toISOString().slice(0,10);
-    const filename = `Enrollment_${outlet.replace(/[^a-zA-Z0-9]/g,'_')}${tierSuffix}_${dateStr}.pdf`;
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const filename = `Enrollment_${outlet.replace(/[^a-zA-Z0-9]/g, '_')}${tierSuffix}_${dateStr}.pdf`;
 
-    if (!shareAfter) {
-        pdf.save(filename);
-        return;
-    }
+    // Generate PDF as Blob
+    const pdfBlob = pdf.output('blob');
 
-    const blob = pdf.output('blob');
-
-    // Auto download
-    const url = URL.createObjectURL(blob);
+    // 🔹 Force download (so file exists locally)
+    const fileURL = URL.createObjectURL(pdfBlob);
     const a = document.createElement('a');
-    a.href = url;
+    a.href = fileURL;
     a.download = filename;
     a.click();
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(fileURL);
 
-    // Share
-    if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type:'application/pdf' })] })) {
+    // 🔹 Open native share sheet immediately
+    if (navigator.canShare && navigator.canShare({
+        files: [new File([pdfBlob], filename, { type: 'application/pdf' })]
+    })) {
         try {
             await navigator.share({
-                title: 'Retailer Enrollment',
+                title: 'Retailer Enrollment PDF',
                 text: 'Please find the enrollment PDF attached.',
-                files: [new File([blob], filename, { type:'application/pdf' })]
+                files: [new File([pdfBlob], filename, { type: 'application/pdf' })]
             });
-            showToast('PDF Shared Successfully!', 'success');
-        } catch {
-            showToast('Sharing cancelled', 'warning');
+        } catch (err) {
+            // User cancelled share — do nothing
         }
     } else {
-        showToast('Sharing not supported on this device', 'info');
+        alert('Sharing not supported on this device');
     }
-}
+});
 
     // =============================================
     // INITIALIZE
