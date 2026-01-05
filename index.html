@@ -3,76 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get User Location</title>
+    <title>High Accuracy GPS</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; }
+        #log { margin-top: 20px; font-size: 0.9em; color: #555; text-align: left; }
+        .success { color: green; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-    <button onclick="getUserLocation()">Get My Location</button>
+    <h2>High Precision Location</h2>
+    <p>This script waits until GPS warms up to get accuracy within 20 meters.</p>
     
-    <p id="status"></p>
-    <p id="map-link"></p>
+    <button onclick="startHighAccuracyGPS()">Get Precise Location</button>
+    
+    <h3 id="result"></h3>
+    <a id="map-link" target="_blank"></a>
+
+    <div id="log"></div>
 
     <script>
-        function getUserLocation() {
-            const status = document.querySelector('#status');
-            const mapLink = document.querySelector('#map-link');
+        let watchId;
+        let bestAccuracy = Infinity; // Start with worst possible accuracy
+        let bestPosition = null;
+        let attemptCount = 0;
+        
+        // SETTINGS
+        const TARGET_ACCURACY = 20; // We want accuracy within 20 meters
+        const TIMEOUT_MS = 15000;   // Stop trying after 15 seconds
 
-            mapLink.href = '';
-            mapLink.textContent = '';
+        function startHighAccuracyGPS() {
+            const logDiv = document.getElementById('log');
+            const resultDiv = document.getElementById('result');
+            
+            // Reset state
+            logDiv.innerHTML = "Attempting to lock GPS satellites...<br>";
+            resultDiv.innerText = "Locating...";
+            bestAccuracy = Infinity;
+            bestPosition = null;
+            attemptCount = 0;
 
-            // 1. Check if the browser supports Geolocation
-            if (!navigator.geolocation) {
-                status.textContent = 'Geolocation is not supported by your browser';
-            } else {
-                status.textContent = 'Locating...';
+            const options = {
+                enableHighAccuracy: true, // Force GPS hardware
+                timeout: 10000,
+                maximumAge: 0             // Do not use cached data
+            };
+
+            // Start watching location (keeps GPS on)
+            watchId = navigator.geolocation.watchPosition(
+                handleSuccess, 
+                handleError, 
+                options
+            );
+
+            // Set a safety timer to stop after 15 seconds if we never hit target accuracy
+            setTimeout(() => {
+                if (watchId) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
+                    logDiv.innerHTML += "<br><strong>Timeout reached.</strong> Using best available location.";
+                    displayFinalLocation(bestPosition);
+                }
+            }, TIMEOUT_MS);
+        }
+
+        function handleSuccess(position) {
+            attemptCount++;
+            const accuracy = position.coords.accuracy;
+            const logDiv = document.getElementById('log');
+
+            // Log the attempt
+            logDiv.innerHTML += `Reading #${attemptCount}: Accuracy within ${Math.round(accuracy)}m<br>`;
+
+            // Save this position if it's the best one we've seen so far
+            if (accuracy < bestAccuracy) {
+                bestAccuracy = accuracy;
+                bestPosition = position;
+            }
+
+            // IF accuracy is good enough, STOP looking
+            if (accuracy <= TARGET_ACCURACY) {
+                logDiv.innerHTML += `<br><span class="success">Target accuracy reached! (${Math.round(accuracy)}m)</span>`;
                 
-                // 2. Request the location
-                navigator.geolocation.getCurrentPosition(success, error, options);
+                // Stop the GPS to save battery
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+                
+                displayFinalLocation(position);
             }
         }
 
-        // 3. Configuration for High Accuracy
-        const options = {
-            enableHighAccuracy: true, // Request GPS if available
-            timeout: 10000,           // Time to wait before error (10 sec)
-            maximumAge: 0             // Do not use a cached position
-        };
-
-        // 4. Success Callback
-        function success(position) {
-            const latitude  = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            const accuracy  = position.coords.accuracy; // Accuracy in meters
-
-            const status = document.querySelector('#status');
-            const mapLink = document.querySelector('#map-link');
-            
-
-            status.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} ° (Accuracy: within ${accuracy} meters)`;
-
-            // Create a link to Google Maps
-            mapLink.href = `https://www.google.com/maps?q=${latitude},${longitude}`;
-            mapLink.textContent = 'View on Google Maps';
+        function handleError(err) {
+            document.getElementById('log').innerText = "Error: " + err.message;
         }
 
-        // 5. Error Callback
-        function error(err) {
-            const status = document.querySelector('#status');
-            
-            switch(err.code) {
-                case err.PERMISSION_DENIED:
-                    status.textContent = "User denied the request for Geolocation.";
-                    break;
-                case err.POSITION_UNAVAILABLE:
-                    status.textContent = "Location information is unavailable.";
-                    break;
-                case err.TIMEOUT:
-                    status.textContent = "The request to get user location timed out.";
-                    break;
-                case err.UNKNOWN_ERROR:
-                    status.textContent = "An unknown error occurred.";
-                    break;
+        function displayFinalLocation(pos) {
+            const resultDiv = document.getElementById('result');
+            const mapLink = document.getElementById('map-link');
+
+            if (!pos) {
+                resultDiv.innerText = "Could not get a valid location.";
+                return;
             }
+
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            const acc = pos.coords.accuracy;
+
+            resultDiv.innerText = `Final Result: ${lat}, ${lon}`;
+            resultDiv.innerText += ` (Accuracy: ${Math.round(acc)}m)`;
+
+            mapLink.href = `https://www.google.com/maps?q=${lat},${lon}`;
+            mapLink.innerText = "View on Google Maps";
         }
     </script>
 </body>
