@@ -2624,13 +2624,13 @@
         // }
         // yPos += photoBoxHeight + 5;
         
-        yPos = addSectionTitle('MONTHLY TARGETS', yPos);
-        const dsrTarget = parseInt(document.getElementById('dsrTarget').value) || 0;
-        const mnpTarget = parseInt(document.getElementById('mnpTarget').value) || 0;
-        const totalTarget = dsrTarget + mnpTarget;
-        yPos = addFourColumnRow('DSR', 'MNP', 'TOTAL', 'WIFI', yPos, true);
-        yPos = addFourColumnRow(dsrTarget, mnpTarget, totalTarget, document.getElementById('wifiTarget').value || 0, yPos);
-        yPos += 5;
+        // yPos = addSectionTitle('MONTHLY TARGETS', yPos);
+        // const dsrTarget = parseInt(document.getElementById('dsrTarget').value) || 0;
+        // const mnpTarget = parseInt(document.getElementById('mnpTarget').value) || 0;
+        // const totalTarget = dsrTarget + mnpTarget;
+        // yPos = addFourColumnRow('DSR', 'MNP', 'TOTAL', 'WIFI', yPos, true);
+        // yPos = addFourColumnRow(dsrTarget, mnpTarget, totalTarget, document.getElementById('wifiTarget').value || 0, yPos);
+        // yPos += 5;
         
         yPos = addSectionTitle('DECLARATION', yPos);
         pdf.setFillColor(255, 255, 255);
@@ -2666,18 +2666,18 @@
             pdf.setFont('helvetica', 'bold');
             pdf.text(selectedTier.toUpperCase() + ' TIER ENROLLMENT', pageWidth - margin, yPos + 1, { align: 'right' });
         }
-        yPos += 5;
-        pdf.setDrawColor(150, 150, 150);
-        pdf.setLineWidth(0.3);
-        pdf.setLineDashPattern([2, 2], 0);
-        pdf.line(margin, yPos, pageWidth - margin, yPos);
-        pdf.setLineDashPattern([], 0);
-        pdf.setFontSize(10);
-        pdf.text('✂', pageWidth / 2, yPos - 1, { align: 'center' });
-        yPos += 8;
-        yPos = addSectionTitle('GROSS TARGET SLAB REFERENCE', yPos);
-        yPos = addSlabTable(yPos);
-        addPageFooter(2, 2);
+        // yPos += 5;
+        // pdf.setDrawColor(150, 150, 150);
+        // pdf.setLineWidth(0.3);
+        // pdf.setLineDashPattern([2, 2], 0);
+        // pdf.line(margin, yPos, pageWidth - margin, yPos);
+        // pdf.setLineDashPattern([], 0);
+        // pdf.setFontSize(10);
+        // pdf.text('✂', pageWidth / 2, yPos - 1, { align: 'center' });
+        // yPos += 8;
+        // yPos = addSectionTitle('GROSS TARGET SLAB REFERENCE', yPos);
+        // yPos = addSlabTable(yPos);
+        // addPageFooter(2, 2);
         
         // --- 3. OUTPUT & SHARE ---
         const outlet = document.getElementById('outletName').value || 'Retailer';
