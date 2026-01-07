@@ -2537,14 +2537,7 @@
         pdf.setFont('helvetica', 'bold');
         pdf.text('SIMEX - Rs.50 Per SIMEX', pageWidth / 2, yPos + 4.8, { align: 'center' });
         yPos += 10;
-        
-        yPos = addSectionTitle('OTF CALCULATIONS', yPos);
-        yPos = addThreeColumnRow('Item', 'Count', 'Amount (Rs.)', yPos, true);
-        yPos = addThreeColumnRow('DSR OTF (Rs.135)', document.getElementById('dsrCount').value || '0', document.getElementById('dsrAmount').value || '0', yPos);
-        yPos = addThreeColumnRow('MNP OTF (Rs.235)', document.getElementById('mnpCount').value || '0', document.getElementById('mnpAmount').value || '0', yPos);
-        yPos = addGrossCommitmentRow('GROSS COMMITMENT', document.getElementById('grossCount').value || '0', document.getElementById('grossAmount').value || '0', yPos);
-        
-        yPos = addSectionTitle('MARGIN CALCULATIONS', yPos);
+              yPos = addSectionTitle('MARGIN CALCULATIONS', yPos);
         yPos = addThreeColumnRow('Item', 'Value', 'Amount (Rs.)', yPos, true);
         yPos = addThreeColumnRow('Lapu Tertiary (3.9%)', document.getElementById('lapuTertiary').value || '0', document.getElementById('tertiaryAmount').value || '0', yPos);
         yPos = addThreeColumnRow('MNP Days (1.4%)', document.getElementById('mnpDays').value || '0', document.getElementById('mnpDaysAmount').value || '0', yPos);
@@ -2557,6 +2550,62 @@
         yPos = addThreeColumnRow('APB SBA (Rs.45)', document.getElementById('apbCount').value || '0', document.getElementById('apbAmount').value || '0', yPos);
         yPos = addThreeColumnRow('SIMEX (Rs.50)', document.getElementById('simexCount').value || '0', document.getElementById('simexAmount').value || '0', yPos);
         yPos += 3;
+
+
+        yPos = addSectionTitle('OTF CALCULATIONS', yPos);
+        yPos = addThreeColumnRow('Item', 'Count', 'Amount (Rs.)', yPos, true);
+        yPos = addThreeColumnRow('DSR OTF (Rs.135)', document.getElementById('dsrCount').value || '0', document.getElementById('dsrAmount').value || '0', yPos);
+        yPos = addThreeColumnRow('MNP OTF (Rs.235)', document.getElementById('mnpCount').value || '0', document.getElementById('mnpAmount').value || '0', yPos);
+        yPos = addGrossCommitmentRow('GROSS COMMITMENT', document.getElementById('grossCount').value || '0', document.getElementById('grossAmount').value || '0', yPos);
+        
+    // =============================================
+    // SLAB TEXT ROW - CLEAN TEXT EXTRACTION
+    // =============================================
+    function addSlabTextRow(y) {
+        const slabBadgeEl = document.getElementById('slabBadge');
+        const slabLabelEl = document.getElementById('slabLabel');
+        const progressTextEl = document.getElementById('progressText');
+
+        let slabBadgeText = slabBadgeEl ? cleanText(slabBadgeEl.textContent) : '';
+        let slabLabelText = slabLabelEl ? cleanText(slabLabelEl.textContent) : '';
+        let progressText = progressTextEl ? cleanText(progressTextEl.textContent) : '';
+
+        const hasProgress = progressText && progressText.length > 0;
+        const rowHeight = hasProgress ? 11 : 7;
+
+        // Background
+        pdf.setFillColor(248, 250, 252);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.setLineWidth(0.15);
+        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+
+        // Line 1: Badge + Label
+        let textY = y + 4.5;
+        pdf.setTextColor(...palette.darkText);
+        pdf.setFontSize(7);
+        pdf.setFont('helvetica', 'bold');
+
+        const line1 = slabBadgeText + '  |  ' + slabLabelText;
+        pdf.text(line1, margin + 3, textY);
+
+        // Line 2: Progress text
+        if (hasProgress) {
+            textY += 4.5;
+            pdf.setFontSize(6.5);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(200, 120, 0);
+            pdf.text(progressText, margin + 3, textY);
+        }
+
+        return y + rowHeight;
+    }
+
+    // SLAB TEXT ROW
+    yPos = addSlabTextRow(yPos);
+
+    yPos += 2;
         
         yPos = addTotalBox(document.getElementById('totalAmount').textContent || 'Total Amount Rs. 0', yPos);
         addPageFooter(1, 2);
