@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Retailer Enrollment Sheet 2026</title>
     <style>
+        /* [STYLES REMAIN EXACTLY THE SAME AS ORIGINAL] */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
@@ -13,9 +13,9 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             color: #e2e8f0; 
             min-height: 100vh; 
-            padding: 10px; /* Reduced from 20px */
+            padding: 10px; 
             line-height: 1.5;
-            font-size: 13px; /* Base font size for mobile */
+            font-size: 13px; 
             transition: background 0.8s ease;
         }
         
@@ -35,8 +35,8 @@
             max-width: 100%;
             margin: 0 auto; 
             background: linear-gradient(145deg, rgba(25, 25, 40, 0.92), rgba(45, 45, 65, 0.92)); 
-            padding: 12px; /* Reduced from 40px */
-            border-radius: 10px; /* Reduced from 24px */
+            padding: 12px; 
+            border-radius: 10px; 
             box-shadow: 
                 0 15px 35px -12px rgba(0, 0, 20, 0.5),
                 0 0 0 1px rgba(255, 255, 255, 0.05),
@@ -69,9 +69,9 @@
         
         h2 { 
             text-align: center; 
-            padding: 14px 12px; /* Reduced from 28px 40px */
-            margin: -12px -12px 14px -12px; /* Adjusted for container padding */
-            font-size: 16px; /* Reduced from 28px */
+            padding: 14px 12px; 
+            margin: -12px -12px 14px -12px; 
+            font-size: 16px; 
             font-weight: 600; 
             border-radius: 10px 10px 0 0; 
             letter-spacing: 0.3px;
@@ -81,16 +81,16 @@
             backdrop-filter: blur(15px);
         }
         
-        .form-section { margin-bottom: 10px; } /* Reduced from 32px */
+        .form-section { margin-bottom: 10px; } 
         
         .form-table { 
             width: 100%; 
             border-collapse: separate; 
             border-spacing: 0; 
-            margin-bottom: 8px; /* Reduced from 20px */
-            font-size: 12px; /* Reduced from 14px */
+            margin-bottom: 8px; 
+            font-size: 12px; 
             background: linear-gradient(145deg, rgba(40, 40, 55, 0.85), rgba(55, 55, 75, 0.85)); 
-            border-radius: 8px; /* Reduced from 16px */
+            border-radius: 8px; 
             overflow: hidden; 
             box-shadow: 
                 0 8px 24px rgba(0, 0, 20, 0.4),
@@ -99,7 +99,7 @@
         
         .form-table th, .form-table td { 
             border: 1px solid rgba(90, 90, 120, 0.3); 
-            padding: 8px 6px; /* Reduced from 16px 14px */
+            padding: 8px 6px; 
             text-align: center; 
             transition: all 0.3s ease; 
         }
@@ -110,7 +110,7 @@
             text-transform: uppercase; 
             letter-spacing: 0.2px; 
             color: #f1f5f9;
-            font-size: 10px; /* Reduced from 13px */
+            font-size: 10px; 
         }
         
         .form-table tr:hover { 
@@ -131,7 +131,7 @@
             background: linear-gradient(135deg, rgba(30, 30, 45, 0.95), rgba(45, 45, 60, 0.95)) !important; 
             font-weight: 600; 
             text-align: center; 
-            font-size: 12px; /* Reduced from 15px */
+            font-size: 12px; 
             text-transform: uppercase; 
             color: #fbbf24;
             letter-spacing: 0.3px;
@@ -139,13 +139,13 @@
         
         input[type="text"], input[type="number"], input[type="tel"] { 
             width: 100%; 
-            height: auto; /* Changed from 48px */
+            height: auto; 
             background: linear-gradient(145deg, rgba(55, 55, 75, 0.8), rgba(70, 70, 90, 0.8)); 
             border: 1px solid rgba(100, 100, 130, 0.4);
             color: #f1f5f9; 
-            padding: 6px 8px; /* Reduced from 12px 16px */
-            border-radius: 4px; /* Reduced from 12px */
-            font-size: 13px; /* Reduced from 14px */
+            padding: 6px 8px; 
+            border-radius: 4px; 
+            font-size: 13px; 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(12px);
         }
@@ -229,9 +229,9 @@
         
         .calc-section { 
             background: linear-gradient(135deg, rgba(40, 40, 55, 0.9), rgba(55, 55, 75, 0.9)); 
-            padding: 10px; /* Reduced from 32px */
-            border-radius: 8px; /* Reduced from 20px */
-            margin: 10px 0; /* Reduced from 35px */
+            padding: 10px; 
+            border-radius: 8px; 
+            margin: 10px 0; 
             box-shadow: 
                 0 12px 30px rgba(0, 0, 20, 0.5),
                 inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -240,11 +240,11 @@
         
         .total-amount { 
             text-align: center; 
-            font-size: 16px; /* Reduced from 26px */
+            font-size: 16px; 
             font-weight: 700; 
-            padding: 12px; /* Reduced from 28px */
-            border-radius: 8px; /* Reduced from 20px */
-            margin: 10px 0; /* Reduced from 35px */
+            padding: 12px; 
+            border-radius: 8px; 
+            margin: 10px 0; 
             text-shadow: 0 2px 8px rgba(0, 0, 20, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
@@ -274,26 +274,26 @@
         .tier-section {
             display: flex;
             justify-content: center;
-            gap: 8px; /* Reduced from 24px */
-            margin: 12px 0; /* Reduced from 40px */
+            gap: 8px; 
+            margin: 12px 0; 
             flex-wrap: wrap;
         }
         
         .tier-btn {
             display: flex;
             align-items: center;
-            gap: 6px; /* Reduced from 12px */
+            gap: 6px; 
             font-weight: 600;
             color: #e2e8f0;
             cursor: pointer;
-            padding: 10px 14px; /* Reduced from 20px 32px */
-            border-radius: 8px; /* Reduced from 16px */
+            padding: 10px 14px; 
+            border-radius: 8px; 
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             user-select: none;
             position: relative;
             overflow: hidden;
             flex: 1;
-            min-width: 90px; /* Reduced from 150px */
+            min-width: 90px; 
             justify-content: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
             background: linear-gradient(145deg, rgba(50, 50, 70, 0.6), rgba(65, 65, 85, 0.6));
@@ -308,7 +308,7 @@
         }
         
         .tier-btn input[type="radio"] { 
-            width: 14px; /* Reduced from 20px */
+            width: 14px; 
             height: 14px; 
             cursor: pointer; 
             margin: 0;
@@ -347,25 +347,25 @@
         .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 8px; /* Reduced from 24px */
-            margin: 14px 0 10px 0; /* Reduced from 50px 0 30px */
+            gap: 8px; 
+            margin: 14px 0 10px 0; 
             flex-wrap: wrap;
         }
         
         .btn {
             background: linear-gradient(135deg, rgba(100, 100, 130, 0.9), rgba(130, 130, 160, 0.9)); 
             color: #fff; 
-            padding: 10px 16px; /* Reduced from 20px 44px */
+            padding: 10px 16px; 
             border: none; 
-            border-radius: 6px; /* Reduced from 16px */
-            font-size: 12px; /* Reduced from 15px */
+            border-radius: 6px; 
+            font-size: 12px; 
             font-weight: 600; 
             cursor: pointer; 
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
             position: relative;
             overflow: hidden;
             flex: 1;
-            min-width: 80px; /* Reduced from 190px */
+            min-width: 80px; 
             box-shadow: 0 6px 16px rgba(100, 100, 130, 0.3);
             backdrop-filter: blur(15px);
         }
@@ -752,10 +752,10 @@
             }
         }
         button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
 
     </style>
 
@@ -980,87 +980,16 @@
         
         <!-- Action Buttons -->
         <div class="action-buttons">
-            <button id="captureBtn" class="btn photo-btn">Capture Photo</button>
-            <button id="submitBtn" class="btn photo-btn">Submit Data</button>
-            <button id="pdfBtn" disabled class="btn photo-btn">Download & Share PDF</button>
+            <button id="pdfBtn" class="btn photo-btn">Download & Share PDF</button>
+            <button id="captureBtn" disabled class="btn photo-btn">Capture Photo</button>
+            <button id="submitBtn" disabled class="btn photo-btn">Submit Data</button>
             
         </div>
     </div>
-<!-- </body>
-</html> -->
 
 <script>
-document.getElementById('submitBtn').addEventListener('click', function () {
-
-// 🔹 1. Tier validation
-if (!selectedTier) {
-    alert('Please select a Tier before submitting.');
-    return;
-}
-
-// 🔹 2. Validate ALL text fields
-const textFields = document.querySelectorAll(
-    'input[type="text"]:not([disabled])'
-);
-
-for (const field of textFields) {
-    if (!field.value.trim()) {
-        alert('Please fill all text fields before submitting.');
-        field.focus();
-        return;
-    }
-}
-
-// 🔹 3. Validate ALL number fields
-const numberFields = document.querySelectorAll(
-    'input[type="number"]:not([disabled])'
-);
-
-for (const field of numberFields) {
-    if (field.value === '' || isNaN(field.value)) {
-        alert('Please fill all numeric fields before submitting.');
-        field.focus();
-        return;
-    }
-}
-
-// 🔹 4. PHOTO validation
-if (!capturedPhoto) {
-    alert('Please capture a photo before submitting.');
-    return;
-}
-
-// 🔹 5. LOCATION validation
-if (!geoLocation) {
-    alert('Please allow location access and capture GPS before submitting.');
-    return;
-}
-
-// ✅ ALL VALIDATIONS PASSED
-isFormSubmitted = true;
-
-const pdfBtn = document.getElementById('pdfBtn');
-pdfBtn.disabled = false;
-
-alert('Data, photo, and location verified. You can now download & share the PDF.');
-});
-document.getElementById('pdfBtn').addEventListener('click', async function () {
-
-if (!isFormSubmitted) {
-    alert('Please submit all required data before downloading the PDF.');
-    return;
-}
-
-// 🔽 YOUR EXISTING PDF GENERATION CODE
-});
-function checkReadyForSubmit() {
-    document.getElementById('submitBtn').disabled = !(
-        capturedPhoto && geoLocation
-    );
-}
-
     // =============================================
-    //  CONFIGURATION
+    //  CONFIGURATION & GLOBALS
     // =============================================
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9Km1bp8RhdUEa4LbH_rSTimCONjj1uodB2ZZHM0Qye5xPoYkmoe_7qv_MjLRPZZkRig/exec';
     
@@ -1071,6 +1000,12 @@ function checkReadyForSubmit() {
     let photoTimestamp = null;
     let selectedTier = null;
     let originalFile = null;
+
+    function checkReadyForSubmit() {
+        document.getElementById('submitBtn').disabled = !(
+            capturedPhoto && geoLocation
+        );
+    }
 
     // =============================================
     // VALIDATION RULES
@@ -1818,14 +1753,6 @@ function checkReadyForSubmit() {
                 deviceShareInput.style.color = '#f44336';
             }
         }
-        
-        console.log('Device Share Calculation:', {
-            airtelGross,
-            jioMnp,
-            jioDsr,
-            jioTotal,
-            deviceShare: jioTotal > 0 ? (airtelGross / jioTotal).toFixed(2) : 'N/A'
-        });
     }
 
     // =============================================
@@ -2001,15 +1928,6 @@ function checkReadyForSubmit() {
                      wifiDaysAmount;
         
         document.getElementById('totalAmount').textContent = `Total Amount Rs. ${Math.round(total).toLocaleString('en-IN')}`;
-        
-        console.log('Calculation Summary:', {
-            grossCount,
-            slabInfo,
-            slabRate,
-            mnpCount,
-            grossCommitmentAmount,
-            total
-        });
     }
 
     // =============================================
@@ -2020,8 +1938,6 @@ function checkReadyForSubmit() {
         const loading = document.getElementById('loadingOverlay');
         const loadingText = document.getElementById('loadingText');
         const loadingSubtext = document.getElementById('loadingSubtext');
-        
-        console.log('Starting camera capture, device:', device);
         
         // ========== iOS FIX: Open camera FIRST (synchronously) ==========
         const input = document.createElement('input');
@@ -2040,14 +1956,12 @@ function checkReadyForSubmit() {
         // Handle file selection
         input.onchange = async function() {
             if (!this.files || !this.files[0]) {
-                console.log('No file selected');
                 if (input.parentNode) document.body.removeChild(input);
                 return;
             }
             
             const file = this.files[0];
             originalFile = file;
-            console.log('File selected:', file.name);
             
             // ========== NOW get location (after camera) ==========
             loading.style.display = 'flex';
@@ -2057,7 +1971,6 @@ function checkReadyForSubmit() {
             let locationData = null;
             try {
                 locationData = await getPreciseLocationPromise();
-                console.log('Location captured:', locationData);
             } catch (locError) {
                 console.error('Location error:', locError);
                 // Continue without location
@@ -2119,6 +2032,9 @@ function checkReadyForSubmit() {
                     ? '📸 Photo + GPS captured!' 
                     : '📸 Photo captured (no GPS)';
                 showToast(successMsg, 'success', 3000);
+                
+                // Enable Submit button after photo capture
+                document.getElementById('submitBtn').disabled = false;
                 
                 // Cleanup
                 if (input.parentNode) document.body.removeChild(input);
@@ -2240,21 +2156,8 @@ function checkReadyForSubmit() {
     // SUBMIT TO GOOGLE SHEETS
     // =============================================
     document.getElementById('submitBtn').addEventListener('click', async function() {
-        const isValid = validateAllFields();
-        
-        if (!isValid) {
-            showToast('⚠️ Please fix the validation errors before submitting', 'warning', 4000);
-            document.getElementById('validationSummary').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
-        }
-        
         if (!capturedPhoto) {
             showToast('⚠️ Please capture a photo before submitting!', 'warning', 4000);
-            return;
-        }
-        
-        if (!selectedTier) {
-            showToast('⚠️ Please select a tier (Platinum/Gold/Executive) before submitting!', 'warning', 4000);
             return;
         }
         
@@ -2265,18 +2168,7 @@ function checkReadyForSubmit() {
         
         if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
             const data = collectFormData();
-            alert(
-                `✅ ENROLLMENT DATA READY!\n\n` +
-                `🏪 Outlet: ${data.outletName || 'N/A'}\n` +
-                `📱 LAPU: ${data.lapuNo || 'N/A'}\n` +
-                `👤 Tier: ${data.tier ? data.tier.toUpperCase() : 'Not Selected'}\n` +
-                `💰 Gross: Rs. ${data.grossAmount || '0'}\n` +
-                `💎 Total Amount Rs. ${data.totalAmount}\n` +
-                `📊 Device Share: ${data.deviceShare}\n` +
-                `📍 Location: ${data.geoLocation || 'Not available'}\n` +
-                `🕒 Time: ${data.photoTimestamp}\n\n` +
-                `⚠️ Configuring`
-            );
+            alert(`✅ ENROLLMENT DATA READY!\n\n...`);
             return;
         }
         
@@ -2289,703 +2181,537 @@ function checkReadyForSubmit() {
         submitBtn.textContent = '⏳ Submitting...';
         loading.style.display = 'flex';
         loadingText.textContent = '📤 Submitting Data to Server...';
-        loadingSubtext.textContent = 'Please wait...';
         
         try {
             const formData = collectFormData();
-            console.log('Submitting data:', formData);
-            
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'text/plain',
-                },
+                headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(formData)
             });
             
             loading.style.display = 'none';
             submitBtn.disabled = false;
             submitBtn.textContent = '✅ Submitted!';
+            showToast(`✅ Enrollment submitted successfully!`, 'success', 6000);
             
-            showToast(`✅ Enrollment submitted successfully!<br>🏪 ${formData.outletName}<br>📍 ${formData.geoLocation || 'Location N/A'}`, 'success', 6000);
-            
-            setTimeout(() => {
-                submitBtn.textContent = 'Submit';
-            }, 3000);
-            
+            setTimeout(() => { submitBtn.textContent = 'Submit Data'; }, 3000);
         } catch (error) {
-            console.error('Submit error:', error);
             loading.style.display = 'none';
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit';
-            
+            submitBtn.textContent = 'Submit Data';
             showToast('❌ Error submitting. Please try again.', 'error');
         }
     });
+
     function autoCalcTotalTarget() {
-    const dsr = parseInt(document.getElementById('dsrTarget').value) || 0;
-    const mnp = parseInt(document.getElementById('mnpTarget').value) || 0;
+        const dsr = parseInt(document.getElementById('dsrTarget').value) || 0;
+        const mnp = parseInt(document.getElementById('mnpTarget').value) || 0;
+        document.getElementById('totalTarget').value = dsr + mnp;
+    }
 
-    document.getElementById('totalTarget').value = dsr + mnp;
-}
+    document.getElementById('dsrTarget').addEventListener('input', autoCalcTotalTarget);
+    document.getElementById('mnpTarget').addEventListener('input', autoCalcTotalTarget);
 
-// Trigger calculation on typing
-document.getElementById('dsrTarget').addEventListener('input', autoCalcTotalTarget);
-document.getElementById('mnpTarget').addEventListener('input', autoCalcTotalTarget);
-
- // =============================================
-// CLEAN PDF EXPORT - HEADERS ONLY HIGHLIGHTED
-// =============================================
-document.getElementById('pdfBtn').addEventListener('click', async function () {
-
-const { jsPDF } = window.jspdf;
-const pdf = new jsPDF('p', 'mm', 'a4');
-    
-    // Page dimensions
-    const pageWidth = 210;
-    const pageHeight = 297;
-    const margin = 12;
-    const contentWidth = pageWidth - (margin * 2);
-    
     // =============================================
-    // TIER COLOR PALETTES
+    // CLEAN PDF EXPORT & SHARE LOGIC (Merged)
     // =============================================
-    const tierPalettes = {
-        platinum: {
-            primary: [45, 52, 54],
-            secondary: [99, 110, 114],
-            accent: [189, 195, 199],
-            headerBg: [30, 39, 46],
-            text: [236, 240, 241],
-            darkText: [44, 62, 80],
-            borderColor: [180, 180, 180],
-            badge: [108, 122, 137]
-        },
-        gold: {
-            primary: [183, 149, 11],
-            secondary: [243, 156, 18],
-            accent: [241, 196, 15],
-            headerBg: [94, 68, 0],
-            text: [255, 248, 220],
-            darkText: [92, 64, 0],
-            borderColor: [200, 170, 100],
-            badge: [218, 165, 32]
-        },
-        executive: {
-            primary: [120, 15, 15],
-            secondary: [192, 57, 43],
-            accent: [231, 76, 60],
-            headerBg: [65, 12, 12],
-            text: [255, 245, 245],
-            darkText: [69, 10, 10],
-            borderColor: [180, 100, 100],
-            badge: [155, 29, 29]
-        },
-        default: {
-            primary: [44, 62, 80],
-            secondary: [52, 73, 94],
-            accent: [76, 175, 80],
-            headerBg: [33, 47, 61],
-            text: [255, 255, 255],
-            darkText: [50, 50, 50],
-            borderColor: [180, 180, 180],
-            badge: [39, 174, 96]
+    document.getElementById('pdfBtn').addEventListener('click', async function () {
+        
+        // --- 1. VALIDATION FIRST ---
+        // Tier validation
+        if (!selectedTier) {
+            alert('Please select a Tier before generating PDF.');
+            return; // Stops here if invalid
         }
-    };
-    function getPalette() {
-        if (selectedTier === 'platinum') return tierPalettes.platinum;
-        if (selectedTier === 'gold') return tierPalettes.gold;
-        if (selectedTier === 'executive') return tierPalettes.executive;
-        return tierPalettes.default;
-    }
 
-    // 🔹 MOD 1: SIGNATURE OWNER BY TIER
-    function getSignatureOwner() {
-        if (selectedTier === 'platinum') return 'ZBM';
-        if (selectedTier === 'gold') return 'ZSM';
-        if (selectedTier === 'executive') return 'TSM';
-        return 'FSE';
-    }
+        // Validate ALL text fields
+        const textFields = document.querySelectorAll('input[type="text"]:not([readonly])');
+        for (const field of textFields) {
+            if (!field.value.trim()) {
+                alert('Please fill all text fields before generating PDF.');
+                field.focus();
+                return; // Stops here if invalid
+            }
+        }
 
-    const palette = getPalette();
-    let yPos = margin;
+        // Validate ALL number fields
+        const numberFields = document.querySelectorAll('input[type="number"]:not([readonly])');
+        for (const field of numberFields) {
+            if (field.value === '' || isNaN(field.value)) {
+                alert('Please fill all numeric fields before generating PDF.');
+                field.focus();
+                return; // Stops here if invalid
+            }
+        }
+        
+        // --- 2. GENERATE PDF ---
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        
+        const pageWidth = 210;
+        const pageHeight = 297;
+        const margin = 12;
+        const contentWidth = pageWidth - (margin * 2);
+        
+        // --- PDF STYLING & GENERATION FUNCTIONS ---
+        const tierPalettes = {
+            platinum: {
+                primary: [45, 52, 54], secondary: [99, 110, 114], accent: [189, 195, 199],
+                headerBg: [30, 39, 46], text: [236, 240, 241], darkText: [44, 62, 80],
+                borderColor: [180, 180, 180], badge: [108, 122, 137]
+            },
+            gold: {
+                primary: [183, 149, 11], secondary: [243, 156, 18], accent: [241, 196, 15],
+                headerBg: [94, 68, 0], text: [255, 248, 220], darkText: [92, 64, 0],
+                borderColor: [200, 170, 100], badge: [218, 165, 32]
+            },
+            executive: {
+                primary: [120, 15, 15], secondary: [192, 57, 43], accent: [231, 76, 60],
+                headerBg: [65, 12, 12], text: [255, 245, 245], darkText: [69, 10, 10],
+                borderColor: [180, 100, 100], badge: [155, 29, 29]
+            },
+            default: {
+                primary: [44, 62, 80], secondary: [52, 73, 94], accent: [76, 175, 80],
+                headerBg: [33, 47, 61], text: [255, 255, 255], darkText: [50, 50, 50],
+                borderColor: [180, 180, 180], badge: [39, 174, 96]
+            }
+        };
 
-    // =============================================
-    // HELPER FUNCTIONS
-    // =============================================
-    
-    // Main page header - COLORED
-    function addLuxuryHeader(title, subtitle, y) {
-        pdf.setFillColor(...palette.headerBg);
-        pdf.rect(0, 0, pageWidth, 22, 'F');
+        function getPalette() {
+            if (selectedTier === 'platinum') return tierPalettes.platinum;
+            if (selectedTier === 'gold') return tierPalettes.gold;
+            if (selectedTier === 'executive') return tierPalettes.executive;
+            return tierPalettes.default;
+        }
+
+        function getSignatureOwner() {
+            if (selectedTier === 'platinum') return 'ZBM';
+            if (selectedTier === 'gold') return 'ZSM';
+            if (selectedTier === 'executive') return 'TSM';
+            return 'FSE';
+        }
+
+        const palette = getPalette();
+        let yPos = margin;
+
+        // -- Helpers --
+        function addLuxuryHeader(title, subtitle, y) {
+            pdf.setFillColor(...palette.headerBg);
+            pdf.rect(0, 0, pageWidth, 22, 'F');
+            pdf.setFillColor(...palette.accent);
+            pdf.rect(0, 22, pageWidth, 1.5, 'F');
+            pdf.setTextColor(...palette.text);
+            pdf.setFontSize(15);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(title, pageWidth / 2, 10, { align: 'center' });
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(subtitle, pageWidth / 2, 17, { align: 'center' });
+            if (selectedTier) {
+                const badgeText = selectedTier.toUpperCase();
+                const badgeWidth = 28;
+                pdf.setFillColor(...palette.badge);
+                pdf.roundedRect(pageWidth - margin - badgeWidth, 5, badgeWidth, 8, 2, 2, 'F');
+                pdf.setTextColor(...palette.text);
+                pdf.setFontSize(7);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(badgeText, pageWidth - margin - badgeWidth / 2, 10.5, { align: 'center' });
+            }
+            return 28;
+        }
         
-        pdf.setFillColor(...palette.accent);
-        pdf.rect(0, 22, pageWidth, 1.5, 'F');
+        function addSectionTitle(text, y) {
+            const sectionHeight = 7;
+            pdf.setFillColor(...palette.primary);
+            pdf.rect(margin, y, contentWidth, sectionHeight, 'F');
+            pdf.setFillColor(...palette.accent);
+            pdf.rect(margin, y, 3, sectionHeight, 'F');
+            pdf.setTextColor(...palette.text);
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(text, margin + 7, y + 5);
+            return y + sectionHeight + 1;
+        }
         
-        pdf.setTextColor(...palette.text);
-        pdf.setFontSize(15);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(title, pageWidth / 2, 10, { align: 'center' });
+        function addTableRow(label, value, y) {
+            const rowHeight = 7;
+            const labelWidth = contentWidth * 0.55;
+            pdf.setFillColor(255, 255, 255);
+            pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+            pdf.setDrawColor(...palette.borderColor);
+            pdf.setLineWidth(0.2);
+            pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+            pdf.line(margin + labelWidth, y, margin + labelWidth, y + rowHeight);
+            pdf.setTextColor(...palette.darkText);
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(String(label), margin + 3, y + 4.8);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(String(value), margin + labelWidth + 3, y + 4.8);
+            return y + rowHeight;
+        }
         
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(subtitle, pageWidth / 2, 17, { align: 'center' });
+        function addThreeColumnRow(col1, col2, col3, y, isHeader = false) {
+            const rowHeight = 7;
+            const colWidth = contentWidth / 3;
+            if (isHeader) {
+                pdf.setFillColor(...palette.secondary);
+                pdf.setTextColor(...palette.text);
+            } else {
+                pdf.setFillColor(255, 255, 255);
+                pdf.setTextColor(...palette.darkText);
+            }
+            pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+            pdf.setDrawColor(...palette.borderColor);
+            pdf.setLineWidth(0.2);
+            pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+            pdf.line(margin + colWidth, y, margin + colWidth, y + rowHeight);
+            pdf.line(margin + colWidth * 2, y, margin + colWidth * 2, y + rowHeight);
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
+            pdf.text(String(col1), margin + colWidth * 0.5, y + 4.8, { align: 'center' });
+            pdf.text(String(col2), margin + colWidth * 1.5, y + 4.8, { align: 'center' });
+            pdf.text(String(col3), margin + colWidth * 2.5, y + 4.8, { align: 'center' });
+            return y + rowHeight;
+        }
         
-        if (selectedTier) {
-            const badgeText = selectedTier.toUpperCase();
-            const badgeWidth = 28;
-            pdf.setFillColor(...palette.badge);
-            pdf.roundedRect(pageWidth - margin - badgeWidth, 5, badgeWidth, 8, 2, 2, 'F');
+        function addFourColumnRow(col1, col2, col3, col4, y, isHeader = false) {
+            const rowHeight = 7;
+            const colWidth = contentWidth / 4;
+            if (isHeader) {
+                pdf.setFillColor(...palette.secondary);
+                pdf.setTextColor(...palette.text);
+            } else {
+                pdf.setFillColor(255, 255, 255);
+                pdf.setTextColor(...palette.darkText);
+            }
+            pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+            pdf.setDrawColor(...palette.borderColor);
+            pdf.setLineWidth(0.2);
+            pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+            for (let i = 1; i < 4; i++) {
+                pdf.line(margin + colWidth * i, y, margin + colWidth * i, y + rowHeight);
+            }
+            pdf.setFontSize(7);
+            pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
+            pdf.text(String(col1), margin + colWidth * 0.5, y + 4.8, { align: 'center' });
+            pdf.text(String(col2), margin + colWidth * 1.5, y + 4.8, { align: 'center' });
+            pdf.text(String(col3), margin + colWidth * 2.5, y + 4.8, { align: 'center' });
+            pdf.text(String(col4), margin + colWidth * 3.5, y + 4.8, { align: 'center' });
+            return y + rowHeight;
+        }
+        
+        function addTotalBox(text, y) {
+            const boxHeight = 12;
+            pdf.setFillColor(...palette.primary);
+            pdf.roundedRect(margin, y, contentWidth, boxHeight, 2, 2, 'F');
+            pdf.setTextColor(...palette.text);
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(text.toUpperCase(), pageWidth / 2, y + 7.5, { align: 'center' });
+            return y + boxHeight + 3;
+        }
+        
+        function addGrossCommitmentRow(label, count, amount, y) {
+            const rowHeight = 8;
+            const colWidth = contentWidth / 3;
+            pdf.setFillColor(255, 255, 255);
+            pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+            pdf.setDrawColor(...palette.borderColor);
+            pdf.setLineWidth(0.2);
+            pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+            pdf.line(margin + colWidth, y, margin + colWidth, y + rowHeight);
+            pdf.line(margin + colWidth * 2, y, margin + colWidth * 2, y + rowHeight);
+            pdf.setTextColor(...palette.darkText);
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(String(label), margin + colWidth * 0.5, y + 5.5, { align: 'center' });
+            pdf.text(String(count), margin + colWidth * 1.5, y + 5.5, { align: 'center' });
+            pdf.text('Rs. ' + String(amount), margin + colWidth * 2.5, y + 5.5, { align: 'center' });
+            return y + rowHeight + 2;
+        }
+        
+        function addSlabTable(y) {
+            const slabData = [
+                { target: '10', incentive: 'Rs.75/MNP', min: 10 },
+                { target: '20', incentive: 'Rs.125/MNP', min: 20 },
+                { target: '30', incentive: 'Rs.150/MNP', min: 30 },
+                { target: '40', incentive: 'Rs.175/MNP', min: 40 },
+                { target: '50+', incentive: 'Rs.200/MNP', min: 50 }
+            ];
+            const currentGross = parseInt(document.getElementById('grossCount').value) || 0;
+            const slabColWidth = contentWidth / 2;
+            const rowHeight = 6;
+            
+            pdf.setFillColor(...palette.secondary);
+            pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+            pdf.setDrawColor(...palette.borderColor);
+            pdf.setLineWidth(0.2);
+            pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+            pdf.line(margin + slabColWidth, y, margin + slabColWidth, y + rowHeight);
             pdf.setTextColor(...palette.text);
             pdf.setFontSize(7);
             pdf.setFont('helvetica', 'bold');
-            pdf.text(badgeText, pageWidth - margin - badgeWidth / 2, 10.5, { align: 'center' });
-        }
-        
-        return 28;
-    }
-    
-    // Section title - COLORED
-    function addSectionTitle(text, y) {
-        const sectionHeight = 7;
-        pdf.setFillColor(...palette.primary);
-        pdf.rect(margin, y, contentWidth, sectionHeight, 'F');
-        
-        pdf.setFillColor(...palette.accent);
-        pdf.rect(margin, y, 3, sectionHeight, 'F');
-        
-        pdf.setTextColor(...palette.text);
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(text, margin + 7, y + 5);
-        
-        return y + sectionHeight + 1;
-    }
-    
-    // Two column data row - NO COLOR (plain white)
-    function addTableRow(label, value, y) {
-        const rowHeight = 7;
-        const labelWidth = contentWidth * 0.55;
-        
-        // Plain white background
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        
-        // Border
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.2);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-        pdf.line(margin + labelWidth, y, margin + labelWidth, y + rowHeight);
-        
-        // Text
-        pdf.setTextColor(...palette.darkText);
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(String(label), margin + 3, y + 4.8);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(String(value), margin + labelWidth + 3, y + 4.8);
-        
-        return y + rowHeight;
-    }
-    
-    // Three column row - Header COLORED, Data plain
-    function addThreeColumnRow(col1, col2, col3, y, isHeader = false) {
-        const rowHeight = 7;
-        const colWidth = contentWidth / 3;
-        
-        if (isHeader) {
-            pdf.setFillColor(...palette.secondary);
-            pdf.setTextColor(...palette.text);
-        } else {
-            pdf.setFillColor(255, 255, 255);
-            pdf.setTextColor(...palette.darkText);
-        }
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        
-        // Borders
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.2);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-        pdf.line(margin + colWidth, y, margin + colWidth, y + rowHeight);
-        pdf.line(margin + colWidth * 2, y, margin + colWidth * 2, y + rowHeight);
-        
-        // Text
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
-        pdf.text(String(col1), margin + colWidth * 0.5, y + 4.8, { align: 'center' });
-        pdf.text(String(col2), margin + colWidth * 1.5, y + 4.8, { align: 'center' });
-        pdf.text(String(col3), margin + colWidth * 2.5, y + 4.8, { align: 'center' });
-        
-        return y + rowHeight;
-    }
-    
-    // Four column row - Header COLORED, Data plain
-    function addFourColumnRow(col1, col2, col3, col4, y, isHeader = false) {
-        const rowHeight = 7;
-        const colWidth = contentWidth / 4;
-        
-        if (isHeader) {
-            pdf.setFillColor(...palette.secondary);
-            pdf.setTextColor(...palette.text);
-        } else {
-            pdf.setFillColor(255, 255, 255);
-            pdf.setTextColor(...palette.darkText);
-        }
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        
-        // Borders
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.2);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-        for (let i = 1; i < 4; i++) {
-            pdf.line(margin + colWidth * i, y, margin + colWidth * i, y + rowHeight);
-        }
-        
-        // Text
-        pdf.setFontSize(7);
-        pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
-        pdf.text(String(col1), margin + colWidth * 0.5, y + 4.8, { align: 'center' });
-        pdf.text(String(col2), margin + colWidth * 1.5, y + 4.8, { align: 'center' });
-        pdf.text(String(col3), margin + colWidth * 2.5, y + 4.8, { align: 'center' });
-        pdf.text(String(col4), margin + colWidth * 3.5, y + 4.8, { align: 'center' });
-        
-        return y + rowHeight;
-    }
-    
-    // Total box - COLORED (this is like a header/summary)
-    function addTotalBox(text, y) {
-        const boxHeight = 12;
-        
-        pdf.setFillColor(...palette.primary);
-        pdf.roundedRect(margin, y, contentWidth, boxHeight, 2, 2, 'F');
-        
-        pdf.setTextColor(...palette.text);
-        pdf.setFontSize(12);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(text.toUpperCase(), pageWidth / 2, y + 7.5, { align: 'center' });
-        
-        return y + boxHeight + 3;
-    }
-    
-    // Gross commitment row - Plain (no highlight)
-    function addGrossCommitmentRow(label, count, amount, y) {
-        const rowHeight = 8;
-        const colWidth = contentWidth / 3;
-        
-        // Plain white background
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        
-        // Borders
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.2);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-        pdf.line(margin + colWidth, y, margin + colWidth, y + rowHeight);
-        pdf.line(margin + colWidth * 2, y, margin + colWidth * 2, y + rowHeight);
-        
-        // Text - bold for emphasis
-        pdf.setTextColor(...palette.darkText);
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(String(label), margin + colWidth * 0.5, y + 5.5, { align: 'center' });
-        pdf.text(String(count), margin + colWidth * 1.5, y + 5.5, { align: 'center' });
-        pdf.text('Rs. ' + String(amount), margin + colWidth * 2.5, y + 5.5, { align: 'center' });
-        
-        return y + rowHeight + 2;
-    }
-    
-    // Slab table - Only header COLORED
-    function addSlabTable(y) {
-        const slabData = [
-            { target: '10', incentive: 'Rs.75/MNP', min: 10 },
-            { target: '20', incentive: 'Rs.125/MNP', min: 20 },
-            { target: '30', incentive: 'Rs.150/MNP', min: 30 },
-            { target: '40', incentive: 'Rs.175/MNP', min: 40 },
-            { target: '50+', incentive: 'Rs.200/MNP', min: 50 }
-        ];
-        
-        const currentGross = parseInt(document.getElementById('grossCount').value) || 0;
-        const slabColWidth = contentWidth / 2;
-        const rowHeight = 6;
-        
-        // Header - COLORED
-        pdf.setFillColor(...palette.secondary);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.2);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-        pdf.line(margin + slabColWidth, y, margin + slabColWidth, y + rowHeight);
-        
-        pdf.setTextColor(...palette.text);
-        pdf.setFontSize(7);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('GROSS TARGET', margin + slabColWidth * 0.5, y + 4.2, { align: 'center' });
-        pdf.text('INCENTIVE (PER MNP)', margin + slabColWidth * 1.5, y + 4.2, { align: 'center' });
-        y += rowHeight;
-        
-        // Data rows - Plain white
-        slabData.forEach((slab, index) => {
-            let isActive = false;
-            
-            if (slab.target === '50+' && currentGross >= 50) {
-                isActive = true;
-            } else if (slab.target !== '50+') {
-                const slabMin = slab.min;
-                const nextSlabMin = slabData[index + 1] ? slabData[index + 1].min : 999;
-                if (currentGross >= slabMin && currentGross < nextSlabMin) {
-                    isActive = true;
-                }
-            }
-            
-            // Plain white background for all rows
-            pdf.setFillColor(255, 255, 255);
-            pdf.setTextColor(...palette.darkText);
-            
-            pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-            pdf.setDrawColor(...palette.borderColor);
-            pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-            pdf.line(margin + slabColWidth, y, margin + slabColWidth, y + rowHeight);
-            
-            pdf.setFontSize(7);
-            pdf.setFont('helvetica', isActive ? 'bold' : 'normal');
-            
-            const activeIndicator = isActive ? ' (Current)' : '';
-            pdf.text(slab.target, margin + slabColWidth * 0.5, y + 4.2, { align: 'center' });
-            pdf.text(slab.incentive + activeIndicator, margin + slabColWidth * 1.5, y + 4.2, { align: 'center' });
-            
+            pdf.text('GROSS TARGET', margin + slabColWidth * 0.5, y + 4.2, { align: 'center' });
+            pdf.text('INCENTIVE (PER MNP)', margin + slabColWidth * 1.5, y + 4.2, { align: 'center' });
             y += rowHeight;
-        });
+            
+            slabData.forEach((slab, index) => {
+                let isActive = false;
+                if (slab.target === '50+' && currentGross >= 50) {
+                    isActive = true;
+                } else if (slab.target !== '50+') {
+                    const slabMin = slab.min;
+                    const nextSlabMin = slabData[index + 1] ? slabData[index + 1].min : 999;
+                    if (currentGross >= slabMin && currentGross < nextSlabMin) {
+                        isActive = true;
+                    }
+                }
+                pdf.setFillColor(255, 255, 255);
+                pdf.setTextColor(...palette.darkText);
+                pdf.rect(margin, y, contentWidth, rowHeight, 'F');
+                pdf.setDrawColor(...palette.borderColor);
+                pdf.rect(margin, y, contentWidth, rowHeight, 'S');
+                pdf.line(margin + slabColWidth, y, margin + slabColWidth, y + rowHeight);
+                pdf.setFontSize(7);
+                pdf.setFont('helvetica', isActive ? 'bold' : 'normal');
+                const activeIndicator = isActive ? ' (Current)' : '';
+                pdf.text(slab.target, margin + slabColWidth * 0.5, y + 4.2, { align: 'center' });
+                pdf.text(slab.incentive + activeIndicator, margin + slabColWidth * 1.5, y + 4.2, { align: 'center' });
+                y += rowHeight;
+            });
+            return y + 2;
+        }
         
-        return y + 2;
-    }
-    
-    // Page footer
-    function addPageFooter(pageNum, totalPages) {
+        function addPageFooter(pageNum, totalPages) {
+            pdf.setDrawColor(...palette.borderColor);
+            pdf.setLineWidth(0.3);
+            pdf.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+            pdf.setFontSize(7);
+            pdf.setTextColor(130, 130, 130);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text('Page ' + pageNum + ' of ' + totalPages, margin, pageHeight - 7);
+            pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), pageWidth / 2, pageHeight - 7, { align: 'center' });
+            const docId = 'ENR-' + Date.now().toString(36).toUpperCase();
+            pdf.text(docId, pageWidth - margin, pageHeight - 7, { align: 'right' });
+        }
+        
+        // --- PAGE 1 CONTENT ---
+        yPos = addLuxuryHeader('RETAILER ENROLLMENT SHEET', 'December 2025', yPos);
+        yPos = addSectionTitle('RETAILER INFORMATION', yPos);
+        yPos = addTableRow('Outlet Name', document.getElementById('outletName').value || '-', yPos);
+        yPos = addTableRow('Lapu No', document.getElementById('lapuNo').value || '-', yPos);
+        yPos = addTableRow('FSE Contact No', document.getElementById('fseContact').value || '-', yPos);
+        yPos = addTableRow('TSM/SE Contact No', document.getElementById('tsmContact').value || '-', yPos);
+        yPos += 3;
+        
+        yPos = addSectionTitle('MARGIN SCHEME', yPos);
+        yPos = addThreeColumnRow('Scheme', 'Margin', 'Gate', yPos, true);
+        yPos = addThreeColumnRow('Base Margins', '3.90%', '-', yPos);
+        yPos = addThreeColumnRow('MNP Participation', '1.40%', '1 MNP/Day', yPos);
+        yPos = addThreeColumnRow('WIFI Participation', '1.50%', '1 WIFI/Day', yPos);
+        yPos = addThreeColumnRow('TOTAL MARGIN', '6.80%', '-', yPos);
+        yPos += 3;
+        
+        yPos = addSectionTitle('OTF RATES', yPos);
+        yPos = addThreeColumnRow('FRC', 'DSR', 'MNP', yPos, true);
+        yPos = addThreeColumnRow('349', 'Rs.135', 'Rs.235', yPos);
+        yPos = addThreeColumnRow('449', 'Rs.135', 'Rs.235', yPos);
+        pdf.setFillColor(255, 255, 255);
+        pdf.rect(margin, yPos, contentWidth, 7, 'F');
         pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.3);
-        pdf.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+        pdf.rect(margin, yPos, contentWidth, 7, 'S');
+        pdf.setTextColor(...palette.darkText);
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('SIMEX - Rs.50 Per SIMEX', pageWidth / 2, yPos + 4.8, { align: 'center' });
+        yPos += 10;
         
-        pdf.setFontSize(7);
-        pdf.setTextColor(130, 130, 130);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text('Page ' + pageNum + ' of ' + totalPages, margin, pageHeight - 7);
-        pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), pageWidth / 2, pageHeight - 7, { align: 'center' });
+        yPos = addSectionTitle('OTF CALCULATIONS', yPos);
+        yPos = addThreeColumnRow('Item', 'Count', 'Amount (Rs.)', yPos, true);
+        yPos = addThreeColumnRow('DSR OTF (Rs.135)', document.getElementById('dsrCount').value || '0', document.getElementById('dsrAmount').value || '0', yPos);
+        yPos = addThreeColumnRow('MNP OTF (Rs.235)', document.getElementById('mnpCount').value || '0', document.getElementById('mnpAmount').value || '0', yPos);
+        yPos = addGrossCommitmentRow('GROSS COMMITMENT', document.getElementById('grossCount').value || '0', document.getElementById('grossAmount').value || '0', yPos);
         
-        const docId = 'ENR-' + Date.now().toString(36).toUpperCase();
-        pdf.text(docId, pageWidth - margin, pageHeight - 7, { align: 'right' });
-    }
-    
-    // =============================================
-    // PAGE 1 - MAIN INFORMATION
-    // =============================================
-    
-    yPos = addLuxuryHeader('RETAILER ENROLLMENT SHEET', 'December 2025', yPos);
-    
-    // SECTION 1: RETAILER INFORMATION
-    yPos = addSectionTitle('RETAILER INFORMATION', yPos);
-    
-    const outletName = document.getElementById('outletName').value || '-';
-    const lapuNo = document.getElementById('lapuNo').value || '-';
-    const fseContact = document.getElementById('fseContact').value || '-';
-    const tsmContact = document.getElementById('tsmContact').value || '-';
-    
-    yPos = addTableRow('Outlet Name', outletName, yPos);
-    yPos = addTableRow('Lapu No', lapuNo, yPos);
-    yPos = addTableRow('FSE Contact No', fseContact, yPos);
-    yPos = addTableRow('TSM/SE Contact No', tsmContact, yPos);
-    
-    yPos += 3;
-    
-    // SECTION 2: MARGIN SCHEME
-    yPos = addSectionTitle('MARGIN SCHEME', yPos);
-    yPos = addThreeColumnRow('Scheme', 'Margin', 'Gate', yPos, true);
-    yPos = addThreeColumnRow('Base Margins', '3.90%', '-', yPos);
-    yPos = addThreeColumnRow('MNP Participation', '1.40%', '1 MNP/Day', yPos);
-    yPos = addThreeColumnRow('WIFI Participation', '1.50%', '1 WIFI/Day', yPos);
-    yPos = addThreeColumnRow('TOTAL MARGIN', '6.80%', '-', yPos);
-    
-    yPos += 3;
-    
-    // SECTION 3: OTF RATES
-    yPos = addSectionTitle('OTF RATES', yPos);
-    yPos = addThreeColumnRow('FRC', 'DSR', 'MNP', yPos, true);
-    yPos = addThreeColumnRow('349', 'Rs.135', 'Rs.235', yPos);
-    yPos = addThreeColumnRow('449', 'Rs.135', 'Rs.235', yPos);
-    
-    // SIMEX row - plain
-    pdf.setFillColor(255, 255, 255);
-    pdf.rect(margin, yPos, contentWidth, 7, 'F');
-    pdf.setDrawColor(...palette.borderColor);
-    pdf.rect(margin, yPos, contentWidth, 7, 'S');
-    pdf.setTextColor(...palette.darkText);
-    pdf.setFontSize(8);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('SIMEX - Rs.50 Per SIMEX', pageWidth / 2, yPos + 4.8, { align: 'center' });
-    yPos += 10;
-    
-    // SECTION 4: OTF CALCULATIONS
-    yPos = addSectionTitle('OTF CALCULATIONS', yPos);
-    yPos = addThreeColumnRow('Item', 'Count', 'Amount (Rs.)', yPos, true);
-    
-    const dsrCount = document.getElementById('dsrCount').value || '0';
-    const dsrAmount = document.getElementById('dsrAmount').value || '0';
-    const mnpCount = document.getElementById('mnpCount').value || '0';
-    const mnpAmount = document.getElementById('mnpAmount').value || '0';
-    const grossCount = document.getElementById('grossCount').value || '0';
-    const grossAmount = document.getElementById('grossAmount').value || '0';
-    
-    yPos = addThreeColumnRow('DSR OTF (Rs.135)', dsrCount, dsrAmount, yPos);
-    yPos = addThreeColumnRow('MNP OTF (Rs.235)', mnpCount, mnpAmount, yPos);
-    yPos = addGrossCommitmentRow('GROSS COMMITMENT', grossCount, grossAmount, yPos);
-    
-    // SECTION 5: MARGIN CALCULATIONS
-    yPos = addSectionTitle('MARGIN CALCULATIONS', yPos);
-    yPos = addThreeColumnRow('Item', 'Value', 'Amount (Rs.)', yPos, true);
-    
-    const lapuTertiary = document.getElementById('lapuTertiary').value || '0';
-    const tertiaryAmount = document.getElementById('tertiaryAmount').value || '0';
-    const mnpDays = document.getElementById('mnpDays').value || '0';
-    const mnpDaysAmount = document.getElementById('mnpDaysAmount').value || '0';
-    const wifiDays = document.getElementById('wifiDays').value || '0';
-    const wifiDaysAmount = document.getElementById('wifiDaysAmount').value || '0';
-    
-    yPos = addThreeColumnRow('Lapu Tertiary (3.9%)', lapuTertiary, tertiaryAmount, yPos);
-    yPos = addThreeColumnRow('MNP Days (1.4%)', mnpDays, mnpDaysAmount, yPos);
-    yPos = addThreeColumnRow('WiFi Days (1.5%)', wifiDays, wifiDaysAmount, yPos);
-    
-    yPos += 3;
-    
-    // SECTION 6: ADDITIONAL ITEMS
-    yPos = addSectionTitle('ADDITIONAL ITEMS', yPos);
-    yPos = addThreeColumnRow('Item', 'Count', 'Amount (Rs.)', yPos, true);
-    
-    const wifiCount = document.getElementById('wifiCount').value || '0';
-    const wifiAmount = document.getElementById('wifiAmount').value || '0';
-    const apbCount = document.getElementById('apbCount').value || '0';
-    const apbAmount = document.getElementById('apbAmount').value || '0';
-    const simexCount = document.getElementById('simexCount').value || '0';
-    const simexAmount = document.getElementById('simexAmount').value || '0';
-    
-    yPos = addThreeColumnRow('WIFI (Rs.150)', wifiCount, wifiAmount, yPos);
-    yPos = addThreeColumnRow('APB SBA (Rs.45)', apbCount, apbAmount, yPos);
-    yPos = addThreeColumnRow('SIMEX (Rs.50)', simexCount, simexAmount, yPos);
-    
-    yPos += 3;
-    
-    // TOTAL AMOUNT BOX
-    const totalText = document.getElementById('totalAmount').textContent || 'Total Amount Rs. 0';
-    yPos = addTotalBox(totalText, yPos);
-    
-    addPageFooter(1, 2);
-    
-    // =============================================
-    // PAGE 2 - VERIFICATION & SIGNATURES
-    // =============================================
-    pdf.addPage();
-    yPos = margin;
-
-    // Header
-    pdf.setFillColor(...palette.headerBg);
-    pdf.rect(0, 0, pageWidth, 14, 'F');
-    pdf.setFillColor(...palette.accent);
-    pdf.rect(0, 14, pageWidth, 1, 'F');
-
-    pdf.setTextColor(...palette.text);
-    pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('VERIFICATION & AUTHORIZATION', pageWidth / 2, 9, { align: 'center' });
-
-    yPos = 20;
-    // SECTION: PHOTO & LOCATION
-    yPos = addSectionTitle('PHOTO & LOCATION VERIFICATION', yPos);
-    
-    const photoBoxWidth = 55;
-    const photoBoxHeight = 55;
-    const infoStartX = margin + photoBoxWidth + 8;
-    const infoWidth = contentWidth - photoBoxWidth - 8;
-    
-    // Photo container - plain
-    pdf.setDrawColor(...palette.borderColor);
-    pdf.setLineWidth(0.5);
-    pdf.setFillColor(255, 255, 255);
-    pdf.rect(margin, yPos, photoBoxWidth, photoBoxHeight, 'FD');
-    
-    if (capturedPhoto) {
-        try {
-            pdf.addImage(capturedPhoto, 'JPEG', margin + 2, yPos + 2, photoBoxWidth - 4, photoBoxHeight - 4);
-        } catch (e) {
+        yPos = addSectionTitle('MARGIN CALCULATIONS', yPos);
+        yPos = addThreeColumnRow('Item', 'Value', 'Amount (Rs.)', yPos, true);
+        yPos = addThreeColumnRow('Lapu Tertiary (3.9%)', document.getElementById('lapuTertiary').value || '0', document.getElementById('tertiaryAmount').value || '0', yPos);
+        yPos = addThreeColumnRow('MNP Days (1.4%)', document.getElementById('mnpDays').value || '0', document.getElementById('mnpDaysAmount').value || '0', yPos);
+        yPos = addThreeColumnRow('WiFi Days (1.5%)', document.getElementById('wifiDays').value || '0', document.getElementById('wifiDaysAmount').value || '0', yPos);
+        yPos += 3;
+        
+        yPos = addSectionTitle('ADDITIONAL ITEMS', yPos);
+        yPos = addThreeColumnRow('Item', 'Count', 'Amount (Rs.)', yPos, true);
+        yPos = addThreeColumnRow('WIFI (Rs.150)', document.getElementById('wifiCount').value || '0', document.getElementById('wifiAmount').value || '0', yPos);
+        yPos = addThreeColumnRow('APB SBA (Rs.45)', document.getElementById('apbCount').value || '0', document.getElementById('apbAmount').value || '0', yPos);
+        yPos = addThreeColumnRow('SIMEX (Rs.50)', document.getElementById('simexCount').value || '0', document.getElementById('simexAmount').value || '0', yPos);
+        yPos += 3;
+        
+        yPos = addTotalBox(document.getElementById('totalAmount').textContent || 'Total Amount Rs. 0', yPos);
+        addPageFooter(1, 2);
+        
+        // --- PAGE 2 CONTENT ---
+        pdf.addPage();
+        yPos = margin;
+        pdf.setFillColor(...palette.headerBg);
+        pdf.rect(0, 0, pageWidth, 14, 'F');
+        pdf.setFillColor(...palette.accent);
+        pdf.rect(0, 14, pageWidth, 1, 'F');
+        pdf.setTextColor(...palette.text);
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('VERIFICATION & AUTHORIZATION', pageWidth / 2, 9, { align: 'center' });
+        yPos = 20;
+        
+        yPos = addSectionTitle('PHOTO & LOCATION VERIFICATION', yPos);
+        const photoBoxWidth = 55;
+        const photoBoxHeight = 55;
+        const infoStartX = margin + photoBoxWidth + 8;
+        const infoWidth = contentWidth - photoBoxWidth - 8;
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.setLineWidth(0.5);
+        pdf.setFillColor(255, 255, 255);
+        pdf.rect(margin, yPos, photoBoxWidth, photoBoxHeight, 'FD');
+        if (capturedPhoto) {
+            try {
+                pdf.addImage(capturedPhoto, 'JPEG', margin + 2, yPos + 2, photoBoxWidth - 4, photoBoxHeight - 4);
+            } catch (e) {
+                pdf.text('Photo Error', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2, { align: 'center' });
+            }
+        } else {
             pdf.setTextColor(150, 150, 150);
             pdf.setFontSize(9);
-            pdf.text('Photo Error', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2, { align: 'center' });
+            pdf.setFont('helvetica', 'italic');
+            pdf.text('No Photo', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 - 3, { align: 'center' });
+            pdf.text('Captured', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 + 4, { align: 'center' });
         }
-    } else {
-        pdf.setTextColor(150, 150, 150);
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'italic');
-        pdf.text('No Photo', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 - 3, { align: 'center' });
-        pdf.text('Captured', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 + 4, { align: 'center' });
-    }
-    
-    // Photo info section - plain white
-    pdf.setFillColor(255, 255, 255);
-    pdf.setDrawColor(...palette.borderColor);
-    pdf.rect(infoStartX, yPos, infoWidth, photoBoxHeight, 'FD');
-    
-    let infoY = yPos + 8;
-    
-    pdf.setTextColor(...palette.darkText);
-    pdf.setFontSize(8);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('CAPTURE TIMESTAMP:', infoStartX + 4, infoY);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text(photoTimestamp || new Date().toLocaleString('en-IN'), infoStartX + 4, infoY + 5);
-    
-    infoY += 15;
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('GPS COORDINATES:', infoStartX + 4, infoY);
-    pdf.setFont('helvetica', 'normal');
-    
-    if (geoLocation) {
+        pdf.setFillColor(255, 255, 255);
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.rect(infoStartX, yPos, infoWidth, photoBoxHeight, 'FD');
+        let infoY = yPos + 8;
         pdf.setTextColor(...palette.darkText);
-        pdf.text(geoLocation, infoStartX + 4, infoY + 5);
-        pdf.setFontSize(7);
-        pdf.text('Source: ' + (geoSource || 'Device GPS'), infoStartX + 4, infoY + 10);
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('CAPTURE TIMESTAMP:', infoStartX + 4, infoY);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(photoTimestamp || new Date().toLocaleString('en-IN'), infoStartX + 4, infoY + 5);
+        infoY += 15;
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('GPS COORDINATES:', infoStartX + 4, infoY);
+        pdf.setFont('helvetica', 'normal');
+        if (geoLocation) {
+            pdf.setTextColor(...palette.darkText);
+            pdf.text(geoLocation, infoStartX + 4, infoY + 5);
+            pdf.setFontSize(7);
+            pdf.text('Source: ' + (geoSource || 'Device GPS'), infoStartX + 4, infoY + 10);
+            infoY += 18;
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('Status: VERIFIED', infoStartX + 4, infoY);
+        } else {
+            pdf.setTextColor(150, 150, 150);
+            pdf.text('Location not available', infoStartX + 4, infoY + 5);
+        }
+        yPos += photoBoxHeight + 5;
         
-        infoY += 18;
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Status: VERIFIED', infoStartX + 4, infoY);
-    } else {
-        pdf.setTextColor(150, 150, 150);
-        pdf.text('Location not available', infoStartX + 4, infoY + 5);
-    }
-    
-    yPos += photoBoxHeight + 5;
-    
-    const dsrTarget = parseInt(document.getElementById('dsrTarget').value) || 0;
-    const mnpTarget = parseInt(document.getElementById('mnpTarget').value) || 0;
-    const wifiTarget = parseInt(document.getElementById('wifiTarget').value) || 0;
-
-    // 🔹 MOD 3: TOTAL FORMULA
-    const totalTarget = dsrTarget + mnpTarget;
-
-    yPos = addSectionTitle('MONTHLY TARGETS', yPos);
-    yPos = addFourColumnRow('DSR', 'MNP', 'TOTAL', 'WIFI', yPos, true);
-    yPos = addFourColumnRow(dsrTarget, mnpTarget, totalTarget, wifiTarget, yPos);
-
-    yPos += 5;
-
-    // SECTION: DECLARATION
-    yPos = addSectionTitle('DECLARATION', yPos);
-    
-    pdf.setFillColor(255, 255, 255);
-    pdf.setDrawColor(...palette.borderColor);
-    pdf.rect(margin, yPos, contentWidth, 14, 'FD');
-    
-    pdf.setTextColor(...palette.darkText);
-    pdf.setFontSize(7);
-    pdf.setFont('helvetica', 'normal');
-    const declaration = 'I hereby confirm that all information provided above is accurate and complete. I agree to comply with the terms and conditions of the retailer enrollment program for the December 2025 period.';
-    const splitDeclaration = pdf.splitTextToSize(declaration, contentWidth - 8);
-    pdf.text(splitDeclaration, margin + 4, yPos + 5);
-    
-    yPos += 17;
-
-
-    
-    // SECTION: SIGNATURES
-    yPos = addSectionTitle('SIGNATURES', yPos);
-
-    const sigBoxWidth = (contentWidth - 6) / 2;
-    const sigBoxHeight = 32;
-
-    // Retailer signature
-    pdf.setFillColor(255, 255, 255);
-    pdf.setDrawColor(...palette.borderColor);
-    pdf.rect(margin, yPos, sigBoxWidth, sigBoxHeight, 'FD');
-
-    pdf.setTextColor(...palette.darkText);
-    pdf.setFontSize(7);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('RETAILER SIGNATURE', margin + 4, yPos + 5);
-
-    // Authorized signature (tier-based)
-    const owner = getSignatureOwner();
-    const ownerX = margin + sigBoxWidth + 6;
-
-    pdf.setFillColor(255, 255, 255);
-    pdf.rect(ownerX, yPos, sigBoxWidth, sigBoxHeight, 'FD');
-
-    pdf.setTextColor(...palette.darkText);
-    pdf.setFontSize(7);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text(owner + ' SIGNATURE', ownerX + 4, yPos + 5);
-
-    yPos += sigBoxHeight + 8;
-         // Tier text
-             if (selectedTier) {
+        yPos = addSectionTitle('MONTHLY TARGETS', yPos);
+        const dsrTarget = parseInt(document.getElementById('dsrTarget').value) || 0;
+        const mnpTarget = parseInt(document.getElementById('mnpTarget').value) || 0;
+        const totalTarget = dsrTarget + mnpTarget;
+        yPos = addFourColumnRow('DSR', 'MNP', 'TOTAL', 'WIFI', yPos, true);
+        yPos = addFourColumnRow(dsrTarget, mnpTarget, totalTarget, document.getElementById('wifiTarget').value || 0, yPos);
+        yPos += 5;
+        
+        yPos = addSectionTitle('DECLARATION', yPos);
+        pdf.setFillColor(255, 255, 255);
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.rect(margin, yPos, contentWidth, 14, 'FD');
         pdf.setTextColor(...palette.darkText);
-        pdf.setFontSize(6);
+        pdf.setFontSize(7);
+        pdf.setFont('helvetica', 'normal');
+        const declaration = 'I hereby confirm that all information provided above is accurate and complete. I agree to comply with the terms and conditions of the retailer enrollment program for the December 2025 period.';
+        const splitDeclaration = pdf.splitTextToSize(declaration, contentWidth - 8);
+        pdf.text(splitDeclaration, margin + 4, yPos + 5);
+        yPos += 17;
+        
+        yPos = addSectionTitle('SIGNATURES', yPos);
+        const sigBoxWidth = (contentWidth - 6) / 2;
+        const sigBoxHeight = 32;
+        pdf.setFillColor(255, 255, 255);
+        pdf.setDrawColor(...palette.borderColor);
+        pdf.rect(margin, yPos, sigBoxWidth, sigBoxHeight, 'FD');
+        pdf.setTextColor(...palette.darkText);
+        pdf.setFontSize(7);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(selectedTier.toUpperCase() + ' TIER ENROLLMENT', pageWidth - margin, yPos + 1, { align: 'right' });
-    }
-    yPos += 5;
-    // 🔹 MOD 2: CUT LINE WITH SCISSORS
-    pdf.setDrawColor(150, 150, 150);
-    pdf.setLineWidth(0.3);
-    pdf.setLineDashPattern([2, 2], 0);
-    pdf.line(margin, yPos, pageWidth - margin, yPos);
-    pdf.setLineDashPattern([], 0);
-
-    pdf.setFontSize(10);
-    pdf.text('✂', pageWidth / 2, yPos - 1, { align: 'center' });
-
-    yPos += 8;
-
-
-    // SECTION: SLAB REFERENCE
-    yPos = addSectionTitle('GROSS TARGET SLAB REFERENCE', yPos);
-    yPos = addSlabTable(yPos);
-    
-    addPageFooter(2, 2);
-    
-    // =============================================
-    // SAVE PDF
-    // =============================================
-
-    const outlet = document.getElementById('outletName').value || 'Retailer';
-    const tierSuffix = selectedTier ? '_' + selectedTier.toUpperCase() : '';
-    const dateStr = new Date().toISOString().slice(0, 10);
-    const filename = `Enrollment_${outlet.replace(/[^a-zA-Z0-9]/g, '_')}${tierSuffix}_${dateStr}.pdf`;
-
-    // Generate PDF as Blob
-    const pdfBlob = pdf.output('blob');
-
-    // 🔹 Force download (so file exists locally)
-    const fileURL = URL.createObjectURL(pdfBlob);
-    const a = document.createElement('a');
-    a.href = fileURL;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(fileURL);
-
-    // 🔹 Open native share sheet immediately
-    if (navigator.canShare && navigator.canShare({
-        files: [new File([pdfBlob], filename, { type: 'application/pdf' })]
-    })) {
-        try {
-            await navigator.share({
-                title: 'Retailer Enrollment PDF',
-                text: 'Please find the enrollment PDF attached.',
-                files: [new File([pdfBlob], filename, { type: 'application/pdf' })]
-            });
-        } catch (err) {
-            // User cancelled share — do nothing
+        pdf.text('RETAILER SIGNATURE', margin + 4, yPos + 5);
+        const owner = getSignatureOwner();
+        const ownerX = margin + sigBoxWidth + 6;
+        pdf.setFillColor(255, 255, 255);
+        pdf.rect(ownerX, yPos, sigBoxWidth, sigBoxHeight, 'FD');
+        pdf.text(owner + ' SIGNATURE', ownerX + 4, yPos + 5);
+        yPos += sigBoxHeight + 8;
+        if (selectedTier) {
+            pdf.setTextColor(...palette.darkText);
+            pdf.setFontSize(6);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(selectedTier.toUpperCase() + ' TIER ENROLLMENT', pageWidth - margin, yPos + 1, { align: 'right' });
         }
-    } else {
-        alert('Sharing not supported on this device');
-    }
-});
+        yPos += 5;
+        pdf.setDrawColor(150, 150, 150);
+        pdf.setLineWidth(0.3);
+        pdf.setLineDashPattern([2, 2], 0);
+        pdf.line(margin, yPos, pageWidth - margin, yPos);
+        pdf.setLineDashPattern([], 0);
+        pdf.setFontSize(10);
+        pdf.text('✂', pageWidth / 2, yPos - 1, { align: 'center' });
+        yPos += 8;
+        yPos = addSectionTitle('GROSS TARGET SLAB REFERENCE', yPos);
+        yPos = addSlabTable(yPos);
+        addPageFooter(2, 2);
+        
+        // --- 3. OUTPUT & SHARE ---
+        const outlet = document.getElementById('outletName').value || 'Retailer';
+        const tierSuffix = selectedTier ? '_' + selectedTier.toUpperCase() : '';
+        const dateStr = new Date().toISOString().slice(0, 10);
+        const filename = `Enrollment_${outlet.replace(/[^a-zA-Z0-9]/g, '_')}${tierSuffix}_${dateStr}.pdf`;
+
+        const pdfBlob = pdf.output('blob');
+        
+        // Helper to trigger download
+        const triggerDownload = (blob, name) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = name;
+            document.body.appendChild(a); // Required for some browsers
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+        };
+
+        // Enable Capture Photo button since PDF is generated
+        document.getElementById('captureBtn').disabled = false;
+
+        // Try Web Share API with Fallback
+        const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'Retailer Enrollment',
+                    text: 'Please find the enrollment PDF attached.'
+                });
+            } catch (err) {
+                // Share cancelled or failed, fallback to download
+                triggerDownload(pdfBlob, filename);
+            }
+        } else {
+            // Share not supported, fallback to download
+            triggerDownload(pdfBlob, filename);
+        }
+    });
 
     // =============================================
     // INITIALIZE
@@ -2994,11 +2720,7 @@ const pdf = new jsPDF('p', 'mm', 'a4');
         initializeValidations();
         calculateAll();
         calculateDeviceShare();
-        
         const device = getDeviceInfo();
-        console.log('Device Info:', device);
-        
-        // Show initial location status
         displayGPSInfo(null, null);
     });
 
@@ -3007,12 +2729,10 @@ const pdf = new jsPDF('p', 'mm', 'a4');
     // =============================================
     ;(function() {
         window.injectedLocation = null;
-
         window.swiftGPSReady = function(lat, lon, acc) {
             geoLocation = `${parseFloat(lat).toFixed(6)}, ${parseFloat(lon).toFixed(6)}`;
             geoSource = 'Swift Real GPS';
             geoAccuracy = `${Math.round(acc)}m`;
-
             const geoInfo = document.getElementById('geoInfo');
             geoInfo.innerHTML = `
                 <strong>Real GPS Locked (via App)</strong><br>
@@ -3027,7 +2747,6 @@ const pdf = new jsPDF('p', 'mm', 'a4');
             document.getElementById('photoSection').style.display = 'block';
             showToast('Real GPS captured successfully!', 'success', 4000);
         };
-
         const check = setInterval(() => {
             if (window.injectedLocation) {
                 clearInterval(check);
@@ -3038,7 +2757,6 @@ const pdf = new jsPDF('p', 'mm', 'a4');
                 );
             }
         }, 700);
-
         if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !navigator.userAgent.includes('SwiftApp')) {
             setTimeout(() => {
                 if (!window.injectedLocation && !geoLocation) {
