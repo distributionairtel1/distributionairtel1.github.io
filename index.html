@@ -819,86 +819,34 @@
                 </tr>
             </table>
         </div>
-
+        <!-- Tier Selection -->
+        <div class="tier-section">
+            <label class="tier-btn tier-platinum">
+                <input type="radio" name="tier" id="chckPlat" value="platinum">
+                <span>Platinum</span>
+            </label>
+            <label class="tier-btn tier-gold">
+                <input type="radio" name="tier" id="chckGold" value="gold">
+                <span>Gold</span>
+            </label>
+            <label class="tier-btn tier-executive">
+                <input type="radio" name="tier" id="chckExec" value="executive">
+                <span>Executive</span>
+            </label>
+        </div>
         <!-- Validation Summary -->
         <div class="validation-summary" id="validationSummary">
             <h4>⚠️ Please fix the following errors:</h4>
             <ul id="validationErrors"></ul>
         </div>
-
-        <!-- Margin Scheme -->
-        <div class="form-section">
-            <table class="form-table">
-                <tr><th>Scheme</th><th>Margin</th><th>Gate</th></tr>
-                <tr><td class="left">Base Margins</td><td>3.90%</td><td>-</td></tr>
-                <tr><td class="left">MNP Participation</td><td>1.40%</td><td>1 MNP/Day</td></tr>
-                <tr><td class="left">WIFI Participation</td><td>1.50%</td><td>1 WIFI/Day</td></tr>
-                <tr class="highlight"><td class="left">Total Margin</td><td>6.80%</td><td>-</td></tr>
-            </table>
-        </div>
-
-        <!-- OTF Section -->
-        <div class="form-section">
-            <table class="form-table">
-                <tr class="section-title"><td colspan="3">OTF</td></tr>
-                <tr><th>FRC</th><th>DSR</th><th>MNP</th></tr>
-                <tr><td>349</td><td>135</td><td>235</td></tr>
-                <tr><td>449</td><td>135</td><td>235</td></tr>
-                <tr><td colspan="3" style="text-align: center; font-weight: 600;">SIMEX – Rs.50 Per SIMEX</td></tr>
-            </table>
-        </div>
-
-        <!-- Main Calculation Section -->
-        <div class="calc-section">
-            <table class="form-table">
-                <tr><th>Items</th><th>Count</th><th>Amount</th></tr>
-                <tr><td class="left">DSR OTF - Rs.135</td><td><input type="number" id="dsrCount" placeholder="0" min="0"></td><td><input type="text" id="dsrAmount" readonly class="total-display"></td></tr>
-                <tr><td class="left">MNP OTF - Rs.235</td><td><input type="number" id="mnpCount" placeholder="0" min="0"></td><td><input type="text" id="mnpAmount" readonly class="total-display"></td></tr>
-                <tr class="gross-row slab-highlight" id="grossRow">
-                    <td class="left">GROSS COMMITMENT</td>
-                    <td><input type="text" id="grossCount" readonly class="auto-calc"></td>
-                    <td><input type="text" id="grossAmount" readonly class="total-display slab-highlight"></td>
-                </tr>
-                <tr>
-                    <td class="left" colspan='3'>
-                        <span id="slabBadge" class="slab-badge inactive">No Slab</span>
-                        <br>
-                        <span class="auto-label" id="slabLabel">Slab Rate × MNP Count</span>
-                        <div class="slab-progress" id="slabProgress" style="display: none;">
-                            <span id="progressText"></span>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- Margin Calculations -->
-        <div class="form-section">
-            <table class="form-table">
-                <tr class="section-title"><td colspan="3">Margin Calculations</td></tr>
-                <tr><td class="left">Lapu Tertiary</td><td><input type="number" id="lapuTertiary" placeholder="0" min="0"></td><td><input type="text" id="tertiaryAmount" readonly class="total-display"></td></tr>
-                <tr><td class="left">MNP Days</td><td><input type="number" id="mnpDays" placeholder="0" min="0"></td><td><input type="text" id="mnpDaysAmount" readonly class="total-display"></td></tr>
-                <tr><td class="left">WiFi Days</td><td><input type="number" id="wifiDays" placeholder="0" min="0"></td><td><input type="text" id="wifiDaysAmount" readonly class="total-display"></td></tr>
-            </table>
-        </div>
-
-        <!-- Additional Items -->
-        <table class="form-table">
-            <tr><td class="left">WIFI</td><td><input type="number" id="wifiCount" placeholder="0" min="0"></td><td><input type="text" id="wifiAmount" readonly class="total-display"></td></tr>
-            <tr><td class="left">APB SBA</td><td><input type="number" id="apbCount" placeholder="0" min="0"></td><td><input type="text" id="apbAmount" readonly class="total-display"></td></tr>
-            <tr><td class="left">SIMEX</td><td><input type="number" id="simexCount" placeholder="0" min="0"></td><td><input type="text" id="simexAmount" readonly class="total-display"></td></tr>
-        </table>
-
-        <div class="total-amount" id="totalAmount">Total Amount Rs. 0</div>
         
         <div class="form-section" id="exclude-airtel-gross">
             <!-- Competitor Data -->
             <div class="form-section" id="exclude-competitor">
                 <div class="table-scroll">
+                    
                     <table class="form-table">
+                         <tr class="section-title"><td colspan="4">Competitor Data</td></tr>
                         <tr class="section-title">
                             <td><input type="number" id="viMnp" placeholder="VI MNP" min="0"></td>
                             <td><input type="number" id="viDsr" placeholder="VI DSR" min="0"></td>
@@ -923,24 +871,99 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Tier Selection -->
-        <div class="tier-section">
-            <label class="tier-btn tier-platinum">
-                <input type="radio" name="tier" id="chckPlat" value="platinum">
-                <span>Platinum</span>
-            </label>
-            <label class="tier-btn tier-gold">
-                <input type="radio" name="tier" id="chckGold" value="gold">
-                <span>Gold</span>
-            </label>
-            <label class="tier-btn tier-executive">
-                <input type="radio" name="tier" id="chckExec" value="executive">
-                <span>Executive</span>
-            </label>
+            <!-- Margin Calculations -->
+        <div class="form-section">
+            <table class="form-table">
+                <tr class="section-title"><td colspan="3">Margin Calculations</td></tr>
+                <tr><td class="left">Lapu Tertiary</td><td><input type="number" id="lapuTertiary" placeholder="0" min="0"></td><td><input type="text" id="tertiaryAmount" readonly class="total-display"></td></tr>
+                <tr><td class="left">MNP Days</td><td><input type="number" id="mnpDays" placeholder="0" min="0"></td><td><input type="text" id="mnpDaysAmount" readonly class="total-display"></td></tr>
+                <tr><td class="left">WiFi Days</td><td><input type="number" id="wifiDays" placeholder="0" min="0"></td><td><input type="text" id="wifiDaysAmount" readonly class="total-display"></td></tr>
+            </table>
         </div>
 
-        <!-- Targets -->
+        <!-- Additional Items -->
+        <table class="form-table">
+            <tr><td class="left">WIFI</td><td><input type="number" id="wifiCount" placeholder="0" min="0"></td><td><input type="text" id="wifiAmount" readonly class="total-display"></td></tr>
+            <tr><td class="left">APB SBA</td><td><input type="number" id="apbCount" placeholder="0" min="0"></td><td><input type="text" id="apbAmount" readonly class="total-display"></td></tr>
+            <tr><td class="left">SIMEX</td><td><input type="number" id="simexCount" placeholder="0" min="0"></td><td><input type="text" id="simexAmount" readonly class="total-display"></td></tr>
+        </table>
+
+        <!-- Margin Scheme -->
+        <div class="form-section">
+            <table class="form-table">
+            <tr class="section-title"><td colspan="3">RECHARGE COMMISSION</td></tr>
+
+                <tr><th>Scheme</th><th>Margin</th><th>Gate</th></tr>
+                <tr><td class="left">Base Margins</td><td>3.90%</td><td>-</td></tr>
+                <tr><td class="left">MNP Participation</td><td>1.40%</td><td>1 MNP/Day</td></tr>
+                <tr><td class="left">WIFI Participation</td><td>1.50%</td><td>1 WIFI/Day</td></tr>
+                <tr class="highlight"><td class="left">Total Margin</td><td>6.80%</td><td>-</td></tr>
+            </table>
+        </div>
+
+        <!-- OTF Section -->
+        <div class="form-section">
+            <table class="form-table">
+                <tr class="section-title"><td colspan="3">NEW CUSTOMER AQUICISITION</td></tr>
+                <tr><th>FRC</th><th>DSR</th><th>MNP</th></tr>
+                <tr><td>349</td><td>135</td><td>235</td></tr>
+                <tr><td>449</td><td>135</td><td>235</td></tr>
+                <tr><td colspan="3" style="text-align: center; font-weight: 600;">SIMEX – Rs.50 Per SIMEX</td></tr>
+            </table>
+        </div>
+
+        <!-- Main Calculation Section -->
+        <div class="calc-section">
+            <table class="form-table">
+                <tr class="section-title"><td colspan="3">Commission</td></tr>
+
+                <tr><th>Items</th><th>Count</th><th>Amount</th></tr>
+                <tr><td class="left">DSR OTF - Rs.135</td><td><input type="number" id="dsrCount" placeholder="0" min="0"></td><td><input type="text" id="dsrAmount" readonly class="total-display"></td></tr>
+                <tr><td class="left">MNP OTF - Rs.235</td><td><input type="number" id="mnpCount" placeholder="0" min="0"></td><td><input type="text" id="mnpAmount" readonly class="total-display"></td></tr>
+                <tr class="gross-row slab-highlight" id="grossRow">
+                    <td class="left">GROSS COMMITMENT</td>
+                    <td><input type="text" id="grossCount" readonly class="auto-calc"></td>
+                    <td><input type="text" id="grossAmount" readonly class="total-display slab-highlight"></td>
+                </tr>
+                <tr>
+                    <td class="left" colspan='3'>
+                        <span id="slabBadge" class="slab-badge inactive">No Slab</span>
+                        <br>
+                        <span class="auto-label" id="slabLabel">Slab Rate × MNP Count</span>
+                        <div class="slab-progress" id="slabProgress" style="display: none;">
+                            <span id="progressText"></span>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Margin Calculations
+        <div class="form-section">
+            <table class="form-table">
+                <tr class="section-title"><td colspan="3">Margin Calculations</td></tr>
+                <tr><td class="left">Lapu Tertiary</td><td><input type="number" id="lapuTertiary" placeholder="0" min="0"></td><td><input type="text" id="tertiaryAmount" readonly class="total-display"></td></tr>
+                <tr><td class="left">MNP Days</td><td><input type="number" id="mnpDays" placeholder="0" min="0"></td><td><input type="text" id="mnpDaysAmount" readonly class="total-display"></td></tr>
+                <tr><td class="left">WiFi Days</td><td><input type="number" id="wifiDays" placeholder="0" min="0"></td><td><input type="text" id="wifiDaysAmount" readonly class="total-display"></td></tr>
+            </table>
+        </div>
+
+        <!Additional Items
+        <table class="form-table">
+            <tr><td class="left">WIFI</td><td><input type="number" id="wifiCount" placeholder="0" min="0"></td><td><input type="text" id="wifiAmount" readonly class="total-display"></td></tr>
+            <tr><td class="left">APB SBA</td><td><input type="number" id="apbCount" placeholder="0" min="0"></td><td><input type="text" id="apbAmount" readonly class="total-display"></td></tr>
+            <tr><td class="left">SIMEX</td><td><input type="number" id="simexCount" placeholder="0" min="0"></td><td><input type="text" id="simexAmount" readonly class="total-display"></td></tr>
+        </table> -->
+
+        <div class="total-amount" id="totalAmount">Total Amount Rs. 0</div>
+
+        
+
+
+        <!-- Targets
         <div class="form-section" id="exclude-targets">
             <div class="table-scroll">
                 <table class="form-table">
@@ -953,9 +976,9 @@
                     </tr>
                 </table>
             </div>
-        </div>
+        </div> -->
 
-        <!-- SLAB REFERENCE TABLE -->
+        <!-- SLAB REFERENCE TABLE
         <div class="form-section">
             <table class="form-table slab-table" id="slabTable">
                 <tr><th>Gross Target SLAB</th><th>INCENTIVE (PER MNP)</th></tr>
@@ -965,7 +988,7 @@
                 <tr id="slab-40"><td>40</td><td>₹175/MNP</td></tr>
                 <tr id="slab-50"><td>50+</td><td>₹200/MNP</td></tr>
             </table>
-        </div>
+        </div> -->
 
         <!-- Photo & Geo Section -->
         <div class="photo-section" id="photoSection">
@@ -2565,55 +2588,55 @@
         pdf.text('VERIFICATION & AUTHORIZATION', pageWidth / 2, 9, { align: 'center' });
         yPos = 20;
         
-        yPos = addSectionTitle('PHOTO & LOCATION VERIFICATION', yPos);
-        const photoBoxWidth = 55;
-        const photoBoxHeight = 55;
-        const infoStartX = margin + photoBoxWidth + 8;
-        const infoWidth = contentWidth - photoBoxWidth - 8;
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.5);
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(margin, yPos, photoBoxWidth, photoBoxHeight, 'FD');
-        if (capturedPhoto) {
-            try {
-                pdf.addImage(capturedPhoto, 'JPEG', margin + 2, yPos + 2, photoBoxWidth - 4, photoBoxHeight - 4);
-            } catch (e) {
-                pdf.text('Photo Error', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2, { align: 'center' });
-            }
-        } else {
-            pdf.setTextColor(150, 150, 150);
-            pdf.setFontSize(9);
-            pdf.setFont('helvetica', 'italic');
-            pdf.text('No Photo', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 - 3, { align: 'center' });
-            pdf.text('Captured', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 + 4, { align: 'center' });
-        }
-        pdf.setFillColor(255, 255, 255);
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.rect(infoStartX, yPos, infoWidth, photoBoxHeight, 'FD');
-        let infoY = yPos + 8;
-        pdf.setTextColor(...palette.darkText);
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('CAPTURE TIMESTAMP:', infoStartX + 4, infoY);
-        pdf.setFont('helvetica', 'normal');
-        pdf.text(photoTimestamp || new Date().toLocaleString('en-IN'), infoStartX + 4, infoY + 5);
-        infoY += 15;
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('GPS COORDINATES:', infoStartX + 4, infoY);
-        pdf.setFont('helvetica', 'normal');
-        if (geoLocation) {
-            pdf.setTextColor(...palette.darkText);
-            pdf.text(geoLocation, infoStartX + 4, infoY + 5);
-            pdf.setFontSize(7);
-            pdf.text('Source: ' + (geoSource || 'Device GPS'), infoStartX + 4, infoY + 10);
-            infoY += 18;
-            pdf.setFont('helvetica', 'bold');
-            pdf.text('Status: VERIFIED', infoStartX + 4, infoY);
-        } else {
-            pdf.setTextColor(150, 150, 150);
-            pdf.text('Location not available', infoStartX + 4, infoY + 5);
-        }
-        yPos += photoBoxHeight + 5;
+        // yPos = addSectionTitle('PHOTO & LOCATION VERIFICATION', yPos);
+        // const photoBoxWidth = 55;
+        // const photoBoxHeight = 55;
+        // const infoStartX = margin + photoBoxWidth + 8;
+        // const infoWidth = contentWidth - photoBoxWidth - 8;
+        // pdf.setDrawColor(...palette.borderColor);
+        // pdf.setLineWidth(0.5);
+        // pdf.setFillColor(255, 255, 255);
+        // pdf.rect(margin, yPos, photoBoxWidth, photoBoxHeight, 'FD');
+        // if (capturedPhoto) {
+        //     try {
+        //         pdf.addImage(capturedPhoto, 'JPEG', margin + 2, yPos + 2, photoBoxWidth - 4, photoBoxHeight - 4);
+        //     } catch (e) {
+        //         pdf.text('Photo Error', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2, { align: 'center' });
+        //     }
+        // } else {
+        //     pdf.setTextColor(150, 150, 150);
+        //     pdf.setFontSize(9);
+        //     pdf.setFont('helvetica', 'italic');
+        //     pdf.text('No Photo', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 - 3, { align: 'center' });
+        //     pdf.text('Captured', margin + photoBoxWidth / 2, yPos + photoBoxHeight / 2 + 4, { align: 'center' });
+        // }
+        // pdf.setFillColor(255, 255, 255);
+        // pdf.setDrawColor(...palette.borderColor);
+        // pdf.rect(infoStartX, yPos, infoWidth, photoBoxHeight, 'FD');
+        // let infoY = yPos + 8;
+        // pdf.setTextColor(...palette.darkText);
+        // pdf.setFontSize(8);
+        // pdf.setFont('helvetica', 'bold');
+        // pdf.text('CAPTURE TIMESTAMP:', infoStartX + 4, infoY);
+        // pdf.setFont('helvetica', 'normal');
+        // pdf.text(photoTimestamp || new Date().toLocaleString('en-IN'), infoStartX + 4, infoY + 5);
+        // infoY += 15;
+        // pdf.setFont('helvetica', 'bold');
+        // pdf.text('GPS COORDINATES:', infoStartX + 4, infoY);
+        // pdf.setFont('helvetica', 'normal');
+        // if (geoLocation) {
+        //     pdf.setTextColor(...palette.darkText);
+        //     pdf.text(geoLocation, infoStartX + 4, infoY + 5);
+        //     pdf.setFontSize(7);
+        //     pdf.text('Source: ' + (geoSource || 'Device GPS'), infoStartX + 4, infoY + 10);
+        //     infoY += 18;
+        //     pdf.setFont('helvetica', 'bold');
+        //     pdf.text('Status: VERIFIED', infoStartX + 4, infoY);
+        // } else {
+        //     pdf.setTextColor(150, 150, 150);
+        //     pdf.text('Location not available', infoStartX + 4, infoY + 5);
+        // }
+        // yPos += photoBoxHeight + 5;
         
         yPos = addSectionTitle('MONTHLY TARGETS', yPos);
         const dsrTarget = parseInt(document.getElementById('dsrTarget').value) || 0;
