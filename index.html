@@ -840,7 +840,8 @@
             <ul id="validationErrors"></ul>
         </div>
         
-        <div class="form-section" id="exclude-airtel-gross">
+        <!-- HIDDEN SECTIONS START (Competitor Data & Airtel Gross) -->
+        <div class="form-section" id="exclude-airtel-gross" style="display:none;">
             <!-- Competitor Data -->
             <div class="form-section" id="exclude-competitor">
                 <div class="table-scroll">
@@ -848,10 +849,10 @@
                     <table class="form-table">
                          <tr class="section-title"><td colspan="4">Competitor Data</td></tr>
                         <tr class="section-title">
-                            <td><input type="number" id="viMnp" placeholder="VI MNP" min="0"></td>
-                            <td><input type="number" id="viDsr" placeholder="VI DSR" min="0"></td>
-                            <td><input type="number" id="jioMnp" placeholder="JIO MNP" min="0"></td>
-                            <td><input type="number" id="jioDsr" placeholder="JIO DSR" min="0"></td>
+                            <td><input type="number" id="viMnp" placeholder="VI MNP" min="0" value="0"></td>
+                            <td><input type="number" id="viDsr" placeholder="VI DSR" min="0" value="0"></td>
+                            <td><input type="number" id="jioMnp" placeholder="JIO MNP" min="0" value="0"></td>
+                            <td><input type="number" id="jioDsr" placeholder="JIO DSR" min="0" value="0"></td>
                         </tr>
                     </table>
                 </div>
@@ -861,7 +862,7 @@
                 <div class="table-scroll">
                     <table class="form-table">
                         <tr class="section-title">
-                            <td><input type="number" id="airtelGross" placeholder="Airtel 4G Gross" min="0"></td>
+                            <td><input type="number" id="airtelGross" placeholder="Airtel 4G Gross" min="0" value="0"></td>
                             <td>
                                 <input type="text" id="deviceShare" readonly placeholder="" style="color: #60a5fa; font-weight: 600;">
                                 <span class="auto-label">Device Share</span>
@@ -871,6 +872,8 @@
                 </div>
             </div>
         </div>
+        <!-- HIDDEN SECTIONS END -->
+
             <!-- Margin Calculations -->
         <div class="form-section">
             <table class="form-table">
@@ -941,45 +944,26 @@
             </table>
         </div>
 
-        <!-- Margin Calculations
-        <div class="form-section">
-            <table class="form-table">
-                <tr class="section-title"><td colspan="3">Margin Calculations</td></tr>
-                <tr><td class="left">Lapu Tertiary</td><td><input type="number" id="lapuTertiary" placeholder="0" min="0"></td><td><input type="text" id="tertiaryAmount" readonly class="total-display"></td></tr>
-                <tr><td class="left">MNP Days</td><td><input type="number" id="mnpDays" placeholder="0" min="0"></td><td><input type="text" id="mnpDaysAmount" readonly class="total-display"></td></tr>
-                <tr><td class="left">WiFi Days</td><td><input type="number" id="wifiDays" placeholder="0" min="0"></td><td><input type="text" id="wifiDaysAmount" readonly class="total-display"></td></tr>
-            </table>
-        </div>
-
-        <!Additional Items
-        <table class="form-table">
-            <tr><td class="left">WIFI</td><td><input type="number" id="wifiCount" placeholder="0" min="0"></td><td><input type="text" id="wifiAmount" readonly class="total-display"></td></tr>
-            <tr><td class="left">APB SBA</td><td><input type="number" id="apbCount" placeholder="0" min="0"></td><td><input type="text" id="apbAmount" readonly class="total-display"></td></tr>
-            <tr><td class="left">SIMEX</td><td><input type="number" id="simexCount" placeholder="0" min="0"></td><td><input type="text" id="simexAmount" readonly class="total-display"></td></tr>
-        </table> -->
-
         <div class="total-amount" id="totalAmount">Total Amount Rs. 0</div>
 
         
-
-
-        <!-- Targets
-        <div class="form-section" id="exclude-targets">
+        <!-- HIDDEN SECTIONS START (Targets & Slab Table) -->
+        <!-- These are kept in code but hidden with CSS so JS variables don't crash -->
+        <div class="form-section" id="exclude-targets" style="display:none;">
             <div class="table-scroll">
                 <table class="form-table">
                     <tr><th>DSR TGT</th><th>MNP TGT</th><th>TOTAL TGT</th><th>WIFI TGT</th></tr>
                     <tr>
-                        <td><input type="number" id="dsrTarget" placeholder="0" min="0"></td>
-                        <td><input type="number" id="mnpTarget" placeholder="0" min="0"></td>
-                        <td><input type="number" id="totalTarget" readonly></td>
-                        <td><input type="number" id="wifiTarget" placeholder="0" min="0"></td>
+                        <td><input type="number" id="dsrTarget" placeholder="0" min="0" value="0"></td>
+                        <td><input type="number" id="mnpTarget" placeholder="0" min="0" value="0"></td>
+                        <td><input type="number" id="totalTarget" readonly value="0"></td>
+                        <td><input type="number" id="wifiTarget" placeholder="0" min="0" value="0"></td>
                     </tr>
                 </table>
             </div>
-        </div> -->
+        </div>
 
-        <!-- SLAB REFERENCE TABLE
-        <div class="form-section">
+        <div class="form-section" style="display:none;">
             <table class="form-table slab-table" id="slabTable">
                 <tr><th>Gross Target SLAB</th><th>INCENTIVE (PER MNP)</th></tr>
                 <tr id="slab-10"><td>10</td><td>₹75/MNP</td></tr>
@@ -988,7 +972,9 @@
                 <tr id="slab-40"><td>40</td><td>₹175/MNP</td></tr>
                 <tr id="slab-50"><td>50+</td><td>₹200/MNP</td></tr>
             </table>
-        </div> -->
+        </div>
+        <!-- HIDDEN SECTIONS END -->
+
 
         <!-- Photo & Geo Section -->
         <div class="photo-section" id="photoSection">
