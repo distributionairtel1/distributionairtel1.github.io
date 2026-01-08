@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="css/style.css">
+    <title>Retailer Enrollment Sheet 2026</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">📍 Extracting GPS from photo...</div>
+        <div class="loading-subtext" id="loadingSubtext">Please wait while we read location data</div>
+    </div>
+
+    <div class="container">
+        <h2>Retailer Enrollment Sheet 2026</h2>
+        
+        <!-- Basic Info Section -->
+        <div class="form-section">
+            <table class="form-table" id="basicInfoTable">
+                <tr>
+                    <td class="left">Outlet Name<span class="required-star">*</span></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="text" id="outletName" placeholder="Enter outlet name" data-validation="name" required>
+                            <div class="input-hint">Only alphabets and spaces</div>
+                            <div class="error-message" id="outletName-error">Please enter a valid name</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">Lapu No<span class="required-star">*</span></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="tel" id="lapuNo" placeholder="10-digit LAPU number" maxlength="10" data-validation="phone" required>
+                            <div class="input-hint">10 digits only</div>
+                            <div class="error-message" id="lapuNo-error">Enter valid 10-digit number</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">FSE Contact<span class="required-star">*</span></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="tel" id="fseContact" placeholder="10-digit mobile" maxlength="10" data-validation="phone" required inputmode="numeric">
+                            <div class="char-counter" id="fseContact-counter">0/10</div>
+                            <div class="error-message" id="fseContact-error">Enter valid 10-digit number</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left">TSM/SE Contact<span class="required-star">*</span></td>
+                    <td>
+                        <div class="input-wrapper">
+                            <input type="tel" id="tsmContact" placeholder="10-digit mobile" maxlength="10" data-validation="phone" required inputmode="numeric">
+                            <div class="char-counter" id="tsmContact-counter">0/10</div>
+                            <div class="error-message" id="tsmContact-error">Enter valid 10-digit number</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+                <!-- Tier Selection -->
+                <div class="tier-section">
+                    <label class="tier-btn tier-platinum">
+                        <input type="radio" name="tier" id="chckPlat" value="platinum">
+                        <span>Platinum</span>
+                    </label>
+                    <label class="tier-btn tier-gold">
+                        <input type="radio" name="tier" id="chckGold" value="gold">
+                        <span>Gold</span>
+                    </label>
+                    <label class="tier-btn tier-executive">
+                        <input type="radio" name="tier" id="chckExec" value="executive">
+                        <span>Executive</span>
+                    </label>
+                </div>
+        <!-- Competitor Data -->
+                <div class="form-section" id="exclude-airtel-gross">
+                    <div class="table-scroll">
+                        <table class="form-table">
+                            <tr class="section-title"><td colspan="4">Competitor Data</td></tr>
+                            <tr>
+                                <td><input type="number" id="viMnp" placeholder="VI MNP" min="0"></td>
+                                <td><input type="number" id="viDsr" placeholder="VI DSR" min="0"></td>
+                                <td><input type="number" id="jioMnp" placeholder="JIO MNP" min="0"></td>
+                                <td><input type="number" id="jioDsr" placeholder="JIO DSR" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><input type="number" id="airtelGross" placeholder="Airtel 4G Gross" min="0"></td>
+                                <td colspan="2">
+                                    <div class="input-wrapper">
+                                        <input type="text" id="deviceShare" readonly placeholder="" style="color: #60a5fa; font-weight: 600;">
+                                        <span class="auto-label">Device Share</span>
+                                    </div>
+                                </td>
+                                
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+        
+                <!-- Margin Calculations -->
+                <div class="form-section">
+                    <table class="form-table">
+                        <tr class="section-title"><td colspan="3">Margin Calculations</td></tr>
+                        <tr><td class="left">Lapu Tertiary</td><td><input type="number" id="lapuTertiary" placeholder="0" min="0"></td><td><input type="text" id="tertiaryAmount" readonly class="total-display"></td></tr>
+                        <tr><td class="left">MNP Days</td><td><input type="number" id="mnpDays" placeholder="0" min="0"></td><td><input type="text" id="mnpDaysAmount" readonly class="total-display"></td></tr>
+                        <tr><td class="left">WiFi Days</td><td><input type="number" id="wifiDays" placeholder="0" min="0"></td><td><input type="text" id="wifiDaysAmount" readonly class="total-display"></td></tr>
+                    </table>
+                </div>
+        
+                <!-- Additional Items -->
+                <table class="form-table">
+                    <tr><td class="left">WIFI</td><td><input type="number" id="wifiCount" placeholder="0" min="0"></td><td><input type="text" id="wifiAmount" readonly class="total-display"></td></tr>
+                    <tr><td class="left">APB SBA</td><td><input type="number" id="apbCount" placeholder="0" min="0"></td><td><input type="text" id="apbAmount" readonly class="total-display"></td></tr>
+                    <tr><td class="left">SIMEX</td><td><input type="number" id="simexCount" placeholder="0" min="0"></td><td><input type="text" id="simexAmount" readonly class="total-display"></td></tr>
+                </table>
+        
+        
+                <!-- Validation Summary -->
+                <div class="validation-summary" id="validationSummary">
+                    <h4>⚠️ Please fix the following errors:</h4>
+                    <ul id="validationErrors"></ul>
+                </div>
+        
+                <!-- Margin Scheme -->
+                <div class="form-section">
+                    <table class="form-table">
+                        <tr class="section-title"><td colspan="3">Recharge Commission</td></tr>
+                        <tr><th>Scheme</th><th>Margin</th><th>Gate</th></tr>
+                        <tr><td class="left">Base Margins</td><td>3.90%</td><td>-</td></tr>
+                        <tr><td class="left">MNP Participation</td><td>1.40%</td><td>1 MNP/Day</td></tr>
+                        <tr><td class="left">WIFI Participation</td><td>1.50%</td><td>1 WIFI/Day</td></tr>
+                        <tr class="highlight"><td class="left">Total Margin</td><td>6.80%</td><td>-</td></tr>
+                    </table>
+                </div>
+        
+                <!-- OTF Section -->
+                <div class="form-section">
+                    <table class="form-table">
+                        <tr class="section-title"><td colspan="3">New Customer Acquisition</td></tr>
+                        <tr><th>FRC</th><th>DSR</th><th>MNP</th></tr>
+                        <tr><td>349</td><td>135</td><td>235</td></tr>
+                        <tr><td>449</td><td>135</td><td>235</td></tr>
+                        <tr><td colspan="3" style="text-align: center; font-weight: 600;">SIMEX – Rs.50 Per SIMEX</td></tr>
+                    </table>
+                </div>
+
+        <!-- Main Calculation Section -->
+        <div class="calc-section">
+            <table class="form-table">
+                <tr class="section-title"><td colspan="3">Commission</td></tr>
+                <tr><th>Items</th><th>Count</th><th>Amount</th></tr>
+                <tr><td class="left">DSR OTF - Rs.135</td><td><input type="number" id="dsrCount" placeholder="0" min="0"></td><td><input type="text" id="dsrAmount" readonly class="total-display"></td></tr>
+                <tr><td class="left">MNP OTF - Rs.235</td><td><input type="number" id="mnpCount" placeholder="0" min="0"></td><td><input type="text" id="mnpAmount" readonly class="total-display"></td></tr>
+                <tr class="gross-row slab-highlight" id="grossRow">
+                    <td class="left">GROSS COMMITMENT</td>
+                    <td><input type="text" id="grossCount" readonly class="auto-calc"></td>
+                    <td><input type="text" id="grossAmount" readonly class="total-display slab-highlight"></td>
+                </tr>
+                <tr>
+                    <td class="left" colspan='3'>
+                        <span id="slabBadge" class="slab-badge inactive">No Slab</span>
+                        <br>
+                        <span class="auto-label" id="slabLabel">Slab Rate × MNP Count</span>
+                        <div class="slab-progress" id="slabProgress" style="display: none;">
+                            <span id="progressText"></span>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+
+
+        <div class="total-amount" id="totalAmount">Total Amount Rs. 0</div>
+        
+
+        
+
+
+        <!-- Targets and Slab reference removed per request -->
+
+        <!-- Photo & Geo Section -->
+        <div class="photo-section" id="photoSection">
+            <img id="photoPreview" class="photo-preview" alt="Captured Photo">
+            <div id="geoInfo" class="geo-info"></div>
+            <div id="debugInfo" class="debug-info"></div>
+        </div>
+        <input type="hidden" id="latitude">
+        <input type="hidden" id="longitude">
+        <input type="hidden" id="locAccuracy">
+        <span id="locationStatus" style="display:none;"></span>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button id="pdfBtn"  class="btn photo-btn">Download & Share PDF</button>
+            <button id="submitBtn" class="btn photo-btn">Submit Data</button>
+            <button id="captureBtn" class="btn photo-btn">Capture Photo</button>
+
+
+            
+        </div>
+    </div>
+    <script src="script/script.js"></script>
+</body>
+</html>
