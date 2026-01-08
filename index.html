@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -882,8 +880,7 @@ button:disabled {
     cursor: not-allowed;
     opacity: 0.6;
 }
-
-
+        
     </style>
 </head>
 <body>
@@ -1089,10 +1086,8 @@ button:disabled {
             
         </div>
     </div>
-
-
-<script>
-// 🔹 REQUEST LOCATION PERMISSION ON PAGE LOAD
+    <script>
+        // 🔹 REQUEST LOCATION PERMISSION ON PAGE LOAD
 window.addEventListener('load', function() {
     if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -1105,11 +1100,6 @@ window.addEventListener('load', function() {
         );
     }
 });
-function checkReadyForSubmit() {
-    document.getElementById('submitBtn').disabled = !(
-        capturedPhoto && geoLocation
-    );
-}
 // =============================================
 //  CONFIGURATION
 // =============================================
@@ -1302,23 +1292,26 @@ function updateButtonStates() {
         
         if (allFieldsFilled && !isPdfDownloaded) {
             pdfBtn.classList.add('ready-pulse');
-            pdfBtn.innerHTML = 'Download & Share PDF';
+            pdfBtn.innerHTML = '📄 Download & Share PDF';
         } else if (isPdfDownloaded) {
             pdfBtn.classList.remove('ready-pulse');
-            pdfBtn.innerHTML = 'PDF Downloaded';
+            pdfBtn.innerHTML = '✅ PDF Downloaded';
         }
     }
     
-    // Step 2: Submit button enabled when ALL fields are filled (SAME as PDF)
+    // Step 2: Submit button enabled ONLY AFTER PDF is downloaded
     if (submitBtn) {
-        submitBtn.disabled = !allFieldsFilled;
+        submitBtn.disabled = !isPdfDownloaded;
         
-        if (allFieldsFilled && !isFormSubmitted) {
+        if (isPdfDownloaded && !isFormSubmitted) {
             submitBtn.classList.add('ready-pulse');
-            submitBtn.innerHTML = 'Submit Data';
+            submitBtn.innerHTML = '📤 Submit Data';
         } else if (isFormSubmitted) {
             submitBtn.classList.remove('ready-pulse');
-            submitBtn.innerHTML = 'Data Submitted';
+            submitBtn.innerHTML = '✅ Data Submitted';
+        } else {
+            submitBtn.classList.remove('ready-pulse');
+            submitBtn.innerHTML = '🔒 Submit (Download PDF First)';
         }
     }
     
@@ -1328,12 +1321,12 @@ function updateButtonStates() {
         
         if (isFormSubmitted && !isPhotoCaptured) {
             captureBtn.classList.add('ready-pulse');
-            captureBtn.innerHTML = 'Capture Photo';
+            captureBtn.innerHTML = '📸 Capture Photo';
         } else if (isPhotoCaptured) {
             captureBtn.classList.remove('ready-pulse');
-            captureBtn.innerHTML = 'Photo Captured';
+            captureBtn.innerHTML = '✅ Photo Captured';
         } else {
-            captureBtn.innerHTML = 'Capture (Submit First)';
+            captureBtn.innerHTML = '🔒 Capture (Submit First)';
         }
     }
     
@@ -1373,15 +1366,17 @@ function updateFlowIndicator() {
     
     const step1 = allFieldsFilled ? '✅' : '⭕';
     const step2 = isPdfDownloaded ? '✅' : (allFieldsFilled ? '🔵' : '⭕');
-    const step3 = isFormSubmitted ? '✅' : (allFieldsFilled ? '🔵' : '⭕');
+    const step3 = isFormSubmitted ? '✅' : (isPdfDownloaded ? '🔵' : '⭕');
     const step4 = isPhotoCaptured ? '✅' : (isFormSubmitted ? '🔵' : '⭕');
     
     flowIndicator.innerHTML = `
         <span>${step1} Data</span>
         <span>→</span>
-        <span>${step2} PDF & Submit</span>
+        <span>${step2} PDF</span>
         <span>→</span>
-        <span>${step3} Capture</span>
+        <span>${step3} Submit</span>
+        <span>→</span>
+        <span>${step4} Photo</span>
     `;
 }
 
@@ -2044,6 +2039,8 @@ function calculateAll() {
 // =============================================
 // CAMERA CAPTURE HANDLER
 // =============================================
+// CAMERA CAPTURE HANDLER
+// =============================================
 async function handleCameraCapture() {
     const device = getDeviceInfo();
     const loading = document.getElementById('loadingOverlay');
@@ -2056,17 +2053,17 @@ async function handleCameraCapture() {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
+    input.id = 'photoInput_' + Date.now();
 
-    if (device.isIOS) {
-        input.setAttribute('capture', 'camera');
-    } else if (device.isMobile) {
+    // Set capture attribute for mobile devices
+    if (device.isMobile) {
         input.setAttribute('capture', 'environment');
     }
 
-    input.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+    input.style.cssText = 'display:none;';
     document.body.appendChild(input);
 
-    input.onchange = async function () {
+    input.addEventListener('change', async function handlePhotoChange() {
         if (!this.files || !this.files[0]) {
             if (input.parentNode) document.body.removeChild(input);
             return;
@@ -2128,18 +2125,23 @@ async function handleCameraCapture() {
             await sendFinalUpdate();
 
             if (input.parentNode) document.body.removeChild(input);
+            input.removeEventListener('change', handlePhotoChange);
         };
 
         reader.onerror = function () {
             if (loading) loading.style.display = 'none';
             showToast('❌ Error reading image file', 'error');
             if (input.parentNode) document.body.removeChild(input);
+            input.removeEventListener('change', handlePhotoChange);
         };
 
         reader.readAsDataURL(file);
-    };
+    }, { once: true });
 
-    input.click();
+    // Trigger file input - use setTimeout for iOS compatibility
+    setTimeout(() => {
+        input.click();
+    }, 100);
 }
 
 // =============================================
@@ -2295,27 +2297,26 @@ window.addEventListener('DOMContentLoaded', async () => {
             
             showToast('📍 PDF download location recorded', 'info', 2000);
 
-            // Your existing PDF generation code here...
+            // Generate PDF
             await generatePDF();
 
             // Mark PDF as downloaded
             isPdfDownloaded = true;
             updateButtonStates();
 
-            showToast('✅ PDF Downloaded! You can now submit data and capture photo.', 'success', 4000);
+            showToast('✅ PDF Downloaded! Now click Submit to continue.', 'success', 4000);
         });
     }
 
     // =============================================
-    // SUBMIT BUTTON - (Can be clicked same time as PDF)
+    // SUBMIT BUTTON - (Only after PDF is downloaded)
     // =============================================
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', async function () {
-            // Validate all fields first
-            const isValid = validateAllFields();
-            if (!isValid) {
-                showToast('⚠️ Please fill all required fields correctly', 'warning');
+            // Check if PDF was downloaded first
+            if (!isPdfDownloaded) {
+                showToast('⚠️ Please download PDF first!', 'warning');
                 return;
             }
 
@@ -3109,7 +3110,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         }, 4000);
     }
 })();
-</script>
-    <!-- <script src="script/script.js"></script> -->
+
+
+    </script>
 </body>
 </html>
