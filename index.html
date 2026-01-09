@@ -1934,7 +1934,9 @@
         document.getElementById('apbAmount').value = (apbCount * 45).toLocaleString('en-IN');
         document.getElementById('simexAmount').value = (simexCount * 50).toLocaleString('en-IN');
 
-        const total = grossCommitmentAmount + 
+        const total = (dsrCount * 135) +
+                     (mnpCount * 235) +
+                     grossCommitmentAmount + 
                      (wifiCount * 150) + 
                      (apbCount * 45) + 
                      (simexCount * 50) + 
