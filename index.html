@@ -1,111 +1,132 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>My Links</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        body {
-            font-family: 'Poppins', Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            position: relative;
+        html, body {
+            height: 100%;
             overflow-x: hidden;
         }
 
-        /* Animated Background Particles */
-        body::before {
-            content: '';
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        /* Subtle Background Animation */
+        .bg-gradient {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(94, 129, 244, 0.1) 0%, transparent 30%);
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 40%);
             pointer-events: none;
             z-index: 0;
         }
 
-        /* Floating Orbs Animation */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(40px);
-            opacity: 0.5;
-            animation: float 8s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .orb1 {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            top: 10%;
-            left: -50px;
-            animation-delay: 0s;
-        }
-
-        .orb2 {
-            width: 150px;
-            height: 150px;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            bottom: 20%;
-            right: -30px;
-            animation-delay: -4s;
-        }
-
-        .orb3 {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            top: 50%;
-            left: 50%;
-            animation-delay: -2s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-30px) rotate(10deg);
-            }
-        }
-
-        /* Container */
+        /* Main Container */
         .container {
             position: relative;
             z-index: 1;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 40px 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.3),
-                inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            animation: slideUp 0.8s ease-out;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            max-width: 100%;
+            width: 100%;
         }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            padding: 20px 0 30px;
+            animation: fadeDown 0.5s ease-out;
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo/Icon */
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        /* Links Container */
+        ul {
+            list-style: none;
+            padding: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        li {
+            opacity: 0;
+            animation: slideUp 0.4s ease-out forwards;
+        }
+
+        li:nth-child(1) { animation-delay: 0.1s; }
+        li:nth-child(2) { animation-delay: 0.2s; }
+        li:nth-child(3) { animation-delay: 0.3s; }
+        li:nth-child(4) { animation-delay: 0.4s; }
 
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(50px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -113,317 +134,451 @@
             }
         }
 
-        /* Header */
-        h1 {
-            color: #ffffff;
-            text-align: center;
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-            animation: fadeIn 1s ease-out 0.3s both;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin-bottom: 35px;
-            animation: fadeIn 1s ease-out 0.5s both;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Decorative Line */
-        .divider {
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 2px;
-            margin: 0 auto 30px;
-            animation: expandWidth 0.8s ease-out 0.6s both;
-        }
-
-        @keyframes expandWidth {
-            from {
-                width: 0;
-            }
-            to {
-                width: 60px;
-            }
-        }
-
-        /* List Styles */
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            margin: 15px 0;
-            opacity: 0;
-            animation: slideIn 0.6s ease-out forwards;
-        }
-
-        li:nth-child(1) { animation-delay: 0.4s; }
-        li:nth-child(2) { animation-delay: 0.5s; }
-        li:nth-child(3) { animation-delay: 0.6s; }
-        li:nth-child(4) { animation-delay: 0.7s; }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* Link Styles */
+        /* Link Cards */
         a {
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 18px 25px;
+            padding: 18px 20px;
             background: rgba(255, 255, 255, 0.08);
             color: #ffffff;
             text-decoration: none;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
-            font-weight: 500;
-            font-size: 1rem;
+            min-height: 70px;
         }
 
-        /* Icon Styles */
-        a::before {
-            content: '';
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
+        /* Touch Active State */
+        a:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* Icon Container */
+        .icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
-            transition: all 0.4s ease;
+            font-size: 1.4rem;
             flex-shrink: 0;
         }
 
-        li:nth-child(1) a::before {
-            content: '🏪';
+        li:nth-child(1) .icon {
             background: linear-gradient(135deg, #667eea, #764ba2);
         }
 
-        li:nth-child(2) a::before {
-            content: '📋';
+        li:nth-child(2) .icon {
             background: linear-gradient(135deg, #f093fb, #f5576c);
         }
 
-        li:nth-child(3) a::before {
-            content: '📦';
+        li:nth-child(3) .icon {
             background: linear-gradient(135deg, #4facfe, #00f2fe);
         }
 
-        li:nth-child(4) a::before {
-            content: '👤';
+        li:nth-child(4) .icon {
             background: linear-gradient(135deg, #43e97b, #38f9d7);
         }
 
-        /* Shine Effect */
-        a::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
-            transition: left 0.5s ease;
+        /* Text Content */
+        .link-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
         }
 
-        a:hover::after {
-            left: 100%;
+        .link-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #ffffff;
         }
 
-        /* Arrow Icon */
+        .link-desc {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Arrow */
         .arrow {
-            margin-left: auto;
-            font-size: 1.2rem;
-            transition: transform 0.3s ease;
-            opacity: 0.5;
-        }
-
-        a:hover .arrow {
-            transform: translateX(5px);
-            opacity: 1;
-        }
-
-        /* Hover Effects */
-        a:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateX(10px);
-            border-color: rgba(255, 255, 255, 0.3);
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.2),
-                0 0 0 1px rgba(255, 255, 255, 0.1);
-        }
-
-        a:active {
-            transform: translateX(10px) scale(0.98);
-        }
-
-        /* Ripple Effect */
-        .ripple {
-            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
         }
 
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
+        a:active .arrow {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
         }
 
         /* Footer */
         .footer {
             text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            animation: fadeIn 1s ease-out 1s both;
+            padding: 25px 0 15px;
+            animation: fadeUp 0.5s ease-out 0.5s both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .footer p {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.75rem;
         }
 
-        /* Pulse Animation for Active State */
+        /* Status Indicator */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(67, 233, 123, 0.15);
+            color: #43e97b;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-bottom: 10px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: #43e97b;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
         @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+            0%, 100% {
+                opacity: 1;
             }
-            70% {
-                box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            50% {
+                opacity: 0.5;
             }
         }
 
-        /* Responsive */
-        @media (max-width: 480px) {
+        /* Pull to Refresh Indicator (Visual Only) */
+        .pull-indicator {
+            text-align: center;
+            padding: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.7rem;
+            display: none;
+        }
+
+        /* Loading State */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Touch Ripple Effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: rippleEffect 0.5s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        /* Network Status Banner */
+        .offline-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #f5576c;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8rem;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .offline-banner.show {
+            transform: translateY(0);
+        }
+
+        /* Dark Notch Area for iPhone */
+        @supports (padding-top: env(safe-area-inset-top)) {
             body {
-                margin: 20px auto;
-                padding: 15px;
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        /* Landscape Orientation */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .container {
+                padding: 15px 30px;
             }
             
-            .container {
-                padding: 30px 20px;
+            .header {
+                padding: 10px 0 15px;
             }
-
+            
+            .logo {
+                width: 50px;
+                height: 50px;
+                margin-bottom: 10px;
+            }
+            
             h1 {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
             }
-
+            
+            ul {
+                gap: 8px;
+            }
+            
             a {
-                padding: 15px 20px;
-                font-size: 0.9rem;
+                padding: 12px 15px;
+                min-height: auto;
             }
+            
+            .icon {
+                width: 38px;
+                height: 38px;
+            }
+        }
 
-            a::before {
+        /* Larger Phones */
+        @media (min-width: 400px) {
+            .container {
+                padding: 35px 25px;
+            }
+            
+            a {
+                padding: 20px 22px;
+            }
+        }
+
+        /* Small Phones */
+        @media (max-width: 350px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 1.4rem;
+            }
+            
+            a {
+                padding: 15px;
+                gap: 12px;
+            }
+            
+            .icon {
                 width: 40px;
                 height: 40px;
-                font-size: 1.1rem;
+                font-size: 1.2rem;
+            }
+            
+            .link-title {
+                font-size: 0.9rem;
+            }
+            
+            .arrow {
+                width: 32px;
+                height: 32px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Floating Orbs -->
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="loader"></div>
+    </div>
 
+    <!-- Offline Banner -->
+    <div class="offline-banner" id="offlineBanner">
+        ⚠️ You are currently offline
+    </div>
+
+    <!-- Background -->
+    <div class="bg-gradient"></div>
+
+    <!-- Main Container -->
     <div class="container">
-        <h1>Quick Links</h1>
-        <p class="subtitle">Select an option to continue</p>
-        <div class="divider"></div>
-        
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">📱</div>
+            <div>
+
+            </div>
+            <h1>Welcome to Dashboard</h1>
+            <p class="subtitle">Select an option to continue</p>
+        </div>
+
+        <!-- Navigation Links -->
         <ul>
             <li>
                 <a href="retailer_enroll.html">
-                    <span>Retailer Enrollment</span>
-                    <span class="arrow">→</span>
+                    <div class="icon">🏪</div>
+                    <div class="link-content">
+                        <span class="link-title">Retailer Enrollment</span>
+                        <span class="link-desc">Register new retail partners</span>
+                    </div>
+                    <div class="arrow">›</div>
                 </a>
             </li>
             <li>
                 <a href="">
-                    <span>ASC Registration</span>
-                    <span class="arrow">→</span>
+                    <div class="icon">📋</div>
+                    <div class="link-content">
+                        <span class="link-title">ASC Registration</span>
+                        <span class="link-desc">Service center registration</span>
+                    </div>
+                    <div class="arrow">›</div>
                 </a>
             </li>
             <li>
                 <a href="">
-                    <span>Distributor PLI</span>
-                    <span class="arrow">→</span>
+                    <div class="icon">📦</div>
+                    <div class="link-content">
+                        <span class="link-title">Distributor PLI</span>
+                        <span class="link-desc">Distributor incentive program</span>
+                    </div>
+                    <div class="arrow">›</div>
                 </a>
             </li>
             <li>
                 <a href="">
-                    <span>Promoter Registration</span>
-                    <span class="arrow">→</span>
+                    <div class="icon">👤</div>
+                    <div class="link-content">
+                        <span class="link-title">Promoter Registration</span>
+                        <span class="link-desc">Join as a brand promoter</span>
+                    </div>
+                    <div class="arrow">›</div>
                 </a>
             </li>
         </ul>
 
+        <!-- Footer -->
         <div class="footer">
             <p>© 2024 All Rights Reserved</p>
         </div>
     </div>
 
     <script>
-        // Ripple Effect on Click
+        // Hide Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hide');
+            }, 500);
+        });
+
+        // Touch Ripple Effect
         document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('touchstart', function(e) {
                 const ripple = document.createElement('span');
                 ripple.classList.add('ripple');
                 
                 const rect = this.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
+                const touch = e.touches[0];
+                const size = Math.max(rect.width, rect.height) * 2;
                 
                 ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = e.clientX - rect.left - size / 2 + 'px';
-                ripple.style.top = e.clientY - rect.top - size / 2 + 'px';
+                ripple.style.left = touch.clientX - rect.left - size / 2 + 'px';
+                ripple.style.top = touch.clientY - rect.top - size / 2 + 'px';
                 
                 this.appendChild(ripple);
                 
-                setTimeout(() => ripple.remove(), 600);
-            });
+                setTimeout(() => ripple.remove(), 500);
+            }, { passive: true });
+        });
+
+        // Offline Detection
+        function updateOnlineStatus() {
+            const banner = document.getElementById('offlineBanner');
+            if (!navigator.onLine) {
+                banner.classList.add('show');
+            } else {
+                banner.classList.remove('show');
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+
+        // Prevent Zoom on Double Tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Haptic Feedback (if supported)
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('touchstart', () => {
+                if (navigator.vibrate) {
+                    navigator.vibrate(10);
+                }
+            }, { passive: true });
         });
     </script>
 </body>
 </html>
+
