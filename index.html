@@ -4,55 +4,426 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Links</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', Arial, sans-serif;
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
+
+        /* Animated Background Particles */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(94, 129, 244, 0.1) 0%, transparent 30%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Floating Orbs Animation */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.5;
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb1 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: 10%;
+            left: -50px;
+            animation-delay: 0s;
+        }
+
+        .orb2 {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 20%;
+            right: -30px;
+            animation-delay: -4s;
+        }
+
+        .orb3 {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            top: 50%;
+            left: 50%;
+            animation-delay: -2s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
         h1 {
-            color: #333;
+            color: #ffffff;
             text-align: center;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            animation: fadeIn 1s ease-out 0.3s both;
         }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-bottom: 35px;
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Decorative Line */
+        .divider {
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            margin: 0 auto 30px;
+            animation: expandWidth 0.8s ease-out 0.6s both;
+        }
+
+        @keyframes expandWidth {
+            from {
+                width: 0;
+            }
+            to {
+                width: 60px;
+            }
+        }
+
+        /* List Styles */
         ul {
             list-style: none;
             padding: 0;
         }
+
         li {
             margin: 15px 0;
+            opacity: 0;
+            animation: slideIn 0.6s ease-out forwards;
         }
+
+        li:nth-child(1) { animation-delay: 0.4s; }
+        li:nth-child(2) { animation-delay: 0.5s; }
+        li:nth-child(3) { animation-delay: 0.6s; }
+        li:nth-child(4) { animation-delay: 0.7s; }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Link Styles */
         a {
-            display: block;
-            padding: 15px 20px;
-            background: white;
-            color: #007bff;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 25px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
             text-decoration: none;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            font-weight: 500;
+            font-size: 1rem;
         }
+
+        /* Icon Styles */
+        a::before {
+            content: '';
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: all 0.4s ease;
+            flex-shrink: 0;
+        }
+
+        li:nth-child(1) a::before {
+            content: '🏪';
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        li:nth-child(2) a::before {
+            content: '📋';
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        li:nth-child(3) a::before {
+            content: '📦';
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        li:nth-child(4) a::before {
+            content: '👤';
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        /* Shine Effect */
+        a::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transition: left 0.5s ease;
+        }
+
+        a:hover::after {
+            left: 100%;
+        }
+
+        /* Arrow Icon */
+        .arrow {
+            margin-left: auto;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            opacity: 0.5;
+        }
+
+        a:hover .arrow {
+            transform: translateX(5px);
+            opacity: 1;
+        }
+
+        /* Hover Effects */
         a:hover {
-            background: #007bff;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(10px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        a:active {
+            transform: translateX(10px) scale(0.98);
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 1s ease-out 1s both;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+        }
+
+        /* Pulse Animation for Active State */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                margin: 20px auto;
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            a {
+                padding: 15px 20px;
+                font-size: 0.9rem;
+            }
+
+            a::before {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <h1></h1>
-    <ul>
-        <li><a href="retailer_enroll.html">Retailer Enrollement</a></li>
-        <li><a href="">ASC Registration</a></li>
-        <li><a href="">Distributor PLI</a></li>
-        <li><a href="">Promoter Registration</a></li>
+    <!-- Floating Orbs -->
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
 
-    </ul>
+    <div class="container">
+        <h1>Quick Links</h1>
+        <p class="subtitle">Select an option to continue</p>
+        <div class="divider"></div>
+        
+        <ul>
+            <li>
+                <a href="retailer_enroll.html">
+                    <span>Retailer Enrollment</span>
+                    <span class="arrow">→</span>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <span>ASC Registration</span>
+                    <span class="arrow">→</span>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <span>Distributor PLI</span>
+                    <span class="arrow">→</span>
+                </a>
+            </li>
+            <li>
+                <a href="">
+                    <span>Promoter Registration</span>
+                    <span class="arrow">→</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="footer">
+            <p>© 2024 All Rights Reserved</p>
+        </div>
+    </div>
+
+    <script>
+        // Ripple Effect on Click
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = e.clientX - rect.left - size / 2 + 'px';
+                ripple.style.top = e.clientY - rect.top - size / 2 + 'px';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
-
