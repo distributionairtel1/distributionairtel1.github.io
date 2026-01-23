@@ -1774,12 +1774,14 @@
     // ENHANCED SLAB RATE FUNCTIONS
     // =============================================
     
-    const SLAB_THRESHOLDS = [
+const SLAB_THRESHOLDS = [
         { min: 50, rate: 200, label: '50+', id: 'slab-50' },
         { min: 40, rate: 175, label: '40', id: 'slab-40' },
         { min: 30, rate: 150, label: '30', id: 'slab-30' },
         { min: 20, rate: 125, label: '20', id: 'slab-20' },
-        { min: 10, rate: 75, label: '10', id: 'slab-10' }
+        { min: 10, rate: 75, label: '10', id: 'slab-10' },
+        { min: 5, rate: 50, label: '5', id: 'slab-5' }
+
     ];
 
     function getSlabRate(grossCount) {
@@ -1788,6 +1790,7 @@
         if (grossCount >= 30) return 150;
         if (grossCount >= 20) return 125;
         if (grossCount >= 10) return 75;
+        if (grossCount >= 5) return 50;
         return 0;
     }
 
