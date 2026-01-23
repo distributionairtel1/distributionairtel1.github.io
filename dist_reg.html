@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtel Distributor Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ec1c24;
+            --primary-light: #ff4d4d;
+            --bg-dark: #0f0f23;
+            --bg-card: #1a1a2e;
+            --bg-input: #242441;
+            --bg-input-hover: #2d2d51;
+            --border-color: #2d3748;
+            --border-focus: #ec1c24;
+            --text-primary: #f7fafc;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+            --success: #38a169;
+            --error: #e53e3e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Main Container */
+        .container {
+            background: var(--bg-card);
+            width: 100%;
+            max-width: 950px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header - PERFECT AS-IS, UNCHANGED */
+        .header {
+            padding: 40px;
+            background: linear-gradient(180deg, rgba(236, 28, 36, 0.1) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-wrapper {
+            display: inline-block;
+            margin-bottom: 20px;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(236, 28, 36, 0.4));
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 30px rgba(236, 28, 36, 0.4));
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .header-badge {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 6px 16px;
+            background: rgba(236, 28, 36, 0.15);
+            border: 1px solid rgba(236, 28, 36, 0.3);
+            border-radius: 50px;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(236, 28, 36, 0.3); }
+            50% { box-shadow: 0 0 0 10px rgba(236, 28, 36, 0); }
+        }
+
+        /* Form Body */
+        .form-body {
+            padding: 50px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        /* Section Title */
+        .section-title {
+            grid-column: 1 / -1;
+            padding: 20px 0 10px 0;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(236, 28, 36, 0.1);
+            border: 2px solid rgba(236, 28, 36, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .section-text h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-text p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Input Groups */
+        .input-group {
+            position: relative;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 16px;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 20px 18px 55px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.3px;
+        }
+
+        input::placeholder {
+            color: var(--text-muted);
+        }
+
+        input:hover {
+            background: var(--bg-input-hover);
+            border-color: rgba(236, 28, 36, 0.3);
+        }
+
+        input:focus {
+            outline: none;
+            background: var(--bg-input-hover);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(236, 28, 36, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* Validation States */
+        .input-group.valid input {
+            border-color: var(--success);
+            background: rgba(56, 161, 105, 0.08);
+        }
+
+        .input-group.error input {
+            border-color: var(--error);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            grid-column: 1 / -1;
+            margin-top: 30px;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(236, 28, 36, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn i {
+            margin-left: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .submit-btn:hover i {
+            transform: translateX(6px);
+        }
+
+        /* Loading State */
+        .submit-btn.loading {
+            pointer-events: none;
+        }
+
+        .submit-btn.loading .btn-text {
+            opacity: 0;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            padding: 30px 50px;
+            background: rgba(10, 10, 20, 0.8);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--primary-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-body {
+                grid-template-columns: 1fr;
+                padding: 30px 25px;
+                gap: 25px;
+            }
+
+            .header {
+                padding: 30px 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .container {
+                margin: 10px;
+                border-radius: 16px;
+            }
+        }
+
+        /* Professional Animations Only */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-group {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .input-group:nth-child(1) { animation-delay: 0.1s; }
+        .input-group:nth-child(2) { animation-delay: 0.15s; }
+        .input-group:nth-child(3) { animation-delay: 0.2s; }
+        .input-group:nth-child(4) { animation-delay: 0.25s; }
+        .input-group:nth-child(5) { animation-delay: 0.3s; }
+        .input-group:nth-child(6) { animation-delay: 0.35s; }
+        .input-group:nth-child(7) { animation-delay: 0.4s; }
+        .input-group:nth-child(8) { animation-delay: 0.45s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header - PERFECT AS-IS, UNCHANGED -->
+        <div class="header">
+            <div class="logo-wrapper">
+                <img src="airtel_cropped.png" alt="Airtel Logo" class="logo">
+            </div>
+            <h1>Airtel Distributor Registration</h1>
+            <!-- <p>February 2026 Business Planning</p> -->
+            <!-- <div class="header-badge">FEBRUARY TARGETS</div> -->
+        </div>
+
+        <!-- Form -->
+        <form action="/distributor-report" method="POST" class="form-body" id="distributorForm">
+            
+            <!-- Distributor Information -->
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fa-solid fa-building"></i>
+                </div>
+                <div class="section-text">
+                    <h3>Distributor Information</h3>
+                    <!-- <p>Basic distributor details</p> -->
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="dist_name">Distributor Name *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <input type="text" id="dist_name" name="dist_name" placeholder="Enter distributor name" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="dist_lapu">Distributor LAPU Number *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <input type="tel" id="dist_lapu" name="dist_lapu" placeholder="Enter LAPU number" required>
+                </div>
+            </div>
+
+            <!-- Targets -->
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
+                <div class="section-text">
+                    <h3>February Targets</h3>
+                    <!-- <p>Monthly performance goals</p> -->
+                </div>
+            </div>
+
+            <div class="input-group full-width">
+                <label for="pli_target">PLI Target for February *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <input type="number" id="pli_target" name="pli_target" placeholder="e.g. 500" min="0" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="asc_required">ASC Required Count *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-users"></i>
+                    <input type="number" id="asc_required" name="asc_required" placeholder="e.g. 10" min="0" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="asc_available">ASC Available</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <input type="number" id="asc_available" name="asc_available" placeholder="e.g. 8" min="0">
+                </div>
+            </div>
+
+            <!-- Financials -->
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div class="section-text">
+                    <h3>Monthly Expenses (₹)</h3>
+                    <!-- <p>Operational cost breakdown</p> -->
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="asc_cost">ASC Cost *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                    <input type="number" id="asc_cost" name="asc_cost" placeholder="e.g. 15000" min="0" step="100" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="rent">Rent *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-home"></i>
+                    <input type="number" id="rent" name="rent" placeholder="e.g. 25000" min="0" step="100" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="electricity">Electricity *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-plug"></i>
+                    <input type="number" id="electricity" name="electricity" placeholder="e.g. 5000" min="0" step="100" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="miscellaneous">Miscellaneous *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-list"></i>
+                    <input type="number" id="miscellaneous" name="miscellaneous" placeholder="e.g. 8000" min="0" step="100" required>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <span class="btn-text">
+                    Submit Monthly Report
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </button>
+        </form>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                <i class="fa-solid fa-lock"></i> 
+                Secured with enterprise-grade encryption | 
+                <a href="#">Privacy Policy</a> | 
+                <a href="#">Terms of Service</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Real-time validation
+        const inputs = document.querySelectorAll('input[required]');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                const group = this.closest('.input-group');
+                if (this.value && this.checkValidity()) {
+                    group.classList.add('valid');
+                    group.classList.remove('error');
+                } else if (this.value) {
+                    group.classList.add('error');
+                    group.classList.remove('valid');
+                }
+            });
+
+            input.addEventListener('input', function() {
+                const group = this.closest('.input-group');
+                if (this.value) {
+                    group.classList.remove('error');
+                }
+            });
+        });
+
+        // Form submission
+        const form = document.getElementById('distributorForm');
+        const submitBtn = document.querySelector('.submit-btn');
+
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Check all required fields
+            const requiredInputs = form.querySelectorAll('input[required]');
+            requiredInputs.forEach(input => {
+                if (!input.value) {
+                    input.closest('.input-group').classList.add('error');
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            }
+
+            submitBtn.classList.add('loading');
+            
+            // Simulate API call
+            setTimeout(() => {
+                submitBtn.classList.remove('loading');
+            }, 2500);
+        });
+
+        // Smooth focus scroll
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        });
+
+        // Auto-format currency fields
+        const currencyFields = ['asc_cost', 'rent', 'electricity', 'miscellaneous'];
+        currencyFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            field.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, '');
+                if (value) {
+                    this.value = parseInt(value).toLocaleString();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
