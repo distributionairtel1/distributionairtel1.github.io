@@ -76,20 +76,17 @@
         }
 
         /* SAME LOGO - Pure PNG with shadow only */
-                /* SAME LOGO - Pure PNG with shadow only */
-/* FIXED - Initial logo perfectly centered */
+        /* SAME LOGO - Pure PNG with shadow only */
         .moving-logo {
             position: fixed;
-            top: 50%;           /* ADD this line */
             left: 50%;
             width: 120px;
             height: 120px;
-            transform: translate(-50%, -50%) translateY(50vh) scale(1);  /* Fixed transform */
+            transform: translateX(-50%) translateY(50vh) scale(1);
             z-index: 10000;
             transition: all 1.5s cubic-bezier(0.34, 0.16, 0.25, 1);
             background: transparent;
         }
-
 
         .moving-logo img {
             width: 100%;
@@ -467,6 +464,7 @@
     </script>
 </body>
 </html>
+
 
 
 
