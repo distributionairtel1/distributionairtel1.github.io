@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASC Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-   <style>
+<style>
     :root {
         --primary: #ec1c24;
         --primary-light: #ff4d4d;
@@ -211,6 +211,31 @@
         transition: all 0.2s ease;
         letter-spacing: 0.2px;
         min-height: 48px;
+    }
+
+    /* FORCE DATE INPUTS - Mobile perfect */
+    input[type="date"] {
+        font-size: 16px !important;
+        padding: 12px 14px 12px 48px !important;
+        min-height: 48px !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 6px !important;
+        background: var(--bg-input) !important;
+        color: var(--text-primary) !important;
+        letter-spacing: 0.2px !important;
+        margin-bottom: 6px !important;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        color: var(--primary);
+        opacity: 0.7;
+        cursor: pointer;
+        padding-right: 10px;
+    }
+
+    input[type="date"]::-webkit-datetime-edit {
+        color: var(--text-primary);
+        font-size: 16px;
     }
 
     input::placeholder {
@@ -439,6 +464,7 @@
         }
     }
 </style>
+
 </head>
 <body>
     <div class="container">
