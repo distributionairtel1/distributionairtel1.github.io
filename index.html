@@ -76,17 +76,20 @@
         }
 
         /* SAME LOGO - Pure PNG with shadow only */
-        /* SAME LOGO - Pure PNG with shadow only */
+/* Initial - DEAD CENTER screen */
         .moving-logo {
             position: fixed;
+            top: 50%;
             left: 50%;
             width: 120px;
             height: 120px;
-            transform: translateX(-50%) translateY(50vh) scale(1);
+            transform: translate(-50%, -50%);
             z-index: 10000;
             transition: all 1.5s cubic-bezier(0.34, 0.16, 0.25, 1);
             background: transparent;
         }
+
+
 
         .moving-logo img {
             width: 100%;
@@ -103,14 +106,16 @@
             background: transparent;
         }
 
-        /* Logo moves to EXACT header position - Pure PNG */
+        /* Settled - Header position */
         .moving-logo.settled {
             width: 50px;
             height: 50px;
-            transform: translateX(-50%) translateY(45px) scale(1);
+            transform: translate(-50%, -50%) translateX(0px) translateY(-215px);
+            top: 44%;
             left: 50%;
             background: transparent;
         }
+
 
         .moving-logo.settled img {
             width: 100%;
@@ -118,7 +123,6 @@
             /* box-shadow: 0 8px 25px rgba(226, 0, 26, 0.3); */
             background: transparent;
         }
-
 
         /* Header Logo Container - Clean */
         .header-logo {
@@ -464,6 +468,7 @@
     </script>
 </body>
 </html>
+
 
 
 
