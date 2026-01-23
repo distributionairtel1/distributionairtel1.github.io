@@ -1755,7 +1755,7 @@
                 deviceShareInput.style.color = '#888';
             }
         } else {
-            const deviceShare = airtelGross / jioTotal;
+            const deviceShare = (airtelGross / jioTotal)*100;
             
             if (deviceShare >= 1) {
                 deviceShareInput.value = deviceShare.toFixed(2) + '';
