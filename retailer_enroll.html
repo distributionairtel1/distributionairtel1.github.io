@@ -1738,37 +1738,34 @@
     // =============================================
     // DEVICE SHARE CALCULATION
     // =============================================
-    function calculateDeviceShare() {
-        const airtelGross = parseFloat(document.getElementById('airtelGross').value) || 0;
-        const jioMnp = parseFloat(document.getElementById('jioMnp').value) || 0;
-        const jioDsr = parseFloat(document.getElementById('jioDsr').value) || 0;
-        
-        const jioTotal = jioMnp + jioDsr;
-        const deviceShareInput = document.getElementById('deviceShare');
-        
-        if (jioTotal === 0) {
-            if (airtelGross > 0) {
-                deviceShareInput.value = '∞ (No JIO)';
-                deviceShareInput.style.color = '#4CAF50';
-            } else {
-                deviceShareInput.value = '';
-                deviceShareInput.style.color = '#888';
-            }
+function calculateDeviceShare() {
+    const airtelGross = parseFloat(document.getElementById('airtelGross').value) || 0;
+    const jioMnp = parseFloat(document.getElementById('jioMnp').value) || 0;
+    const jioDsr = parseFloat(document.getElementById('jioDsr').value) || 0;
+
+    const jioTotal = jioMnp + jioDsr;
+    const deviceShareInput = document.getElementById('deviceShare');
+
+    if (jioTotal === 0) {
+        if (airtelGross > 0) {
+            deviceShareInput.value = '∞ (No JIO)';
+            deviceShareInput.style.setProperty('color', '#4CAF50', 'important');
         } else {
-            const deviceShare = (airtelGross / jioTotal)*100;
-            
-            if (deviceShare >= 1) {
-                deviceShareInput.value = deviceShare.toFixed(2) + '';
-                deviceShareInput.style.color = '#4CAF50';
-            } else if (deviceShare >= 0.5) {
-                deviceShareInput.value = deviceShare.toFixed(2) + '';
-                deviceShareInput.style.color = '#ffc107';
-            } else {
-                deviceShareInput.value = deviceShare.toFixed(2) + '';
-                deviceShareInput.style.color = '#f44336';
-            }
+            deviceShareInput.value = '';
+            deviceShareInput.style.setProperty('color', '#888', 'important');
         }
+        return;
     }
+
+    const deviceSharePercent = (airtelGross / jioTotal) * 100;
+    deviceShareInput.value = deviceSharePercent.toFixed(2) + '%';
+
+    if (deviceSharePercent < 100.00) {
+        deviceShareInput.style.setProperty('color', '#f44336', 'important');
+    } else {
+        deviceShareInput.style.setProperty('color', '#4CAF50', 'important');
+    }
+}
 
     // =============================================
     // ENHANCED SLAB RATE FUNCTIONS
