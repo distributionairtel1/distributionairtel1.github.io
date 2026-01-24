@@ -930,7 +930,7 @@
                 <tr><td class="left">DSR OTF - Rs.135</td><td><input type="number" id="dsrCount" placeholder="0" min="0"></td><td><input type="text" id="dsrAmount" readonly class="total-display"></td></tr>
                 <tr><td class="left">MNP OTF - Rs.235</td><td><input type="number" id="mnpCount" placeholder="0" min="0"></td><td><input type="text" id="mnpAmount" readonly class="total-display"></td></tr>
                 <tr class="gross-row slab-highlight" id="grossRow">
-                    <td class="left">GROSS COMMITMENT(DTR-Slab Incentive)</td>
+                    <td class="left">GROSS COMMITMENT & COMMISSION(DTR-Slab Incentive)</td>
                     <td><input type="text" id="grossCount" readonly class="auto-calc"></td>
                     <td><input type="text" id="grossAmount" readonly class="total-display slab-highlight"></td>
                 </tr>
@@ -1840,61 +1840,75 @@ const SLAB_THRESHOLDS = [
             }
         });
     }
-
-    function updateGrossRowStyling(slabInfo, mnpCount) {
-        const grossRow = document.getElementById('grossRow');
-        const slabBadge = document.getElementById('slabBadge');
-        const slabLabel = document.getElementById('slabLabel');
-        const slabProgress = document.getElementById('slabProgress');
-        const progressText = document.getElementById('progressText');
-        const progressBar = document.getElementById('progressBar');
+function updateGrossRowStyling(slabInfo, mnpCount) {
+    const grossRow = document.getElementById('grossRow');
+    const slabBadge = document.getElementById('slabBadge');
+    const slabLabel = document.getElementById('slabLabel');
+    const slabProgress = document.getElementById('slabProgress');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+    
+    // Calculate platinum bonus
+    const platinumBonus = (selectedTier === 'platinum') ? 25 : 0;
+    const effectiveRate = slabInfo.rate + platinumBonus;
+    
+    if (slabInfo.rate > 0 || platinumBonus > 0) {
+        grossRow.classList.add('has-slab');
+        grossRow.classList.remove('no-slab');
+        slabBadge.classList.add('active');
+        slabBadge.classList.remove('inactive');
         
-        if (slabInfo.rate > 0) {
-            grossRow.classList.add('has-slab');
-            grossRow.classList.remove('no-slab');
-            slabBadge.classList.add('active');
-            slabBadge.classList.remove('inactive');
+        if (platinumBonus > 0) {
+            slabBadge.textContent = `₹${slabInfo.rate}+₹25/MNP`;
+        } else {
             slabBadge.textContent = `₹${slabInfo.rate}/MNP`;
-        } else {
-            grossRow.classList.remove('has-slab');
-            grossRow.classList.add('no-slab');
-            slabBadge.classList.remove('active');
-            slabBadge.classList.add('inactive');
-            slabBadge.textContent = 'No Slab';
         }
-        
-        if (slabInfo.rate > 0) {
-            slabLabel.innerHTML = `
-                <strong>Slab ${slabInfo.label}</strong> → ₹${slabInfo.rate} × ${mnpCount} MNP = 
-                <strong style="color: #4CAF50;">₹${(slabInfo.rate * mnpCount).toLocaleString('en-IN')}</strong>
-            `;
-        } else {
-            slabLabel.textContent = 'Need minimum 10 Gross to unlock slab incentive';
-        }
-        
-        if (!slabInfo.isMaxSlab && slabInfo.nextSlab) {
-            slabProgress.style.display = 'block';
-            progressText.innerHTML = `<span style="color: #ffc107;">🎯 ${slabInfo.neededForNext} more for ₹${slabInfo.nextSlab.rate}/MNP slab</span>`;
-            
-            let progressPercent = 0;
-            if (slabInfo.rate === 0) {
-                progressPercent = (10 - slabInfo.neededForNext) / 10 * 100;
-            } else {
-                const currentMin = SLAB_THRESHOLDS.find(s => s.rate === slabInfo.rate).min;
-                const nextMin = slabInfo.nextSlab.min;
-                const range = nextMin - currentMin;
-                const current = nextMin - slabInfo.neededForNext - currentMin;
-                progressPercent = (current / range) * 100;
-            }
-            progressBar.style.width = `${Math.max(0, Math.min(100, progressPercent))}%`;
-        } else if (slabInfo.isMaxSlab) {
-            slabProgress.style.display = 'block';
-            progressText.innerHTML = `<span style="color: #4CAF50;">🏆 Maximum slab achieved!</span>`;
-            progressBar.style.width = '100%';
-        } else {
-            slabProgress.style.display = 'none';
-        }
+    } else {
+        grossRow.classList.remove('has-slab');
+        grossRow.classList.add('no-slab');
+        slabBadge.classList.remove('active');
+        slabBadge.classList.add('inactive');
+        slabBadge.textContent = 'No Slab';
     }
+    
+    if (slabInfo.rate > 0 || platinumBonus > 0) {
+        let labelHTML = `<strong>Slab ${slabInfo.label}</strong>`;
+        
+        if (platinumBonus > 0) {
+            labelHTML += ` → (₹${slabInfo.rate} + <span style="color: #b4b9c3;">₹25 Platinum</span>) × ${mnpCount} MNP = `;
+        } else {
+            labelHTML += ` → ₹${slabInfo.rate} × ${mnpCount} MNP = `;
+        }
+        
+        labelHTML += `<strong style="color: #4CAF50;">₹${(effectiveRate * mnpCount).toLocaleString('en-IN')}</strong>`;
+        slabLabel.innerHTML = labelHTML;
+    } else {
+        slabLabel.textContent = 'Need minimum 10 Gross to unlock slab incentive';
+    }
+    
+    if (!slabInfo.isMaxSlab && slabInfo.nextSlab) {
+        slabProgress.style.display = 'block';
+        progressText.innerHTML = `<span style="color: #ffc107;">🎯 ${slabInfo.neededForNext} more for ₹${slabInfo.nextSlab.rate}${platinumBonus > 0 ? '+₹25' : ''}/MNP slab</span>`;
+        
+        let progressPercent = 0;
+        if (slabInfo.rate === 0) {
+            progressPercent = (10 - slabInfo.neededForNext) / 10 * 100;
+        } else {
+            const currentMin = SLAB_THRESHOLDS.find(s => s.rate === slabInfo.rate).min;
+            const nextMin = slabInfo.nextSlab.min;
+            const range = nextMin - currentMin;
+            const current = nextMin - slabInfo.neededForNext - currentMin;
+            progressPercent = (current / range) * 100;
+        }
+        progressBar.style.width = `${Math.max(0, Math.min(100, progressPercent))}%`;
+    } else if (slabInfo.isMaxSlab) {
+        slabProgress.style.display = 'block';
+        progressText.innerHTML = `<span style="color: #4CAF50;">🏆 Maximum slab achieved!${platinumBonus > 0 ? ' (+₹25 Platinum Bonus)' : ''}</span>`;
+        progressBar.style.width = '100%';
+    } else {
+        slabProgress.style.display = 'none';
+    }
+}
 
     // =============================================
     // MAIN CALCULATION FUNCTION
@@ -1915,7 +1929,11 @@ const SLAB_THRESHOLDS = [
         const grossCount = dsrCount + mnpCount;
         const slabInfo = getSlabInfo(grossCount);
         const slabRate = slabInfo.rate;
-        const grossCommitmentAmount = mnpCount * slabRate;
+        
+        // Add Rs. 25 per MNP bonus for Platinum tier
+        const platinumBonus = (selectedTier === 'platinum') ? 25 : 0;
+        const effectiveRate = slabRate + platinumBonus;
+        const grossCommitmentAmount = mnpCount * effectiveRate;
         
         document.getElementById('grossCount').value = grossCount;
         document.getElementById('grossAmount').value = grossCommitmentAmount.toLocaleString('en-IN');
@@ -2082,15 +2100,18 @@ const SLAB_THRESHOLDS = [
     // =============================================
     // TIER SELECTION
     // =============================================
-    document.querySelectorAll('input[name="tier"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            selectedTier = this.value;
-            document.body.classList.remove('tier-platinum', 'tier-gold', 'tier-executive');
-            document.querySelectorAll('.tier-btn').forEach(btn => btn.classList.remove('active'));
-            document.body.classList.add(`tier-${this.value}`);
-            this.closest('.tier-btn').classList.add('active');
-        });
+document.querySelectorAll('input[name="tier"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        selectedTier = this.value;
+        document.body.classList.remove('tier-platinum', 'tier-gold', 'tier-executive');
+        document.querySelectorAll('.tier-btn').forEach(btn => btn.classList.remove('active'));
+        document.body.classList.add(`tier-${this.value}`);
+        this.closest('.tier-btn').classList.add('active');
+        
+        // Recalculate totals when tier changes (for platinum bonus)
+        calculateAll();
     });
+});
 
     // =============================================
     // INPUT LISTENERS - Main Calculation
