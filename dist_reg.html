@@ -496,7 +496,21 @@
                 <label for="dist_name">Distributor Name *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-user-tie"></i>
-                    <input type="text" id="dist_name" name="dist_name" placeholder="Enter distributor name" required>
+                    <input type="text" id="dist_name" name="dist_name" placeholder="Enter Distributor Name" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="dist_name">ZSM Name *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <input type="text" id="dist_name" name="dist_name" placeholder="Enter ZSM Name" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="dist_name">TSM Name *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <input type="text" id="dist_name" name="dist_name" placeholder="Enter TSM Name" required>
                 </div>
             </div>
 
@@ -504,11 +518,220 @@
                 <label for="dist_lapu">Distributor LAPU Number *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-mobile-screen"></i>
-                    <input type="tel" id="dist_lapu" name="dist_lapu" placeholder="Enter LAPU number" required>
+                    <input type="tel" id="dist_lapu" name="dist_lapu" placeholder="Enter LAPU Number" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="total_security">Total(with Security) *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-calculator"></i>
+                    <input type="number" id="total_security" name="total_security" class="display-field" placeholder="Enter Total(with Security) " min="0">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="lapu_dth">LAPU/DTH LAPU (3 days) *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <input type="tel" id="lapu_dth" name="lapu_dth" class="display-field" placeholder="Enter LAPU/DTH LAPU (3 days) " >
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="lapu_dth">Lapu Commission(Amount)*</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <input type="tel" id="lapu_dth" name="lapu_dth" class="display-field" placeholder="Enter Lapu Commission(Amount) " >
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="lapu_dth">ASC Incentive*</label>
+                <div class="input-wrapper"> 
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <input type="tel" id="lapu_dth" name="lapu_dth" class="display-field" placeholder="Enter ASC Incentive " >
+                </div>
+            </div>
+            <!-- Targets -->
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
+                <div class="section-text">
+                    <h3>November Targets</h3>
+                    <!-- <p>Monthly performance goals</p> -->
+                </div>
+            </div>
+        
+            <div class="input-group full-width">
+                <label for="pli_target">November Gross*</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <input type="number" id="pli_target" name="pli_target" placeholder="e.g. 500" min="0" required>
                 </div>
             </div>
 
-            <!-- Targets -->
+            <div class="input-group">
+                <label for="asc_required">November MNP *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-users"></i>
+                    <input type="number" id="asc_required" name="asc_required" placeholder="e.g. 10" min="0" required>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
+                <div class="section-text">
+                    <h3>December Targets</h3>
+                    <!-- <p>Monthly performance goals</p> -->
+                </div>
+            </div>
+        
+            <div class="input-group full-width">
+                <label for="pli_target">December Gross*</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <input type="number" id="pli_target" name="pli_target" placeholder="e.g. 500" min="0" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="asc_required">December MNP *</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-users"></i>
+                    <input type="number" id="asc_required" name="asc_required" placeholder="e.g. 10" min="0" required>
+                </div>
+            </div>
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
+                <div class="section-text">
+                    <h3>January Targets</h3>
+                    <!-- <p>Monthly performance goals</p> -->
+                </div>
+            </div>
+        
+            <div class="input-group full-width">
+                <label>January Gross Target & Achievement*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <input type="number" id="gross_target" name="gross_target" placeholder="Gross Target" min="0" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-trophy"></i>
+                        <input type="number" id="gross_achievement" name="gross_achievement" placeholder="Gross Achievement" min="0">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="input-group full-width">
+                <label>January MNP Target & Achievement*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="number" id="mnp_target" name="mnp_target" placeholder="MNP Target" min="0" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-medal"></i>
+                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="input-group full-width">
+                <label>January ASC Gross*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <input type="number" id="asc_gross" name="asc_gross" placeholder="ASC Gross" min="0" required>
+                    </div>
+                    <!-- <div style="flex: 1;">
+                        <i class="fa-solid fa-trophy"></i>
+                        <input type="number" id="gross_achievement" name="gross_achievement" placeholder="Gross Achievement" min="0">
+                    </div> -->
+                </div>
+            </div>
+            
+            <div class="input-group full-width">
+                <label>January ASC MNP*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="number" id="asc_mnp" name="asc_mnp" placeholder="ASC MNP" min="0" required>
+                    </div>
+                    <!-- <div style="flex: 1;">
+                        <i class="fa-solid fa-medal"></i>
+                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
+                    </div> -->
+                </div>
+            </div>
+            <div class="input-group full-width">
+                <label>January Promotor MNP*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="number" id="promotor_mnp" name="promotor_mnp" placeholder="Promotor MNP" min="0" required>
+                    </div>
+                    <!-- <div style="flex: 1;">
+                        <i class="fa-solid fa-medal"></i>
+                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
+                    </div> -->
+                </div>
+            </div>
+            <div class="input-group full-width">
+                <label>January Trade Gross*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="number" id="trade_gross" name="trade_gross" placeholder="Trade Gross" min="0" required>
+                    </div>
+                    <!-- <div style="flex: 1;">
+                        <i class="fa-solid fa-medal"></i>
+                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
+                    </div> -->
+                </div>
+            </div> 
+            <div class="input-group full-width">
+                <label>January Trade MNP*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="number" id="trade_mnp" name="trade_mnp" placeholder="Trade MNP" min="0" required>
+                    </div>
+                    <!-- <div style="flex: 1;">
+                        <i class="fa-solid fa-medal"></i>
+                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
+                    </div> -->
+                </div>
+            </div>  
+            
+            <div class="input-group full-width">
+                <label>January PLI WIFI Target & WIFI Achievement*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="number" id="pli_wifi_target" name="pli_wifi_target" placeholder="PLI WIFI Target" min="0" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-medal"></i>
+                        <input type="number" id="pli_wifi_achievement" name="pli_wifi_achievement" placeholder="PLI WIFI Achievement" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="input-group full-width">
+                <label>January PLI APB Target & APB Achievement*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="number" id="pli_apb_target" name="pli_apb_target" placeholder="PLI APB Target" min="0" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-medal"></i>
+                        <input type="number" id="pli_apb_achievement" name="pli_apb_achievement" placeholder="PLI APB Achievement" min="0">
+                    </div>
+                </div>
+            </div>
             <div class="section-title">
                 <div class="section-icon">
                     <i class="fa-solid fa-bullseye"></i>
@@ -527,19 +750,31 @@
                 </div>
             </div>
 
-            <div class="input-group">
-                <label for="asc_required">ASC Required Count *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-users"></i>
-                    <input type="number" id="asc_required" name="asc_required" placeholder="e.g. 10" min="0" required>
+            <div class="input-group full-width">
+                <label>ASC Required & ASC Available*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="number" id="asc_required" name="asc_required" placeholder="ASC Required" min="0" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-medal"></i>
+                        <input type="number" id="asc_available" name="asc_available" placeholder="ASC Available" min="0">
+                    </div>
                 </div>
             </div>
 
-            <div class="input-group">
-                <label for="asc_available">ASC Available</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-check-circle"></i>
-                    <input type="number" id="asc_available" name="asc_available" placeholder="e.g. 8" min="0">
+            <div class="input-group full-width">
+                <label>Promotor Required & Promotor Available*</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="number" id="promotor_mnp" name="wifi_target" placeholder="Promotor Required" min="0" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <i class="fa-solid fa-medal"></i>
+                        <input type="number" id="mnp_achievement" name="wifi_achievement" placeholder="Promotor Available" min="0">
+                    </div>
                 </div>
             </div>
 
@@ -555,7 +790,7 @@
             </div>
 
             <div class="input-group">
-                <label for="asc_cost">ASC Cost *</label>
+                <label for="asc_cost">ASC Salary *</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-indian-rupee-sign"></i>
                     <input type="number" id="asc_cost" name="asc_cost" placeholder="e.g. 15000" min="0" step="100" required>
@@ -585,7 +820,43 @@
                     <input type="number" id="miscellaneous" name="miscellaneous" placeholder="e.g. 8000" min="0" step="100" required>
                 </div>
             </div>
+            <div class="input-group">
+                <label>PLI Credited *</label>
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label for="oct_credited" style="font-weight: normal; font-size: 0.9em;">October</label>
+                        <div style="position: relative;">
+                            <i class="fa-solid fa-calendar" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666;"></i>
+                            <input type="number" id="oct_credited" name="oct_credited" placeholder="0" min="0" style="padding-left: 40px;">
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="nov_credited" style="font-weight: normal; font-size: 0.9em;">November</label>
+                        <div style="position: relative;">
+                            <i class="fa-solid fa-calendar" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666;"></i>
+                            <input type="number" id="nov_credited" name="nov_credited" placeholder="0" min="0" style="padding-left: 40px;">
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="dec_credited" style="font-weight: normal; font-size: 0.9em;">December</label>
+                        <div style="position: relative;">
+                            <i class="fa-solid fa-calendar" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666;"></i>
+                            <input type="number" id="dec_credited" name="dec_credited" placeholder="0" min="0" style="padding-left: 40px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="input-group full-width">
+                <label for="no_due_certificate">No Due Certificate*</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-file-certificate"></i>
+<input type="file" id="no_due_certificate" name="no_due_certificate" 
+       accept=".pdf,.doc,.docx" required onchange="checkFileSize(this)">
 
+                </div>
+            </div>
+            
             <button type="submit" class="submit-btn">
                 <span class="btn-text">
                     Submit Monthly Report
@@ -606,6 +877,19 @@
     </div>
 
     <script>
+
+function checkFileSize(input) {
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (input.files[0] && input.files[0].size > maxSize) {
+        alert('File size must be less than 5MB');
+        input.value = '';
+    }
+}
+
+    document.getElementById('no_due_certificate').addEventListener('change', function() {
+    const fileName = document.getElementById('file-name');
+    fileName.textContent = this.files[0] ? this.files[0].name : '';
+});
         // Real-time validation
         const inputs = document.querySelectorAll('input[required]');
         inputs.forEach(input => {
