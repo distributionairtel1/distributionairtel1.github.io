@@ -1848,21 +1848,12 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
     const progressText = document.getElementById('progressText');
     const progressBar = document.getElementById('progressBar');
     
-    // Calculate platinum bonus
-    const platinumBonus = (selectedTier === 'platinum') ? 25 : 0;
-    const effectiveRate = slabInfo.rate + platinumBonus;
-    
-    if (slabInfo.rate > 0 || platinumBonus > 0) {
+    if (slabInfo.rate > 0) {
         grossRow.classList.add('has-slab');
         grossRow.classList.remove('no-slab');
         slabBadge.classList.add('active');
         slabBadge.classList.remove('inactive');
-        
-        if (platinumBonus > 0) {
-            slabBadge.textContent = `₹${slabInfo.rate}+₹25/MNP`;
-        } else {
-            slabBadge.textContent = `₹${slabInfo.rate}/MNP`;
-        }
+        slabBadge.textContent = `₹${slabInfo.rate}/MNP`;
     } else {
         grossRow.classList.remove('has-slab');
         grossRow.classList.add('no-slab');
@@ -1871,24 +1862,18 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
         slabBadge.textContent = 'No Slab';
     }
     
-    if (slabInfo.rate > 0 || platinumBonus > 0) {
-        let labelHTML = `<strong>Slab ${slabInfo.label}</strong>`;
-        
-        if (platinumBonus > 0) {
-            labelHTML += ` → (₹${slabInfo.rate} + <span style="color: #b4b9c3;">₹25 Platinum</span>) × ${mnpCount} MNP = `;
-        } else {
-            labelHTML += ` → ₹${slabInfo.rate} × ${mnpCount} MNP = `;
-        }
-        
-        labelHTML += `<strong style="color: #4CAF50;">₹${(effectiveRate * mnpCount).toLocaleString('en-IN')}</strong>`;
-        slabLabel.innerHTML = labelHTML;
+    if (slabInfo.rate > 0) {
+        slabLabel.innerHTML = `
+            <strong>Slab ${slabInfo.label}</strong> → ₹${slabInfo.rate} × ${mnpCount} MNP = 
+            <strong style="color: #4CAF50;">₹${(slabInfo.rate * mnpCount).toLocaleString('en-IN')}</strong>
+        `;
     } else {
         slabLabel.textContent = 'Need minimum 10 Gross to unlock slab incentive';
     }
     
     if (!slabInfo.isMaxSlab && slabInfo.nextSlab) {
         slabProgress.style.display = 'block';
-        progressText.innerHTML = `<span style="color: #ffc107;">🎯 ${slabInfo.neededForNext} more for ₹${slabInfo.nextSlab.rate}${platinumBonus > 0 ? '+₹25' : ''}/MNP slab</span>`;
+        progressText.innerHTML = `<span style="color: #ffc107;">🎯 ${slabInfo.neededForNext} more for ₹${slabInfo.nextSlab.rate}/MNP slab</span>`;
         
         let progressPercent = 0;
         if (slabInfo.rate === 0) {
@@ -1903,7 +1888,7 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
         progressBar.style.width = `${Math.max(0, Math.min(100, progressPercent))}%`;
     } else if (slabInfo.isMaxSlab) {
         slabProgress.style.display = 'block';
-        progressText.innerHTML = `<span style="color: #4CAF50;">🏆 Maximum slab achieved!${platinumBonus > 0 ? ' (+₹25 Platinum Bonus)' : ''}</span>`;
+        progressText.innerHTML = `<span style="color: #4CAF50;">🏆 Maximum slab achieved!</span>`;
         progressBar.style.width = '100%';
     } else {
         slabProgress.style.display = 'none';
@@ -1913,57 +1898,67 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
     // =============================================
     // MAIN CALCULATION FUNCTION
     // =============================================
-    function calculateAll() {
-        const dsrCount = parseInt(document.getElementById('dsrCount').value) || 0;
-        const mnpCount = parseInt(document.getElementById('mnpCount').value) || 0;
-        const wifiCount = parseInt(document.getElementById('wifiCount').value) || 0;
-        const apbCount = parseInt(document.getElementById('apbCount').value) || 0;
-        const simexCount = parseInt(document.getElementById('simexCount').value) || 0;
-        const lapuTertiary = parseInt(document.getElementById('lapuTertiary').value) || 0;
-        const mnpDays = parseInt(document.getElementById('mnpDays').value) || 0;
-        const wifiDays = parseInt(document.getElementById('wifiDays').value) || 0;
+function calculateAll() {
+    const dsrCount = parseInt(document.getElementById('dsrCount').value) || 0;
+    const mnpCount = parseInt(document.getElementById('mnpCount').value) || 0;
+    const wifiCount = parseInt(document.getElementById('wifiCount').value) || 0;
+    const apbCount = parseInt(document.getElementById('apbCount').value) || 0;
+    const simexCount = parseInt(document.getElementById('simexCount').value) || 0;
+    const lapuTertiary = parseInt(document.getElementById('lapuTertiary').value) || 0;
+    const mnpDays = parseInt(document.getElementById('mnpDays').value) || 0;
+    const wifiDays = parseInt(document.getElementById('wifiDays').value) || 0;
 
-        document.getElementById('dsrAmount').value = (dsrCount * 135).toLocaleString('en-IN');
-        document.getElementById('mnpAmount').value = (mnpCount * 235).toLocaleString('en-IN');
+    // Calculate DSR OTF with Platinum bonus
+    const platinumDsrBonus = (selectedTier === 'platinum') ? 25 : 0;
+    const dsrRate = 135 + platinumDsrBonus;
+    const dsrAmount = dsrCount * dsrRate;
+    document.getElementById('dsrAmount').value = dsrAmount.toLocaleString('en-IN');
+    
+    // MNP OTF (no change)
+    const mnpAmount = mnpCount * 235;
+    document.getElementById('mnpAmount').value = mnpAmount.toLocaleString('en-IN');
 
-        const grossCount = dsrCount + mnpCount;
-        const slabInfo = getSlabInfo(grossCount);
-        const slabRate = slabInfo.rate;
-        
-        // Add Rs. 25 per MNP bonus for Platinum tier
-        const platinumBonus = (selectedTier === 'platinum') ? 25 : 0;
-        const effectiveRate = slabRate + platinumBonus;
-        const grossCommitmentAmount = mnpCount * effectiveRate;
-        
-        document.getElementById('grossCount').value = grossCount;
-        document.getElementById('grossAmount').value = grossCommitmentAmount.toLocaleString('en-IN');
-        
-        highlightActiveSlab(slabInfo);
-        updateGrossRowStyling(slabInfo, mnpCount);
+    // Gross Commitment (Slab based on Gross Count)
+    const grossCount = dsrCount + mnpCount;
+    const slabInfo = getSlabInfo(grossCount);
+    const slabRate = slabInfo.rate;
+    const grossCommitmentAmount = mnpCount * slabRate;
+    
+    document.getElementById('grossCount').value = grossCount;
+    document.getElementById('grossAmount').value = grossCommitmentAmount.toLocaleString('en-IN');
+    
+    highlightActiveSlab(slabInfo);
+    updateGrossRowStyling(slabInfo, mnpCount);
 
-        const tertiaryAmount = lapuTertiary * 0.039;
-        const mnpDaysAmount = (lapuTertiary / 30 * 0.014) * mnpDays;
-        const wifiDaysAmount = (lapuTertiary / 30 * 0.015) * wifiDays;
-        document.getElementById('tertiaryAmount').value = tertiaryAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
-        document.getElementById('mnpDaysAmount').value = mnpDaysAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
-        document.getElementById('wifiDaysAmount').value = wifiDaysAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    // Margin Calculations
+    const tertiaryAmount = lapuTertiary * 0.039;
+    const mnpDaysAmount = (lapuTertiary / 30 * 0.014) * mnpDays;
+    const wifiDaysAmount = (lapuTertiary / 30 * 0.015) * wifiDays;
+    document.getElementById('tertiaryAmount').value = tertiaryAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    document.getElementById('mnpDaysAmount').value = mnpDaysAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    document.getElementById('wifiDaysAmount').value = wifiDaysAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 });
 
-        document.getElementById('wifiAmount').value = (wifiCount * 150).toLocaleString('en-IN');
-        document.getElementById('apbAmount').value = (apbCount * 45).toLocaleString('en-IN');
-        document.getElementById('simexAmount').value = (simexCount * 50).toLocaleString('en-IN');
+    // Additional Items
+    const wifiAmount = wifiCount * 150;
+    const apbAmount = apbCount * 45;
+    const simexAmount = simexCount * 50;
+    document.getElementById('wifiAmount').value = wifiAmount.toLocaleString('en-IN');
+    document.getElementById('apbAmount').value = apbAmount.toLocaleString('en-IN');
+    document.getElementById('simexAmount').value = simexAmount.toLocaleString('en-IN');
 
-        const total = (dsrCount * 135) +
-                     (mnpCount * 235) +
-                     grossCommitmentAmount + 
-                     (wifiCount * 150) + 
-                     (apbCount * 45) + 
-                     (simexCount * 50) + 
-                     tertiaryAmount + 
-                     mnpDaysAmount + 
-                     wifiDaysAmount;
-        
-        document.getElementById('totalAmount').textContent = `Total Amount Rs. ${Math.round(total).toLocaleString('en-IN')}`;
-    }
+    // Total Calculation
+    const total = dsrAmount +
+                 mnpAmount +
+                 grossCommitmentAmount + 
+                 wifiAmount + 
+                 apbAmount + 
+                 simexAmount + 
+                 tertiaryAmount + 
+                 mnpDaysAmount + 
+                 wifiDaysAmount;
+    
+    document.getElementById('totalAmount').textContent = `Total Amount Rs. ${Math.round(total).toLocaleString('en-IN')}`;
+}
 
     // =============================================
     // CAMERA CAPTURE HANDLER (iOS COMPATIBLE)
@@ -2108,7 +2103,7 @@ document.querySelectorAll('input[name="tier"]').forEach(radio => {
         document.body.classList.add(`tier-${this.value}`);
         this.closest('.tier-btn').classList.add('active');
         
-        // Recalculate totals when tier changes (for platinum bonus)
+        // Recalculate totals when tier changes (for platinum DSR bonus)
         calculateAll();
     });
 });
