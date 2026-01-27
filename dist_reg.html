@@ -439,7 +439,7 @@
             
             <button type="button" class="camera-btn" id="captureBtn">
                 <i class="fa-solid fa-camera" id="cameraIcon"></i> 
-                <span id="btnText">📸 Tap to Capture Photo + GPS</span>
+                <span id="btnText">Tap to Capture Photo + GPS</span>
             </button>
             
             <!-- Photo Section -->
@@ -631,7 +631,7 @@ function displayGPSInfo(gpsData, source) {
         geoInfo.classList.add('exif-source');
         
         geoInfo.innerHTML = `
-            <strong>📍 GPS from Photo:</strong> 
+            <strong>GPS from Photo:</strong> 
             <span class="geo-badge exif">PHOTO EXIF ✓</span><br><br>
             <strong>Coordinates:</strong> ${geoLocation}<br>
             ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
@@ -662,7 +662,7 @@ function displayGPSInfo(gpsData, source) {
         geoInfo.classList.add('no-source');
         
         geoInfo.innerHTML = `
-            <strong>📍 Location:</strong>
+            <strong>Location:</strong>
             <span class="geo-badge none">NOT CAPTURED</span><br><br>
             <small>Location not captured.<br>
             <strong>Please ensure location permission is enabled.</strong></small>
@@ -988,7 +988,7 @@ async function handleCameraCapture() {
         
         // ========== NOW get location (after camera) ==========
         loading.style.display = 'flex';
-        loadingText.textContent = '📍 Getting your location...';
+        loadingText.textContent = 'Getting your location...';
         loadingSubtext.textContent = 'Please wait...';
         
         let locationData = null;
@@ -1000,7 +1000,7 @@ async function handleCameraCapture() {
         }
         
         // ========== Process photo ==========
-        loadingText.textContent = '📸 Processing photo...';
+        loadingText.textContent = 'Processing photo...';
         loadingSubtext.textContent = 'Almost done...';
         
         // Check if photo is from gallery (more than 2 minutes old)
@@ -1011,7 +1011,7 @@ async function handleCameraCapture() {
         if (timeDiff > 120000) {
             loading.style.display = 'none';
             const usePhoto = confirm(
-                '⚠️ This photo appears to be from your gallery.\n\n' +
+                'This photo appears to be from your gallery.\n\n' +
                 'For accurate tracking, please capture a NEW photo.\n\n' +
                 'Click OK to use this photo anyway, or Cancel to take a new one.'
             );
@@ -1059,12 +1059,12 @@ async function handleCameraCapture() {
             
             captureBtn.classList.add('captured');
             cameraIcon.className = 'fa-solid fa-check-circle';
-            btnText.innerHTML = '✅ Photo & GPS Captured!';
+            btnText.innerHTML = 'Photo & GPS Captured!';
             
             // Show success message
             const successMsg = locationData 
-                ? '📸 Photo + GPS captured!' 
-                : (exifGPS ? '📸 Photo + EXIF GPS captured!' : '📸 Photo captured (no GPS)');
+                ? 'Photo + GPS captured!' 
+                : (exifGPS ? 'Photo + EXIF GPS captured!' : 'Photo captured (no GPS)');
             showToast(successMsg, 'success', 3000);
             
             // Enable Submit button after photo capture
@@ -1076,7 +1076,7 @@ async function handleCameraCapture() {
         
         reader.onerror = function() {
             loading.style.display = 'none';
-            showToast('❌ Error reading image file', 'error');
+            showToast('Error reading image file', 'error');
             if (input.parentNode) document.body.removeChild(input);
         };
         
@@ -1093,7 +1093,7 @@ async function handleCameraCapture() {
 function validateAndSubmit() {
     // Check photo
     if (!capturedPhoto) {
-        showToast('❌ Please capture photo first', 'error');
+        showToast('Please capture photo first', 'error');
         document.getElementById('captureBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
     }
@@ -1113,7 +1113,7 @@ function validateAndSubmit() {
     });
     
     if (!allValid) {
-        showToast('❌ Please fill all required fields', 'error');
+        showToast('Please fill all required fields', 'error');
         if (firstInvalid) {
             firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
             firstInvalid.focus();
@@ -1127,7 +1127,7 @@ function validateAndSubmit() {
     const loadingSubtext = document.getElementById('loadingSubtext');
     
     loading.style.display = 'flex';
-    loadingText.textContent = '📤 Submitting...';
+    loadingText.textContent = 'Submitting...';
     loadingSubtext.textContent = 'Please wait...';
     
     // Collect data
@@ -1182,8 +1182,8 @@ function validateAndSubmit() {
         
         let successMessage = 'Registration submitted successfully!';
         if (geoLocation) {
-            successMessage += '\n\n📍 GPS: ' + geoLocation;
-            if (geoAccuracy) successMessage += '\n📏 Accuracy: ±' + geoAccuracy;
+            successMessage += '\n\nGPS: ' + geoLocation;
+            if (geoAccuracy) successMessage += '\nAccuracy: ±' + geoAccuracy;
         }
         
         document.getElementById('successMsg').textContent = successMessage;
@@ -1233,6 +1233,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
 
 
 
