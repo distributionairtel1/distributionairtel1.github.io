@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Airtel Distributor Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- EXIF.js for GPS extraction from photos -->
+    <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/exif.min.js"></script>
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { height: 100%; overflow-y: auto; -webkit-text-size-adjust: 100%; }
@@ -59,11 +61,12 @@
         width: 100%; 
         background: linear-gradient(145deg, rgba(55, 55, 75, 0.85), rgba(70, 70, 90, 0.85)); 
         border: 1px solid rgba(100, 100, 130, 0.5);
-        color: #f1f5f9; padding: 8px 10px; border-radius: 6px; font-size: 14px; 
-        transition: all 0.3s ease; backdrop-filter: blur(15px); height: 40px;
+        color: #f1f5f9; padding: 8px 10px; border-radius: 6px; font-size: 16px; 
+        transition: all 0.3s ease; backdrop-filter: blur(15px); height: 44px;
+        -webkit-appearance: none;
     }
     
-    input::placeholder { font-size: 12px; color: rgba(226, 232, 240, 0.5); }
+    input::placeholder { font-size: 13px; color: rgba(226, 232, 240, 0.5); }
     
     input:focus { 
         outline: none; border-color: rgba(251, 191, 36, 0.6); 
@@ -80,53 +83,23 @@
         75% { transform: translateX(3px); }
     }
     
-    .error-message {
-        color: #ef4444; font-size: 9px; font-weight: 600; margin-top: 4px;
-        padding: 4px 6px; background: rgba(239, 68, 68, 0.12); border-radius: 4px;
-        border-left: 3px solid #ef4444; display: none;
-    }
-    
     .input-group { margin-bottom: 12px; }
     small { display: block; font-size: 9px; color: rgba(226, 232, 240, 0.8); margin-bottom: 4px; font-weight: 500; }
     
     .camera-btn {
-        width: 100%; padding: 12px 14px; 
+        width: 100%; padding: 14px 16px; 
         background: linear-gradient(145deg, rgba(55, 55, 75, 0.85), rgba(70, 70, 90, 0.85));
-        border: 2px dashed rgba(251, 191, 36, 0.4); border-radius: 8px; color: #e2e8f0;
-        font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; 
-        min-height: 50px; justify-content: center; cursor: pointer; transition: all 0.3s ease;
+        border: 2px dashed rgba(251, 191, 36, 0.4); border-radius: 10px; color: #e2e8f0;
+        font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
+        min-height: 56px; justify-content: center; cursor: pointer; transition: all 0.3s ease;
         flex-wrap: wrap; text-align: center;
     }
-    .camera-btn:hover { border-color: rgba(251, 191, 36, 0.8); }
-    .camera-btn.captured { border-color: #10b981; border-style: solid;
-        background: linear-gradient(145deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.12)); }
-    .camera-btn.loading { pointer-events: none; opacity: 0.7; }
+    .camera-btn:active { transform: scale(0.98); }
+    .camera-btn.captured { 
+        border-color: #10b981; border-style: solid;
+        background: linear-gradient(145deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.12)); 
+    }
     .camera-btn.error { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-    
-    .location-info {
-        font-size: 10px; color: #10b981; margin-top: 6px; padding: 8px 10px;
-        background: rgba(16, 185, 129, 0.1); border-radius: 6px; border-left: 3px solid #10b981;
-        display: none; font-weight: 500;
-    }
-    
-    .accuracy-info {
-        font-size: 9px; color: #fbbf24; margin-top: 4px; padding: 4px 8px;
-        background: rgba(251, 191, 36, 0.1); border-radius: 4px; display: none;
-    }
-    
-    .permission-help {
-        display: none; margin-top: 10px; padding: 12px;
-        background: rgba(239, 68, 68, 0.1); border-radius: 8px;
-        border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-    .permission-help h4 { color: #ef4444; font-size: 11px; margin-bottom: 8px; }
-    .permission-help ol { color: #e2e8f0; font-size: 10px; padding-left: 16px; line-height: 1.6; }
-    .permission-help li { margin-bottom: 4px; }
-    .permission-help .retry-btn {
-        margin-top: 10px; padding: 8px 16px; background: #ef4444;
-        border: none; border-radius: 6px; color: white; font-size: 11px;
-        font-weight: 600; cursor: pointer; width: 100%;
-    }
     
     .dual-inputs { display: flex; gap: 8px; }
     .dual-inputs input { flex: 1; min-width: 0; }
@@ -134,31 +107,75 @@
     .triple-inputs > div { flex: 1; min-width: 0; }
     
     .submit-btn {
-        width: 100%; margin-top: 16px; padding: 14px 18px;
+        width: 100%; margin-top: 16px; padding: 16px 18px;
         background: linear-gradient(135deg, #dc2626, #b91c1c); border: none; border-radius: 10px;
-        color: white; font-size: 14px; font-weight: 700; text-transform: uppercase;
-        cursor: pointer; min-height: 50px; box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        color: white; font-size: 15px; font-weight: 700; text-transform: uppercase;
+        cursor: pointer; min-height: 54px; box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
         letter-spacing: 0.4px; transition: all 0.3s ease;
     }
-    .submit-btn:hover:not(.loading) { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(220, 38, 38, 0.5); }
+    .submit-btn:active { transform: scale(0.98); }
     .submit-btn.loading { pointer-events: none; opacity: 0.8; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     
-    .photo-preview { margin-top: 8px; display: none; border-radius: 6px; overflow: hidden; border: 2px solid #10b981; }
-    .photo-preview img { width: 100%; max-height: 120px; object-fit: cover; }
+    /* Photo Section */
+    #photoSection {
+        display: none; margin-top: 12px;
+    }
     
+    #photoPreview {
+        width: 100%; max-height: 200px; object-fit: cover;
+        border-radius: 8px; border: 2px solid #10b981;
+        display: none;
+    }
+    
+    /* GPS Info Box */
+    #geoInfo {
+        display: none; margin-top: 10px; padding: 12px;
+        border-radius: 8px; font-size: 11px; line-height: 1.6;
+    }
+    
+    #geoInfo.device-source {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #10b981;
+    }
+    
+    #geoInfo.exif-source {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #60a5fa;
+    }
+    
+    #geoInfo.no-source {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+    }
+    
+    .geo-badge {
+        display: inline-block; padding: 2px 8px; border-radius: 4px;
+        font-size: 9px; font-weight: 700; text-transform: uppercase;
+        margin-left: 8px;
+    }
+    .geo-badge.device { background: #10b981; color: #fff; }
+    .geo-badge.exif { background: #3b82f6; color: #fff; }
+    .geo-badge.none { background: #ef4444; color: #fff; }
+    
+    /* Loading Overlay */
     .loading-overlay {
         position: fixed; top: 0; left: 0; right: 0; bottom: 0;
         background: rgba(0,0,0,0.85); display: none; justify-content: center;
         align-items: center; z-index: 9999; flex-direction: column;
     }
-    .loading-overlay.show { display: flex; }
     .loading-spinner {
         width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.2);
         border-top-color: #fbbf24; border-radius: 50%; animation: spin 1s linear infinite;
     }
-    .loading-text { color: #fff; margin-top: 16px; font-size: 14px; text-align: center; padding: 0 20px; }
+    #loadingText { color: #fff; margin-top: 16px; font-size: 16px; font-weight: 600; }
+    #loadingSubtext { color: #94a3b8; margin-top: 8px; font-size: 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
     
+    /* Success Modal */
     .success-modal {
         position: fixed; top: 0; left: 0; right: 0; bottom: 0;
         background: rgba(0,0,0,0.9); display: none; justify-content: center;
@@ -172,14 +189,31 @@
     }
     .success-icon { font-size: 50px; color: #10b981; margin-bottom: 16px; }
     .success-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 8px; }
-    .success-msg { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
-    .success-btn { padding: 12px 30px; background: #10b981; border: none;
+    .success-msg { font-size: 12px; color: #94a3b8; margin-bottom: 20px; white-space: pre-line; }
+    .success-btn { padding: 14px 30px; background: #10b981; border: none;
         border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer; font-size: 14px; }
     
-    /* iOS specific touch improvements */
-    @supports (-webkit-touch-callout: none) {
-        input, button { font-size: 16px !important; } /* Prevents zoom on iOS */
+    /* Toast Notification */
+    .toast {
+        position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+        padding: 12px 24px; border-radius: 8px; font-size: 13px; font-weight: 600;
+        z-index: 10001; opacity: 0; transition: opacity 0.3s ease;
+        max-width: 90%; text-align: center;
     }
+    .toast.show { opacity: 1; }
+    .toast.success { background: #10b981; color: #fff; }
+    .toast.error { background: #ef4444; color: #fff; }
+    .toast.warning { background: #f59e0b; color: #fff; }
+    
+    /* Permission Help */
+    .permission-help {
+        display: none; margin-top: 10px; padding: 12px;
+        background: rgba(239, 68, 68, 0.1); border-radius: 8px;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .permission-help h4 { color: #ef4444; font-size: 11px; margin-bottom: 8px; }
+    .permission-help ol { color: #e2e8f0; font-size: 10px; padding-left: 16px; line-height: 1.6; }
+    .permission-help li { margin-bottom: 4px; }
     
     @media (max-width: 380px) {
         body { padding: 6px; }
@@ -199,11 +233,14 @@
 </head>
 <body>
 
+<!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-spinner"></div>
-    <div class="loading-text" id="loadingText">Submitting...</div>
+    <div id="loadingText">Processing...</div>
+    <div id="loadingSubtext">Please wait...</div>
 </div>
 
+<!-- Success Modal -->
 <div class="success-modal" id="successModal">
     <div class="success-content">
         <div class="success-icon"><i class="fa-solid fa-check-circle"></i></div>
@@ -213,12 +250,21 @@
     </div>
 </div>
 
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Header -->
 <div class="header-container">
     <div class="logo-wrapper">
         <img src="airtel_cropped.png" alt="Airtel" class="logo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23dc2626%22/><text x=%2250%22 y=%2265%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2240%22 font-weight=%22bold%22>A</text></svg>'">
     </div>
     <h1>Airtel Distributor Registration</h1>
 </div>
+
+<!-- Hidden inputs for GPS data -->
+<input type="hidden" id="latitude" name="latitude">
+<input type="hidden" id="longitude" name="longitude">
+<input type="hidden" id="locAccuracy" name="locAccuracy">
 
 <!-- 1. DISTRIBUTOR INFO -->
 <div class="section-container">
@@ -390,244 +436,664 @@
         <div class="section-title"><i class="fa-solid fa-camera"></i> No Due Certificate</div>
         <div class="input-group">
             <label>Capture Photo + Location <span style="color:#ef4444">*</span></label>
-            <input type="file" id="no_due_photo" accept="image/*" capture="environment" style="display:none">
+            
             <button type="button" class="camera-btn" id="captureBtn">
                 <i class="fa-solid fa-camera" id="cameraIcon"></i> 
-                <span id="btnText">Tap to Capture Photo + Location</span>
+                <span id="btnText">📸 Tap to Capture Photo + GPS</span>
             </button>
             
-            <!-- Permission Help Box -->
+            <!-- Photo Section -->
+            <div id="photoSection">
+                <img id="photoPreview" src="" alt="Captured Photo">
+                <div id="geoInfo"></div>
+            </div>
+            
+            <!-- Permission Help -->
             <div class="permission-help" id="permissionHelp">
                 <h4><i class="fa-solid fa-exclamation-triangle"></i> Location Permission Required</h4>
                 <ol>
                     <li>Open iPhone <b>Settings</b></li>
                     <li>Go to <b>Privacy & Security</b></li>
                     <li>Tap <b>Location Services</b> → Turn ON</li>
-                    <li>Scroll down, tap <b>Safari Websites</b></li>
+                    <li>Scroll to <b>Safari Websites</b></li>
                     <li>Select <b>"While Using the App"</b></li>
-                    <li>Return here and tap the button below</li>
                 </ol>
-                <button class="retry-btn" id="retryBtn">
-                    <i class="fa-solid fa-refresh"></i> Try Again
-                </button>
-            </div>
-            
-            <div class="photo-preview" id="photoPreview"><img id="previewImg" src="" alt="Preview"></div>
-            <div class="location-info" id="locationInfo">
-                <i class="fa-solid fa-map-marker-alt"></i> Location: <span id="lat"></span>, <span id="lon"></span>
-            </div>
-            <div class="accuracy-info" id="accuracyInfo">
-                <i class="fa-solid fa-crosshairs"></i> Accuracy: <span id="accuracy"></span>m
             </div>
         </div>
-        <button type="button" class="submit-btn" id="submitBtn">
+        
+        <button type="button" class="submit-btn" id="submitBtn" disabled>
             Submit Registration <i class="fa-solid fa-arrow-right"></i>
         </button>
     </div>
 </div>
 
 <script>
-// ========== YOUR WEB APP URL ==========
+// =============================================
+// CONFIGURATION
+// =============================================
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmI0HMk13m1w8zBF8ay6x5knshUlNEVnvLzXvN0C40kqBKI3pu19agzaNKzwezwP--/exec';
 
-let photoCaptured = false;
-let currentLocation = null;
-let photoBase64 = null;
-let locationRetryCount = 0;
+// =============================================
+// GLOBAL VARIABLES
+// =============================================
+let capturedPhoto = null;
+let photoTimestamp = null;
+let originalFile = null;
+let geoLocation = null;
+let geoSource = null;
+let geoAccuracy = null;
 
-document.addEventListener('DOMContentLoaded', function() {
-    setupCamera();
-    document.getElementById('submitBtn').addEventListener('click', validateAndSubmit);
-    document.getElementById('retryBtn').addEventListener('click', retryLocation);
+// =============================================
+// DEVICE DETECTION
+// =============================================
+function getDeviceInfo() {
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isAndroid = /Android/.test(ua);
+    const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua);
+    const isChrome = /Chrome/.test(ua) || /CriOS/.test(ua);
+    const isIOSChrome = /CriOS/.test(ua);
+    const isIOSSafari = isIOS && isSafari;
     
-    // Check if geolocation is available
-    checkGeolocationSupport();
-});
+    let iOSVersion = 0;
+    if (isIOS) {
+        const match = ua.match(/OS (\d+)_/);
+        if (match) {
+            iOSVersion = parseInt(match[1], 10);
+        }
+    }
+    
+    return {
+        isIOS,
+        isAndroid,
+        isSafari,
+        isChrome,
+        isIOSChrome,
+        isIOSSafari,
+        iOSVersion,
+        isMobile: isIOS || isAndroid,
+        userAgent: ua,
+        supportsGeolocation: 'geolocation' in navigator
+    };
+}
 
-function checkGeolocationSupport() {
-    if (!navigator.geolocation) {
-        document.getElementById('btnText').textContent = 'Location not supported on this device';
-        document.getElementById('captureBtn').classList.add('error');
+// =============================================
+// TOAST NOTIFICATION
+// =============================================
+function showToast(message, type = 'success', duration = 3000) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast ' + type + ' show';
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, duration);
+}
+
+// =============================================
+// PRECISE LOCATION METHOD (Returns Promise)
+// =============================================
+function getPreciseLocationPromise() {
+    return new Promise((resolve, reject) => {
+        const latInput = document.getElementById('latitude');
+        const lonInput = document.getElementById('longitude');
+        const accInput = document.getElementById('locAccuracy');
+
+        if (!navigator.geolocation) {
+            reject(new Error('Geolocation not supported'));
+            return;
+        }
+
+        // Try to get high accuracy location with multiple attempts
+        let bestPosition = null;
+        let attempts = 0;
+        const maxAttempts = 3;
+        
+        const tryGetPosition = () => {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    attempts++;
+                    const coords = position.coords;
+                    
+                    // Keep best position (lowest accuracy value = most accurate)
+                    if (!bestPosition || coords.accuracy < bestPosition.coords.accuracy) {
+                        bestPosition = position;
+                    }
+                    
+                    // If good accuracy or max attempts reached
+                    if (coords.accuracy <= 20 || attempts >= maxAttempts) {
+                        const finalCoords = bestPosition.coords;
+                        const latitude = finalCoords.latitude.toFixed(6);
+                        const longitude = finalCoords.longitude.toFixed(6);
+                        const accuracy = finalCoords.accuracy.toFixed(0);
+
+                        if (latInput) latInput.value = latitude;
+                        if (lonInput) lonInput.value = longitude;
+                        if (accInput) accInput.value = accuracy;
+
+                        geoLocation = `${latitude}, ${longitude}`;
+                        geoSource = 'Device GPS';
+                        geoAccuracy = `${accuracy}m`;
+
+                        resolve({
+                            latitude: latitude,
+                            longitude: longitude,
+                            accuracy: accuracy + 'm',
+                            method: 'Device GPS'
+                        });
+                    } else {
+                        // Try again for better accuracy
+                        setTimeout(tryGetPosition, 500);
+                    }
+                },
+                (error) => {
+                    console.error("Geolocation error:", error);
+                    if (bestPosition) {
+                        // Use best position we got
+                        const finalCoords = bestPosition.coords;
+                        resolve({
+                            latitude: finalCoords.latitude.toFixed(6),
+                            longitude: finalCoords.longitude.toFixed(6),
+                            accuracy: finalCoords.accuracy.toFixed(0) + 'm',
+                            method: 'Device GPS'
+                        });
+                    } else {
+                        reject(error);
+                    }
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                }
+            );
+        };
+        
+        tryGetPosition();
+    });
+}
+
+// =============================================
+// DISPLAY GPS INFO
+// =============================================
+function displayGPSInfo(gpsData, source) {
+    const geoInfo = document.getElementById('geoInfo');
+    const photoSection = document.getElementById('photoSection');
+    
+    if (!geoInfo) return;
+    
+    geoInfo.classList.remove('exif-source', 'device-source', 'no-source');
+    
+    if (source === 'exif' && gpsData) {
+        geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
+        geoSource = 'EXIF';
+        geoAccuracy = null;
+        geoInfo.classList.add('exif-source');
+        
+        geoInfo.innerHTML = `
+            <strong>📍 GPS from Photo:</strong> 
+            <span class="geo-badge exif">PHOTO EXIF ✓</span><br><br>
+            <strong>Coordinates:</strong> ${geoLocation}<br>
+            ${gpsData.altitude ? `<strong>Altitude:</strong> ${gpsData.altitude}<br>` : ''}
+            ${gpsData.timestamp ? `<strong>Photo Time:</strong> ${gpsData.timestamp}<br>` : ''}
+            <small>Location extracted from photo metadata</small>
+        `;
+        
+    } else if (source === 'device' && gpsData) {
+        geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
+        geoSource = gpsData.method || 'Device GPS';
+        geoAccuracy = gpsData.accuracy || null;
+        
+        geoInfo.classList.add('device-source');
+        
+        geoInfo.innerHTML = `
+            <strong>🛰️ GPS Location Captured:</strong>
+            <span class="geo-badge device">GPS LOCKED ✓</span><br><br>
+            <strong>Coordinates:</strong> ${geoLocation}<br>
+            <strong>Accuracy:</strong> ±${gpsData.accuracy}<br>
+            <strong>Time:</strong> ${new Date().toLocaleString('en-IN')}<br>
+            <small>Precise location captured successfully</small>
+        `;
+        
+    } else {
+        geoLocation = null;
+        geoSource = null;
+        geoAccuracy = null;
+        geoInfo.classList.add('no-source');
+        
+        geoInfo.innerHTML = `
+            <strong>📍 Location:</strong>
+            <span class="geo-badge none">NOT CAPTURED</span><br><br>
+            <small>Location not captured.<br>
+            <strong>Please ensure location permission is enabled.</strong></small>
+        `;
+        
+        document.getElementById('permissionHelp').style.display = 'block';
+    }
+    
+    geoInfo.style.display = 'block';
+    if (photoSection) {
+        photoSection.style.display = 'block';
     }
 }
 
-function setupCamera() {
-    const captureBtn = document.getElementById('captureBtn');
-    const photoInput = document.getElementById('no_due_photo');
-    
-    captureBtn.addEventListener('click', startCapture);
-    
-    photoInput.addEventListener('change', function(e) {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            if (file.size > 10 * 1024 * 1024) {
-                alert('Photo must be under 10MB');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                photoBase64 = event.target.result;
-                document.getElementById('previewImg').src = photoBase64;
-                document.getElementById('photoPreview').style.display = 'block';
-                photoCaptured = true;
-                captureBtn.classList.add('captured');
-                captureBtn.classList.remove('error');
-                document.getElementById('btnText').innerHTML = '<i class="fa-solid fa-check"></i> Photo & Location Captured!';
-                document.getElementById('cameraIcon').className = 'fa-solid fa-check-circle';
-                document.getElementById('permissionHelp').style.display = 'none';
-            };
-            reader.readAsDataURL(file);
+// =============================================
+// EXIF EXTRACTION FUNCTIONS
+// =============================================
+function extractGPSFromImage(file) {
+    return new Promise((resolve) => {
+        const device = getDeviceInfo();
+        console.log('Device:', device);
+        
+        // iOS strips EXIF data, skip extraction
+        if (device.isIOS) {
+            console.log('iOS detected - skipping EXIF extraction');
+            resolve(null);
+            return;
+        }
+        
+        if (typeof EXIF !== 'undefined') {
+            extractWithEXIFJS(file).then(result => {
+                if (result) {
+                    resolve(result);
+                } else {
+                    extractManually(file).then(manualResult => {
+                        resolve(manualResult);
+                    });
+                }
+            }).catch(() => {
+                extractManually(file).then(manualResult => {
+                    resolve(manualResult);
+                });
+            });
+        } else {
+            extractManually(file).then(result => {
+                resolve(result);
+            });
         }
     });
 }
 
-function startCapture() {
-    const captureBtn = document.getElementById('captureBtn');
-    const btnText = document.getElementById('btnText');
-    const permissionHelp = document.getElementById('permissionHelp');
-    
-    captureBtn.classList.add('loading');
-    captureBtn.classList.remove('error');
-    permissionHelp.style.display = 'none';
-    btnText.textContent = 'Getting your location...';
-    
-    getLocation();
-}
-
-function retryLocation() {
-    document.getElementById('permissionHelp').style.display = 'none';
-    locationRetryCount = 0;
-    startCapture();
-}
-
-function getLocation() {
-    const captureBtn = document.getElementById('captureBtn');
-    const btnText = document.getElementById('btnText');
-    const photoInput = document.getElementById('no_due_photo');
-    const permissionHelp = document.getElementById('permissionHelp');
-    
-    if (!navigator.geolocation) {
-        captureBtn.classList.remove('loading');
-        captureBtn.classList.add('error');
-        btnText.textContent = 'Geolocation not supported';
-        return;
-    }
-    
-    // Options for high accuracy
-    const options = {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 0
-    };
-    
-    navigator.geolocation.getCurrentPosition(
-        // SUCCESS
-        function(position) {
-            currentLocation = {
-                lat: position.coords.latitude,
-                lon: position.coords.longitude,
-                accuracy: position.coords.accuracy,
-                timestamp: new Date().toISOString()
+function extractWithEXIFJS(file) {
+    return new Promise((resolve) => {
+        try {
+            const img = document.createElement('img');
+            const objectUrl = URL.createObjectURL(file);
+            
+            img.onload = function() {
+                try {
+                    EXIF.getData(img, function() {
+                        try {
+                            const lat = EXIF.getTag(this, 'GPSLatitude');
+                            const latRef = EXIF.getTag(this, 'GPSLatitudeRef');
+                            const lon = EXIF.getTag(this, 'GPSLongitude');
+                            const lonRef = EXIF.getTag(this, 'GPSLongitudeRef');
+                            const altitude = EXIF.getTag(this, 'GPSAltitude');
+                            const dateTime = EXIF.getTag(this, 'DateTimeOriginal') || EXIF.getTag(this, 'DateTime');
+                            
+                            if (lat && lon && latRef && lonRef) {
+                                const latitude = convertToDecimal(lat, latRef);
+                                const longitude = convertToDecimal(lon, lonRef);
+                                
+                                URL.revokeObjectURL(objectUrl);
+                                resolve({
+                                    latitude: latitude.toFixed(6),
+                                    longitude: longitude.toFixed(6),
+                                    altitude: altitude ? (altitude.numerator / altitude.denominator).toFixed(1) + 'm' : null,
+                                    timestamp: dateTime || null,
+                                    method: 'EXIF.js'
+                                });
+                            } else {
+                                URL.revokeObjectURL(objectUrl);
+                                resolve(null);
+                            }
+                        } catch (e) {
+                            URL.revokeObjectURL(objectUrl);
+                            resolve(null);
+                        }
+                    });
+                } catch (e) {
+                    URL.revokeObjectURL(objectUrl);
+                    resolve(null);
+                }
             };
             
-            // Show location info
-            document.getElementById('lat').textContent = currentLocation.lat.toFixed(6);
-            document.getElementById('lon').textContent = currentLocation.lon.toFixed(6);
-            document.getElementById('accuracy').textContent = currentLocation.accuracy.toFixed(1);
-            document.getElementById('locationInfo').style.display = 'block';
-            document.getElementById('accuracyInfo').style.display = 'block';
+            img.onerror = function() {
+                URL.revokeObjectURL(objectUrl);
+                resolve(null);
+            };
             
-            // If accuracy is poor, try again (up to 3 times)
-            if (currentLocation.accuracy > 50 && locationRetryCount < 3) {
-                locationRetryCount++;
-                btnText.textContent = `Improving accuracy... (${locationRetryCount}/3)`;
-                setTimeout(function() {
-                    navigator.geolocation.getCurrentPosition(
-                        function(betterPosition) {
-                            if (betterPosition.coords.accuracy < currentLocation.accuracy) {
-                                currentLocation = {
-                                    lat: betterPosition.coords.latitude,
-                                    lon: betterPosition.coords.longitude,
-                                    accuracy: betterPosition.coords.accuracy,
-                                    timestamp: new Date().toISOString()
-                                };
-                                document.getElementById('lat').textContent = currentLocation.lat.toFixed(6);
-                                document.getElementById('lon').textContent = currentLocation.lon.toFixed(6);
-                                document.getElementById('accuracy').textContent = currentLocation.accuracy.toFixed(1);
-                            }
-                            openCamera();
-                        },
-                        function() {
-                            openCamera(); // Use existing location
-                        },
-                        options
-                    );
-                }, 1000);
-            } else {
-                openCamera();
-            }
-        },
-        
-        // ERROR
-        function(error) {
-            captureBtn.classList.remove('loading');
-            captureBtn.classList.add('error');
+            img.src = objectUrl;
             
-            let errorMessage = '';
+            setTimeout(() => {
+                URL.revokeObjectURL(objectUrl);
+            }, 10000);
             
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    errorMessage = 'Location permission denied';
-                    // Show help instructions
-                    permissionHelp.style.display = 'block';
-                    break;
-                    
-                case error.POSITION_UNAVAILABLE:
-                    errorMessage = 'Location unavailable. Check GPS.';
-                    break;
-                    
-                case error.TIMEOUT:
-                    errorMessage = 'Location timeout. Try again.';
-                    break;
-                    
-                default:
-                    errorMessage = 'Location error. Try again.';
-            }
-            
-            btnText.textContent = errorMessage;
-            
-            // Log for debugging
-            console.log('Geolocation Error:', error.code, error.message);
-        },
-        
-        options
-    );
+        } catch (e) {
+            resolve(null);
+        }
+    });
 }
 
-function openCamera() {
-    const captureBtn = document.getElementById('captureBtn');
-    const btnText = document.getElementById('btnText');
-    const photoInput = document.getElementById('no_due_photo');
+function convertToDecimal(dmsArray, ref) {
+    if (!dmsArray || dmsArray.length < 3) return 0;
     
-    btnText.textContent = 'Location captured! Opening camera...';
+    let degrees, minutes, seconds;
     
-    setTimeout(function() {
-        captureBtn.classList.remove('loading');
-        photoInput.click();
-    }, 300);
-}
-
-function validateAndSubmit() {
-    // Check photo and location
-    if (!photoCaptured) {
-        alert('Please capture photo first');
-        document.getElementById('captureBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
+    if (typeof dmsArray[0] === 'object' && dmsArray[0].numerator !== undefined) {
+        degrees = dmsArray[0].numerator / dmsArray[0].denominator;
+        minutes = dmsArray[1].numerator / dmsArray[1].denominator;
+        seconds = dmsArray[2].numerator / dmsArray[2].denominator;
+    } else {
+        degrees = parseFloat(dmsArray[0]) || 0;
+        minutes = parseFloat(dmsArray[1]) || 0;
+        seconds = parseFloat(dmsArray[2]) || 0;
     }
     
-    if (!currentLocation) {
-        alert('Location not captured. Please try again.');
+    let decimal = degrees + (minutes / 60) + (seconds / 3600);
+    
+    if (ref === 'S' || ref === 'W') {
+        decimal = -decimal;
+    }
+    
+    return decimal;
+}
+
+function extractManually(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            try {
+                const buffer = e.target.result;
+                const view = new DataView(buffer);
+                
+                if (view.getUint16(0, false) !== 0xFFD8) {
+                    resolve(null);
+                    return;
+                }
+                
+                let offset = 2;
+                const length = Math.min(view.byteLength, 65536);
+                
+                while (offset < length) {
+                    if (view.getUint8(offset) !== 0xFF) {
+                        offset++;
+                        continue;
+                    }
+                    
+                    const marker = view.getUint8(offset + 1);
+                    
+                    if (marker === 0xE1) {
+                        const exifData = parseEXIFSegment(view, offset + 4);
+                        if (exifData) {
+                            resolve({
+                                ...exifData,
+                                method: 'Manual'
+                            });
+                            return;
+                        }
+                    }
+                    
+                    if (marker === 0xD9 || marker === 0xDA) break;
+                    
+                    const segmentLength = view.getUint16(offset + 2, false);
+                    offset += 2 + segmentLength;
+                }
+                
+                resolve(null);
+            } catch (e) {
+                resolve(null);
+            }
+        };
+        
+        reader.onerror = () => resolve(null);
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+function parseEXIFSegment(view, start) {
+    try {
+        if (view.getUint32(start, false) !== 0x45786966) return null;
+        
+        const tiffOffset = start + 6;
+        const littleEndian = view.getUint16(tiffOffset, false) === 0x4949;
+        
+        const ifd0Offset = view.getUint32(tiffOffset + 4, littleEndian) + tiffOffset;
+        
+        const gpsIFDPointer = findTagValue(view, ifd0Offset, 0x8825, littleEndian, tiffOffset);
+        if (!gpsIFDPointer) return null;
+        
+        const gpsOffset = gpsIFDPointer + tiffOffset;
+        return parseGPSData(view, gpsOffset, littleEndian, tiffOffset);
+    } catch (e) {
+        return null;
+    }
+}
+
+function findTagValue(view, ifdOffset, tagId, littleEndian, tiffOffset) {
+    try {
+        const entries = view.getUint16(ifdOffset, littleEndian);
+        
+        for (let i = 0; i < entries; i++) {
+            const entryOffset = ifdOffset + 2 + (i * 12);
+            const tag = view.getUint16(entryOffset, littleEndian);
+            
+            if (tag === tagId) {
+                return view.getUint32(entryOffset + 8, littleEndian);
+            }
+        }
+    } catch (e) {}
+    return null;
+}
+
+function parseGPSData(view, gpsOffset, littleEndian, tiffOffset) {
+    try {
+        const entries = view.getUint16(gpsOffset, littleEndian);
+        
+        let lat = null, latRef = null, lon = null, lonRef = null, alt = null;
+        
+        for (let i = 0; i < entries; i++) {
+            const entryOffset = gpsOffset + 2 + (i * 12);
+            const tag = view.getUint16(entryOffset, littleEndian);
+            const valueOffset = view.getUint32(entryOffset + 8, littleEndian);
+            
+            switch (tag) {
+                case 0x0001:
+                    latRef = String.fromCharCode(view.getUint8(entryOffset + 8));
+                    break;
+                case 0x0002:
+                    lat = readRational3(view, valueOffset + tiffOffset, littleEndian);
+                    break;
+                case 0x0003:
+                    lonRef = String.fromCharCode(view.getUint8(entryOffset + 8));
+                    break;
+                case 0x0004:
+                    lon = readRational3(view, valueOffset + tiffOffset, littleEndian);
+                    break;
+                case 0x0006:
+                    const num = view.getUint32(valueOffset + tiffOffset, littleEndian);
+                    const den = view.getUint32(valueOffset + tiffOffset + 4, littleEndian);
+                    alt = (num / den).toFixed(1);
+                    break;
+            }
+        }
+        
+        if (lat && lon && latRef && lonRef) {
+            const latitude = dmsToDecimal(lat, latRef);
+            const longitude = dmsToDecimal(lon, lonRef);
+            
+            return {
+                latitude: latitude.toFixed(6),
+                longitude: longitude.toFixed(6),
+                altitude: alt ? alt + 'm' : null
+            };
+        }
+    } catch (e) {}
+    return null;
+}
+
+function readRational3(view, offset, littleEndian) {
+    const values = [];
+    for (let i = 0; i < 3; i++) {
+        const num = view.getUint32(offset + (i * 8), littleEndian);
+        const den = view.getUint32(offset + (i * 8) + 4, littleEndian);
+        values.push(num / den);
+    }
+    return values;
+}
+
+function dmsToDecimal(dms, ref) {
+    let dd = dms[0] + dms[1] / 60 + dms[2] / 3600;
+    if (ref === 'S' || ref === 'W') dd = -dd;
+    return dd;
+}
+
+// =============================================
+// CAMERA CAPTURE HANDLER (iOS COMPATIBLE)
+// =============================================
+async function handleCameraCapture() {
+    const device = getDeviceInfo();
+    const loading = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    const loadingSubtext = document.getElementById('loadingSubtext');
+    
+    // Hide permission help
+    document.getElementById('permissionHelp').style.display = 'none';
+    
+    // ========== iOS FIX: Open camera FIRST (synchronously) ==========
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    
+    // Force camera on mobile devices
+    if (device.isIOS) {
+        input.setAttribute('capture', 'camera');
+    } else if (device.isMobile) {
+        input.setAttribute('capture', 'environment');
+    }
+    
+    input.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+    document.body.appendChild(input);
+    
+    // Handle file selection
+    input.onchange = async function() {
+        if (!this.files || !this.files[0]) {
+            if (input.parentNode) document.body.removeChild(input);
+            return;
+        }
+        
+        const file = this.files[0];
+        originalFile = file;
+        
+        // ========== NOW get location (after camera) ==========
+        loading.style.display = 'flex';
+        loadingText.textContent = '📍 Getting your location...';
+        loadingSubtext.textContent = 'Please wait...';
+        
+        let locationData = null;
+        try {
+            locationData = await getPreciseLocationPromise();
+        } catch (locError) {
+            console.error('Location error:', locError);
+            // Continue without location
+        }
+        
+        // ========== Process photo ==========
+        loadingText.textContent = '📸 Processing photo...';
+        loadingSubtext.textContent = 'Almost done...';
+        
+        // Check if photo is from gallery (more than 2 minutes old)
+        const fileTime = file.lastModified;
+        const currentTime = Date.now();
+        const timeDiff = currentTime - fileTime;
+        
+        if (timeDiff > 120000) {
+            loading.style.display = 'none';
+            const usePhoto = confirm(
+                '⚠️ This photo appears to be from your gallery.\n\n' +
+                'For accurate tracking, please capture a NEW photo.\n\n' +
+                'Click OK to use this photo anyway, or Cancel to take a new one.'
+            );
+            if (!usePhoto) {
+                if (input.parentNode) document.body.removeChild(input);
+                return;
+            }
+            loading.style.display = 'flex';
+        }
+        
+        // Read the file
+        const reader = new FileReader();
+        
+        reader.onload = async function(e) {
+            capturedPhoto = e.target.result;
+            photoTimestamp = new Date().toLocaleString('en-IN');
+            
+            // Show photo preview
+            const photoPreview = document.getElementById('photoPreview');
+            photoPreview.src = capturedPhoto;
+            photoPreview.style.display = 'block';
+            document.getElementById('photoSection').style.display = 'block';
+            
+            // Try to extract EXIF GPS (skip on iOS)
+            let exifGPS = null;
+            if (!device.isIOS) {
+                exifGPS = await extractGPSFromImage(file);
+            }
+            
+            // Priority: Device GPS > EXIF GPS
+            if (locationData) {
+                displayGPSInfo(locationData, 'device');
+            } else if (exifGPS) {
+                displayGPSInfo(exifGPS, 'exif');
+            } else {
+                displayGPSInfo(null, null);
+            }
+            
+            loading.style.display = 'none';
+            
+            // Update capture button
+            const captureBtn = document.getElementById('captureBtn');
+            const btnText = document.getElementById('btnText');
+            const cameraIcon = document.getElementById('cameraIcon');
+            
+            captureBtn.classList.add('captured');
+            cameraIcon.className = 'fa-solid fa-check-circle';
+            btnText.innerHTML = '✅ Photo & GPS Captured!';
+            
+            // Show success message
+            const successMsg = locationData 
+                ? '📸 Photo + GPS captured!' 
+                : (exifGPS ? '📸 Photo + EXIF GPS captured!' : '📸 Photo captured (no GPS)');
+            showToast(successMsg, 'success', 3000);
+            
+            // Enable Submit button after photo capture
+            document.getElementById('submitBtn').disabled = false;
+            
+            // Cleanup
+            if (input.parentNode) document.body.removeChild(input);
+        };
+        
+        reader.onerror = function() {
+            loading.style.display = 'none';
+            showToast('❌ Error reading image file', 'error');
+            if (input.parentNode) document.body.removeChild(input);
+        };
+        
+        reader.readAsDataURL(file);
+    };
+    
+    // ========== MUST be synchronous - no await before this! ==========
+    input.click();
+}
+
+// =============================================
+// FORM SUBMISSION
+// =============================================
+function validateAndSubmit() {
+    // Check photo
+    if (!capturedPhoto) {
+        showToast('❌ Please capture photo first', 'error');
         document.getElementById('captureBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
     }
@@ -637,7 +1103,7 @@ function validateAndSubmit() {
     let firstInvalid = null;
     
     document.querySelectorAll('input[required]').forEach(field => {
-        if (field.type !== 'file' && !field.value.trim()) {
+        if (field.type !== 'file' && field.type !== 'hidden' && !field.value.trim()) {
             field.classList.add('invalid');
             if (!firstInvalid) firstInvalid = field;
             allValid = false;
@@ -647,7 +1113,7 @@ function validateAndSubmit() {
     });
     
     if (!allValid) {
-        alert('Please fill all required fields');
+        showToast('❌ Please fill all required fields', 'error');
         if (firstInvalid) {
             firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
             firstInvalid.focus();
@@ -656,7 +1122,13 @@ function validateAndSubmit() {
     }
     
     // Show loading
-    showLoading('Submitting your registration...');
+    const loading = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    const loadingSubtext = document.getElementById('loadingSubtext');
+    
+    loading.style.display = 'flex';
+    loadingText.textContent = '📤 Submitting...';
+    loadingSubtext.textContent = 'Please wait...';
     
     // Collect data
     const data = {
@@ -690,11 +1162,12 @@ function validateAndSubmit() {
         asc_available: getValue('asc_available') || '0',
         promotor_required: getValue('promotor_required') || '0',
         promotor_available: getValue('promotor_available') || '0',
-        latitude: currentLocation.lat,
-        longitude: currentLocation.lon,
-        location_accuracy: currentLocation.accuracy,
-        capture_timestamp: currentLocation.timestamp,
-        photo_base64: photoBase64
+        latitude: document.getElementById('latitude').value || geoLocation?.split(',')[0]?.trim() || '',
+        longitude: document.getElementById('longitude').value || geoLocation?.split(',')[1]?.trim() || '',
+        location_accuracy: geoAccuracy || '',
+        location_source: geoSource || '',
+        capture_timestamp: photoTimestamp || new Date().toISOString(),
+        photo_base64: capturedPhoto
     };
     
     // Send to Google Sheets
@@ -705,14 +1178,23 @@ function validateAndSubmit() {
         body: JSON.stringify(data)
     })
     .then(() => {
-        hideLoading();
-        showSuccess('Registration submitted successfully!');
+        loading.style.display = 'none';
+        
+        let successMessage = 'Registration submitted successfully!';
+        if (geoLocation) {
+            successMessage += '\n\n📍 GPS: ' + geoLocation;
+            if (geoAccuracy) successMessage += '\n📏 Accuracy: ±' + geoAccuracy;
+        }
+        
+        document.getElementById('successMsg').textContent = successMessage;
+        document.getElementById('successModal').classList.add('show');
     })
     .catch(error => {
-        hideLoading();
+        loading.style.display = 'none';
         console.error('Submit error:', error);
-        // Even with no-cors, if we get here without exception, it likely worked
-        showSuccess('Registration submitted!');
+        // With no-cors, we can't read response but it usually works
+        document.getElementById('successMsg').textContent = 'Registration submitted!';
+        document.getElementById('successModal').classList.add('show');
     });
 }
 
@@ -721,27 +1203,31 @@ function getValue(id) {
     return el ? el.value.trim() : '';
 }
 
-function showLoading(text) {
-    document.getElementById('loadingText').textContent = text;
-    document.getElementById('loadingOverlay').classList.add('show');
-}
-
-function hideLoading() { 
-    document.getElementById('loadingOverlay').classList.remove('show'); 
-}
-
-function showSuccess(msg) { 
-    document.getElementById('successMsg').textContent = msg || 'Your data has been saved.';
-    document.getElementById('successModal').classList.add('show'); 
-}
-
-// Add input listeners for validation feedback
-document.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input', function() {
-        if (this.value.trim()) {
-            this.classList.remove('invalid');
-            this.classList.add('valid');
-        }
+// =============================================
+// EVENT LISTENERS
+// =============================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Capture button
+    document.getElementById('captureBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleCameraCapture();
+    });
+    
+    // Submit button
+    document.getElementById('submitBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        validateAndSubmit();
+    });
+    
+    // Input validation listeners
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('invalid');
+                this.classList.add('valid');
+            }
+        });
     });
 });
 </script>
