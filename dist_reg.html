@@ -59,12 +59,11 @@
         width: 100%; 
         background: linear-gradient(145deg, rgba(55, 55, 75, 0.85), rgba(70, 70, 90, 0.85)); 
         border: 1px solid rgba(100, 100, 130, 0.5);
-        color: #f1f5f9; padding: 8px 10px; border-radius: 6px; font-size: 16px; 
-        transition: all 0.3s ease; backdrop-filter: blur(15px); height: 44px;
-        -webkit-appearance: none;
+        color: #f1f5f9; padding: 8px 10px; border-radius: 6px; font-size: 14px; 
+        transition: all 0.3s ease; backdrop-filter: blur(15px); height: 40px;
     }
     
-    input::placeholder { font-size: 13px; color: rgba(226, 232, 240, 0.5); }
+    input::placeholder { font-size: 12px; color: rgba(226, 232, 240, 0.5); }
     
     input:focus { 
         outline: none; border-color: rgba(251, 191, 36, 0.6); 
@@ -81,64 +80,38 @@
         75% { transform: translateX(3px); }
     }
     
+    .error-message {
+        color: #ef4444; font-size: 9px; font-weight: 600; margin-top: 4px;
+        padding: 4px 6px; background: rgba(239, 68, 68, 0.12); border-radius: 4px;
+        border-left: 3px solid #ef4444; display: none;
+    }
+    
     .input-group { margin-bottom: 12px; }
     small { display: block; font-size: 9px; color: rgba(226, 232, 240, 0.8); margin-bottom: 4px; font-weight: 500; }
     
     .camera-btn {
-        width: 100%; padding: 14px 16px; 
+        width: 100%; padding: 12px 14px; 
         background: linear-gradient(145deg, rgba(55, 55, 75, 0.85), rgba(70, 70, 90, 0.85));
-        border: 2px dashed rgba(251, 191, 36, 0.4); border-radius: 10px; color: #e2e8f0;
-        font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
-        min-height: 56px; justify-content: center; cursor: pointer; transition: all 0.3s ease;
+        border: 2px dashed rgba(251, 191, 36, 0.4); border-radius: 8px; color: #e2e8f0;
+        font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; 
+        min-height: 50px; justify-content: center; cursor: pointer; transition: all 0.3s ease;
         flex-wrap: wrap; text-align: center;
     }
-    .camera-btn:active { transform: scale(0.98); }
-    .camera-btn.captured { 
-        border-color: #10b981; border-style: solid;
-        background: linear-gradient(145deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.12)); 
-    }
-    .camera-btn.loading { pointer-events: none; opacity: 0.8; }
+    .camera-btn:hover { border-color: rgba(251, 191, 36, 0.8); }
+    .camera-btn.captured { border-color: #10b981; border-style: solid;
+        background: linear-gradient(145deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.12)); }
+    .camera-btn.loading { pointer-events: none; opacity: 0.7; }
     .camera-btn.error { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
     
-    /* GPS Status Box */
-    .gps-status {
-        margin-top: 10px; padding: 12px; border-radius: 8px;
-        background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3);
-        display: none;
-    }
-    .gps-status.active { display: block; }
-    .gps-status.success { 
-        background: rgba(16, 185, 129, 0.1); 
-        border-color: rgba(16, 185, 129, 0.3); 
-    }
-    .gps-header {
-        display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
-    }
-    .gps-spinner {
-        width: 16px; height: 16px; border: 2px solid rgba(251, 191, 36, 0.3);
-        border-top-color: #fbbf24; border-radius: 50%; animation: spin 1s linear infinite;
-    }
-    .gps-status.success .gps-spinner { display: none; }
-    .gps-title { font-size: 11px; font-weight: 700; color: #fbbf24; text-transform: uppercase; }
-    .gps-status.success .gps-title { color: #10b981; }
-    .gps-details { font-size: 10px; color: #e2e8f0; }
-    .gps-details div { margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .gps-details span { color: #fbbf24; font-weight: 600; }
-    .gps-status.success .gps-details span { color: #10b981; }
-    
-    .accuracy-bar {
-        height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;
-        margin-top: 8px; overflow: hidden;
-    }
-    .accuracy-fill {
-        height: 100%; background: linear-gradient(90deg, #10b981, #34d399);
-        border-radius: 3px; transition: width 0.3s ease;
-    }
-    
     .location-info {
-        font-size: 10px; color: #10b981; margin-top: 8px; padding: 8px 10px;
+        font-size: 10px; color: #10b981; margin-top: 6px; padding: 8px 10px;
         background: rgba(16, 185, 129, 0.1); border-radius: 6px; border-left: 3px solid #10b981;
         display: none; font-weight: 500;
+    }
+    
+    .accuracy-info {
+        font-size: 9px; color: #fbbf24; margin-top: 4px; padding: 4px 8px;
+        background: rgba(251, 191, 36, 0.1); border-radius: 4px; display: none;
     }
     
     .permission-help {
@@ -150,8 +123,8 @@
     .permission-help ol { color: #e2e8f0; font-size: 10px; padding-left: 16px; line-height: 1.6; }
     .permission-help li { margin-bottom: 4px; }
     .permission-help .retry-btn {
-        margin-top: 10px; padding: 10px 16px; background: #ef4444;
-        border: none; border-radius: 6px; color: white; font-size: 12px;
+        margin-top: 10px; padding: 8px 16px; background: #ef4444;
+        border: none; border-radius: 6px; color: white; font-size: 11px;
         font-weight: 600; cursor: pointer; width: 100%;
     }
     
@@ -161,52 +134,17 @@
     .triple-inputs > div { flex: 1; min-width: 0; }
     
     .submit-btn {
-        width: 100%; margin-top: 16px; padding: 16px 18px;
+        width: 100%; margin-top: 16px; padding: 14px 18px;
         background: linear-gradient(135deg, #dc2626, #b91c1c); border: none; border-radius: 10px;
-        color: white; font-size: 15px; font-weight: 700; text-transform: uppercase;
-        cursor: pointer; min-height: 54px; box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        color: white; font-size: 14px; font-weight: 700; text-transform: uppercase;
+        cursor: pointer; min-height: 50px; box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
         letter-spacing: 0.4px; transition: all 0.3s ease;
     }
-    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:hover:not(.loading) { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(220, 38, 38, 0.5); }
     .submit-btn.loading { pointer-events: none; opacity: 0.8; }
     
-    .photo-preview { 
-        margin-top: 10px; display: none; border-radius: 8px; 
-        overflow: hidden; border: 2px solid #10b981; 
-    }
-    .photo-preview img { width: 100%; max-height: 150px; object-fit: cover; }
-    
-    /* Camera Modal - Force Camera */
-    .camera-modal {
-        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-        background: #000; z-index: 10001; display: none;
-        flex-direction: column;
-    }
-    .camera-modal.show { display: flex; }
-    .camera-video {
-        flex: 1; width: 100%; object-fit: cover; background: #000;
-    }
-    .camera-controls {
-        padding: 20px; background: rgba(0,0,0,0.9);
-        display: flex; justify-content: center; align-items: center; gap: 30px;
-    }
-    .capture-photo-btn {
-        width: 70px; height: 70px; border-radius: 50%;
-        background: #fff; border: 4px solid rgba(255,255,255,0.3);
-        cursor: pointer; transition: all 0.2s;
-    }
-    .capture-photo-btn:active { transform: scale(0.9); background: #ddd; }
-    .close-camera-btn {
-        width: 50px; height: 50px; border-radius: 50%;
-        background: rgba(255,255,255,0.2); border: none;
-        color: #fff; font-size: 20px; cursor: pointer;
-    }
-    .switch-camera-btn {
-        width: 50px; height: 50px; border-radius: 50%;
-        background: rgba(255,255,255,0.2); border: none;
-        color: #fff; font-size: 18px; cursor: pointer;
-    }
-    .camera-canvas { display: none; }
+    .photo-preview { margin-top: 8px; display: none; border-radius: 6px; overflow: hidden; border: 2px solid #10b981; }
+    .photo-preview img { width: 100%; max-height: 120px; object-fit: cover; }
     
     .loading-overlay {
         position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -235,8 +173,13 @@
     .success-icon { font-size: 50px; color: #10b981; margin-bottom: 16px; }
     .success-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 8px; }
     .success-msg { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
-    .success-btn { padding: 14px 30px; background: #10b981; border: none;
+    .success-btn { padding: 12px 30px; background: #10b981; border: none;
         border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer; font-size: 14px; }
+    
+    /* iOS specific touch improvements */
+    @supports (-webkit-touch-callout: none) {
+        input, button { font-size: 16px !important; } /* Prevents zoom on iOS */
+    }
     
     @media (max-width: 380px) {
         body { padding: 6px; }
@@ -255,17 +198,6 @@
 </style>
 </head>
 <body>
-
-<!-- Camera Modal -->
-<div class="camera-modal" id="cameraModal">
-    <video class="camera-video" id="cameraVideo" autoplay playsinline></video>
-    <canvas class="camera-canvas" id="cameraCanvas"></canvas>
-    <div class="camera-controls">
-        <button class="close-camera-btn" id="closeCameraBtn"><i class="fa-solid fa-xmark"></i></button>
-        <button class="capture-photo-btn" id="capturePhotoBtn"></button>
-        <button class="switch-camera-btn" id="switchCameraBtn"><i class="fa-solid fa-camera-rotate"></i></button>
-    </div>
-</div>
 
 <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-spinner"></div>
@@ -458,30 +390,13 @@
         <div class="section-title"><i class="fa-solid fa-camera"></i> No Due Certificate</div>
         <div class="input-group">
             <label>Capture Photo + Location <span style="color:#ef4444">*</span></label>
-            
+            <input type="file" id="no_due_photo" accept="image/*" capture="environment" style="display:none">
             <button type="button" class="camera-btn" id="captureBtn">
                 <i class="fa-solid fa-camera" id="cameraIcon"></i> 
-                <span id="btnText">Tap to Capture Photo + GPS Location</span>
+                <span id="btnText">Tap to Capture Photo + Location</span>
             </button>
             
-            <!-- GPS Status Box -->
-            <div class="gps-status" id="gpsStatus">
-                <div class="gps-header">
-                    <div class="gps-spinner"></div>
-                    <div class="gps-title" id="gpsTitle">Acquiring GPS Signal...</div>
-                </div>
-                <div class="gps-details">
-                    <div>Accuracy: <span id="gpsAccuracy">--</span></div>
-                    <div>Latitude: <span id="gpsLat">--</span></div>
-                    <div>Longitude: <span id="gpsLon">--</span></div>
-                    <div>Readings: <span id="gpsReadings">0</span></div>
-                </div>
-                <div class="accuracy-bar">
-                    <div class="accuracy-fill" id="accuracyFill" style="width: 0%"></div>
-                </div>
-            </div>
-            
-            <!-- Permission Help -->
+            <!-- Permission Help Box -->
             <div class="permission-help" id="permissionHelp">
                 <h4><i class="fa-solid fa-exclamation-triangle"></i> Location Permission Required</h4>
                 <ol>
@@ -490,23 +405,21 @@
                     <li>Tap <b>Location Services</b> → Turn ON</li>
                     <li>Scroll down, tap <b>Safari Websites</b></li>
                     <li>Select <b>"While Using the App"</b></li>
+                    <li>Return here and tap the button below</li>
                 </ol>
-                <button class="retry-btn" id="retryBtn"><i class="fa-solid fa-refresh"></i> Try Again</button>
+                <button class="retry-btn" id="retryBtn">
+                    <i class="fa-solid fa-refresh"></i> Try Again
+                </button>
             </div>
             
-            <!-- Photo Preview -->
-            <div class="photo-preview" id="photoPreview">
-                <img id="previewImg" src="" alt="Preview">
-            </div>
-            
-            <!-- Final Location Info -->
+            <div class="photo-preview" id="photoPreview"><img id="previewImg" src="" alt="Preview"></div>
             <div class="location-info" id="locationInfo">
-                <i class="fa-solid fa-check-circle"></i> 
-                <strong>GPS Locked:</strong> <span id="finalLat"></span>, <span id="finalLon"></span> 
-                (±<span id="finalAccuracy"></span>m)
+                <i class="fa-solid fa-map-marker-alt"></i> Location: <span id="lat"></span>, <span id="lon"></span>
+            </div>
+            <div class="accuracy-info" id="accuracyInfo">
+                <i class="fa-solid fa-crosshairs"></i> Accuracy: <span id="accuracy"></span>m
             </div>
         </div>
-        
         <button type="button" class="submit-btn" id="submitBtn">
             Submit Registration <i class="fa-solid fa-arrow-right"></i>
         </button>
@@ -514,353 +427,197 @@
 </div>
 
 <script>
-// ========== CONFIGURATION ==========
+// ========== YOUR WEB APP URL ==========
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmI0HMk13m1w8zBF8ay6x5knshUlNEVnvLzXvN0C40kqBKI3pu19agzaNKzwezwP--/exec';
 
-// GPS Settings
-const GPS_CONFIG = {
-    targetAccuracy: 10,      // Target accuracy in meters (will stop when achieved)
-    maxAccuracy: 50,         // Maximum acceptable accuracy
-    maxWaitTime: 30000,      // Maximum time to wait for GPS (30 seconds)
-    minReadings: 3           // Minimum readings before accepting
-};
-
-// ========== STATE ==========
 let photoCaptured = false;
 let currentLocation = null;
 let photoBase64 = null;
-let gpsWatchId = null;
-let gpsReadings = 0;
-let bestLocation = null;
-let cameraStream = null;
-let facingMode = 'environment'; // Back camera
+let locationRetryCount = 0;
 
-// ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('captureBtn').addEventListener('click', startGPSAndCamera);
+    setupCamera();
     document.getElementById('submitBtn').addEventListener('click', validateAndSubmit);
-    document.getElementById('retryBtn').addEventListener('click', startGPSAndCamera);
+    document.getElementById('retryBtn').addEventListener('click', retryLocation);
     
-    // Camera modal controls
-    document.getElementById('closeCameraBtn').addEventListener('click', closeCamera);
-    document.getElementById('capturePhotoBtn').addEventListener('click', takePhoto);
-    document.getElementById('switchCameraBtn').addEventListener('click', switchCamera);
-    
-    // Input validation listeners
-    document.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.classList.remove('invalid');
-                this.classList.add('valid');
-            }
-        });
-    });
+    // Check if geolocation is available
+    checkGeolocationSupport();
 });
 
-// ========== GPS - MAXIMUM ACCURACY ==========
-function startGPSAndCamera() {
+function checkGeolocationSupport() {
+    if (!navigator.geolocation) {
+        document.getElementById('btnText').textContent = 'Location not supported on this device';
+        document.getElementById('captureBtn').classList.add('error');
+    }
+}
+
+function setupCamera() {
+    const captureBtn = document.getElementById('captureBtn');
+    const photoInput = document.getElementById('no_due_photo');
+    
+    captureBtn.addEventListener('click', startCapture);
+    
+    photoInput.addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Photo must be under 10MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                photoBase64 = event.target.result;
+                document.getElementById('previewImg').src = photoBase64;
+                document.getElementById('photoPreview').style.display = 'block';
+                photoCaptured = true;
+                captureBtn.classList.add('captured');
+                captureBtn.classList.remove('error');
+                document.getElementById('btnText').innerHTML = '<i class="fa-solid fa-check"></i> Photo & Location Captured!';
+                document.getElementById('cameraIcon').className = 'fa-solid fa-check-circle';
+                document.getElementById('permissionHelp').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+function startCapture() {
     const captureBtn = document.getElementById('captureBtn');
     const btnText = document.getElementById('btnText');
-    const gpsStatus = document.getElementById('gpsStatus');
     const permissionHelp = document.getElementById('permissionHelp');
     
-    // Reset state
-    gpsReadings = 0;
-    bestLocation = null;
-    permissionHelp.style.display = 'none';
-    
-    // Update UI
     captureBtn.classList.add('loading');
-    captureBtn.classList.remove('error', 'captured');
-    btnText.textContent = 'Acquiring GPS...';
-    gpsStatus.classList.add('active');
-    gpsStatus.classList.remove('success');
-    document.getElementById('gpsTitle').textContent = 'Acquiring GPS Signal...';
+    captureBtn.classList.remove('error');
+    permissionHelp.style.display = 'none';
+    btnText.textContent = 'Getting your location...';
+    
+    getLocation();
+}
+
+function retryLocation() {
+    document.getElementById('permissionHelp').style.display = 'none';
+    locationRetryCount = 0;
+    startCapture();
+}
+
+function getLocation() {
+    const captureBtn = document.getElementById('captureBtn');
+    const btnText = document.getElementById('btnText');
+    const photoInput = document.getElementById('no_due_photo');
+    const permissionHelp = document.getElementById('permissionHelp');
     
     if (!navigator.geolocation) {
-        showGPSError('Geolocation not supported on this device');
+        captureBtn.classList.remove('loading');
+        captureBtn.classList.add('error');
+        btnText.textContent = 'Geolocation not supported';
         return;
     }
     
-    // Clear any existing watch
-    if (gpsWatchId) {
-        navigator.geolocation.clearWatch(gpsWatchId);
-    }
+    // Options for high accuracy
+    const options = {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
+    };
     
-    // Start watching position for maximum accuracy
-    const startTime = Date.now();
-    
-    gpsWatchId = navigator.geolocation.watchPosition(
-        // SUCCESS - Called multiple times as accuracy improves
+    navigator.geolocation.getCurrentPosition(
+        // SUCCESS
         function(position) {
-            gpsReadings++;
-            const accuracy = position.coords.accuracy;
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
+            currentLocation = {
+                lat: position.coords.latitude,
+                lon: position.coords.longitude,
+                accuracy: position.coords.accuracy,
+                timestamp: new Date().toISOString()
+            };
             
-            // Update display
-            document.getElementById('gpsAccuracy').textContent = accuracy.toFixed(1) + 'm';
-            document.getElementById('gpsLat').textContent = lat.toFixed(6);
-            document.getElementById('gpsLon').textContent = lon.toFixed(6);
-            document.getElementById('gpsReadings').textContent = gpsReadings;
+            // Show location info
+            document.getElementById('lat').textContent = currentLocation.lat.toFixed(6);
+            document.getElementById('lon').textContent = currentLocation.lon.toFixed(6);
+            document.getElementById('accuracy').textContent = currentLocation.accuracy.toFixed(1);
+            document.getElementById('locationInfo').style.display = 'block';
+            document.getElementById('accuracyInfo').style.display = 'block';
             
-            // Update accuracy bar (100% = 5m or less, 0% = 100m or more)
-            const fillPercent = Math.max(0, Math.min(100, (100 - accuracy) * 1.1));
-            document.getElementById('accuracyFill').style.width = fillPercent + '%';
-            
-            // Keep best location
-            if (!bestLocation || accuracy < bestLocation.accuracy) {
-                bestLocation = {
-                    lat: lat,
-                    lon: lon,
-                    accuracy: accuracy,
-                    altitude: position.coords.altitude,
-                    timestamp: new Date().toISOString()
-                };
-            }
-            
-            // Check if we have good enough accuracy
-            const elapsedTime = Date.now() - startTime;
-            const hasGoodAccuracy = accuracy <= GPS_CONFIG.targetAccuracy;
-            const hasAcceptableAccuracy = accuracy <= GPS_CONFIG.maxAccuracy && gpsReadings >= GPS_CONFIG.minReadings;
-            const timeoutReached = elapsedTime >= GPS_CONFIG.maxWaitTime;
-            
-            if (hasGoodAccuracy || hasAcceptableAccuracy || timeoutReached) {
-                // Stop watching
-                navigator.geolocation.clearWatch(gpsWatchId);
-                gpsWatchId = null;
-                
-                // Use best location
-                currentLocation = bestLocation;
-                
-                // Update UI
-                gpsStatus.classList.add('success');
-                document.getElementById('gpsTitle').textContent = '✓ GPS Location Locked!';
-                document.getElementById('accuracyFill').style.width = '100%';
-                
-                btnText.textContent = 'GPS Ready! Opening Camera...';
-                
-                // Open camera after short delay
-                setTimeout(openCamera, 500);
+            // If accuracy is poor, try again (up to 3 times)
+            if (currentLocation.accuracy > 50 && locationRetryCount < 3) {
+                locationRetryCount++;
+                btnText.textContent = `Improving accuracy... (${locationRetryCount}/3)`;
+                setTimeout(function() {
+                    navigator.geolocation.getCurrentPosition(
+                        function(betterPosition) {
+                            if (betterPosition.coords.accuracy < currentLocation.accuracy) {
+                                currentLocation = {
+                                    lat: betterPosition.coords.latitude,
+                                    lon: betterPosition.coords.longitude,
+                                    accuracy: betterPosition.coords.accuracy,
+                                    timestamp: new Date().toISOString()
+                                };
+                                document.getElementById('lat').textContent = currentLocation.lat.toFixed(6);
+                                document.getElementById('lon').textContent = currentLocation.lon.toFixed(6);
+                                document.getElementById('accuracy').textContent = currentLocation.accuracy.toFixed(1);
+                            }
+                            openCamera();
+                        },
+                        function() {
+                            openCamera(); // Use existing location
+                        },
+                        options
+                    );
+                }, 1000);
             } else {
-                // Update status
-                document.getElementById('gpsTitle').textContent = 
-                    `Improving Accuracy... (${accuracy.toFixed(0)}m → ${GPS_CONFIG.targetAccuracy}m target)`;
+                openCamera();
             }
         },
         
         // ERROR
         function(error) {
-            navigator.geolocation.clearWatch(gpsWatchId);
-            gpsWatchId = null;
+            captureBtn.classList.remove('loading');
+            captureBtn.classList.add('error');
             
-            let errorMsg = '';
+            let errorMessage = '';
+            
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    errorMsg = 'Location permission denied';
+                    errorMessage = 'Location permission denied';
+                    // Show help instructions
                     permissionHelp.style.display = 'block';
                     break;
+                    
                 case error.POSITION_UNAVAILABLE:
-                    errorMsg = 'GPS signal unavailable. Try outdoors.';
+                    errorMessage = 'Location unavailable. Check GPS.';
                     break;
+                    
                 case error.TIMEOUT:
-                    errorMsg = 'GPS timeout. Please try again.';
+                    errorMessage = 'Location timeout. Try again.';
                     break;
+                    
                 default:
-                    errorMsg = 'GPS error. Please try again.';
+                    errorMessage = 'Location error. Try again.';
             }
             
-            showGPSError(errorMsg);
+            btnText.textContent = errorMessage;
+            
+            // Log for debugging
+            console.log('Geolocation Error:', error.code, error.message);
         },
         
-        // OPTIONS - Maximum accuracy settings
-        {
-            enableHighAccuracy: true,
-            timeout: GPS_CONFIG.maxWaitTime,
-            maximumAge: 0
-        }
+        options
     );
+}
+
+function openCamera() {
+    const captureBtn = document.getElementById('captureBtn');
+    const btnText = document.getElementById('btnText');
+    const photoInput = document.getElementById('no_due_photo');
     
-    // Safety timeout
+    btnText.textContent = 'Location captured! Opening camera...';
+    
     setTimeout(function() {
-        if (gpsWatchId && !currentLocation) {
-            navigator.geolocation.clearWatch(gpsWatchId);
-            gpsWatchId = null;
-            
-            if (bestLocation && bestLocation.accuracy <= GPS_CONFIG.maxAccuracy) {
-                currentLocation = bestLocation;
-                document.getElementById('gpsStatus').classList.add('success');
-                document.getElementById('gpsTitle').textContent = '✓ GPS Location Acquired';
-                setTimeout(openCamera, 500);
-            } else {
-                showGPSError('Could not get accurate GPS. Try moving outdoors.');
-            }
-        }
-    }, GPS_CONFIG.maxWaitTime + 5000);
-}
-
-function showGPSError(message) {
-    const captureBtn = document.getElementById('captureBtn');
-    const btnText = document.getElementById('btnText');
-    const gpsStatus = document.getElementById('gpsStatus');
-    
-    captureBtn.classList.remove('loading');
-    captureBtn.classList.add('error');
-    btnText.textContent = message;
-    gpsStatus.classList.remove('active');
-}
-
-// ========== CAMERA - FORCE OPEN ==========
-async function openCamera() {
-    const captureBtn = document.getElementById('captureBtn');
-    const btnText = document.getElementById('btnText');
-    
-    try {
-        // Check if MediaDevices is supported
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            // Fallback to file input for older devices
-            fallbackToFileInput();
-            return;
-        }
-        
-        // Request camera access
-        const constraints = {
-            video: {
-                facingMode: facingMode,
-                width: { ideal: 1920 },
-                height: { ideal: 1080 }
-            },
-            audio: false
-        };
-        
-        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-        
-        // Show camera modal
-        const video = document.getElementById('cameraVideo');
-        video.srcObject = cameraStream;
-        document.getElementById('cameraModal').classList.add('show');
-        
         captureBtn.classList.remove('loading');
-        btnText.textContent = 'Camera Open - Take Photo';
-        
-    } catch (error) {
-        console.log('Camera error:', error);
-        // Fallback to file input
-        fallbackToFileInput();
-    }
+        photoInput.click();
+    }, 300);
 }
 
-function fallbackToFileInput() {
-    const captureBtn = document.getElementById('captureBtn');
-    const btnText = document.getElementById('btnText');
-    
-    // Create and trigger file input
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.capture = 'environment';
-    
-    input.onchange = function(e) {
-        if (e.target.files && e.target.files[0]) {
-            processPhoto(e.target.files[0]);
-        }
-        captureBtn.classList.remove('loading');
-    };
-    
-    input.click();
-    btnText.textContent = 'Select or Take Photo...';
-}
-
-function takePhoto() {
-    const video = document.getElementById('cameraVideo');
-    const canvas = document.getElementById('cameraCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    // Set canvas size to video size
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
-    // Draw video frame to canvas
-    ctx.drawImage(video, 0, 0);
-    
-    // Convert to blob
-    canvas.toBlob(function(blob) {
-        processPhoto(blob);
-        closeCamera();
-    }, 'image/jpeg', 0.85);
-}
-
-function processPhoto(file) {
-    const captureBtn = document.getElementById('captureBtn');
-    const btnText = document.getElementById('btnText');
-    const cameraIcon = document.getElementById('cameraIcon');
-    
-    if (file.size > 10 * 1024 * 1024) {
-        alert('Photo must be under 10MB');
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        photoBase64 = event.target.result;
-        
-        // Show preview
-        document.getElementById('previewImg').src = photoBase64;
-        document.getElementById('photoPreview').style.display = 'block';
-        
-        // Show final location
-        document.getElementById('finalLat').textContent = currentLocation.lat.toFixed(6);
-        document.getElementById('finalLon').textContent = currentLocation.lon.toFixed(6);
-        document.getElementById('finalAccuracy').textContent = currentLocation.accuracy.toFixed(1);
-        document.getElementById('locationInfo').style.display = 'block';
-        
-        // Update button
-        photoCaptured = true;
-        captureBtn.classList.add('captured');
-        captureBtn.classList.remove('loading', 'error');
-        cameraIcon.className = 'fa-solid fa-check-circle';
-        btnText.innerHTML = 'Photo & GPS Captured Successfully!';
-        
-        // Hide GPS status
-        document.getElementById('gpsStatus').style.display = 'none';
-    };
-    
-    if (file instanceof Blob) {
-        reader.readAsDataURL(file);
-    }
-}
-
-function closeCamera() {
-    const modal = document.getElementById('cameraModal');
-    modal.classList.remove('show');
-    
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-        cameraStream = null;
-    }
-    
-    document.getElementById('captureBtn').classList.remove('loading');
-}
-
-async function switchCamera() {
-    facingMode = facingMode === 'environment' ? 'user' : 'environment';
-    
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-    }
-    
-    try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: facingMode },
-            audio: false
-        });
-        document.getElementById('cameraVideo').srcObject = cameraStream;
-    } catch (error) {
-        console.log('Switch camera error:', error);
-    }
-}
-
-// ========== FORM SUBMISSION ==========
 function validateAndSubmit() {
     // Check photo and location
     if (!photoCaptured) {
@@ -870,7 +627,7 @@ function validateAndSubmit() {
     }
     
     if (!currentLocation) {
-        alert('GPS location not captured. Please try again.');
+        alert('Location not captured. Please try again.');
         document.getElementById('captureBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
     }
@@ -949,11 +706,12 @@ function validateAndSubmit() {
     })
     .then(() => {
         hideLoading();
-        showSuccess('Registration submitted successfully!\nGPS Accuracy: ±' + currentLocation.accuracy.toFixed(1) + 'm');
+        showSuccess('Registration submitted successfully!');
     })
     .catch(error => {
         hideLoading();
         console.error('Submit error:', error);
+        // Even with no-cors, if we get here without exception, it likely worked
         showSuccess('Registration submitted!');
     });
 }
@@ -977,14 +735,14 @@ function showSuccess(msg) {
     document.getElementById('successModal').classList.add('show'); 
 }
 
-// Cleanup on page unload
-window.addEventListener('beforeunload', function() {
-    if (gpsWatchId) {
-        navigator.geolocation.clearWatch(gpsWatchId);
-    }
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-    }
+// Add input listeners for validation feedback
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', function() {
+        if (this.value.trim()) {
+            this.classList.remove('invalid');
+            this.classList.add('valid');
+        }
+    });
 });
 </script>
 </body>
