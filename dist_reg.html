@@ -2,963 +2,579 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Airtel Distributor Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    :root {
-        --primary: #ec1c24;
-        --primary-light: #ff4d4d;
-        --bg-dark: #0f0f23;
-        --bg-card: #1a1a2e;
-        --bg-input: #242441;
-        --bg-input-hover: #2d2d51;
-        --border-color: #2d3748;
-        --border-focus: #ec1c24;
-        --text-primary: #f7fafc;
-        --text-secondary: #a0aec0;
-        --text-muted: #718096;
-        --success: #38a169;
-        --error: #e53e3e;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; overflow-y: auto; -webkit-text-size-adjust: 100%; }
+    body { 
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+        color: #e2e8f0; min-height: 100vh; padding: 8px; line-height: 1.4;
+        font-size: 12px; margin: 0; overflow-x: hidden;
     }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+    
+    .section-container { 
+        background: linear-gradient(145deg, rgba(25, 25, 40, 0.92), rgba(45, 45, 65, 0.92)); 
+        margin-bottom: 10px; border-radius: 10px; 
+        box-shadow: 0 8px 20px -8px rgba(0, 0, 20, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.06); 
+        overflow: hidden; max-width: 100%;
     }
-
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 12px;
+    
+    .header-container {
+        text-align: center; padding: 16px 14px;
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(45, 45, 65, 0.95));
+        border-radius: 10px; box-shadow: 0 8px 20px -8px rgba(220, 38, 38, 0.3);
+        margin-bottom: 12px; border: 1px solid rgba(220, 38, 38, 0.2);
     }
-
-    /* Main Container */
-    .container {
-        background: var(--bg-card);
-        width: 100%;
-        max-width: 950px;
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        overflow: hidden;
-        position: relative;
-        margin: 8px;
+    
+    .logo-wrapper { display: inline-block; margin-bottom: 10px; }
+    .logo { 
+        width: 45px; height: 45px; object-fit: contain; 
+        filter: drop-shadow(0 0 15px rgba(220, 38, 38, 0.5)); transition: all 0.3s ease; 
     }
-
-    /* Header */
-    .header {
-        padding: 25px 20px;
-        background: linear-gradient(180deg, rgba(236, 28, 36, 0.1) 0%, transparent 100%);
-        border-bottom: 1px solid var(--border-color);
-        text-align: center;
-        position: relative;
+    .header-container h1 { 
+        font-size: 16px; font-weight: 700; color: #fff; 
+        letter-spacing: -0.3px; text-shadow: 0 2px 8px rgba(0,0,0,0.6); margin: 0;
     }
-
-    .logo-wrapper {
-        display: inline-block;
-        margin-bottom: 15px;
-        animation: logoFloat 3s ease-in-out infinite;
+    
+    .section-padding { padding: 14px; }
+    
+    .section-title { 
+        background: linear-gradient(135deg, rgba(30, 30, 45, 0.95), rgba(45, 45, 60, 0.95));
+        font-weight: 700; text-align: center; font-size: 11px; text-transform: uppercase; 
+        color: #fbbf24; letter-spacing: 0.8px; margin-bottom: 14px; padding: 10px 12px;
+        border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3);
     }
-
-    @keyframes logoFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-8px); }
-    }
-
-    .logo {
-        width: 50px;
-        height: 50px;
-        object-fit: contain;
-        filter: drop-shadow(0 0 20px rgba(236, 28, 36, 0.4));
-        transition: all 0.3s ease;
-    }
-
-    .logo:hover {
-        transform: scale(1.1) rotate(5deg);
-        filter: drop-shadow(0 0 30px rgba(236, 28, 36, 0.4));
-    }
-
-    .header h1 {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 8px;
-        letter-spacing: -0.5px;
-    }
-
-    .header p {
-        color: var(--text-secondary);
-        font-size: 13px;
-    }
-
-    .header-badge {
-        display: inline-block;
-        margin-top: 12px;
-        padding: 6px 16px;
-        background: rgba(236, 28, 36, 0.15);
-        border: 1px solid rgba(236, 28, 36, 0.3);
-        border-radius: 50px;
-        color: var(--primary);
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        animation: badgePulse 2s ease-in-out infinite;
-    }
-
-    @keyframes badgePulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(236, 28, 36, 0.3); }
-        50% { box-shadow: 0 0 0 10px rgba(236, 28, 36, 0); }
-    }
-
-    /* Form Body */
-    .form-body {
-        padding: 25px 20px;
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    /* Section Title */
-    .section-title {
-        grid-column: 1 / -1;
-        padding: 15px 0 8px 0;
-        border-bottom: 1px solid var(--border-color);
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .section-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(236, 28, 36, 0.1);
-        border: 2px solid rgba(236, 28, 36, 0.3);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary);
-        font-size: 16px;
-    }
-
-    .section-text h3 {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-primary);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .section-text p {
-        font-size: 12px;
-        color: var(--text-muted);
-    }
-
-    /* MOBILE-OPTIMIZED Input Groups */
-    .input-group {
-        position: relative;
-        animation: fadeInUp 0.6s ease forwards;
-        opacity: 0;
-    }
-
-    .full-width {
-        grid-column: 1 / -1;
-    }
-
+    
     label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-secondary);
-        margin-bottom: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
+        display: block; font-size: 10px; font-weight: 600; color: #e2e8f0;
+        margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px;
     }
-
-    .input-wrapper {
-        position: relative;
+    
+    input[type="text"], input[type="number"], input[type="tel"] { 
+        width: 100%; 
+        background: linear-gradient(145deg, rgba(55, 55, 75, 0.85), rgba(70, 70, 90, 0.85)); 
+        border: 1px solid rgba(100, 100, 130, 0.5);
+        color: #f1f5f9; padding: 8px 10px; border-radius: 6px; font-size: 12px; 
+        transition: all 0.3s ease; backdrop-filter: blur(15px); height: 36px;
     }
-
-    .input-wrapper i {
-        position: absolute;
-        left: 14px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        font-size: 16px;
-        z-index: 2;
-        transition: all 0.3s ease;
+    
+    input::placeholder { font-size: 11px; color: rgba(226, 232, 240, 0.5); }
+    
+    input:focus { 
+        outline: none; border-color: rgba(251, 191, 36, 0.6); 
+        box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.15);
+        background: linear-gradient(145deg, rgba(251, 191, 36, 0.08), rgba(251, 191, 36, 0.04));
     }
-
-    input {
-        width: 100%;
-        padding: 12px 14px 12px 48px;
-        background: var(--bg-input);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        color: var(--text-primary);
-        font-size: 16px;
-        font-weight: 500;
-        margin-bottom: 6px;
-        transition: all 0.2s ease;
-        letter-spacing: 0.2px;
-        min-height: 48px;
+    
+    input.valid { border-color: #10b981 !important; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15) !important; }
+    input.invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25) !important; animation: shake 0.4s; }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-3px); }
+        75% { transform: translateX(3px); }
     }
-
-    /* FORCE DATE INPUTS - Mobile perfect */
-    input[type="date"] {
-        font-size: 16px !important;
-        padding: 12px 14px 12px 48px !important;
-        min-height: 48px !important;
-        border: 1px solid var(--border-color) !important;
-        border-radius: 6px !important;
-        background: var(--bg-input) !important;
-        color: var(--text-primary) !important;
-        letter-spacing: 0.2px !important;
-        margin-bottom: 6px !important;
+    
+    .error-message {
+        color: #ef4444; font-size: 9px; font-weight: 600; margin-top: 4px;
+        padding: 4px 6px; background: rgba(239, 68, 68, 0.12); border-radius: 4px;
+        border-left: 3px solid #ef4444; display: none;
     }
-
-    input[type="date"]::-webkit-calendar-picker-indicator {
-        color: var(--primary);
-        opacity: 0.7;
-        cursor: pointer;
-        padding-right: 10px;
+    
+    .input-group { margin-bottom: 12px; }
+    small { display: block; font-size: 9px; color: rgba(226, 232, 240, 0.8); margin-bottom: 4px; font-weight: 500; }
+    
+    .camera-btn {
+        width: 100%; padding: 10px 12px; 
+        background: linear-gradient(145deg, rgba(55, 55, 75, 0.85), rgba(70, 70, 90, 0.85));
+        border: 2px dashed rgba(251, 191, 36, 0.4); border-radius: 8px; color: #e2e8f0;
+        font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 10px; 
+        height: 46px; justify-content: center; cursor: pointer; transition: all 0.3s ease;
     }
-
-    input[type="date"]::-webkit-datetime-edit {
-        color: var(--text-primary);
-        font-size: 16px;
+    .camera-btn:hover { border-color: rgba(251, 191, 36, 0.8); }
+    .camera-btn.captured { border-color: #10b981; border-style: solid;
+        background: linear-gradient(145deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.12)); }
+    .camera-btn.loading { pointer-events: none; opacity: 0.7; }
+    
+    .location-info {
+        font-size: 9px; color: #10b981; margin-top: 6px; padding: 6px 10px;
+        background: rgba(16, 185, 129, 0.1); border-radius: 6px; border-left: 3px solid #10b981;
+        display: none; font-weight: 500;
     }
-
-    input::placeholder {
-        color: var(--text-muted);
-        font-size: 16px;
+    
+    .accuracy-info {
+        font-size: 9px; color: #fbbf24; margin-top: 4px; padding: 4px 8px;
+        background: rgba(251, 191, 36, 0.1); border-radius: 4px; display: none;
     }
-
-    input:hover {
-        background: var(--bg-input-hover);
-        border-color: rgba(236, 28, 36, 0.4);
-    }
-
-    input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(236, 28, 36, 0.2);
-        transform: none;
-    }
-
-    /* File Input - Mobile optimized */
-    .file-input-wrapper {
-        position: relative;
-        cursor: pointer;
-    }
-
-    .file-input-wrapper input[type="file"] {
-        position: absolute;
-        opacity: 0;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
-        z-index: 3;
-    }
-
-    .file-input-custom {
-        padding: 12px 14px 12px 48px;
-        background: var(--bg-input);
-        border: 2px dashed var(--border-color);
-        border-radius: 6px;
-        color: var(--text-muted);
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.2s ease;
-        font-weight: 500;
-        min-height: 48px;
-        margin-bottom: 6px;
-    }
-
-    .file-input-wrapper:hover .file-input-custom {
-        border-color: var(--primary);
-        background: rgba(236, 28, 36, 0.08);
-    }
-
-    .file-input-custom .upload-icon {
-        margin-left: auto;
-        width: 36px;
-        height: 36px;
-        background: rgba(236, 28, 36, 0.15);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary);
-        transition: all 0.3s ease;
-        font-size: 14px;
-    }
-
-    .file-input-wrapper:hover .upload-icon {
-        background: var(--primary);
-        color: white;
-        transform: scale(1.05);
-    }
-
-    /* Validation States */
-    .input-group.valid input,
-    .input-group.valid .file-input-custom {
-        border-color: var(--success);
-        background: rgba(56, 161, 105, 0.08);
-    }
-
-    .input-group.error input {
-        border-color: var(--error);
-    }
-
-    /* Submit Button - Mobile optimized */
+    
+    .dual-inputs { display: flex; gap: 8px; }
+    .dual-inputs input { flex: 1; min-width: 0; }
+    .triple-inputs { display: flex; gap: 6px; }
+    .triple-inputs > div { flex: 1; min-width: 0; }
+    
     .submit-btn {
-        grid-column: 1 / -1;
-        margin-top: 20px;
-        padding: 14px 20px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-        border: none;
-        border-radius: 6px;
-        color: white;
-        font-size: 16px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        min-height: 52px;
+        width: 100%; margin-top: 16px; padding: 12px 18px;
+        background: linear-gradient(135deg, #dc2626, #b91c1c); border: none; border-radius: 10px;
+        color: white; font-size: 13px; font-weight: 700; text-transform: uppercase;
+        cursor: pointer; height: 46px; box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        letter-spacing: 0.4px; transition: all 0.3s ease;
     }
-
-    .submit-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 25px rgba(236, 28, 36, 0.3);
+    .submit-btn:hover:not(.loading) { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(220, 38, 38, 0.5); }
+    .submit-btn.loading { pointer-events: none; opacity: 0.8; }
+    
+    .photo-preview { margin-top: 8px; display: none; border-radius: 6px; overflow: hidden; border: 2px solid #10b981; }
+    .photo-preview img { width: 100%; max-height: 120px; object-fit: cover; }
+    
+    .loading-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.8); display: none; justify-content: center;
+        align-items: center; z-index: 9999; flex-direction: column;
     }
-
-    .submit-btn:active {
-        transform: translateY(0);
+    .loading-overlay.show { display: flex; }
+    .loading-spinner {
+        width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.2);
+        border-top-color: #fbbf24; border-radius: 50%; animation: spin 1s linear infinite;
     }
-
-    .submit-btn i {
-        margin-left: 10px;
-        transition: transform 0.3s ease;
+    .loading-text { color: #fff; margin-top: 16px; font-size: 14px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .success-modal {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.9); display: none; justify-content: center;
+        align-items: center; z-index: 10000;
     }
-
-    .submit-btn:hover i {
-        transform: translateX(5px);
+    .success-modal.show { display: flex; }
+    .success-content {
+        background: linear-gradient(145deg, #1a1a2e, #16213e);
+        padding: 30px; border-radius: 16px; text-align: center;
+        border: 2px solid #10b981; max-width: 90%;
     }
-
-    /* Loading State */
-    .submit-btn.loading {
-        pointer-events: none;
+    .success-icon { font-size: 50px; color: #10b981; margin-bottom: 16px; }
+    .success-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .success-msg { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
+    .success-btn { padding: 12px 30px; background: #10b981; border: none;
+        border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer; }
+    
+    @media (max-width: 380px) {
+        body { padding: 6px; font-size: 11px; }
+        .section-padding { padding: 10px; }
+        .header-container { padding: 12px 10px; }
+        .header-container h1 { font-size: 14px; }
+        input[type="text"], input[type="number"], input[type="tel"] { height: 34px; font-size: 11px; }
+        .section-title { font-size: 10px; padding: 8px 10px; }
+        label { font-size: 9px; }
     }
-
-    .submit-btn.loading .btn-text {
-        opacity: 0;
-    }
-
-    .submit-btn.loading::after {
-        content: '';
-        position: absolute;
-        width: 22px;
-        height: 22px;
-        border: 3px solid rgba(255,255,255,0.3);
-        border-top-color: white;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    @keyframes spin {
-        to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    /* Footer */
-    .footer {
-        padding: 20px;
-        background: rgba(10, 10, 20, 0.8);
-        border-top: 1px solid var(--border-color);
-        text-align: center;
-    }
-
-    .footer p {
-        color: var(--text-muted);
-        font-size: 12px;
-    }
-
-    .footer a {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
-
-    .footer a:hover {
-        color: var(--primary-light);
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .input-group:nth-child(1) { animation-delay: 0.1s; }
-    .input-group:nth-child(2) { animation-delay: 0.15s; }
-    .input-group:nth-child(3) { animation-delay: 0.2s; }
-    .input-group:nth-child(4) { animation-delay: 0.25s; }
-    .input-group:nth-child(5) { animation-delay: 0.3s; }
-    .input-group:nth-child(6) { animation-delay: 0.35s; }
-    .input-group:nth-child(7) { animation-delay: 0.4s; }
-    .input-group:nth-child(8) { animation-delay: 0.45s; }
-    .input-group:nth-child(9) { animation-delay: 0.5s; }
-    .input-group:nth-child(10) { animation-delay: 0.55s; }
-    .input-group:nth-child(11) { animation-delay: 0.6s; }
-    .input-group:nth-child(12) { animation-delay: 0.65s; }
-    .input-group:nth-child(13) { animation-delay: 0.7s; }
-    .input-group:nth-child(14) { animation-delay: 0.75s; }
-
-    /* Ultra-small screens */
-    @media (max-width: 480px) {
-        body {
-            padding: 8px;
-        }
-        
-        .container {
-            border-radius: 10px;
-            margin: 4px;
-        }
-        
-        .form-body {
-            padding: 20px 16px;
-            gap: 12px;
-        }
-        
-        .header {
-            padding: 20px 16px;
-        }
-        
-        input, .file-input-custom {
-            padding: 14px 16px 14px 50px;
-            min-height: 50px;
-        }
-    }
+    
+    @media (max-width: 320px) { .triple-inputs { flex-direction: column; gap: 8px; } }
+    
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"] { -moz-appearance: textfield; }
 </style>
- 
 </head>
 <body>
-    <div class="container">
-        <!-- Header - PERFECT AS-IS, UNCHANGED -->
-        <div class="header">
-            <div class="logo-wrapper">
-                <img src="airtel_cropped.png" alt="Airtel Logo" class="logo">
-            </div>
-            <h1>Airtel Distributor Registration</h1>
-            <!-- <p>February 2026 Business Planning</p> -->
-            <!-- <div class="header-badge">FEBRUARY TARGETS</div> -->
-        </div>
 
-        <!-- Form -->
-        <form action="/distributor-report" method="POST" class="form-body" id="distributorForm">
-            
-            <!-- Distributor Information -->
-            <div class="section-title">
-                <div class="section-icon">
-                    <i class="fa-solid fa-building"></i>
-                </div>
-                <div class="section-text">
-                    <h3>Distributor Information</h3>
-                    <!-- <p>Basic distributor details</p> -->
-                </div>
-            </div>
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">Submitting...</div>
+</div>
 
-            <div class="input-group">
-                <label for="dist_name">Distributor Name *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-user-tie"></i>
-                    <input type="text" id="dist_name" name="dist_name" placeholder="Enter Distributor Name" required>
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="dist_name">ZSM Name *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-user-tie"></i>
-                    <input type="text" id="dist_name" name="dist_name" placeholder="Enter ZSM Name" required>
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="dist_name">TSM Name *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-user-tie"></i>
-                    <input type="text" id="dist_name" name="dist_name" placeholder="Enter TSM Name" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="dist_lapu">Distributor LAPU Number *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-mobile-screen"></i>
-                    <input type="tel" id="dist_lapu" name="dist_lapu" placeholder="Enter LAPU Number" required>
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="total_security">Total(with Security) *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-calculator"></i>
-                    <input type="number" id="total_security" name="total_security" class="display-field" placeholder="Enter Total(with Security) " min="0">
-                </div>
-            </div>
-            
-            <div class="input-group">
-                <label for="lapu_dth">LAPU/DTH LAPU (3 days) *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-mobile-screen"></i>
-                    <input type="tel" id="lapu_dth" name="lapu_dth" class="display-field" placeholder="Enter LAPU/DTH LAPU (3 days) " >
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="lapu_dth">Lapu Commission(Amount)*</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-mobile-screen"></i>
-                    <input type="tel" id="lapu_dth" name="lapu_dth" class="display-field" placeholder="Enter Lapu Commission(Amount) " >
-                </div>
-            </div>
-            <div class="input-group">
-                <label for="lapu_dth">ASC Incentive*</label>
-                <div class="input-wrapper"> 
-                    <i class="fa-solid fa-mobile-screen"></i>
-                    <input type="tel" id="lapu_dth" name="lapu_dth" class="display-field" placeholder="Enter ASC Incentive " >
-                </div>
-            </div>
-            <!-- Targets -->
-            <div class="section-title">
-                <div class="section-icon">
-                    <i class="fa-solid fa-bullseye"></i>
-                </div>
-                <div class="section-text">
-                    <h3>November Targets</h3>
-                    <!-- <p>Monthly performance goals</p> -->
-                </div>
-            </div>
-        
-            <div class="input-group full-width">
-                <label for="pli_target">November Gross*</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <input type="number" id="pli_target" name="pli_target" placeholder="e.g. 500" min="0" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="asc_required">November MNP *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-users"></i>
-                    <input type="number" id="asc_required" name="asc_required" placeholder="e.g. 10" min="0" required>
-                </div>
-            </div>
-
-            <div class="section-title">
-                <div class="section-icon">
-                    <i class="fa-solid fa-bullseye"></i>
-                </div>
-                <div class="section-text">
-                    <h3>December Targets</h3>
-                    <!-- <p>Monthly performance goals</p> -->
-                </div>
-            </div>
-        
-            <div class="input-group full-width">
-                <label for="pli_target">December Gross*</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <input type="number" id="pli_target" name="pli_target" placeholder="e.g. 500" min="0" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="asc_required">December MNP *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-users"></i>
-                    <input type="number" id="asc_required" name="asc_required" placeholder="e.g. 10" min="0" required>
-                </div>
-            </div>
-            <div class="section-title">
-                <div class="section-icon">
-                    <i class="fa-solid fa-bullseye"></i>
-                </div>
-                <div class="section-text">
-                    <h3>January Targets</h3>
-                    <!-- <p>Monthly performance goals</p> -->
-                </div>
-            </div>
-        
-            <div class="input-group full-width">
-                <label>January Gross Target & Achievement*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-chart-line"></i>
-                        <input type="number" id="gross_target" name="gross_target" placeholder="Gross Target" min="0" required>
-                    </div>
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-trophy"></i>
-                        <input type="number" id="gross_achievement" name="gross_achievement" placeholder="Gross Achievement" min="0">
-                    </div>
-                </div>
-            </div>
-            
-            <div class="input-group full-width">
-                <label>January MNP Target & Achievement*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-users"></i>
-                        <input type="number" id="mnp_target" name="mnp_target" placeholder="MNP Target" min="0" required>
-                    </div>
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-medal"></i>
-                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
-                    </div>
-                </div>
-            </div>
-            <div class="input-group full-width">
-                <label>January ASC Gross*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-chart-line"></i>
-                        <input type="number" id="asc_gross" name="asc_gross" placeholder="ASC Gross" min="0" required>
-                    </div>
-                    <!-- <div style="flex: 1;">
-                        <i class="fa-solid fa-trophy"></i>
-                        <input type="number" id="gross_achievement" name="gross_achievement" placeholder="Gross Achievement" min="0">
-                    </div> -->
-                </div>
-            </div>
-            
-            <div class="input-group full-width">
-                <label>January ASC MNP*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-users"></i>
-                        <input type="number" id="asc_mnp" name="asc_mnp" placeholder="ASC MNP" min="0" required>
-                    </div>
-                    <!-- <div style="flex: 1;">
-                        <i class="fa-solid fa-medal"></i>
-                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
-                    </div> -->
-                </div>
-            </div>
-            <div class="input-group full-width">
-                <label>January Promotor MNP*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-users"></i>
-                        <input type="number" id="promotor_mnp" name="promotor_mnp" placeholder="Promotor MNP" min="0" required>
-                    </div>
-                    <!-- <div style="flex: 1;">
-                        <i class="fa-solid fa-medal"></i>
-                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
-                    </div> -->
-                </div>
-            </div>
-            <div class="input-group full-width">
-                <label>January Trade Gross*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-users"></i>
-                        <input type="number" id="trade_gross" name="trade_gross" placeholder="Trade Gross" min="0" required>
-                    </div>
-                    <!-- <div style="flex: 1;">
-                        <i class="fa-solid fa-medal"></i>
-                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
-                    </div> -->
-                </div>
-            </div> 
-            <div class="input-group full-width">
-                <label>January Trade MNP*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-users"></i>
-                        <input type="number" id="trade_mnp" name="trade_mnp" placeholder="Trade MNP" min="0" required>
-                    </div>
-                    <!-- <div style="flex: 1;">
-                        <i class="fa-solid fa-medal"></i>
-                        <input type="number" id="mnp_achievement" name="mnp_achievement" placeholder="MNP Achievement" min="0">
-                    </div> -->
-                </div>
-            </div>  
-            
-            <div class="input-group full-width">
-                <label>January PLI WIFI Target & WIFI Achievement*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-users"></i>
-                        <input type="number" id="pli_wifi_target" name="pli_wifi_target" placeholder="PLI WIFI Target" min="0" required>
-                    </div>
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-medal"></i>
-                        <input type="number" id="pli_wifi_achievement" name="pli_wifi_achievement" placeholder="PLI WIFI Achievement" min="0">
-                    </div>
-                </div>
-            </div>
-            <div class="input-group full-width">
-                <label>January PLI APB Target & APB Achievement*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-users"></i>
-                        <input type="number" id="pli_apb_target" name="pli_apb_target" placeholder="PLI APB Target" min="0" required>
-                    </div>
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-medal"></i>
-                        <input type="number" id="pli_apb_achievement" name="pli_apb_achievement" placeholder="PLI APB Achievement" min="0">
-                    </div>
-                </div>
-            </div>
-            <div class="section-title">
-                <div class="section-icon">
-                    <i class="fa-solid fa-bullseye"></i>
-                </div>
-                <div class="section-text">
-                    <h3>February Targets</h3>
-                    <!-- <p>Monthly performance goals</p> -->
-                </div>
-            </div>
-
-            <div class="input-group full-width">
-                <label for="pli_target">PLI Target for February *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <input type="number" id="pli_target" name="pli_target" placeholder="e.g. 500" min="0" required>
-                </div>
-            </div>
-
-            <div class="input-group full-width">
-                <label>ASC Required & ASC Available*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-users"></i>
-                        <input type="number" id="asc_required" name="asc_required" placeholder="ASC Required" min="0" required>
-                    </div>
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-medal"></i>
-                        <input type="number" id="asc_available" name="asc_available" placeholder="ASC Available" min="0">
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-group full-width">
-                <label>Promotor Required & Promotor Available*</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-users"></i>
-                        <input type="number" id="promotor_mnp" name="wifi_target" placeholder="Promotor Required" min="0" required>
-                    </div>
-                    <div style="flex: 1;">
-                        <i class="fa-solid fa-medal"></i>
-                        <input type="number" id="mnp_achievement" name="wifi_achievement" placeholder="Promotor Available" min="0">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Financials -->
-            <div class="section-title">
-                <div class="section-icon">
-                    <i class="fa-solid fa-calculator"></i>
-                </div>
-                <div class="section-text">
-                    <h3>Monthly Expenses (₹)</h3>
-                    <!-- <p>Operational cost breakdown</p> -->
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="asc_cost">ASC Salary *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-indian-rupee-sign"></i>
-                    <input type="number" id="asc_cost" name="asc_cost" placeholder="e.g. 15000" min="0" step="100" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="rent">Rent *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-home"></i>
-                    <input type="number" id="rent" name="rent" placeholder="e.g. 25000" min="0" step="100" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="electricity">Electricity *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-plug"></i>
-                    <input type="number" id="electricity" name="electricity" placeholder="e.g. 5000" min="0" step="100" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="miscellaneous">Miscellaneous *</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-list"></i>
-                    <input type="number" id="miscellaneous" name="miscellaneous" placeholder="e.g. 8000" min="0" step="100" required>
-                </div>
-            </div>
-            <div class="input-group">
-                <label>PLI Credited *</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <label for="oct_credited" style="font-weight: normal; font-size: 0.9em;">October</label>
-                        <div style="position: relative;">
-                            <i class="fa-solid fa-calendar" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666;"></i>
-                            <input type="number" id="oct_credited" name="oct_credited" placeholder="0" min="0" style="padding-left: 40px;">
-                        </div>
-                    </div>
-                    <div style="flex: 1;">
-                        <label for="nov_credited" style="font-weight: normal; font-size: 0.9em;">November</label>
-                        <div style="position: relative;">
-                            <i class="fa-solid fa-calendar" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666;"></i>
-                            <input type="number" id="nov_credited" name="nov_credited" placeholder="0" min="0" style="padding-left: 40px;">
-                        </div>
-                    </div>
-                    <div style="flex: 1;">
-                        <label for="dec_credited" style="font-weight: normal; font-size: 0.9em;">December</label>
-                        <div style="position: relative;">
-                            <i class="fa-solid fa-calendar" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666;"></i>
-                            <input type="number" id="dec_credited" name="dec_credited" placeholder="0" min="0" style="padding-left: 40px;">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="input-group full-width">
-                <label for="no_due_certificate">No Due Certificate*</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-file-certificate"></i>
-<input type="file" id="no_due_certificate" name="no_due_certificate" 
-       accept=".pdf,.doc,.docx" required onchange="checkFileSize(this)">
-
-                </div>
-            </div>
-            
-            <button type="submit" class="submit-btn">
-                <span class="btn-text">
-                    Submit Monthly Report
-                    <i class="fa-solid fa-arrow-right"></i>
-                </span>
-            </button>
-        </form>
-
-        <!-- Footer -->
-        <!-- <div class="footer">
-            <p>
-                <i class="fa-solid fa-lock"></i> 
-                Secured with enterprise-grade encryption | 
-                <a href="#">Privacy Policy</a> | 
-                <a href="#">Terms of Service</a>
-            </p>
-        </div> -->
+<div class="success-modal" id="successModal">
+    <div class="success-content">
+        <div class="success-icon"><i class="fa-solid fa-check-circle"></i></div>
+        <div class="success-title">Registration Successful!</div>
+        <div class="success-msg" id="successMsg">Your data has been saved.</div>
+        <button class="success-btn" onclick="location.reload()">Submit Another</button>
     </div>
+</div>
 
-    <script>
+<div class="header-container">
+    <div class="logo-wrapper">
+        <img src="airtel_cropped.png" alt="Airtel" class="logo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23dc2626%22/><text x=%2250%22 y=%2265%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2240%22 font-weight=%22bold%22>A</text></svg>'">
+    </div>
+    <h1>Airtel Distributor Registration</h1>
+</div>
 
-function checkFileSize(input) {
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (input.files[0] && input.files[0].size > maxSize) {
-        alert('File size must be less than 5MB');
-        input.value = '';
-    }
+<!-- 1. DISTRIBUTOR INFO -->
+<div class="section-container">
+    <div class="section-padding">
+        <div class="section-title"><i class="fa-solid fa-building"></i> Distributor Information</div>
+        <div class="input-group">
+            <label>Distributor Name <span style="color:#ef4444">*</span></label>
+            <input type="text" id="distributor_name" placeholder="Enter Distributor Name" required>
+            <div class="error-message"></div>
+        </div>
+        <div class="input-group">
+            <label>ZSM Name <span style="color:#ef4444">*</span></label>
+            <input type="text" id="zsm_name" placeholder="Enter ZSM Name" required>
+            <div class="error-message"></div>
+        </div>
+        <div class="input-group">
+            <label>TSM Name <span style="color:#ef4444">*</span></label>
+            <input type="text" id="tsm_name" placeholder="Enter TSM Name" required>
+            <div class="error-message"></div>
+        </div>
+        <div class="input-group">
+            <label>Distributor LAPU Number <span style="color:#ef4444">*</span></label>
+            <input type="tel" id="dist_lapu" placeholder="10-digit LAPU" maxlength="10" required>
+            <div class="error-message"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. NOVEMBER TARGETS -->
+<div class="section-container">
+    <div class="section-padding">
+        <div class="section-title"><i class="fa-solid fa-bullseye"></i> November Targets</div>
+        <div class="input-group">
+            <label>November Gross <span style="color:#ef4444">*</span></label>
+            <input type="number" id="nov_gross" placeholder="e.g. 500" min="0" required>
+        </div>
+        <div class="input-group">
+            <label>November MNP <span style="color:#ef4444">*</span></label>
+            <input type="number" id="nov_mnp" placeholder="e.g. 10" min="0" required>
+        </div>
+    </div>
+</div>
+
+<!-- 3. DECEMBER TARGETS -->
+<div class="section-container">
+    <div class="section-padding">
+        <div class="section-title"><i class="fa-solid fa-bullseye"></i> December Targets</div>
+        <div class="input-group">
+            <label>December Gross <span style="color:#ef4444">*</span></label>
+            <input type="number" id="dec_gross" placeholder="e.g. 500" min="0" required>
+        </div>
+        <div class="input-group">
+            <label>December MNP <span style="color:#ef4444">*</span></label>
+            <input type="number" id="dec_mnp" placeholder="e.g. 10" min="0" required>
+        </div>
+    </div>
+</div>
+
+<!-- 4. JANUARY TARGETS -->
+<div class="section-container">
+    <div class="section-padding">
+        <div class="section-title"><i class="fa-solid fa-bullseye"></i> January Targets</div>
+        <div class="input-group">
+            <label>January Gross (Target & Achievement) <span style="color:#ef4444">*</span></label>
+            <div class="dual-inputs">
+                <input type="number" id="jan_gross_target" placeholder="Target" min="0" required>
+                <input type="number" id="jan_gross_achievement" placeholder="Achievement" min="0">
+            </div>
+        </div>
+        <div class="input-group">
+            <label>January MNP (Target & Achievement) <span style="color:#ef4444">*</span></label>
+            <div class="dual-inputs">
+                <input type="number" id="jan_mnp_target" placeholder="Target" min="0" required>
+                <input type="number" id="jan_mnp_achievement" placeholder="Achievement" min="0">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 5. INVESTMENTS -->
+<div class="section-container">
+    <div class="section-padding">
+        <div class="section-title"><i class="fa-solid fa-coins"></i> Investments</div>
+        <div class="input-group">
+            <label>Investment (with Security) <span style="color:#ef4444">*</span></label>
+            <input type="number" id="total_security" placeholder="Enter amount" min="0" required>
+        </div>
+        <div class="input-group">
+            <label>LAPU Stock Holdings <span style="color:#ef4444">*</span></label>
+            <input type="number" id="lapu_dth" placeholder="Enter holdings" min="0" required>
+        </div>
+    </div>
+</div>
+
+<!-- 6. EARNINGS -->
+<div class="section-container">
+    <div class="section-padding">
+        <div class="section-title"><i class="fa-solid fa-piggy-bank"></i> Earnings</div>
+        <div class="input-group">
+            <label>Lapu Commission (January) <span style="color:#ef4444">*</span></label>
+            <input type="number" id="lapu_commission" placeholder="Enter amount" min="0" required>
+        </div>
+        <div class="input-group">
+            <label>Tertiary <span style="color:#ef4444">*</span></label>
+            <input type="number" id="tertiary" placeholder="Enter amount" min="0" required>
+        </div>
+        <div class="input-group">
+            <label>ASC Incentive Paid (January) <span style="color:#ef4444">*</span></label>
+            <input type="number" id="asc_incentive" placeholder="Enter amount" min="0" required>
+        </div>
+    </div>
+</div>
+
+<!-- 7. EXPENSES -->
+<div class="section-container">
+    <div class="section-padding">
+        <div class="section-title"><i class="fa-solid fa-calculator"></i> Expenses (₹)</div>
+        <div class="input-group">
+            <label>ASC Salary <span style="color:#ef4444">*</span></label>
+            <input type="number" id="asc_cost" placeholder="e.g. 15000" min="0" required>
+        </div>
+        <div class="input-group">
+            <label>Rent <span style="color:#ef4444">*</span></label>
+            <input type="number" id="rent" placeholder="e.g. 25000" min="0" required>
+        </div>
+        <div class="input-group">
+            <label>Electricity <span style="color:#ef4444">*</span></label>
+            <input type="number" id="electricity" placeholder="e.g. 5000" min="0" required>
+        </div>
+        <div class="input-group">
+            <label>Miscellaneous <span style="color:#ef4444">*</span></label>
+            <input type="number" id="miscellaneous" placeholder="e.g. 8000" min="0" required>
+        </div>
+    </div>
+</div>
+
+<!-- 8. PLI + FEBRUARY -->
+<div class="section-container">
+    <div class="section-padding">
+        <div class="input-group">
+            <label>PLI Credited <span style="color:#ef4444">*</span></label>
+            <div class="triple-inputs">
+                <div><small>October</small><input type="number" id="oct_credited" placeholder="0" min="0"></div>
+                <div><small>November</small><input type="number" id="nov_credited" placeholder="0" min="0"></div>
+                <div><small>December</small><input type="number" id="dec_credited" placeholder="0" min="0"></div>
+            </div>
+        </div>
+        <div class="section-title" style="margin:18px 0 14px"><i class="fa-solid fa-bullseye"></i> February Targets</div>
+        <div class="input-group">
+            <label>PLI Target for February <span style="color:#ef4444">*</span></label>
+            <input type="number" id="feb_pli_target" placeholder="e.g. 500" min="0" required>
+        </div>
+        <div class="input-group">
+            <label>ASC (Required & Available) <span style="color:#ef4444">*</span></label>
+            <div class="dual-inputs">
+                <input type="number" id="asc_required" placeholder="Required" min="0" required>
+                <input type="number" id="asc_available" placeholder="Available" min="0">
+            </div>
+        </div>
+        <div class="input-group">
+            <label>Promotor (Required & Available) <span style="color:#ef4444">*</span></label>
+            <div class="dual-inputs">
+                <input type="number" id="promotor_required" placeholder="Required" min="0" required>
+                <input type="number" id="promotor_available" placeholder="Available" min="0">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 9. CAMERA + SUBMIT -->
+<div class="section-container">
+    <div class="section-padding">
+        <div class="section-title"><i class="fa-solid fa-camera"></i> No Due Certificate</div>
+        <div class="input-group">
+            <label>Capture Photo + Location <span style="color:#ef4444">*</span></label>
+            <input type="file" id="no_due_photo" accept="image/*" capture="environment" style="display:none">
+            <button type="button" class="camera-btn" id="captureBtn">
+                <i class="fa-solid fa-camera"></i> <span id="btnText">Tap to Capture</span>
+            </button>
+            <div class="photo-preview" id="photoPreview"><img id="previewImg" src="" alt="Preview"></div>
+            <div class="location-info" id="locationInfo">
+                <i class="fa-solid fa-map-marker-alt"></i> <span id="lat"></span>, <span id="lon"></span>
+            </div>
+            <div class="accuracy-info" id="accuracyInfo">
+                <i class="fa-solid fa-crosshairs"></i> Accuracy: <span id="accuracy"></span>m
+            </div>
+        </div>
+        <button type="button" class="submit-btn" id="submitBtn">
+            Submit Registration <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+// ========== YOUR WEB APP URL ==========
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmI0HMk13m1w8zBF8ay6x5knshUlNEVnvLzXvN0C40kqBKI3pu19agzaNKzwezwP--/exec';
+
+let photoCaptured = false;
+let currentLocation = null;
+let photoBase64 = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    setupCamera();
+    document.getElementById('submitBtn').addEventListener('click', validateAndSubmit);
+});
+
+function setupCamera() {
+    const captureBtn = document.getElementById('captureBtn');
+    const photoInput = document.getElementById('no_due_photo');
+    const btnText = document.getElementById('btnText');
+    
+    captureBtn.addEventListener('click', async function() {
+        captureBtn.classList.add('loading');
+        btnText.textContent = 'Getting GPS...';
+        
+        try {
+            const position = await getHighAccuracyLocation();
+            currentLocation = {
+                lat: position.coords.latitude,
+                lon: position.coords.longitude,
+                accuracy: position.coords.accuracy,
+                timestamp: new Date().toISOString()
+            };
+            
+            document.getElementById('lat').textContent = currentLocation.lat.toFixed(6);
+            document.getElementById('lon').textContent = currentLocation.lon.toFixed(6);
+            document.getElementById('accuracy').textContent = currentLocation.accuracy.toFixed(1);
+            document.getElementById('locationInfo').style.display = 'block';
+            document.getElementById('accuracyInfo').style.display = 'block';
+            
+            btnText.textContent = 'Opening camera...';
+            photoInput.click();
+        } catch (error) {
+            alert('Location Error: ' + error.message);
+            btnText.textContent = 'Tap to Capture';
+        }
+        captureBtn.classList.remove('loading');
+    });
+    
+    photoInput.addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Photo must be under 10MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                photoBase64 = event.target.result;
+                document.getElementById('previewImg').src = photoBase64;
+                document.getElementById('photoPreview').style.display = 'block';
+                photoCaptured = true;
+                captureBtn.classList.add('captured');
+                document.getElementById('btnText').innerHTML = '<i class="fa-solid fa-check"></i> Captured';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 }
 
-    document.getElementById('no_due_certificate').addEventListener('change', function() {
-    const fileName = document.getElementById('file-name');
-    fileName.textContent = this.files[0] ? this.files[0].name : '';
-});
-        // Real-time validation
-        const inputs = document.querySelectorAll('input[required]');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                const group = this.closest('.input-group');
-                if (this.value && this.checkValidity()) {
-                    group.classList.add('valid');
-                    group.classList.remove('error');
-                } else if (this.value) {
-                    group.classList.add('error');
-                    group.classList.remove('valid');
-                }
-            });
+function getHighAccuracyLocation() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error('Geolocation not supported'));
+            return;
+        }
+        
+        let attempts = 0;
+        let bestResult = null;
+        
+        const tryLocation = () => {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    attempts++;
+                    if (!bestResult || position.coords.accuracy < bestResult.coords.accuracy) {
+                        bestResult = position;
+                    }
+                    if (position.coords.accuracy <= 15 || attempts >= 3) {
+                        resolve(bestResult);
+                    } else {
+                        setTimeout(tryLocation, 500);
+                    }
+                },
+                (error) => {
+                    if (bestResult) resolve(bestResult);
+                    else reject(error);
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            );
+        };
+        tryLocation();
+    });
+}
 
-            input.addEventListener('input', function() {
-                const group = this.closest('.input-group');
-                if (this.value) {
-                    group.classList.remove('error');
-                }
-            });
-        });
+function validateAndSubmit() {
+    if (!photoCaptured || !currentLocation) {
+        alert('Please capture photo with location first');
+        return;
+    }
+    
+    let allValid = true;
+    document.querySelectorAll('input[required]').forEach(field => {
+        if (field.type !== 'file' && !field.value.trim()) {
+            field.classList.add('invalid');
+            allValid = false;
+        }
+    });
+    
+    if (!allValid) {
+        alert('Please fill all required fields');
+        return;
+    }
+    
+    showLoading('Submitting...');
+    
+    const data = {
+        submission_timestamp: new Date().toISOString(),
+        distributor_name: document.getElementById('distributor_name').value.trim(),
+        zsm_name: document.getElementById('zsm_name').value.trim(),
+        tsm_name: document.getElementById('tsm_name').value.trim(),
+        dist_lapu: document.getElementById('dist_lapu').value.trim(),
+        nov_gross: document.getElementById('nov_gross').value || '0',
+        nov_mnp: document.getElementById('nov_mnp').value || '0',
+        dec_gross: document.getElementById('dec_gross').value || '0',
+        dec_mnp: document.getElementById('dec_mnp').value || '0',
+        jan_gross_target: document.getElementById('jan_gross_target').value || '0',
+        jan_gross_achievement: document.getElementById('jan_gross_achievement').value || '0',
+        jan_mnp_target: document.getElementById('jan_mnp_target').value || '0',
+        jan_mnp_achievement: document.getElementById('jan_mnp_achievement').value || '0',
+        total_security: document.getElementById('total_security').value || '0',
+        lapu_dth: document.getElementById('lapu_dth').value || '0',
+        lapu_commission: document.getElementById('lapu_commission').value || '0',
+        tertiary: document.getElementById('tertiary').value || '0',
+        asc_incentive: document.getElementById('asc_incentive').value || '0',
+        asc_cost: document.getElementById('asc_cost').value || '0',
+        rent: document.getElementById('rent').value || '0',
+        electricity: document.getElementById('electricity').value || '0',
+        miscellaneous: document.getElementById('miscellaneous').value || '0',
+        oct_credited: document.getElementById('oct_credited').value || '0',
+        nov_credited: document.getElementById('nov_credited').value || '0',
+        dec_credited: document.getElementById('dec_credited').value || '0',
+        feb_pli_target: document.getElementById('feb_pli_target').value || '0',
+        asc_required: document.getElementById('asc_required').value || '0',
+        asc_available: document.getElementById('asc_available').value || '0',
+        promotor_required: document.getElementById('promotor_required').value || '0',
+        promotor_available: document.getElementById('promotor_available').value || '0',
+        latitude: currentLocation.lat,
+        longitude: currentLocation.lon,
+        location_accuracy: currentLocation.accuracy,
+        capture_timestamp: currentLocation.timestamp,
+        photo_base64: photoBase64
+    };
+    
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(() => {
+        hideLoading();
+        showSuccess();
+    })
+    .catch(error => {
+        hideLoading();
+        alert('Error: ' + error.message);
+    });
+}
 
-        // Form submission
-        const form = document.getElementById('distributorForm');
-        const submitBtn = document.querySelector('.submit-btn');
-
-        form.addEventListener('submit', function(e) {
-            let isValid = true;
-            
-            // Check all required fields
-            const requiredInputs = form.querySelectorAll('input[required]');
-            requiredInputs.forEach(input => {
-                if (!input.value) {
-                    input.closest('.input-group').classList.add('error');
-                    isValid = false;
-                }
-            });
-
-            if (!isValid) {
-                e.preventDefault();
-                return false;
-            }
-
-            submitBtn.classList.add('loading');
-            
-            // Simulate API call
-            setTimeout(() => {
-                submitBtn.classList.remove('loading');
-            }, 2500);
-        });
-
-        // Smooth focus scroll
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('focus', function() {
-                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            });
-        });
-
-        // Auto-format currency fields
-        const currencyFields = ['asc_cost', 'rent', 'electricity', 'miscellaneous'];
-        currencyFields.forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            field.addEventListener('input', function() {
-                let value = this.value.replace(/\D/g, '');
-                if (value) {
-                    this.value = parseInt(value).toLocaleString();
-                }
-            });
-        });
-    </script>
+function showLoading(text) {
+    document.getElementById('loadingText').textContent = text;
+    document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+function showSuccess() { document.getElementById('successModal').classList.add('show'); }
+</script>
 </body>
 </html>
