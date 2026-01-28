@@ -1252,13 +1252,29 @@
         function initializeValidations() {
         const outletName = document.getElementById('outletName');
         if (outletName) {
-        restrictToAlphanumeric(outletName);
-        outletName.addEventListener('blur', () => validateField(outletName));
-        outletName.addEventListener('input', () => {
-        if (outletName.classList.contains('invalid')) {
-        validateField(outletName);
-        }
-        });
+            // Custom handler for Outlet Name - allows alphabets, numbers, spaces, hyphens
+            outletName.addEventListener('input', function() {
+                this.value = this.value.replace(/[^A-Za-z0-9\s\-]/g, '');
+            });
+            outletName.addEventListener('keypress', function(e) {
+                const char = e.key;
+                if (char.length > 1) return;
+                if (!/[A-Za-z0-9\s\-]/.test(char)) {
+                    e.preventDefault();
+                }
+            });
+            outletName.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const cleanedText = pastedText.replace(/[^A-Za-z0-9\s\-]/g, '');
+                document.execCommand('insertText', false, cleanedText);
+            });
+            outletName.addEventListener('blur', () => validateField(outletName));
+            outletName.addEventListener('input', () => {
+                if (outletName.classList.contains('invalid')) {
+                    validateField(outletName);
+                }
+            });
         }
         const fseContact = document.getElementById('fseContact');
         if (fseContact) {
