@@ -781,8 +781,8 @@
                     <td class="left">Outlet Name<span class="required-star">*</span></td>
                     <td>
                         <div class="input-wrapper">
-                            <input type="text" id="outletName" placeholder="Enter outlet name" data-validation="name" required>
-                            <div class="input-hint">Only alphabets and spaces</div>
+                            <input type="text" id="outletName" placeholder="Enter outlet name" data-validation="alphanumeric" required>                            
+                            <div class="input-hint">Alphabets, numbers, spaces and hyphens allowed</div>
                             <div class="error-message" id="outletName-error">Please enter a valid name</div>
                         </div>
                     </td>
@@ -1252,7 +1252,7 @@
         function initializeValidations() {
         const outletName = document.getElementById('outletName');
         if (outletName) {
-        restrictToAlphabets(outletName);
+        restrictToAlphanumeric(outletName);
         outletName.addEventListener('blur', () => validateField(outletName));
         outletName.addEventListener('input', () => {
         if (outletName.classList.contains('invalid')) {
