@@ -77,6 +77,20 @@
     input.valid { border-color: #10b981 !important; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15) !important; }
     input.invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25) !important; animation: shake 0.4s; }
     
+    /* Readonly input styling */
+    input[readonly] {
+        background: rgba(16, 185, 129, 0.15) !important;
+        border-color: rgba(16, 185, 129, 0.4) !important;
+        color: #10b981 !important;
+        cursor: not-allowed !important;
+        font-weight: 600 !important;
+    }
+    
+    input[readonly]:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+    
     @keyframes shake {
         0%, 100% { transform: translateX(0); }
         25% { transform: translateX(-3px); }
@@ -85,6 +99,19 @@
     
     .input-group { margin-bottom: 12px; }
     small { display: block; font-size: 9px; color: rgba(226, 232, 240, 0.8); margin-bottom: 4px; font-weight: 500; }
+    
+    /* Auto-fill hint */
+    .auto-fill-hint {
+        font-size: 8px;
+        color: #10b981;
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .auto-fill-hint i {
+        font-size: 10px;
+    }
     
     .camera-btn {
         width: 100%; padding: 14px 16px; 
@@ -365,7 +392,10 @@
         </div>
         <div class="input-group">
             <label>PLI December <span style="color:#ef4444">*</span></label>
-            <input type="number" id="tertiary" placeholder="Enter amount" min="0" required>
+            <input type="number" id="pli_dec" placeholder="Enter amount" min="0" required>
+            <div class="auto-fill-hint">
+                <i class="fa-solid fa-link"></i> This value auto-fills "PLI Credited → December" below
+            </div>
         </div>
         <div class="input-group">
             <label>ASC Incentive Paid (January) <span style="color:#ef4444">*</span></label>
@@ -403,9 +433,21 @@
         <div class="input-group">
             <label>PLI Credited <span style="color:#ef4444">*</span></label>
             <div class="triple-inputs">
-                <div><small>October</small><input type="number" id="oct_credited" placeholder="0" min="0"></div>
-                <div><small>November</small><input type="number" id="nov_credited" placeholder="0" min="0"></div>
-                <div><small>December</small><input type="number" id="dec_credited" placeholder="0" min="0"></div>
+                <div>
+                    <small>October</small>
+                    <input type="number" id="oct_credited" placeholder="0" min="0">
+                </div>
+                <div>
+                    <small>November</small>
+                    <input type="number" id="nov_credited" placeholder="0" min="0">
+                </div>
+                <div>
+                    <small>December <i class="fa-solid fa-lock" style="font-size:8px; color:#10b981;"></i></small>
+                    <input type="number" id="dec_credited" placeholder="Auto-filled" min="0" readonly>
+                    <div class="auto-fill-hint">
+                        <i class="fa-solid fa-arrow-up"></i> From PLI December
+                    </div>
+                </div>
             </div>
         </div>
         <div class="section-title" style="margin:18px 0 14px"><i class="fa-solid fa-bullseye"></i> February Targets</div>
@@ -471,8 +513,7 @@
 // =============================================
 // CONFIGURATION
 // =============================================
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwruGG00jpxw_PhdKP55xthKU8XiSXYuAUAXp617G1kBXv0NImoksxv6tsHACYBN006/exec';
-
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyW4fjzlfOiDda7IoBMsrue1Ixl6hVZQb8H3spSfi-z/devhttps://script.google.com/macros/s/AKfycbzuCltYN05Hbu9W6_yHqjgw59GM0twWwJBnmmdalqTMW4eScKk9FK0oMCZaTWpc3N68nw/exec';
 // =============================================
 // GLOBAL VARIABLES
 // =============================================
@@ -531,6 +572,38 @@ function showToast(message, type = 'success', duration = 3000) {
 }
 
 // =============================================
+// AUTO-POPULATE: pli_dec → dec_credited
+// =============================================
+function setupAutoPopulate() {
+    const pliDecInput = document.getElementById('pli_dec');
+    const decCreditedInput = document.getElementById('dec_credited');
+    
+    if (pliDecInput && decCreditedInput) {
+        // Sync on input (real-time as user types)
+        pliDecInput.addEventListener('input', function() {
+            decCreditedInput.value = this.value || '';
+            
+            // Add visual feedback
+            if (this.value) {
+                decCreditedInput.classList.add('valid');
+            } else {
+                decCreditedInput.classList.remove('valid');
+            }
+        });
+        
+        // Also sync on change (when field loses focus)
+        pliDecInput.addEventListener('change', function() {
+            decCreditedInput.value = this.value || '';
+        });
+        
+        // Initial sync if pli_dec already has a value
+        if (pliDecInput.value) {
+            decCreditedInput.value = pliDecInput.value;
+        }
+    }
+}
+
+// =============================================
 // PRECISE LOCATION METHOD (Returns Promise)
 // =============================================
 function getPreciseLocationPromise() {
@@ -544,7 +617,6 @@ function getPreciseLocationPromise() {
             return;
         }
 
-        // Try to get high accuracy location with multiple attempts
         let bestPosition = null;
         let attempts = 0;
         const maxAttempts = 3;
@@ -555,12 +627,10 @@ function getPreciseLocationPromise() {
                     attempts++;
                     const coords = position.coords;
                     
-                    // Keep best position (lowest accuracy value = most accurate)
                     if (!bestPosition || coords.accuracy < bestPosition.coords.accuracy) {
                         bestPosition = position;
                     }
                     
-                    // If good accuracy or max attempts reached
                     if (coords.accuracy <= 20 || attempts >= maxAttempts) {
                         const finalCoords = bestPosition.coords;
                         const latitude = finalCoords.latitude.toFixed(6);
@@ -582,14 +652,12 @@ function getPreciseLocationPromise() {
                             method: 'Device GPS'
                         });
                     } else {
-                        // Try again for better accuracy
                         setTimeout(tryGetPosition, 500);
                     }
                 },
                 (error) => {
                     console.error("Geolocation error:", error);
                     if (bestPosition) {
-                        // Use best position we got
                         const finalCoords = bestPosition.coords;
                         resolve({
                             latitude: finalCoords.latitude.toFixed(6),
@@ -683,11 +751,8 @@ function displayGPSInfo(gpsData, source) {
 function extractGPSFromImage(file) {
     return new Promise((resolve) => {
         const device = getDeviceInfo();
-        console.log('Device:', device);
         
-        // iOS strips EXIF data, skip extraction
         if (device.isIOS) {
-            console.log('iOS detected - skipping EXIF extraction');
             resolve(null);
             return;
         }
@@ -958,15 +1023,12 @@ async function handleCameraCapture() {
     const loadingText = document.getElementById('loadingText');
     const loadingSubtext = document.getElementById('loadingSubtext');
     
-    // Hide permission help
     document.getElementById('permissionHelp').style.display = 'none';
     
-    // ========== iOS FIX: Open camera FIRST (synchronously) ==========
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     
-    // Force camera on mobile devices
     if (device.isIOS) {
         input.setAttribute('capture', 'camera');
     } else if (device.isMobile) {
@@ -976,7 +1038,6 @@ async function handleCameraCapture() {
     input.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
     document.body.appendChild(input);
     
-    // Handle file selection
     input.onchange = async function() {
         if (!this.files || !this.files[0]) {
             if (input.parentNode) document.body.removeChild(input);
@@ -986,7 +1047,6 @@ async function handleCameraCapture() {
         const file = this.files[0];
         originalFile = file;
         
-        // ========== NOW get location (after camera) ==========
         loading.style.display = 'flex';
         loadingText.textContent = 'Getting your location...';
         loadingSubtext.textContent = 'Please wait...';
@@ -996,14 +1056,11 @@ async function handleCameraCapture() {
             locationData = await getPreciseLocationPromise();
         } catch (locError) {
             console.error('Location error:', locError);
-            // Continue without location
         }
         
-        // ========== Process photo ==========
         loadingText.textContent = 'Processing photo...';
         loadingSubtext.textContent = 'Almost done...';
         
-        // Check if photo is from gallery (more than 2 minutes old)
         const fileTime = file.lastModified;
         const currentTime = Date.now();
         const timeDiff = currentTime - fileTime;
@@ -1022,26 +1079,22 @@ async function handleCameraCapture() {
             loading.style.display = 'flex';
         }
         
-        // Read the file
         const reader = new FileReader();
         
         reader.onload = async function(e) {
             capturedPhoto = e.target.result;
             photoTimestamp = new Date().toLocaleString('en-IN');
             
-            // Show photo preview
             const photoPreview = document.getElementById('photoPreview');
             photoPreview.src = capturedPhoto;
             photoPreview.style.display = 'block';
             document.getElementById('photoSection').style.display = 'block';
             
-            // Try to extract EXIF GPS (skip on iOS)
             let exifGPS = null;
             if (!device.isIOS) {
                 exifGPS = await extractGPSFromImage(file);
             }
             
-            // Priority: Device GPS > EXIF GPS
             if (locationData) {
                 displayGPSInfo(locationData, 'device');
             } else if (exifGPS) {
@@ -1052,7 +1105,6 @@ async function handleCameraCapture() {
             
             loading.style.display = 'none';
             
-            // Update capture button
             const captureBtn = document.getElementById('captureBtn');
             const btnText = document.getElementById('btnText');
             const cameraIcon = document.getElementById('cameraIcon');
@@ -1061,16 +1113,13 @@ async function handleCameraCapture() {
             cameraIcon.className = 'fa-solid fa-check-circle';
             btnText.innerHTML = 'Photo & GPS Captured!';
             
-            // Show success message
             const successMsg = locationData 
                 ? 'Photo + GPS captured!' 
                 : (exifGPS ? 'Photo + EXIF GPS captured!' : 'Photo captured (no GPS)');
             showToast(successMsg, 'success', 3000);
             
-            // Enable Submit button after photo capture
             document.getElementById('submitBtn').disabled = false;
             
-            // Cleanup
             if (input.parentNode) document.body.removeChild(input);
         };
         
@@ -1083,7 +1132,6 @@ async function handleCameraCapture() {
         reader.readAsDataURL(file);
     };
     
-    // ========== MUST be synchronous - no await before this! ==========
     input.click();
 }
 
@@ -1091,18 +1139,18 @@ async function handleCameraCapture() {
 // FORM SUBMISSION
 // =============================================
 function validateAndSubmit() {
-    // Check photo
     if (!capturedPhoto) {
         showToast('Please capture photo first', 'error');
         document.getElementById('captureBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
     }
     
-    // Validate required fields
     let allValid = true;
     let firstInvalid = null;
     
     document.querySelectorAll('input[required]').forEach(field => {
+        if (field.readOnly) return;
+        
         if (field.type !== 'file' && field.type !== 'hidden' && !field.value.trim()) {
             field.classList.add('invalid');
             if (!firstInvalid) firstInvalid = field;
@@ -1121,7 +1169,6 @@ function validateAndSubmit() {
         return;
     }
     
-    // Show loading
     const loading = document.getElementById('loadingOverlay');
     const loadingText = document.getElementById('loadingText');
     const loadingSubtext = document.getElementById('loadingSubtext');
@@ -1130,7 +1177,7 @@ function validateAndSubmit() {
     loadingText.textContent = 'Submitting...';
     loadingSubtext.textContent = 'Please wait...';
     
-    // Collect data
+    // Collect data - UPDATED: pli_dec instead of tertiary
     const data = {
         submission_timestamp: new Date().toISOString(),
         distributor_name: getValue('distributor_name'),
@@ -1148,7 +1195,7 @@ function validateAndSubmit() {
         total_security: getValue('total_security') || '0',
         lapu_dth: getValue('lapu_dth') || '0',
         lapu_commission: getValue('lapu_commission') || '0',
-        tertiary: getValue('tertiary') || '0',
+        pli_dec: getValue('pli_dec') || '0',  // CHANGED FROM tertiary
         asc_incentive: getValue('asc_incentive') || '0',
         asc_cost: getValue('asc_cost') || '0',
         rent: getValue('rent') || '0',
@@ -1170,7 +1217,6 @@ function validateAndSubmit() {
         photo_base64: capturedPhoto
     };
     
-    // Send to Google Sheets
     fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -1192,7 +1238,6 @@ function validateAndSubmit() {
     .catch(error => {
         loading.style.display = 'none';
         console.error('Submit error:', error);
-        // With no-cors, we can't read response but it usually works
         document.getElementById('successMsg').textContent = 'Registration submitted!';
         document.getElementById('successModal').classList.add('show');
     });
@@ -1207,21 +1252,23 @@ function getValue(id) {
 // EVENT LISTENERS
 // =============================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Capture button
+    // Setup auto-populate for pli_dec → dec_credited
+    setupAutoPopulate();
+    
     document.getElementById('captureBtn').addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
         handleCameraCapture();
     });
     
-    // Submit button
     document.getElementById('submitBtn').addEventListener('click', function(e) {
         e.preventDefault();
         validateAndSubmit();
     });
     
-    // Input validation listeners
     document.querySelectorAll('input').forEach(input => {
+        if (input.readOnly) return;
+        
         input.addEventListener('input', function() {
             if (this.value.trim()) {
                 this.classList.remove('invalid');
@@ -1233,9 +1280,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
-
-
-
-
-
-
