@@ -1225,26 +1225,26 @@
     }
 
         function restrictToAlphanumeric(input) {
-            input.addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^A-Za-z0-9\s\-]/g, '');
-            });
-            
-            input.addEventListener('keypress', function(e) {
-                const char = e.key;
-                // Allow control keys (Backspace, Enter, Arrow keys, etc.)
-                if (char.length > 1) return;
-                if (!/[A-Za-z0-9\s\-]/.test(char)) {
-                    e.preventDefault();
-                }
-            });
-            
-            input.addEventListener('paste', function(e) {
+        input.addEventListener('input', function(e) {
+            const cursorPos = this.selectionStart;
+            const oldValue = this.value;
+            this.value = this.value.replace(/[^A-Za-z0-9\s\-]/g, '');
+        });
+        
+        input.addEventListener('keypress', function(e) {
+            const char = e.key;
+            if (char.length > 1) return; // Allow control keys            if (!/[A-Za-z0-9\s\-]/.test(char)) {
                 e.preventDefault();
-                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-                const cleanedText = pastedText.replace(/[^A-Za-z0-9\s\-]/g, '');
-                document.execCommand('insertText', false, cleanedText);
-            });
-        }
+            }
+        });
+        
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const cleanedText = pastedText.replace(/[^A-Za-z0-9\s\-]/g, '');
+            document.execCommand('insertText', false, cleanedText);
+        });
+    }
 
     // =============================================
     // INITIALIZE VALIDATIONS
@@ -1252,29 +1252,13 @@
         function initializeValidations() {
         const outletName = document.getElementById('outletName');
         if (outletName) {
-            // Custom handler for Outlet Name - allows alphabets, numbers, spaces, hyphens
-            outletName.addEventListener('input', function() {
-                this.value = this.value.replace(/[^A-Za-z0-9\s\-]/g, '');
-            });
-            outletName.addEventListener('keypress', function(e) {
-                const char = e.key;
-                if (char.length > 1) return;
-                if (!/[A-Za-z0-9\s\-]/.test(char)) {
-                    e.preventDefault();
-                }
-            });
-            outletName.addEventListener('paste', function(e) {
-                e.preventDefault();
-                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-                const cleanedText = pastedText.replace(/[^A-Za-z0-9\s\-]/g, '');
-                document.execCommand('insertText', false, cleanedText);
-            });
-            outletName.addEventListener('blur', () => validateField(outletName));
-            outletName.addEventListener('input', () => {
-                if (outletName.classList.contains('invalid')) {
-                    validateField(outletName);
-                }
-            });
+        restrictToAlphanumeric(outletName);
+        outletName.addEventListener('blur', () => validateField(outletName));
+        outletName.addEventListener('input', () => {
+        if (outletName.classList.contains('invalid')) {
+        validateField(outletName);
+        }
+        });
         }
         const fseContact = document.getElementById('fseContact');
         if (fseContact) {
