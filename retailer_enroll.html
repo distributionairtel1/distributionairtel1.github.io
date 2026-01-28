@@ -782,7 +782,7 @@
                     <td>
                         <div class="input-wrapper">
                             <input type="text" id="outletName" placeholder="Enter outlet name" data-validation="name" required>
-                            <div class="input-hint">Only alphabets and spaces</div>
+                            <div class="input-hint">Alphabets, numbers and spaces</div>
                             <div class="error-message" id="outletName-error">Please enter a valid name</div>
                         </div>
                     </td>
@@ -1026,8 +1026,8 @@
     // =============================================
     const validationRules = {
         name: {
-            pattern: /^[A-Za-z\s]+$/,
-            message: 'Only alphabets and spaces allowed',
+            pattern: /^[A-Za-z0-9\s]+$/,
+            message: 'Only alphabets, numbers and spaces allowed',
             minLength: 2,
             maxLength: 100
         },
@@ -1140,7 +1140,7 @@
         input.addEventListener('input', function(e) {
             const cursorPos = this.selectionStart;
             const oldValue = this.value;
-            this.value = this.value.replace(/[^A-Za-z\s]/g, '');
+            this.value = this.value.replace(/[^A-Za-z0-9\s]/g, '');
             
             if (oldValue.length !== this.value.length) {
                 const diff = oldValue.length - this.value.length;
@@ -1150,7 +1150,7 @@
         
         input.addEventListener('keypress', function(e) {
             const char = String.fromCharCode(e.keyCode || e.which);
-            if (!/[A-Za-z\s]/.test(char)) {
+            if (!/[A-Za-z0-9\s]/.test(char)) {
                 e.preventDefault();
             }
         });
@@ -1158,7 +1158,7 @@
         input.addEventListener('paste', function(e) {
             e.preventDefault();
             const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-            const cleanedText = pastedText.replace(/[^A-Za-z\s]/g, '');
+            const cleanedText = pastedText.replace(/[^A-Za-z0-9\s]/g, '');
             document.execCommand('insertText', false, cleanedText);
         });
     }
