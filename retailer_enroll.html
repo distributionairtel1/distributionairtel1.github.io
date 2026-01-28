@@ -829,10 +829,10 @@
                 <input type="radio" name="tier" id="chckGold" value="gold">
                 <span>Gold</span>
             </label>
-            <label class="tier-btn tier-executive">
+            <!-- <label class="tier-btn tier-executive">
                 <input type="radio" name="tier" id="chckExec" value="executive">
                 <span>Executive</span>
-            </label>
+            </label> -->
         </div>
         <!-- Validation Summary -->
         <div class="validation-summary" id="validationSummary">
@@ -975,8 +975,7 @@
                 <tr id="slab-10"><td>10</td><td>₹75/MNP</td></tr>
                 <tr id="slab-20"><td>20</td><td>₹125/MNP</td></tr>
                 <tr id="slab-30"><td>30</td><td>₹150/MNP</td></tr>
-                <tr id="slab-40"><td>40</td><td>₹175/MNP</td></tr>
-                <tr id="slab-50"><td>50+</td><td>₹200/MNP</td></tr>
+                <tr id="slab-50"><td>40+</td><td>₹200/MNP</td></tr>
             </table>
         </div>
         <!-- HIDDEN SECTIONS END -->
@@ -1772,22 +1771,17 @@ function calculateDeviceShare() {
     // =============================================
     
 const SLAB_THRESHOLDS = [
-        { min: 50, rate: 200, label: '50+', id: 'slab-50' },
-        { min: 40, rate: 175, label: '40', id: 'slab-40' },
+        { min: 40, rate: 200, label: '40+', id: 'slab-40' },
         { min: 30, rate: 150, label: '30', id: 'slab-30' },
         { min: 20, rate: 125, label: '20', id: 'slab-20' },
         { min: 10, rate: 75, label: '10', id: 'slab-10' },
-        { min: 5, rate: 50, label: '5', id: 'slab-5' }
-
     ];
 
     function getSlabRate(grossCount) {
-        if (grossCount >= 50) return 200;
-        if (grossCount >= 40) return 175;
+        if (grossCount >= 40) return 200;
         if (grossCount >= 30) return 150;
         if (grossCount >= 20) return 125;
         if (grossCount >= 10) return 75;
-        if (grossCount >= 5) return 50;
         return 0;
     }
 
@@ -2481,8 +2475,7 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
                 { target: '10', incentive: 'Rs.75/MNP', min: 10 },
                 { target: '20', incentive: 'Rs.125/MNP', min: 20 },
                 { target: '30', incentive: 'Rs.150/MNP', min: 30 },
-                { target: '40', incentive: 'Rs.175/MNP', min: 40 },
-                { target: '50+', incentive: 'Rs.200/MNP', min: 50 }
+                { target: '40+', incentive: 'Rs.200/MNP', min: 40 }
             ];
             const currentGross = parseInt(document.getElementById('grossCount').value) || 0;
             const slabColWidth = contentWidth / 2;
