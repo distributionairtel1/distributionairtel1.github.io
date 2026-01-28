@@ -1249,17 +1249,24 @@
     // =============================================
     // INITIALIZE VALIDATIONS
     // =============================================
-    function initializeValidations() {
-        const outletName = document.getElementById('outletName');
-        if (outletName) {
-            restrictToAlphabets(outletName);
-            outletName.addEventListener('blur', () => validateField(outletName));
-            outletName.addEventListener('input', () => {
-                if (outletName.classList.contains('invalid')) {
-                    validateField(outletName);
-                }
-            });
-        }
+function initializeValidations() {
+    const outletName = document.getElementById('outletName');
+    if (outletName) {
+        // Replace restrictToAlphabets with alphanumeric restriction
+        outletName.addEventListener('input', function(e) {
+            // Allow only letters, numbers (alphanumeric)
+            e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '');
+        });
+        
+        outletName.addEventListener('blur', () => validateField(outletName));
+        outletName.addEventListener('input', () => {
+            if (outletName.classList.contains('invalid')) {
+                validateField(outletName);
+            }
+        });
+    }
+}
+
 
         const fseContact = document.getElementById('fseContact');
         if (fseContact) {
