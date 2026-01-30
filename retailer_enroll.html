@@ -2258,30 +2258,63 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
         
         // --- 1. VALIDATION FIRST ---
         // Tier validation
-        if (!selectedTier) {
-            alert('Please select a Tier before generating PDF.');
+// --- 1. VALIDATION FIRST ---
+
+// Tier validation
+    if (!selectedTier) {
+        alert('Please select a Tier before generating PDF.');
+        return;
+    }
+
+    // Run existing field validations visually
+    const allInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+    allInputs.forEach(input => input.dispatchEvent(new Event('blur')));
+
+    // 🚫 STOP if any field is marked invalid
+    const invalidField = document.querySelector('input.invalid');
+    if (invalidField) {
+        alert('Please correct the highlighted fields before generating PDF.');
+        invalidField.focus();
+        return;
+    }
+
+    // 🔢 Strict 10-digit validation for specific fields
+    const lapuNo = document.getElementById('lapuNo');
+    const fseContact = document.getElementById('fseContact');
+    const tsmContact = document.getElementById('tsmContact');
+
+    const phoneRegex = /^\d{10}$/;
+
+    if (!phoneRegex.test(lapuNo.value.trim())) {
+        alert('Lapu No must be exactly 10 digits.');
+        lapuNo.classList.add('invalid');
+        lapuNo.focus();
+        return;
+    }
+
+    if (!phoneRegex.test(fseContact.value.trim())) {
+        alert('FSE Contact must be exactly 10 digits.');
+        fseContact.classList.add('invalid');
+        fseContact.focus();
+        return;
+    }
+
+    if (!phoneRegex.test(tsmContact.value.trim())) {
+        alert('TSM/SE Contact must be exactly 10 digits.');
+        tsmContact.classList.add('invalid');
+        tsmContact.focus();
+        return;
+    }
+    // Validate ALL number fields
+    const numberFields = document.querySelectorAll('input[type="number"]:not([readonly])');
+    for (const field of numberFields) {
+        if (field.value === '' || isNaN(field.value)) {
+            alert('Please fill all numeric fields before generating PDF.');
+            field.focus();
             return; // Stops here if invalid
         }
+    }
 
-        // Validate ALL text fields
-        const textFields = document.querySelectorAll('input[type="text"]:not([readonly])');
-        for (const field of textFields) {
-            if (!field.value.trim()) {
-                alert('Please fill all text fields before generating PDF.');
-                field.focus();
-                return; // Stops here if invalid
-            }
-        }
-
-        // Validate ALL number fields
-        const numberFields = document.querySelectorAll('input[type="number"]:not([readonly])');
-        for (const field of numberFields) {
-            if (field.value === '' || isNaN(field.value)) {
-                alert('Please fill all numeric fields before generating PDF.');
-                field.focus();
-                return; // Stops here if invalid
-            }
-        }
         
         // --- 2. GENERATE PDF ---
         const { jsPDF } = window.jspdf;
