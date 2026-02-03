@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Airtel Distributor Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- EXIF.js for GPS extraction -->
     <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/exif.min.js"></script>
-    <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- jsPDF AutoTable plugin for tables -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -100,7 +97,7 @@
         75% { transform: translateX(3px); }
     }
     
-    .input-group { margin-bottom: 12px; }
+    .input-group { margin-bottom: 12px; position: relative; }
     small { display: block; font-size: 9px; color: rgba(226, 232, 240, 0.8); margin-bottom: 4px; font-weight: 500; }
     
     .auto-fill-hint {
@@ -108,6 +105,29 @@
         display: flex; align-items: center; gap: 4px;
     }
     .auto-fill-hint i { font-size: 10px; }
+    
+    .error-message {
+        display: none;
+        font-size: 9px;
+        color: #ef4444;
+        margin-top: 4px;
+        padding: 4px 8px;
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 4px;
+        border-left: 2px solid #ef4444;
+    }
+    .error-message.show { display: block; }
+    .error-message i { margin-right: 4px; }
+    
+    .field-hint {
+        font-size: 9px;
+        color: #94a3b8;
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .field-hint i { font-size: 10px; color: #60a5fa; }
     
     .camera-btn {
         width: 100%; padding: 14px 16px; 
@@ -122,7 +142,19 @@
         border-color: #10b981; border-style: solid;
         background: linear-gradient(145deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.12)); 
     }
-    .camera-btn.error { border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+    .camera-btn.error { 
+        border-color: #ef4444; 
+        background: rgba(239, 68, 68, 0.1);
+        animation: shake 0.4s;
+    }
+    .camera-btn.required-highlight {
+        animation: pulse-red 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-red {
+        0%, 100% { border-color: rgba(239, 68, 68, 0.4); }
+        50% { border-color: rgba(239, 68, 68, 1); box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+    }
     
     .dual-inputs { display: flex; gap: 8px; }
     .dual-inputs input { flex: 1; min-width: 0; }
@@ -138,9 +170,58 @@
     }
     .submit-btn:active { transform: scale(0.98); }
     .submit-btn.loading { pointer-events: none; opacity: 0.8; }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .submit-btn:disabled { 
+        opacity: 0.5; 
+        cursor: not-allowed; 
+        background: linear-gradient(135deg, #6b7280, #4b5563);
+    }
     
-    /* PDF Download Button */
+    .validation-summary {
+        display: none;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-radius: 8px;
+        color: #fca5a5;
+    }
+    .validation-summary.show { display: block; }
+    .validation-summary h4 {
+        font-size: 12px;
+        color: #ef4444;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .validation-summary ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .validation-summary li {
+        font-size: 10px;
+        padding: 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .validation-summary li i { color: #ef4444; font-size: 10px; }
+    
+    .photo-warning {
+        display: none;
+        margin-top: 8px;
+        padding: 10px;
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-radius: 6px;
+        color: #fca5a5;
+        font-size: 11px;
+        text-align: center;
+    }
+    .photo-warning.show { display: block; }
+    .photo-warning i { margin-right: 6px; color: #ef4444; }
+    
     .pdf-btn {
         width: 100%; margin-top: 12px; padding: 14px 18px;
         background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none; border-radius: 10px;
@@ -236,6 +317,48 @@
     .permission-help ol { color: #e2e8f0; font-size: 10px; padding-left: 16px; line-height: 1.6; }
     .permission-help li { margin-bottom: 4px; }
     
+    .required-star { color: #ef4444; font-weight: bold; }
+    
+    .form-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        margin-bottom: 12px;
+        background: linear-gradient(145deg, rgba(25, 25, 40, 0.92), rgba(45, 45, 65, 0.92));
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .progress-text {
+        font-size: 11px;
+        color: #94a3b8;
+    }
+    .progress-bar {
+        flex: 1;
+        height: 6px;
+        background: rgba(100, 100, 130, 0.3);
+        border-radius: 3px;
+        margin-left: 12px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #10b981, #34d399);
+        border-radius: 3px;
+        transition: width 0.3s ease;
+        width: 0%;
+    }
+    
+    /* Hidden file input for camera */
+    #cameraInput {
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+    }
+    
     @media (max-width: 380px) {
         body { padding: 6px; }
         .section-padding { padding: 10px; }
@@ -253,6 +376,9 @@
 </style>
 </head>
 <body>
+
+<!-- Hidden Camera Input - IMPORTANT: Must be in DOM -->
+<input type="file" id="cameraInput" accept="image/*" capture="environment">
 
 <!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay">
@@ -297,20 +423,48 @@
     <div class="section-padding">
         <div class="section-title"><i class="fa-solid fa-building"></i> Distributor Information</div>
         <div class="input-group">
-            <label>Distributor Name <span style="color:#ef4444">*</span></label>
-            <input type="text" id="distributor_name" placeholder="Enter Distributor Name" required>
+            <label>Distributor Name <span class="required-star">*</span></label>
+            <input type="text" id="distributor_name" placeholder="Enter Distributor Name" 
+                   data-field-name="Distributor Name" required>
+            <div class="field-hint">
+                <i class="fa-solid fa-info-circle"></i>
+                <span>Only letters, numbers, and spaces allowed</span>
+            </div>
+            <div class="error-message" id="error_distributor_name">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Only letters, numbers, and spaces are allowed</span>
+            </div>
         </div>
         <div class="input-group">
-            <label>ZSM Name <span style="color:#ef4444">*</span></label>
-            <input type="text" id="zsm_name" placeholder="Enter ZSM Name" required>
+            <label>ZSM Name <span class="required-star">*</span></label>
+            <input type="text" id="zsm_name" placeholder="Enter ZSM Name" 
+                   data-field-name="ZSM Name" required>
+            <div class="error-message" id="error_zsm_name">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>This field is required</span>
+            </div>
         </div>
         <div class="input-group">
-            <label>TSM Name <span style="color:#ef4444">*</span></label>
-            <input type="text" id="tsm_name" placeholder="Enter TSM Name" required>
+            <label>TSM Name <span class="required-star">*</span></label>
+            <input type="text" id="tsm_name" placeholder="Enter TSM Name" 
+                   data-field-name="TSM Name" required>
+            <div class="error-message" id="error_tsm_name">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>This field is required</span>
+            </div>
         </div>
         <div class="input-group">
-            <label>Distributor LAPU Number <span style="color:#ef4444">*</span></label>
-            <input type="tel" id="dist_lapu" placeholder="10-digit LAPU" maxlength="10" required>
+            <label>Distributor LAPU Number <span class="required-star">*</span></label>
+            <input type="tel" id="dist_lapu" placeholder="e.g. 9876543210" maxlength="10" 
+                   data-field-name="LAPU Number" required>
+            <div class="field-hint">
+                <i class="fa-solid fa-mobile-alt"></i>
+                <span>10-digit Indian mobile (starts with 6, 7, 8, or 9)</span>
+            </div>
+            <div class="error-message" id="error_dist_lapu">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Enter valid 10-digit number starting with 6, 7, 8, or 9</span>
+            </div>
         </div>
     </div>
 </div>
@@ -320,12 +474,22 @@
     <div class="section-padding">
         <div class="section-title"><i class="fa-solid fa-bullseye"></i> November Achievement</div>
         <div class="input-group">
-            <label>November Gross <span style="color:#ef4444">*</span></label>
-            <input type="number" id="nov_gross" placeholder="e.g. 500" min="0" required>
+            <label>November Gross <span class="required-star">*</span></label>
+            <input type="number" id="nov_gross" placeholder="e.g. 500" min="0" 
+                   data-field-name="November Gross" required>
+            <div class="error-message" id="error_nov_gross">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid number</span>
+            </div>
         </div>
         <div class="input-group">
-            <label>November MNP <span style="color:#ef4444">*</span></label>
-            <input type="number" id="nov_mnp" placeholder="e.g. 10" min="0" required>
+            <label>November MNP <span class="required-star">*</span></label>
+            <input type="number" id="nov_mnp" placeholder="e.g. 10" min="0" 
+                   data-field-name="November MNP" required>
+            <div class="error-message" id="error_nov_mnp">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid number</span>
+            </div>
         </div>
     </div>
 </div>
@@ -335,12 +499,22 @@
     <div class="section-padding">
         <div class="section-title"><i class="fa-solid fa-bullseye"></i> December Achievement</div>
         <div class="input-group">
-            <label>December Gross <span style="color:#ef4444">*</span></label>
-            <input type="number" id="dec_gross" placeholder="e.g. 500" min="0" required>
+            <label>December Gross <span class="required-star">*</span></label>
+            <input type="number" id="dec_gross" placeholder="e.g. 500" min="0" 
+                   data-field-name="December Gross" required>
+            <div class="error-message" id="error_dec_gross">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid number</span>
+            </div>
         </div>
         <div class="input-group">
-            <label>December MNP <span style="color:#ef4444">*</span></label>
-            <input type="number" id="dec_mnp" placeholder="e.g. 10" min="0" required>
+            <label>December MNP <span class="required-star">*</span></label>
+            <input type="number" id="dec_mnp" placeholder="e.g. 10" min="0" 
+                   data-field-name="December MNP" required>
+            <div class="error-message" id="error_dec_mnp">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid number</span>
+            </div>
         </div>
     </div>
 </div>
@@ -350,17 +524,21 @@
     <div class="section-padding">
         <div class="section-title"><i class="fa-solid fa-bullseye"></i> January Achievement</div>
         <div class="input-group">
-            <label>January Gross (Target & Achievement) <span style="color:#ef4444">*</span></label>
+            <label>January Gross (Target & Achievement) <span class="required-star">*</span></label>
             <div class="dual-inputs">
-                <input type="number" id="jan_gross_target" placeholder="Target" min="0" required>
-                <input type="number" id="jan_gross_achievement" placeholder="Achievement" min="0">
+                <input type="number" id="jan_gross_target" placeholder="Target" min="0" 
+                       data-field-name="January Gross Target" required>
+                <input type="number" id="jan_gross_achievement" placeholder="Achievement" min="0" 
+                       data-field-name="January Gross Achievement" required>
             </div>
         </div>
         <div class="input-group">
-            <label>January MNP (Target & Achievement) <span style="color:#ef4444">*</span></label>
+            <label>January MNP (Target & Achievement) <span class="required-star">*</span></label>
             <div class="dual-inputs">
-                <input type="number" id="jan_mnp_target" placeholder="Target" min="0" required>
-                <input type="number" id="jan_mnp_achievement" placeholder="Achievement" min="0">
+                <input type="number" id="jan_mnp_target" placeholder="Target" min="0" 
+                       data-field-name="January MNP Target" required>
+                <input type="number" id="jan_mnp_achievement" placeholder="Achievement" min="0" 
+                       data-field-name="January MNP Achievement" required>
             </div>
         </div>
     </div>
@@ -371,12 +549,22 @@
     <div class="section-padding">
         <div class="section-title"><i class="fa-solid fa-coins"></i> Investments</div>
         <div class="input-group">
-            <label>Security Deposit<span style="color:#ef4444">*</span></label>
-            <input type="number" id="total_security" placeholder="Enter amount" min="0" required>
+            <label>Security Deposit <span class="required-star">*</span></label>
+            <input type="number" id="total_security" placeholder="Enter amount" min="0" 
+                   data-field-name="Security Deposit" required>
+            <div class="error-message" id="error_total_security">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid amount</span>
+            </div>
         </div>
         <div class="input-group">
-            <label>LAPU Stock Holdings <span style="color:#ef4444">*</span></label>
-            <input type="number" id="lapu_dth" placeholder="Enter holdings" min="0" required>
+            <label>LAPU Stock Holdings <span class="required-star">*</span></label>
+            <input type="number" id="lapu_dth" placeholder="Enter holdings" min="0" 
+                   data-field-name="LAPU Stock Holdings" required>
+            <div class="error-message" id="error_lapu_dth">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid number</span>
+            </div>
         </div>
     </div>
 </div>
@@ -386,19 +574,34 @@
     <div class="section-padding">
         <div class="section-title"><i class="fa-solid fa-piggy-bank"></i> Earnings</div>
         <div class="input-group">
-            <label>Lapu Commission (January) <span style="color:#ef4444">*</span></label>
-            <input type="number" id="lapu_commission" placeholder="Enter amount" min="0" required>
-        </div>
-        <div class="input-group">
-            <label>PLI December <span style="color:#ef4444">*</span></label>
-            <input type="number" id="pli_dec" placeholder="Enter amount" min="0" required>
-            <div class="auto-fill-hint">
-                <i class="fa-solid fa-link"></i> Auto-fills "PLI Credited → December" below
+            <label>Lapu Commission (January) <span class="required-star">*</span></label>
+            <input type="number" id="lapu_commission" placeholder="Enter amount" min="0" 
+                   data-field-name="Lapu Commission" required>
+            <div class="error-message" id="error_lapu_commission">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid amount</span>
             </div>
         </div>
         <div class="input-group">
-            <label>ASC Incentive Paid (January) <span style="color:#ef4444">*</span></label>
-            <input type="number" id="asc_incentive" placeholder="Enter amount" min="0" required>
+            <label>PLI December <span class="required-star">*</span></label>
+            <input type="number" id="pli_dec" placeholder="Enter amount" min="0" 
+                   data-field-name="PLI December" required>
+            <div class="auto-fill-hint">
+                <i class="fa-solid fa-link"></i> Auto-fills "PLI Credited → December" below
+            </div>
+            <div class="error-message" id="error_pli_dec">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid amount</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>ASC Incentive Paid (January) <span class="required-star">*</span></label>
+            <input type="number" id="asc_incentive" placeholder="Enter amount" min="0" 
+                   data-field-name="ASC Incentive" required>
+            <div class="error-message" id="error_asc_incentive">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid amount</span>
+            </div>
         </div>
     </div>
 </div>
@@ -408,20 +611,40 @@
     <div class="section-padding">
         <div class="section-title"><i class="fa-solid fa-calculator"></i> Expenses (₹)</div>
         <div class="input-group">
-            <label>ASC Salary <span style="color:#ef4444">*</span></label>
-            <input type="number" id="asc_cost" placeholder="e.g. 15000" min="0" required>
+            <label>ASC Salary <span class="required-star">*</span></label>
+            <input type="number" id="asc_cost" placeholder="e.g. 15000" min="0" 
+                   data-field-name="ASC Salary" required>
+            <div class="error-message" id="error_asc_cost">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid amount</span>
+            </div>
         </div>
         <div class="input-group">
-            <label>Rent <span style="color:#ef4444">*</span></label>
-            <input type="number" id="rent" placeholder="e.g. 25000" min="0" required>
+            <label>Rent <span class="required-star">*</span></label>
+            <input type="number" id="rent" placeholder="e.g. 25000" min="0" 
+                   data-field-name="Rent" required>
+            <div class="error-message" id="error_rent">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid amount</span>
+            </div>
         </div>
         <div class="input-group">
-            <label>Electricity <span style="color:#ef4444">*</span></label>
-            <input type="number" id="electricity" placeholder="e.g. 5000" min="0" required>
+            <label>Electricity <span class="required-star">*</span></label>
+            <input type="number" id="electricity" placeholder="e.g. 5000" min="0" 
+                   data-field-name="Electricity" required>
+            <div class="error-message" id="error_electricity">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid amount</span>
+            </div>
         </div>
         <div class="input-group">
-            <label>Miscellaneous <span style="color:#ef4444">*</span></label>
-            <input type="number" id="miscellaneous" placeholder="e.g. 8000" min="0" required>
+            <label>Miscellaneous <span class="required-star">*</span></label>
+            <input type="number" id="miscellaneous" placeholder="e.g. 8000" min="0" 
+                   data-field-name="Miscellaneous" required>
+            <div class="error-message" id="error_miscellaneous">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid amount</span>
+            </div>
         </div>
     </div>
 </div>
@@ -430,54 +653,77 @@
 <div class="section-container">
     <div class="section-padding">
         <div class="input-group">
-            <label>PLI Credited <span style="color:#ef4444">*</span></label>
+            <label>PLI Credited <span class="required-star">*</span></label>
             <div class="triple-inputs">
                 <div>
                     <small>October</small>
-                    <input type="number" id="oct_credited" placeholder="0" min="0">
+                    <input type="number" id="oct_credited" placeholder="0" min="0" 
+                           data-field-name="October PLI" required>
                 </div>
                 <div>
                     <small>November</small>
-                    <input type="number" id="nov_credited" placeholder="0" min="0">
+                    <input type="number" id="nov_credited" placeholder="0" min="0" 
+                           data-field-name="November PLI" required>
                 </div>
                 <div>
                     <small>December <i class="fa-solid fa-lock" style="font-size:8px; color:#10b981;"></i></small>
                     <input type="number" id="dec_credited" placeholder="Auto-filled" min="0" readonly>
-                    <div class="auto-fill-hint">
-                        <!-- <i class="fa-solid fa-arrow-up"></i> From PLI December -->
-                    </div>
                 </div>
             </div>
         </div>
         <div class="section-title" style="margin:18px 0 14px"><i class="fa-solid fa-bullseye"></i> February Targets</div>
         <div class="input-group">
-            <label>PLI Target for February <span style="color:#ef4444">*</span></label>
-            <input type="number" id="feb_pli_target" placeholder="e.g. 500" min="0" required>
-        </div>
-        <div class="input-group">
-            <label>MNP (Points) <span style="color:#ef4444">*</span></label>
-            <input type="number" id="feb_mnp_points" placeholder="e.g. 100" min="0" required>
-        </div>
-        <div class="input-group">
-            <label>Wi-Fi <span style="color:#ef4444">*</span></label>
-            <input type="number" id="feb_wifi" placeholder="e.g. 50" min="0" required>
-        </div>
-        <div class="input-group">
-            <label>APB <span style="color:#ef4444">*</span></label>
-            <input type="number" id="feb_apb" placeholder="e.g. 25" min="0" required>
-        </div>
-        <div class="input-group">
-            <label>ASC (Required & Available) <span style="color:#ef4444">*</span></label>
-            <div class="dual-inputs">
-                <input type="number" id="asc_required" placeholder="Required" min="0" required>
-                <input type="number" id="asc_available" placeholder="Available" min="0">
+            <label>PLI Target for February <span class="required-star">*</span></label>
+            <input type="number" id="feb_pli_target" placeholder="e.g. 500" min="0" 
+                   data-field-name="February PLI Target" required>
+            <div class="error-message" id="error_feb_pli_target">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid number</span>
             </div>
         </div>
         <div class="input-group">
-            <label>Promotor (Required & Available) <span style="color:#ef4444">*</span></label>
+            <label>MNP (Points) <span class="required-star">*</span></label>
+            <input type="number" id="feb_mnp_points" placeholder="e.g. 100" min="0" 
+                   data-field-name="February MNP Points" required>
+            <div class="error-message" id="error_feb_mnp_points">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid number</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>Wi-Fi <span class="required-star">*</span></label>
+            <input type="number" id="feb_wifi" placeholder="e.g. 50" min="0" 
+                   data-field-name="February Wi-Fi" required>
+            <div class="error-message" id="error_feb_wifi">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid number</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>APB <span class="required-star">*</span></label>
+            <input type="number" id="feb_apb" placeholder="e.g. 25" min="0" 
+                   data-field-name="February APB" required>
+            <div class="error-message" id="error_feb_apb">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please enter a valid number</span>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>ASC (Required & Available) <span class="required-star">*</span></label>
             <div class="dual-inputs">
-                <input type="number" id="promotor_required" placeholder="Required" min="0" required>
-                <input type="number" id="promotor_available" placeholder="Available" min="0">
+                <input type="number" id="asc_required" placeholder="Required" min="0" 
+                       data-field-name="ASC Required" required>
+                <input type="number" id="asc_available" placeholder="Available" min="0" 
+                       data-field-name="ASC Available" required>
+            </div>
+        </div>
+        <div class="input-group">
+            <label>Promotor (Required & Available) <span class="required-star">*</span></label>
+            <div class="dual-inputs">
+                <input type="number" id="promotor_required" placeholder="Required" min="0" 
+                       data-field-name="Promotor Required" required>
+                <input type="number" id="promotor_available" placeholder="Available" min="0" 
+                       data-field-name="Promotor Available" required>
             </div>
         </div>
     </div>
@@ -487,13 +733,24 @@
 <div class="section-container">
     <div class="section-padding">
         <div class="section-title"><i class="fa-solid fa-camera"></i> No Due Certificate</div>
+        
+        <div class="validation-summary" id="validationSummary">
+            <h4><i class="fa-solid fa-exclamation-triangle"></i> Please fix the following errors:</h4>
+            <ul id="errorList"></ul>
+        </div>
+        
         <div class="input-group">
-            <label>Capture Photo + Location <span style="color:#ef4444">*</span></label>
+            <label>Capture Photo + Location <span class="required-star">*</span></label>
             
             <button type="button" class="camera-btn" id="captureBtn">
                 <i class="fa-solid fa-camera" id="cameraIcon"></i> 
                 <span id="btnText">Tap to Capture Photo + GPS</span>
             </button>
+            
+            <div class="photo-warning" id="photoWarning">
+                <i class="fa-solid fa-camera"></i>
+                Photo capture is required before submitting the form
+            </div>
             
             <div id="photoSection">
                 <img id="photoPreview" src="" alt="Captured Photo">
@@ -512,7 +769,7 @@
             </div>
         </div>
         
-        <button type="button" class="submit-btn" id="submitBtn" disabled>
+        <button type="button" class="submit-btn" id="submitBtn">
             Submit Registration <i class="fa-solid fa-arrow-right"></i>
         </button>
     </div>
@@ -543,16 +800,10 @@ function getDeviceInfo() {
     const ua = navigator.userAgent;
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
     const isAndroid = /Android/.test(ua);
-    const isSafari = /Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua);
-    const isChrome = /Chrome/.test(ua) || /CriOS/.test(ua);
-    
     return {
         isIOS,
         isAndroid,
-        isSafari,
-        isChrome,
         isMobile: isIOS || isAndroid,
-        userAgent: ua,
         supportsGeolocation: 'geolocation' in navigator
     };
 }
@@ -565,6 +816,124 @@ function showToast(message, type = 'success', duration = 3000) {
     toast.textContent = message;
     toast.className = 'toast ' + type + ' show';
     setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+// =============================================
+// VALIDATION FUNCTIONS
+// =============================================
+function setFieldError(field, errorElement, message) {
+    field.classList.remove('valid');
+    field.classList.add('invalid');
+    if (errorElement) {
+        errorElement.querySelector('span').textContent = message;
+        errorElement.classList.add('show');
+    }
+}
+
+function clearFieldError(field, errorElement) {
+    field.classList.remove('invalid');
+    if (field.value.trim()) {
+        field.classList.add('valid');
+    }
+    if (errorElement) {
+        errorElement.classList.remove('show');
+    }
+}
+
+function validateField(field) {
+    const value = field.value.trim();
+    const fieldName = field.dataset.fieldName || field.id;
+    const isRequired = field.hasAttribute('required');
+    const errorElement = document.getElementById('error_' + field.id);
+    
+    if (field.readOnly) {
+        return { valid: true, field: field, fieldName: fieldName };
+    }
+    
+    if (isRequired && !value) {
+        setFieldError(field, errorElement, `${fieldName} is required`);
+        return { valid: false, field: field, fieldName: fieldName, message: `${fieldName} is required` };
+    }
+    
+    if (!value) {
+        clearFieldError(field, errorElement);
+        return { valid: true, field: field, fieldName: fieldName };
+    }
+    
+    if (field.id === 'distributor_name') {
+        if (!/^[a-zA-Z0-9\s]+$/.test(value)) {
+            setFieldError(field, errorElement, 'Only letters, numbers, and spaces allowed');
+            return { valid: false, field: field, fieldName: fieldName, message: 'Only letters, numbers, and spaces allowed' };
+        }
+        if (value.length < 2) {
+            setFieldError(field, errorElement, 'Name must be at least 2 characters');
+            return { valid: false, field: field, fieldName: fieldName, message: 'Name must be at least 2 characters' };
+        }
+    }
+    
+    if (field.id === 'dist_lapu') {
+        if (!/^[0-9]{10}$/.test(value)) {
+            setFieldError(field, errorElement, 'Enter exactly 10 digits');
+            return { valid: false, field: field, fieldName: fieldName, message: 'Enter exactly 10 digits' };
+        }
+        if (!['6', '7', '8', '9'].includes(value.charAt(0))) {
+            setFieldError(field, errorElement, 'Must start with 6, 7, 8, or 9');
+            return { valid: false, field: field, fieldName: fieldName, message: 'Must start with 6, 7, 8, or 9' };
+        }
+    }
+    
+    clearFieldError(field, errorElement);
+    field.classList.remove('invalid');
+    field.classList.add('valid');
+    return { valid: true, field: field, fieldName: fieldName };
+}
+
+function validateAllFields() {
+    const errors = [];
+    const fields = document.querySelectorAll('input[required]:not([readonly])');
+    
+    fields.forEach(field => {
+        const result = validateField(field);
+        if (!result.valid) {
+            errors.push(result);
+        }
+    });
+    
+    return errors;
+}
+
+function showValidationSummary(errors) {
+    const summary = document.getElementById('validationSummary');
+    const errorList = document.getElementById('errorList');
+    
+    if (errors.length === 0) {
+        summary.classList.remove('show');
+        return;
+    }
+    
+    errorList.innerHTML = errors.map(err => 
+        `<li><i class="fa-solid fa-times-circle"></i> ${err.fieldName}: ${err.message || 'This field is required'}</li>`
+    ).join('');
+    
+    summary.classList.add('show');
+}
+
+function updateProgress() {
+    const progressPercent = document.getElementById('progressPercent');
+    const progressFill = document.getElementById('progressFill');
+    
+    if (!progressPercent || !progressFill) return;
+    
+    const allFields = document.querySelectorAll('input[required]:not([readonly])');
+    const filledFields = Array.from(allFields).filter(field => field.value.trim() !== '');
+    
+    let totalRequired = allFields.length + 1;
+    let filledCount = filledFields.length + (capturedPhoto ? 1 : 0);
+    
+    const percentage = Math.round((filledCount / totalRequired) * 100);
+    
+    progressPercent.textContent = percentage + '%';
+    progressFill.style.width = percentage + '%';
 }
 
 // =============================================
@@ -583,11 +952,121 @@ function setupAutoPopulate() {
                 decCreditedInput.classList.remove('valid');
             }
         });
+    }
+}
+
+// =============================================
+// INPUT RESTRICTIONS
+// =============================================
+function setupInputRestrictions() {
+    const distNameInput = document.getElementById('distributor_name');
+    if (distNameInput) {
+        distNameInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^a-zA-Z0-9\s]/g, '');
+            validateField(this);
+            updateProgress();
+        });
         
-        pliDecInput.addEventListener('change', function() {
-            decCreditedInput.value = this.value || '';
+        distNameInput.addEventListener('keypress', function(e) {
+            const char = String.fromCharCode(e.which);
+            if (!/[a-zA-Z0-9\s]/.test(char)) {
+                e.preventDefault();
+                showToast('Only letters, numbers, and spaces allowed', 'warning', 2000);
+            }
         });
     }
+    
+    const lapuInput = document.getElementById('dist_lapu');
+    if (lapuInput) {
+        lapuInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+            
+            const value = this.value;
+            const errorElement = document.getElementById('error_dist_lapu');
+            
+            if (value.length > 0) {
+                const firstDigit = value.charAt(0);
+                
+                if (!['6', '7', '8', '9'].includes(firstDigit)) {
+                    this.classList.add('invalid');
+                    this.classList.remove('valid');
+                    if (errorElement) {
+                        errorElement.querySelector('span').textContent = 'Must start with 6, 7, 8, or 9';
+                        errorElement.classList.add('show');
+                    }
+                } else if (value.length === 10) {
+                    this.classList.remove('invalid');
+                    this.classList.add('valid');
+                    if (errorElement) errorElement.classList.remove('show');
+                } else {
+                    this.classList.remove('invalid', 'valid');
+                    if (errorElement) errorElement.classList.remove('show');
+                }
+            } else {
+                this.classList.remove('invalid', 'valid');
+                if (errorElement) errorElement.classList.remove('show');
+            }
+            
+            updateProgress();
+        });
+        
+        lapuInput.addEventListener('keypress', function(e) {
+            const char = String.fromCharCode(e.which);
+            
+            if (!/[0-9]/.test(char)) {
+                e.preventDefault();
+                showToast('Only numbers allowed', 'warning', 2000);
+                return;
+            }
+            
+            if (this.value.length === 0 && !['6', '7', '8', '9'].includes(char)) {
+                e.preventDefault();
+                showToast('Must start with 6, 7, 8, or 9', 'warning', 2500);
+                return;
+            }
+            
+            if (this.value.length >= 10) {
+                e.preventDefault();
+            }
+        });
+        
+        lapuInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const cleanedText = pastedText.replace(/[^0-9]/g, '').slice(0, 10);
+            
+            if (cleanedText.length > 0) {
+                const firstDigit = cleanedText.charAt(0);
+                if (!['6', '7', '8', '9'].includes(firstDigit)) {
+                    showToast('Invalid! Must start with 6, 7, 8, or 9', 'error', 3000);
+                    return;
+                }
+            }
+            
+            this.value = cleanedText;
+            validateField(this);
+            updateProgress();
+        });
+    }
+    
+    ['zsm_name', 'tsm_name'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-Z\s.'-]/g, '');
+                validateField(this);
+                updateProgress();
+            });
+        }
+    });
+    
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value < 0) this.value = 0;
+            if (!this.readOnly) validateField(this);
+            updateProgress();
+        });
+    });
 }
 
 // =============================================
@@ -595,10 +1074,6 @@ function setupAutoPopulate() {
 // =============================================
 function getPreciseLocationPromise() {
     return new Promise((resolve, reject) => {
-        const latInput = document.getElementById('latitude');
-        const lonInput = document.getElementById('longitude');
-        const accInput = document.getElementById('locAccuracy');
-
         if (!navigator.geolocation) {
             reject(new Error('Geolocation not supported'));
             return;
@@ -624,9 +1099,9 @@ function getPreciseLocationPromise() {
                         const longitude = finalCoords.longitude.toFixed(6);
                         const accuracy = finalCoords.accuracy.toFixed(0);
 
-                        if (latInput) latInput.value = latitude;
-                        if (lonInput) lonInput.value = longitude;
-                        if (accInput) accInput.value = accuracy;
+                        document.getElementById('latitude').value = latitude;
+                        document.getElementById('longitude').value = longitude;
+                        document.getElementById('locAccuracy').value = accuracy;
 
                         geoLocation = `${latitude}, ${longitude}`;
                         geoSource = 'Device GPS';
@@ -683,18 +1158,6 @@ function displayGPSInfo(gpsData, source) {
             <strong>Time:</strong> ${new Date().toLocaleString('en-IN')}<br>
             <small>Precise location captured successfully</small>
         `;
-    } else if (source === 'exif' && gpsData) {
-        geoLocation = `${gpsData.latitude}, ${gpsData.longitude}`;
-        geoSource = 'EXIF';
-        geoAccuracy = null;
-        geoInfo.classList.add('exif-source');
-        
-        geoInfo.innerHTML = `
-            <strong>GPS from Photo:</strong> 
-            <span class="geo-badge exif">PHOTO EXIF ✓</span><br><br>
-            <strong>Coordinates:</strong> ${geoLocation}<br>
-            <small>Location extracted from photo metadata</small>
-        `;
     } else {
         geoLocation = null;
         geoSource = null;
@@ -715,42 +1178,38 @@ function displayGPSInfo(gpsData, source) {
 }
 
 // =============================================
-// CAMERA CAPTURE HANDLER
+// CAMERA CAPTURE HANDLER - FIXED VERSION
 // =============================================
-async function handleCameraCapture() {
+function setupCameraInput() {
+    const cameraInput = document.getElementById('cameraInput');
     const device = getDeviceInfo();
-    const loading = document.getElementById('loadingOverlay');
-    const loadingText = document.getElementById('loadingText');
-    const loadingSubtext = document.getElementById('loadingSubtext');
     
-    document.getElementById('permissionHelp').style.display = 'none';
-    
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    
+    // Set capture attribute based on device
     if (device.isIOS) {
-        input.setAttribute('capture', 'camera');
+        cameraInput.setAttribute('capture', 'camera');
     } else if (device.isMobile) {
-        input.setAttribute('capture', 'environment');
+        cameraInput.setAttribute('capture', 'environment');
+    } else {
+        // Desktop - remove capture to allow file selection
+        cameraInput.removeAttribute('capture');
     }
     
-    input.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
-    document.body.appendChild(input);
-    
-    input.onchange = async function() {
-        if (!this.files || !this.files[0]) {
-            if (input.parentNode) document.body.removeChild(input);
-            return;
-        }
-        
+    // Handle file selection
+    cameraInput.addEventListener('change', async function(e) {
         const file = this.files[0];
+        if (!file) return;
+        
         originalFile = file;
+        
+        const loading = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+        const loadingSubtext = document.getElementById('loadingSubtext');
         
         loading.style.display = 'flex';
         loadingText.textContent = 'Getting your location...';
         loadingSubtext.textContent = 'Please wait...';
         
+        // Get location
         let locationData = null;
         try {
             locationData = await getPreciseLocationPromise();
@@ -761,9 +1220,10 @@ async function handleCameraCapture() {
         loadingText.textContent = 'Processing photo...';
         loadingSubtext.textContent = 'Almost done...';
         
+        // Read the file
         const reader = new FileReader();
         
-        reader.onload = async function(e) {
+        reader.onload = function(e) {
             capturedPhoto = e.target.result;
             photoTimestamp = new Date().toLocaleString('en-IN');
             
@@ -780,31 +1240,43 @@ async function handleCameraCapture() {
             
             loading.style.display = 'none';
             
+            // Update button state
             const captureBtn = document.getElementById('captureBtn');
+            captureBtn.classList.remove('error', 'required-highlight');
             captureBtn.classList.add('captured');
             document.getElementById('cameraIcon').className = 'fa-solid fa-check-circle';
-            document.getElementById('btnText').innerHTML = 'Photo & GPS Captured!';
+            document.getElementById('btnText').innerHTML = 'Photo & GPS Captured! <small>(Tap to retake)</small>';
+            
+            document.getElementById('photoWarning').classList.remove('show');
+            document.getElementById('permissionHelp').style.display = 'none';
             
             showToast(locationData ? 'Photo + GPS captured!' : 'Photo captured (no GPS)', 'success', 3000);
-            document.getElementById('submitBtn').disabled = false;
-            
-            if (input.parentNode) document.body.removeChild(input);
+            updateProgress();
         };
         
         reader.onerror = function() {
             loading.style.display = 'none';
             showToast('Error reading image file', 'error');
-            if (input.parentNode) document.body.removeChild(input);
         };
         
         reader.readAsDataURL(file);
-    };
+        
+        // Reset input so same file can be selected again
+        this.value = '';
+    });
+}
+
+function handleCameraCapture() {
+    document.getElementById('permissionHelp').style.display = 'none';
+    document.getElementById('photoWarning').classList.remove('show');
     
-    input.click();
+    // Simply trigger the hidden file input
+    const cameraInput = document.getElementById('cameraInput');
+    cameraInput.click();
 }
 
 // =============================================
-// PDF GENERATION - CLEAN HELPER FUNCTIONS
+// PDF GENERATION
 // =============================================
 function generatePDF() {
     const { jsPDF } = window.jspdf;
@@ -816,309 +1288,72 @@ function generatePDF() {
     const contentWidth = pageWidth - (margin * 2);
     let yPos = 0;
     
-    // Color Palette
     const palette = {
-        primary: [220, 38, 38],        // Airtel Red
-        secondary: [30, 41, 59],       // Dark Blue
-        accent: [251, 191, 36],        // Gold
-        headerBg: [220, 38, 38],       // Red header
-        text: [255, 255, 255],         // White text
-        darkText: [30, 41, 59],        // Dark text
-        borderColor: [200, 200, 200],  // Light border
-        success: [16, 185, 129],       // Green
-        lightBg: [248, 250, 252]       // Light gray bg
+        primary: [220, 38, 38],
+        secondary: [30, 41, 59],
+        accent: [251, 191, 36],
+        text: [255, 255, 255],
+        darkText: [30, 41, 59],
+        borderColor: [200, 200, 200],
+        lightBg: [248, 250, 252]
     };
     
-    // ========== HELPER FUNCTIONS ==========
-    
-    function addHeader(title, subtitle, y) {
-        // Red header background
-        pdf.setFillColor(...palette.headerBg);
+    function addHeader(title, subtitle) {
+        pdf.setFillColor(...palette.primary);
         pdf.rect(0, 0, pageWidth, 24, 'F');
-        
-        // Gold accent line
         pdf.setFillColor(...palette.accent);
         pdf.rect(0, 24, pageWidth, 1.5, 'F');
-        
-        // Title text
         pdf.setTextColor(...palette.text);
         pdf.setFontSize(16);
         pdf.setFont('helvetica', 'bold');
         pdf.text(title, pageWidth / 2, 10, { align: 'center' });
-        
-        // Subtitle
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'normal');
         pdf.text(subtitle, pageWidth / 2, 18, { align: 'center' });
-        
-        // Submission ID badge
         if (submissionId) {
             pdf.setFontSize(7);
             pdf.text('ID: ' + submissionId, pageWidth - margin, 10, { align: 'right' });
         }
-        
         return 30;
     }
     
     function addSectionTitle(text, y) {
-        const sectionHeight = 8;
-        
-        // Section background
         pdf.setFillColor(...palette.secondary);
-        pdf.rect(margin, y, contentWidth, sectionHeight, 'F');
-        
-        // Accent bar on left
+        pdf.rect(margin, y, contentWidth, 8, 'F');
         pdf.setFillColor(...palette.accent);
-        pdf.rect(margin, y, 3, sectionHeight, 'F');
-        
-        // Section title text
+        pdf.rect(margin, y, 3, 8, 'F');
         pdf.setTextColor(...palette.text);
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'bold');
         pdf.text(text, margin + 8, y + 5.5);
-        
-        return y + sectionHeight + 2;
+        return y + 10;
     }
     
-    function addTableRow(label, value, y, isAlternate) {
-        const rowHeight = 7;
-        const labelWidth = contentWidth * 0.5;
-        
-        // Row background
-        if (isAlternate) {
-            pdf.setFillColor(...palette.lightBg);
-        } else {
-            pdf.setFillColor(255, 255, 255);
-        }
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        
-        // Border
+    function addTableRow(label, value, y, isAlt) {
+        const rowH = 7;
+        const labelW = contentWidth * 0.5;
+        pdf.setFillColor(isAlt ? 248 : 255, isAlt ? 250 : 255, isAlt ? 252 : 255);
+        pdf.rect(margin, y, contentWidth, rowH, 'F');
         pdf.setDrawColor(...palette.borderColor);
         pdf.setLineWidth(0.2);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-        
-        // Vertical divider
-        pdf.line(margin + labelWidth, y, margin + labelWidth, y + rowHeight);
-        
-        // Label text
+        pdf.rect(margin, y, contentWidth, rowH, 'S');
+        pdf.line(margin + labelW, y, margin + labelW, y + rowH);
         pdf.setTextColor(...palette.darkText);
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'normal');
         pdf.text(String(label), margin + 4, y + 5);
-        
-        // Value text
         pdf.setFont('helvetica', 'bold');
-        pdf.text(String(value || '-'), margin + labelWidth + 4, y + 5);
-        
-        return y + rowHeight;
+        pdf.text(String(value || '-'), margin + labelW + 4, y + 5);
+        return y + rowH;
     }
     
-    function addThreeColumnRow(col1, col2, col3, y, isHeader) {
-        const rowHeight = 7;
-        const colWidth = contentWidth / 3;
-        
-        if (isHeader) {
-            pdf.setFillColor(...palette.secondary);
-            pdf.setTextColor(...palette.text);
-        } else {
-            pdf.setFillColor(255, 255, 255);
-            pdf.setTextColor(...palette.darkText);
-        }
-        
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        
-        // Border
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.2);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-        
-        // Column dividers
-        pdf.line(margin + colWidth, y, margin + colWidth, y + rowHeight);
-        pdf.line(margin + colWidth * 2, y, margin + colWidth * 2, y + rowHeight);
-        
-        // Text
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
-        pdf.text(String(col1), margin + colWidth * 0.5, y + 5, { align: 'center' });
-        pdf.text(String(col2), margin + colWidth * 1.5, y + 5, { align: 'center' });
-        pdf.text(String(col3), margin + colWidth * 2.5, y + 5, { align: 'center' });
-        
-        return y + rowHeight;
+    function formatAmount(val) {
+        if (!val || val === '0') return 'Rs. 0';
+        return 'Rs. ' + parseInt(val).toLocaleString('en-IN');
     }
     
-    function addFourColumnRow(col1, col2, col3, col4, y, isHeader) {
-        const rowHeight = 7;
-        const colWidth = contentWidth / 4;
-        
-        if (isHeader) {
-            pdf.setFillColor(...palette.secondary);
-            pdf.setTextColor(...palette.text);
-        } else {
-            pdf.setFillColor(255, 255, 255);
-            pdf.setTextColor(...palette.darkText);
-        }
-        
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        
-        // Border
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.2);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-        
-        // Column dividers
-        for (let i = 1; i < 4; i++) {
-            pdf.line(margin + colWidth * i, y, margin + colWidth * i, y + rowHeight);
-        }
-        
-        // Text
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
-        pdf.text(String(col1), margin + colWidth * 0.5, y + 5, { align: 'center' });
-        pdf.text(String(col2), margin + colWidth * 1.5, y + 5, { align: 'center' });
-        pdf.text(String(col3), margin + colWidth * 2.5, y + 5, { align: 'center' });
-        pdf.text(String(col4), margin + colWidth * 3.5, y + 5, { align: 'center' });
-        
-        return y + rowHeight;
-    }
+    yPos = addHeader('AIRTEL DISTRIBUTOR REGISTRATION', new Date().toLocaleDateString('en-IN'));
     
-    function addTwoColumnRow(col1, col2, y, isHeader) {
-        const rowHeight = 7;
-        const colWidth = contentWidth / 2;
-        
-        if (isHeader) {
-            pdf.setFillColor(...palette.secondary);
-            pdf.setTextColor(...palette.text);
-        } else {
-            pdf.setFillColor(255, 255, 255);
-            pdf.setTextColor(...palette.darkText);
-        }
-        
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        
-        // Border
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.2);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'S');
-        
-        // Column divider
-        pdf.line(margin + colWidth, y, margin + colWidth, y + rowHeight);
-        
-        // Text
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', isHeader ? 'bold' : 'normal');
-        pdf.text(String(col1), margin + colWidth * 0.5, y + 5, { align: 'center' });
-        pdf.text(String(col2), margin + colWidth * 1.5, y + 5, { align: 'center' });
-        
-        return y + rowHeight;
-    }
-    
-    function addTotalRow(label, value, y) {
-        const rowHeight = 9;
-        
-        // Background
-        pdf.setFillColor(...palette.primary);
-        pdf.rect(margin, y, contentWidth, rowHeight, 'F');
-        
-        // Text
-        pdf.setTextColor(...palette.text);
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(label + ': ' + value, pageWidth / 2, y + 6, { align: 'center' });
-        
-        return y + rowHeight + 3;
-    }
-    
-    function addInfoBox(label, value, y, color) {
-        const boxHeight = 10;
-        const boxWidth = contentWidth / 2 - 2;
-        
-        pdf.setFillColor(...(color || palette.success));
-        pdf.rect(margin, y, boxWidth, boxHeight, 'F');
-        
-        pdf.setTextColor(...palette.text);
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(label, margin + 4, y + 4);
-        pdf.setFontSize(9);
-        pdf.text(String(value), margin + 4, y + 8);
-        
-        return boxHeight;
-    }
-    
-    function addSignatureSection(y) {
-        const sigHeight = 25;
-        const sigWidth = contentWidth / 2 - 10;
-        
-        // Divider line
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.5);
-        pdf.line(margin, y, pageWidth - margin, y);
-        
-        y += 8;
-        
-        // Distributor signature
-        pdf.setTextColor(...palette.darkText);
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('Distributor Signature', margin, y);
-        
-        pdf.setLineWidth(0.3);
-        pdf.line(margin, y + 12, margin + sigWidth, y + 12);
-        
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', 'normal');
-        const distName = submittedData?.distributor_name || getValue('distributor_name') || '';
-        pdf.text('Name: ' + distName, margin, y + 18);
-        
-        // TSM signature
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(9);
-        pdf.text('TSM Signature', pageWidth - margin - sigWidth, y);
-        
-        pdf.line(pageWidth - margin - sigWidth, y + 12, pageWidth - margin, y + 12);
-        
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', 'normal');
-        const tsmName = submittedData?.tsm_name || getValue('tsm_name') || '';
-        pdf.text('Name: ' + tsmName, pageWidth - margin - sigWidth, y + 18);
-        
-        return y + sigHeight;
-    }
-    
-    function addFooter(pageNum, totalPages) {
-        pdf.setDrawColor(...palette.borderColor);
-        pdf.setLineWidth(0.3);
-        pdf.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
-        
-        pdf.setFontSize(7);
-        pdf.setTextColor(130, 130, 130);
-        pdf.setFont('helvetica', 'normal');
-        
-        pdf.text('Page ' + pageNum + ' of ' + totalPages, margin, pageHeight - 7);
-        pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), pageWidth / 2, pageHeight - 7, { align: 'center' });
-        pdf.text('Airtel Distribution', pageWidth - margin, pageHeight - 7, { align: 'right' });
-    }
-    
-    function checkPageBreak(currentY, neededHeight) {
-        if (currentY + neededHeight > pageHeight - 25) {
-            addFooter(1, 2);
-            pdf.addPage();
-            return 15;
-        }
-        return currentY;
-    }
-    
-    function formatAmount(value) {
-        if (!value || value === '0' || value === '') return 'Rs. 0';
-        return 'Rs. ' + parseInt(value).toLocaleString('en-IN');
-    }
-    
-    // ========== PAGE 1 CONTENT ==========
-    
-    // Header
-    yPos = addHeader('AIRTEL DISTRIBUTOR REGISTRATION', new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }), yPos);
-    
-    // Distributor Information
     yPos = addSectionTitle('DISTRIBUTOR INFORMATION', yPos);
     yPos = addTableRow('Distributor Name', submittedData?.distributor_name || getValue('distributor_name'), yPos, false);
     yPos = addTableRow('ZSM Name', submittedData?.zsm_name || getValue('zsm_name'), yPos, true);
@@ -1126,202 +1361,78 @@ function generatePDF() {
     yPos = addTableRow('LAPU Number', submittedData?.dist_lapu || getValue('dist_lapu'), yPos, true);
     yPos += 4;
     
-    // Monthly Achievements
-    yPos = addSectionTitle('MONTHLY ACHIEVEMENTS', yPos);
-    yPos = addThreeColumnRow('MONTH', 'GROSS', 'MNP', yPos, true);
-    yPos = addThreeColumnRow('November', submittedData?.nov_gross || getValue('nov_gross') || '0', submittedData?.nov_mnp || getValue('nov_mnp') || '0', yPos, false);
-    yPos = addThreeColumnRow('December', submittedData?.dec_gross || getValue('dec_gross') || '0', submittedData?.dec_mnp || getValue('dec_mnp') || '0', yPos, false);
-    yPos += 4;
-    
-    // January Target & Achievement
-    yPos = addSectionTitle('JANUARY TARGET & ACHIEVEMENT', yPos);
-    yPos = addFourColumnRow('TYPE', 'GROSS TARGET', 'GROSS ACH', 'MNP TARGET', yPos, true);
-    yPos = addFourColumnRow(
-        'January',
-        submittedData?.jan_gross_target || getValue('jan_gross_target') || '0',
-        submittedData?.jan_gross_achievement || getValue('jan_gross_achievement') || '0',
-        submittedData?.jan_mnp_target || getValue('jan_mnp_target') || '0',
-        yPos, false
-    );
-    yPos = addFourColumnRow(
-        '',
-        '',
-        'MNP ACH',
-        submittedData?.jan_mnp_achievement || getValue('jan_mnp_achievement') || '0',
-        yPos, false
-    );
-    yPos += 4;
-    
-    // Investments
-    yPos = addSectionTitle('INVESTMENTS', yPos);
+    yPos = addSectionTitle('INVESTMENTS & EARNINGS', yPos);
     yPos = addTableRow('Security Deposit', formatAmount(submittedData?.total_security || getValue('total_security')), yPos, false);
     yPos = addTableRow('LAPU Stock Holdings', formatAmount(submittedData?.lapu_dth || getValue('lapu_dth')), yPos, true);
-    yPos += 4;
-    
-    // Earnings
-    yPos = addSectionTitle('EARNINGS', yPos);
-    yPos = addTableRow('Lapu Commission (January)', formatAmount(submittedData?.lapu_commission || getValue('lapu_commission')), yPos, false);
+    yPos = addTableRow('Lapu Commission', formatAmount(submittedData?.lapu_commission || getValue('lapu_commission')), yPos, false);
     yPos = addTableRow('PLI December', formatAmount(submittedData?.pli_dec || getValue('pli_dec')), yPos, true);
-    yPos = addTableRow('ASC Incentive (January)', formatAmount(submittedData?.asc_incentive || getValue('asc_incentive')), yPos, false);
     yPos += 4;
     
-    // Check for page break
-    yPos = checkPageBreak(yPos, 60);
-    
-    // Expenses
-    yPos = addSectionTitle('MONTHLY EXPENSES', yPos);
+    yPos = addSectionTitle('EXPENSES', yPos);
     yPos = addTableRow('ASC Salary', formatAmount(submittedData?.asc_cost || getValue('asc_cost')), yPos, false);
     yPos = addTableRow('Rent', formatAmount(submittedData?.rent || getValue('rent')), yPos, true);
     yPos = addTableRow('Electricity', formatAmount(submittedData?.electricity || getValue('electricity')), yPos, false);
     yPos = addTableRow('Miscellaneous', formatAmount(submittedData?.miscellaneous || getValue('miscellaneous')), yPos, true);
     
-    // Calculate total expenses
-    const totalExpenses = (
-        parseFloat(submittedData?.asc_cost || getValue('asc_cost') || 0) +
-        parseFloat(submittedData?.rent || getValue('rent') || 0) +
-        parseFloat(submittedData?.electricity || getValue('electricity') || 0) +
-        parseFloat(submittedData?.miscellaneous || getValue('miscellaneous') || 0)
-    );
-    yPos = addTotalRow('TOTAL EXPENSES', formatAmount(totalExpenses), yPos);
-    
-    // PLI Credited
-    yPos = addSectionTitle('PLI CREDITED', yPos);
-    yPos = addThreeColumnRow('OCTOBER', 'NOVEMBER', 'DECEMBER', yPos, true);
-    yPos = addThreeColumnRow(
-        formatAmount(submittedData?.oct_credited || getValue('oct_credited')),
-        formatAmount(submittedData?.nov_credited || getValue('nov_credited')),
-        formatAmount(submittedData?.dec_credited || getValue('dec_credited')),
-        yPos, false
-    );
-    yPos += 4;
-    
-    // Check for page break
-    yPos = checkPageBreak(yPos, 70);
-    
-    // February Targets - UPDATED with new fields
-    yPos = addSectionTitle('FEBRUARY TARGETS', yPos);
-    yPos = addTableRow('PLI Target', submittedData?.feb_pli_target || getValue('feb_pli_target') || '0', yPos, false);
-    yPos = addTableRow('MNP (Points)', submittedData?.feb_mnp_points || getValue('feb_mnp_points') || '0', yPos, true);
-    yPos = addTableRow('Wi-Fi', submittedData?.feb_wifi || getValue('feb_wifi') || '0', yPos, false);
-    yPos = addTableRow('APB', submittedData?.feb_apb || getValue('feb_apb') || '0', yPos, true);
+    const totalExp = parseFloat(getValue('asc_cost') || 0) + parseFloat(getValue('rent') || 0) + 
+                     parseFloat(getValue('electricity') || 0) + parseFloat(getValue('miscellaneous') || 0);
     yPos += 2;
-
-    yPos = addThreeColumnRow('TYPE', 'REQUIRED', 'AVAILABLE', yPos, true);
-    yPos = addThreeColumnRow(
-        'ASC',
-        submittedData?.asc_required || getValue('asc_required') || '0',
-        submittedData?.asc_available || getValue('asc_available') || '0',
-        yPos, false
-    );
-    yPos = addThreeColumnRow(
-        'Promotor',
-        submittedData?.promotor_required || getValue('promotor_required') || '0',
-        submittedData?.promotor_available || getValue('promotor_available') || '0',
-        yPos, false
-    );
-    yPos += 4;
+    pdf.setFillColor(...palette.primary);
+    pdf.rect(margin, yPos, contentWidth, 9, 'F');
+    pdf.setTextColor(...palette.text);
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('TOTAL: ' + formatAmount(totalExp), pageWidth / 2, yPos + 6, { align: 'center' });
+    yPos += 12;
     
-    // GPS Location
     if (geoLocation) {
         yPos = addSectionTitle('GPS LOCATION', yPos);
         yPos = addTableRow('Coordinates', geoLocation, yPos, false);
         yPos = addTableRow('Accuracy', geoAccuracy || 'N/A', yPos, true);
-        yPos = addTableRow('Source', geoSource || 'Device GPS', yPos, false);
-        yPos = addTableRow('Captured At', photoTimestamp || new Date().toLocaleString('en-IN'), yPos, true);
-        yPos += 4;
     }
     
-    // Photo Section
-    if (capturedPhoto) {
-        yPos = checkPageBreak(yPos, 50);
-        
-        yPos = addSectionTitle('NO DUE CERTIFICATE PHOTO', yPos);
-        
-        try {
-            // Add photo
-            const photoWidth = 45;
-            const photoHeight = 35;
-            pdf.addImage(capturedPhoto, 'JPEG', margin, yPos, photoWidth, photoHeight);
-            
-            // Photo border
-            pdf.setDrawColor(...palette.success);
-            pdf.setLineWidth(0.5);
-            pdf.rect(margin, yPos, photoWidth, photoHeight, 'S');
-            
-            // Photo info text
-            pdf.setFontSize(8);
-            pdf.setTextColor(...palette.darkText);
-            pdf.setFont('helvetica', 'normal');
-            pdf.text('Photo captured on:', margin + photoWidth + 5, yPos + 8);
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(photoTimestamp || new Date().toLocaleString('en-IN'), margin + photoWidth + 5, yPos + 14);
-            
-            if (geoLocation) {
-                pdf.setFont('helvetica', 'normal');
-                pdf.text('Location:', margin + photoWidth + 5, yPos + 22);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text(geoLocation, margin + photoWidth + 5, yPos + 28);
-            }
-            
-            yPos += photoHeight + 8;
-        } catch (e) {
-            console.log('Could not add image to PDF:', e);
-            yPos += 5;
-        }
-    }
+    pdf.setFontSize(7);
+    pdf.setTextColor(130, 130, 130);
+    pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), pageWidth / 2, pageHeight - 7, { align: 'center' });
     
-    // Signature Section
-    yPos = checkPageBreak(yPos, 35);
-    yPos = addSignatureSection(yPos);
-    
-    // Footer
-    addFooter(1, 1);
-    
-    // ========== SAVE PDF ==========
-    const distName = (submittedData?.distributor_name || getValue('distributor_name') || 'Unknown')
-        .replace(/[^a-zA-Z0-9]/g, '_')
-        .substring(0, 20);
-    const fileName = 'Airtel_Registration_' + distName + '_' + Date.now() + '.pdf';
-    
+    const fileName = 'Airtel_' + (getValue('distributor_name') || 'Reg').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 15) + '_' + Date.now() + '.pdf';
     pdf.save(fileName);
-    showToast('PDF Downloaded Successfully!', 'success', 3000);
-}
-
-// Format number with commas
-function formatNumber(num) {
-    if (!num || num === '0' || num === '') return '0';
-    return parseInt(num).toLocaleString('en-IN');
+    showToast('PDF Downloaded!', 'success', 3000);
 }
 
 // =============================================
 // FORM SUBMISSION
 // =============================================
 function validateAndSubmit() {
+    document.getElementById('validationSummary').classList.remove('show');
+    document.getElementById('photoWarning').classList.remove('show');
+    
+    const captureBtn = document.getElementById('captureBtn');
+    captureBtn.classList.remove('error', 'required-highlight');
+    
+    const errors = validateAllFields();
+    
     if (!capturedPhoto) {
-        showToast('Please capture photo first', 'error');
-        document.getElementById('captureBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
+        errors.push({
+            valid: false,
+            field: null,
+            fieldName: 'Photo',
+            message: 'Photo capture is required'
+        });
+        captureBtn.classList.add('error', 'required-highlight');
+        document.getElementById('photoWarning').classList.add('show');
     }
     
-    let allValid = true;
-    let firstInvalid = null;
-    
-    document.querySelectorAll('input[required]').forEach(field => {
-        if (field.readOnly) return;
-        if (field.type !== 'file' && field.type !== 'hidden' && !field.value.trim()) {
-            field.classList.add('invalid');
-            if (!firstInvalid) firstInvalid = field;
-            allValid = false;
+    if (errors.length > 0) {
+        showValidationSummary(errors);
+        showToast(`Please fix ${errors.length} error(s)`, 'error', 4000);
+        
+        const firstErr = errors.find(e => e.field)?.field;
+        if (firstErr) {
+            firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstErr.focus();
         } else {
-            field.classList.remove('invalid');
-        }
-    });
-    
-    if (!allValid) {
-        showToast('Please fill all required fields', 'error');
-        if (firstInvalid) {
-            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            firstInvalid.focus();
+            document.getElementById('validationSummary').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         return;
     }
@@ -1331,10 +1442,8 @@ function validateAndSubmit() {
     document.getElementById('loadingText').textContent = 'Submitting...';
     document.getElementById('loadingSubtext').textContent = 'Please wait...';
     
-    // Generate submission ID
     submissionId = 'AIR-' + Date.now();
     
-    // Collect data - UPDATED with new fields
     submittedData = {
         submission_timestamp: new Date().toISOString(),
         submission_id: submissionId,
@@ -1370,8 +1479,8 @@ function validateAndSubmit() {
         asc_available: getValue('asc_available') || '0',
         promotor_required: getValue('promotor_required') || '0',
         promotor_available: getValue('promotor_available') || '0',
-        latitude: document.getElementById('latitude').value || geoLocation?.split(',')[0]?.trim() || '',
-        longitude: document.getElementById('longitude').value || geoLocation?.split(',')[1]?.trim() || '',
+        latitude: document.getElementById('latitude').value || '',
+        longitude: document.getElementById('longitude').value || '',
         location_accuracy: geoAccuracy || '',
         location_source: geoSource || '',
         capture_timestamp: photoTimestamp || new Date().toISOString(),
@@ -1386,19 +1495,14 @@ function validateAndSubmit() {
     })
     .then(() => {
         loading.style.display = 'none';
-        
-        let successMessage = 'Registration submitted successfully!\n\nID: ' + submissionId;
-        if (geoLocation) {
-            successMessage += '\n\nGPS: ' + geoLocation;
-            if (geoAccuracy) successMessage += '\nAccuracy: ±' + geoAccuracy;
-        }
-        
-        document.getElementById('successMsg').textContent = successMessage;
+        let msg = 'Registration submitted!\n\nID: ' + submissionId;
+        if (geoLocation) msg += '\n\nGPS: ' + geoLocation;
+        document.getElementById('successMsg').textContent = msg;
         document.getElementById('successModal').classList.add('show');
     })
     .catch(error => {
         loading.style.display = 'none';
-        console.error('Submit error:', error);
+        console.error('Error:', error);
         document.getElementById('successMsg').textContent = 'Registration submitted!\n\nID: ' + submissionId;
         document.getElementById('successModal').classList.add('show');
     });
@@ -1414,25 +1518,29 @@ function getValue(id) {
 // =============================================
 document.addEventListener('DOMContentLoaded', function() {
     setupAutoPopulate();
+    setupInputRestrictions();
+    setupCameraInput(); // Setup the camera input handler
+    updateProgress();
     
+    // Camera button click handler
     document.getElementById('captureBtn').addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
         handleCameraCapture();
     });
     
+    // Submit button click handler
     document.getElementById('submitBtn').addEventListener('click', function(e) {
         e.preventDefault();
         validateAndSubmit();
     });
     
+    // Field validation on blur
     document.querySelectorAll('input').forEach(input => {
         if (input.readOnly) return;
-        input.addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.classList.remove('invalid');
-                this.classList.add('valid');
-            }
+        
+        input.addEventListener('blur', function() {
+            validateField(this);
         });
     });
 });
