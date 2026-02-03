@@ -2568,7 +2568,7 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
         }
         
         // --- PAGE 1 CONTENT ---
-        yPos = addLuxuryHeader('RETAILER ENROLLMENT SHEET', 'December 2025', yPos);
+        yPos = addLuxuryHeader('RETAILER ENROLLMENT SHEET', 'February 2025', yPos);
         yPos = addSectionTitle('RETAILER INFORMATION', yPos);
         yPos = addTableRow('Outlet Name', document.getElementById('outletName').value || '-', yPos);
         yPos = addTableRow('Lapu No', document.getElementById('lapuNo').value || '-', yPos);
@@ -2702,7 +2702,7 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
         pdf.setTextColor(...palette.darkText);
         pdf.setFontSize(7);
         pdf.setFont('helvetica', 'normal');
-        const declaration = 'I hereby confirm that all information provided above is accurate and complete. I agree to comply with the terms and conditions of the retailer enrollment program for the December 2025 period.';
+        const declaration = 'I hereby confirm that all information provided above is accurate and complete. I agree to comply with the terms and conditions of the retailer enrollment program for the February 2025 period.';
         const splitDeclaration = pdf.splitTextToSize(declaration, contentWidth - 8);
         pdf.text(splitDeclaration, margin + 4, yPos + 5);
         yPos += 17;
