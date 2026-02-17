@@ -5,8 +5,9 @@
   <style>
     body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
     input { padding: 10px; margin: 5px; width: 200px; }
-    button { padding: 10px 20px; background: #4285f4; color: white; border: none; cursor: pointer; }
+    button { padding: 10px 20px; background: #4285f4; color: white; border: none; cursor: pointer; border-radius: 5px; }
     button:hover { background: #3367d6; }
+    .export-btn { background: #28a745 !important; margin: 20px 0; padding: 12px 24px !important; font-size: 16px !important; }
     ul { list-style: none; padding: 0; }
     li { background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 5px; }
     .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
@@ -28,38 +29,40 @@
   
   <h3>📋 Users in Cloud:</h3>
   <ul id="userList">Loading...</ul>
-  <button onclick="exportCSV()" style="background: #28a745; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; margin: 20px 0; font-size: 16px;">
-📥 EXPORT USERS TO CSV
-</button>
+  
+  <button onclick="exportCSV()" class="export-btn">
+    📥 EXPORT USERS TO CSV
+  </button>
 
-  <!-- 🔥 PASTE YOUR FIREBASE CONFIG HERE (Step 1 below) -->
   <script type="module">
-    // 🚨 REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIG:
-const firebaseConfig = {
-  apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
-  authDomain: "test-3eb90.firebaseapp.com",
-  projectId: "test-3eb90",
-  storageBucket: "test-3eb90.firebasestorage.app",
-  messagingSenderId: "941574915904",
-  appId: "1:941574915904:web:9002d0621c17f7f0cddca5",
-  measurementId: "G-4H15CWG2FG"
-};
+    // YOUR CONFIG - PERFECT!
+    const firebaseConfig = {
+      apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
+      authDomain: "test-3eb90.firebaseapp.com",
+      projectId: "test-3eb90",
+      storageBucket: "test-3eb90.firebasestorage.app",
+      messagingSenderId: "941574915904",
+      appId: "1:941574915904:web:9002d0621c17f7f0cddca5",
+      measurementId: "G-4H15CWG2FG"
+    };
 
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    
     const status = document.getElementById('status');
+    
+    // LIVE USERS
+    let allUsers = []; // Store actual data globally
     
     onSnapshot(query(collection(db, 'users'), orderBy('timestamp', 'desc')), 
       (snapshot) => {
-        const users = snapshot.docs.map(doc => doc.data());
-        document.getElementById('userList').innerHTML = users.length 
-          ? users.map(u => `<li>${u.name} (${u.email}) <small>${new Date(u.timestamp?.seconds * 1000).toLocaleString()}</small></li>`).join('')
+        allUsers = snapshot.docs.map(doc => doc.data());
+        document.getElementById('userList').innerHTML = allUsers.length 
+          ? allUsers.map(u => `<li>${u.name} (${u.email}) <small>${u.timestamp?.seconds ? new Date(u.timestamp.seconds * 1000).toLocaleString() : 'Just now'}</small></li>`).join('')
           : '<li>No users yet - add one above!</li>';
-        status.textContent = `✅ Loaded ${users.length} users from cloud`;
+        status.textContent = `✅ Loaded ${allUsers.length} users from cloud`;
         status.className = 'status success';
       },
       (error) => {
@@ -96,44 +99,38 @@ const firebaseConfig = {
       }
     };
 
+    // ✅ FIXED CSV EXPORT
+    window.exportCSV = () => {
+      if (allUsers.length === 0) {
+        alert('No users to export! Add some users first.');
+        return;
+      }
+      
+      const csvContent = 'Name,Email,Date Added\n' + 
+        allUsers.map(u => {
+          const date = u.timestamp?.seconds 
+            ? new Date(u.timestamp.seconds * 1000).toLocaleDateString()
+            : new Date().toLocaleDateString();
+          return `"${u.name}","${u.email}","${date}"`;
+        }).join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `users-${new Date().toISOString().split('T')[0]}.csv`;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+      
+      status.textContent = `✅ ${allUsers.length} users exported to CSV!`;
+      status.className = 'status success';
+    };
+
     document.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') addUser();
     });
-    function exportCSV() {
-  // Get users from your live display
-  const users = Array.from(document.querySelectorAll('#userList li')).map(li => {
-    const text = li.textContent;
-    const nameMatch = text.match(/^([^(\n]+)/);
-    const emailMatch = text.match(/\(([^)]+)\)/);
-    return {
-      name: nameMatch ? nameMatch[1].trim() : '',
-      email: emailMatch ? emailMatch[1].trim() : ''
-    };
-  }).filter(u => u.name && u.email);
-  
-  if (users.length === 0) {
-    alert('No users to export! Add some first.');
-    return;
-  }
-  
-  // Create CSV
-  const csvContent = 'Name,Email,Date Added\n' + 
-    users.map(u => `"${u.name}","${u.email}","${new Date().toLocaleDateString()}"`).join('\n');
-  
-  // Download file
-  const blob = new Blob([csvContent], { type: 'text/csv' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'users.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  window.URL.revokeObjectURL(url);
-  
-  alert(`✅ ${users.length} users exported to users.csv! Open in Excel`);
-}
   </script>
 </body>
 </html>
-
