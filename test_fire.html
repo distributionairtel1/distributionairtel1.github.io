@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>🧪 Firebase Test - Save User Data</title>
+  <style>
+    body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
+    input { padding: 10px; margin: 5px; width: 200px; }
+    button { padding: 10px 20px; background: #4285f4; color: white; border: none; cursor: pointer; }
+    button:hover { background: #3367d6; }
+    ul { list-style: none; padding: 0; }
+    li { background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 5px; }
+    .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Firebase Cloud Test</h1>
+  <p>Add users below - data saves to Google Cloud instantly!</p>
+  
+  <div>
+    <input id="name" placeholder="Enter name" />
+    <input id="email" placeholder="Enter email" />
+    <button onclick="addUser()">➕ Save User</button>
+  </div>
+  
+  <div id="status"></div>
+  
+  <h3>📋 Users in Cloud:</h3>
+  <ul id="userList">Loading...</ul>
+
+  <!-- 🔥 PASTE YOUR FIREBASE CONFIG HERE (Step 1 below) -->
+  <script type="module">
+    // 🚨 REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIG:
+const firebaseConfig = {
+  apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
+  authDomain: "test-3eb90.firebaseapp.com",
+  projectId: "test-3eb90",
+  storageBucket: "test-3eb90.firebasestorage.app",
+  messagingSenderId: "941574915904",
+  appId: "1:941574915904:web:9002d0621c17f7f0cddca5",
+  measurementId: "G-4H15CWG2FG"
+};
+
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    const status = document.getElementById('status');
+    
+    onSnapshot(query(collection(db, 'users'), orderBy('timestamp', 'desc')), 
+      (snapshot) => {
+        const users = snapshot.docs.map(doc => doc.data());
+        document.getElementById('userList').innerHTML = users.length 
+          ? users.map(u => `<li>${u.name} (${u.email}) <small>${new Date(u.timestamp?.seconds * 1000).toLocaleString()}</small></li>`).join('')
+          : '<li>No users yet - add one above!</li>';
+        status.textContent = `✅ Loaded ${users.length} users from cloud`;
+        status.className = 'status success';
+      },
+      (error) => {
+        status.textContent = `❌ Error: ${error.message}`;
+        status.className = 'status error';
+      }
+    );
+
+    window.addUser = async () => {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      
+      if (!name || !email) {
+        status.textContent = '❌ Please fill name AND email';
+        status.className = 'status error';
+        return;
+      }
+      
+      try {
+        status.textContent = '⏳ Saving to cloud...';
+        status.className = 'status';
+        
+        await addDoc(collection(db, 'users'), {
+          name, email, timestamp: serverTimestamp()
+        });
+        
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        status.textContent = `✅ Saved "${name}" to Firebase Cloud!`;
+        status.className = 'status success';
+      } catch (error) {
+        status.textContent = `❌ Save failed: ${error.message}`;
+        status.className = 'status error';
+      }
+    };
+
+    document.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addUser();
+    });
+  </script>
+</body>
+</html>
