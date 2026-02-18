@@ -1,41 +1,621 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>🧪 Firebase Test - Save User Data</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Promoter Onboarding Form</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
-    input { padding: 10px; margin: 5px; width: 200px; }
-    button { padding: 10px 20px; background: #4285f4; color: white; border: none; cursor: pointer; border-radius: 5px; }
-    button:hover { background: #3367d6; }
-    .export-btn { background: #28a745 !important; margin: 20px 0; padding: 12px 24px !important; font-size: 16px !important; }
-    ul { list-style: none; padding: 0; }
-    li { background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 5px; }
-    .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
-    .success { background: #d4edda; color: #155724; }
-    .error { background: #f8d7da; color: #721c24; }
+    :root {
+      --bg: #faf5f5;
+      --card: #ffffff;
+      --border: #e7e0e0;
+      --text: #1f1f28;
+      --muted: #6b6b7a;
+      --primary: #c62828;
+      --primary-2: #b71c1c;
+      --primary-light: #ffebee;
+      --danger: #d93025;
+      --dark: #2b1a1a;
+      --success: #2e7d32;
+      --shadow: 0 4px 20px rgba(20,20,30,.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Poppins", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    .form-header {
+      text-align: center;
+      background: var(--card);
+      padding: 28px 20px;
+      margin: 0 auto 30px;
+      max-width: 720px;
+      border-bottom: 5px solid var(--primary);
+      border-radius: 0 0 14px 14px;
+      box-shadow: 0 6px 20px rgba(198,40,40,.15);
+    }
+
+    .header-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-wrapper { 
+      display: inline-block; 
+      margin-bottom: 10px; 
+    }
+
+    .logo { 
+      width: 45px; 
+      height: 45px; 
+      object-fit: contain; 
+      filter: drop-shadow(0 0 15px rgba(220, 38, 38, 0.5)); 
+      transition: all 0.3s ease; 
+    }
+
+    .logo:hover {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.7));
+    }
+
+    .form-header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    @media (max-width: 520px) {
+      .form-header h1 { font-size: 24px; }
+      .logo { width: 40px; height: 40px; }
+    }
+
+    .section-title {
+      margin-top: 22px;
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 12px 12px 0 0;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: .2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 0;
+      border-radius: 0 0 12px 12px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .field {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .field:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(198,40,40,.1);
+    }
+
+    .field.invalid {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(217,48,37,.1);
+    }
+
+    .field.valid {
+      border-color: var(--success);
+      box-shadow: 0 0 0 3px rgba(46,125,50,.1);
+    }
+
+    .label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2b2b35;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .req { color: var(--danger); font-weight: 700; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      padding: 8px 2px 6px;
+      border-bottom: 2px solid #ece7e7;
+      background: transparent;
+      font-family: inherit;
+      color: var(--text);
+      transition: border-color .2s;
+    }
+
+    textarea { min-height: 70px; resize: vertical; }
+
+    input:focus, select:focus, textarea:focus {
+      border-bottom-color: var(--primary);
+    }
+
+    input::placeholder, textarea::placeholder { color: #bbb; }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b6b7a' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+      padding-right: 28px;
+    }
+
+    .hint {
+      margin-top: 6px;
+      font-size: 11.5px;
+      color: var(--muted);
+      transition: color .2s;
+    }
+
+    .hint.counting {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .hint.complete {
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .error {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--danger);
+      font-weight: 500;
+      display: none;
+    }
+
+    .radio-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 4px;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #2d2d38;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .radio-item:hover { background: var(--primary-light); }
+    .radio-item input { accent-color: var(--primary); cursor: pointer; }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 11px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-family: inherit;
+      font-size: 14px;
+      transition: all .2s ease;
+    }
+
+    .btn.clear {
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .btn.clear:hover { color: var(--danger); }
+
+    .btn.primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(198,40,40,.25);
+    }
+
+    .btn.primary:hover {
+      background: var(--primary-2);
+      transform: translateY(-1px);
+    }
+
+    .btn.primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .toast {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--success);
+      border-radius: 12px;
+      padding: 14px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn .3s ease;
+    }
+
+    .toast.err { border-left-color: var(--danger); }
+    .toast.out { opacity: 0; transform: translateX(30px); transition: all .3s; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 520px) {
+      .form-header h1 { font-size: 20px; }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; text-align: center; }
+    }
   </style>
 </head>
 <body>
-  <h1>🧪 Firebase Cloud Test</h1>
-  <p>Add users below - data saves to Google Cloud instantly!</p>
-  
-  <div>
-    <input id="name" placeholder="Enter name" />
-    <input id="email" placeholder="Enter email" />
-    <button onclick="addUser()">➕ Save User</button>
+
+  <div class="wrap">
+
+    <div class="form-header">
+      <div class="header-container">
+        <div class="logo-wrapper">
+          <img src="logo.png" alt="Airtel" class="logo" id="airtelLogo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23dc2626%22/><text x=%2250%22 y=%2265%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2240%22 font-weight=%22bold%22>A</text></svg>'">
+        </div>
+        <h1>Promoter Onboarding Form</h1>
+      </div>
+    </div>
+
+    <!-- SECTION 1: Personal Details -->
+    <div class="section-title">👤 Personal Details</div>
+    <div class="card">
+
+      <div class="field">
+        <div class="label">Category <span class="req">*</span></div>
+        <select name="category" required>
+          <option value="" disabled selected>Select a category</option>
+          <option>DG/MT</option>
+          <option>Rural Promoter</option>
+          <option>WIFI First Promoter</option>
+        </select>
+        <div class="error">Please select a category.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Promoter Full Name <span class="req">*</span></div>
+        <input type="text" name="promoter_full_name" placeholder="Your answer" required />
+        <div class="error">Please enter promoter full name.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">POS ID <span class="req">*</span></div>
+        <input type="text" name="pos_id" placeholder="Your answer" required />
+        <div class="error">Please enter POS ID.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Promoter LAPU Number with FTA Rights <span class="req">*</span></div>
+        <input type="tel" name="lapu_number" placeholder="Enter 10-digit number" maxlength="10" required />
+        <div class="hint" id="hint_lapu_number">0 / 10 digits entered</div>
+        <div class="error">Please enter a valid 10-digit number.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Associate's Email ID <span class="req">*</span></div>
+        <input type="email" name="associate_email" placeholder="example@email.com" required />
+        <div class="hint">Enter a valid email address</div>
+        <div class="error">Please enter a valid email.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Alternate Contact Number <span class="req">*</span></div>
+        <input type="tel" name="alternate_contact" placeholder="Enter 10-digit number" maxlength="10" required />
+        <div class="hint" id="hint_alternate_contact">0 / 10 digits entered</div>
+        <div class="error">Please enter a valid 10-digit number.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Emergency Contact Number <span class="req">*</span></div>
+        <input type="tel" name="emergency_contact" placeholder="Enter 10-digit number" maxlength="10" required />
+        <div class="hint" id="hint_emergency_contact">0 / 10 digits entered</div>
+        <div class="error">Please enter a valid 10-digit number.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Emergency Contact Person Name <span class="req">*</span></div>
+        <input type="text" name="emergency_person_name" placeholder="Your answer" required />
+        <div class="error">Please enter emergency contact person name.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Relationship With Emergency Contact <span class="req">*</span></div>
+        <select name="emergency_relationship" required>
+          <option value="" disabled selected>Choose relationship</option>
+          <option>Father</option>
+          <option>Mother</option>
+          <option>Spouse</option>
+          <option>Brother</option>
+          <option>Sister</option>
+          <option>Friend</option>
+          <option>Other</option>
+        </select>
+        <div class="error">Please select relationship.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Gender <span class="req">*</span></div>
+        <div class="radio-row">
+          <label class="radio-item"><input type="radio" name="gender" value="Male" required> Male</label>
+          <label class="radio-item"><input type="radio" name="gender" value="Female" required> Female</label>
+        </div>
+        <div class="error">Please select gender.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Tentative Date of Joining <span class="req">*</span></div>
+        <input type="date" name="doj" required />
+        <div class="error">Please select tentative date of joining.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Aadhaar Number <span class="req">*</span></div>
+        <input type="text" name="aadhaar" placeholder="Enter 12-digit Aadhaar" maxlength="12" inputmode="numeric" required />
+        <div class="hint" id="hint_aadhaar">0 / 12 digits entered</div>
+        <div class="error">Please enter a valid 12-digit Aadhaar number.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Date of Birth <span class="req">*</span></div>
+        <input type="date" name="dob" required />
+        <div class="error">Please select date of birth.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">PAN Card Number <span class="req">*</span></div>
+        <input type="text" name="pan" placeholder="ABCDE1234F" maxlength="10" required />
+        <div class="hint" id="hint_pan">Format: ABCDE1234F</div>
+        <div class="error">Please enter a valid PAN card number.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Father's Name (as per PAN Card) <span class="req">*</span></div>
+        <input type="text" name="father_name" placeholder="Your answer" required />
+        <div class="error">Please enter father's name.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Marital Status <span class="req">*</span></div>
+        <select name="marital_status" required>
+          <option value="" disabled selected>Choose Marital Status</option>
+          <option>Single</option>
+          <option>Married</option>
+          <option>Divorced</option>
+          <option>Widowed</option>
+        </select>
+        <div class="error">Please select marital status.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Present Address <span class="req">*</span></div>
+        <textarea name="present_address" placeholder="Your answer" required></textarea>
+        <div class="error">Please enter present address.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Pincode <span class="req">*</span></div>
+        <input type="text" name="pincode" placeholder="Enter 6-digit pincode" maxlength="6" inputmode="numeric" required />
+        <div class="hint" id="hint_pincode">0 / 6 digits entered</div>
+        <div class="error">Please enter a valid 6-digit pincode.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Driving License Details <span class="req">*</span></div>
+        <input type="text" name="driving_license" placeholder="Your answer" required />
+        <div class="error">Please enter driving license details.</div>
+      </div>
+
+    </div>
+
+    <!-- SECTION 2: Employment Details -->
+    <div class="section-title">💼 Employment Details</div>
+    <div class="card">
+
+      <div class="field">
+        <div class="label">Work Location <span class="req">*</span></div>
+        <select name="work_location" required>
+          <option value="" disabled selected>Select a Work Location</option>
+          <option>Kottayam</option>
+          <option>Ernakulam</option>
+          <option>Thrissur</option>
+          <option>Trivananthapuram</option>
+          <option>Kozhikode</option>
+          <option>Kannur</option>
+          <option>Pathanamthitta</option>
+          <option>Alappuzha</option>
+          <option>Idukki</option>
+          <option>Palakkad</option>
+          <option>Malappuram</option>
+          <option>Wayanad</option>
+          <option>Kasargod</option>
+          <option>Kollam</option>
+        </select>
+        <div class="error">Please select work location.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">ZSM Name <span class="req">*</span></div>
+        <select name="zsm_name" required>
+          <option value="" disabled selected>Choose ZSM Name</option>
+          <option>Rakesh S L</option>
+          <option>Jyothish R</option>
+          <option>Manu M</option>
+          <option>Rahul Chandran</option>
+          <option>Sarath Prasad R</option>
+          <option>Shibin Baby</option>
+          <option>Jobin George</option>
+          <option>Joyson Faria</option>
+          <option>TBA Palakkad</option>
+          <option>Sajas Sathar</option>
+          <option>Muhammed Rafi</option>
+          <option>Anoop A</option>
+          <option>Nidhin Surendran</option>
+          <option>TBA Kasargod</option>
+        </select>
+        <div class="error">Please select ZSM name.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Manager Name <span class="req">*</span></div>
+        <input type="text" name="manager_name" placeholder="Your answer" required />
+        <div class="error">Please enter manager name.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Manager Email ID <span class="req">*</span></div>
+        <input type="email" name="manager_email" placeholder="example@email.com" required />
+        <div class="hint">Enter a valid email address</div>
+        <div class="error">Please enter a valid manager email.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Manager Contact Number <span class="req">*</span></div>
+        <input type="tel" name="manager_contact" placeholder="Enter 10-digit number" maxlength="10" required />
+        <div class="hint" id="hint_manager_contact">0 / 10 digits entered</div>
+        <div class="error">Please enter a valid 10-digit number.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Shared By <span class="req">*</span></div>
+        <input type="text" name="shared_by" placeholder="Your answer" required />
+        <div class="error">Please enter shared by.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Shared By OLM ID <span class="req">*</span></div>
+        <input type="text" name="shared_by_olm" placeholder="Your answer" required />
+        <div class="error">Please enter Shared By OLM ID.</div>
+      </div>
+
+    </div>
+
+    <!-- SECTION 3: Bank Account Details -->
+    <div class="section-title">🏦 Bank Account Details</div>
+    <div class="card">
+
+      <div class="field">
+        <div class="label">Bank Account Number <span class="req">*</span></div>
+        <input type="text" name="bank_account" placeholder="Your answer" inputmode="numeric" required />
+        <div class="error">Please enter bank account number.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Bank Name <span class="req">*</span></div>
+        <input type="text" name="bank_name" placeholder="Your answer" required />
+        <div class="error">Please enter bank name.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">Branch Name <span class="req">*</span></div>
+        <input type="text" name="branch_name" placeholder="Your answer" required />
+        <div class="error">Please enter branch name.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">IFSC Code <span class="req">*</span></div>
+        <input type="text" name="ifsc" placeholder="SBIN0001234" maxlength="11" required />
+        <div class="hint" id="hint_ifsc">Format: ABCD0123456 (11 characters)</div>
+        <div class="error">Please enter a valid IFSC code.</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn clear" type="button" id="clearBtn">Clear form</button>
+        <button class="btn primary" type="button" id="submitBtn">Submit</button>
+      </div>
+
+    </div>
+
   </div>
-  
-  <div id="status"></div>
-  
-  <h3>📋 Users in Cloud:</h3>
-  <ul id="userList">Loading...</ul>
-  
-  <button onclick="exportCSV()" class="export-btn">
-    📥 EXPORT USERS TO CSV
-  </button>
 
   <script type="module">
-    // YOUR CONFIG - PERFECT!
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
     const firebaseConfig = {
       apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
       authDomain: "test-3eb90.firebaseapp.com",
@@ -46,91 +626,366 @@
       measurementId: "G-4H15CWG2FG"
     };
 
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const status = document.getElementById('status');
-    
-    // LIVE USERS
-    let allUsers = []; // Store actual data globally
-    
-    onSnapshot(query(collection(db, 'users'), orderBy('timestamp', 'desc')), 
-      (snapshot) => {
-        allUsers = snapshot.docs.map(doc => doc.data());
-        document.getElementById('userList').innerHTML = allUsers.length 
-          ? allUsers.map(u => `<li>${u.name} (${u.email}) <small>${u.timestamp?.seconds ? new Date(u.timestamp.seconds * 1000).toLocaleString() : 'Just now'}</small></li>`).join('')
-          : '<li>No users yet - add one above!</li>';
-        status.textContent = `✅ Loaded ${allUsers.length} users from cloud`;
-        status.className = 'status success';
-      },
-      (error) => {
-        status.textContent = `❌ Error: ${error.message}`;
-        status.className = 'status error';
-      }
-    );
 
-    window.addUser = async () => {
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      
-      if (!name || !email) {
-        status.textContent = '❌ Please fill name AND email';
-        status.className = 'status error';
-        return;
-      }
-      
-      try {
-        status.textContent = '⏳ Saving to cloud...';
-        status.className = 'status';
-        
-        await addDoc(collection(db, 'users'), {
-          name, email, timestamp: serverTimestamp()
-        });
-        
-        document.getElementById('name').value = '';
-        document.getElementById('email').value = '';
-        status.textContent = `✅ Saved "${name}" to Firebase Cloud!`;
-        status.className = 'status success';
-      } catch (error) {
-        status.textContent = `❌ Save failed: ${error.message}`;
-        status.className = 'status error';
-      }
+    // ── Phone number fields (digits only, max 10) ──
+    const phoneFields = ['lapu_number', 'alternate_contact', 'emergency_contact', 'manager_contact'];
+
+    // ── Digits-only fields with their max lengths ──
+    const digitsOnlyFields = {
+      lapu_number: 10,
+      alternate_contact: 10,
+      emergency_contact: 10,
+      manager_contact: 10,
+      aadhaar: 12,
+      pincode: 6,
+      bank_account: 20
     };
 
-    // ✅ FIXED CSV EXPORT
-    window.exportCSV = () => {
-      if (allUsers.length === 0) {
-        alert('No users to export! Add some users first.');
-        return;
-      }
-      
-      const csvContent = 'Name,Email,Date Added\n' + 
-        allUsers.map(u => {
-          const date = u.timestamp?.seconds 
-            ? new Date(u.timestamp.seconds * 1000).toLocaleDateString()
-            : new Date().toLocaleDateString();
-          return `"${u.name}","${u.email}","${date}"`;
-        }).join('\n');
-      
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `users-${new Date().toISOString().split('T')[0]}.csv`;
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(link.href);
-      
-      status.textContent = `✅ ${allUsers.length} users exported to CSV!`;
-      status.className = 'status success';
+    // ── Validation rules ──
+    const validationRules = {
+      lapu_number:        v => /^\d{10}$/.test(v),
+      alternate_contact:  v => /^\d{10}$/.test(v),
+      emergency_contact:  v => /^\d{10}$/.test(v),
+      manager_contact:    v => /^\d{10}$/.test(v),
+      aadhaar:            v => /^\d{12}$/.test(v),
+      pincode:            v => /^\d{6}$/.test(v),
+      pan:                v => /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(v.toUpperCase()),
+      ifsc:               v => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.toUpperCase()),
+      associate_email:    v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+      manager_email:      v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
     };
 
-    document.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addUser();
+    // ── Helpers ──
+
+    function markInvalid(wrap, bad) {
+      const err = wrap.querySelector('.error');
+      if (err) err.style.display = bad ? 'block' : 'none';
+      wrap.classList.toggle('invalid', bad);
+      if (bad) wrap.classList.remove('valid');
+    }
+
+    function markValid(wrap) {
+      wrap.classList.remove('invalid');
+      wrap.classList.add('valid');
+      const err = wrap.querySelector('.error');
+      if (err) err.style.display = 'none';
+    }
+
+    function markNeutral(wrap) {
+      wrap.classList.remove('invalid', 'valid');
+      const err = wrap.querySelector('.error');
+      if (err) err.style.display = 'none';
+    }
+
+    function showToast(msg, type) {
+      const t = document.createElement('div');
+      t.className = 'toast' + (type === 'error' ? ' err' : '');
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => {
+        t.classList.add('out');
+        setTimeout(() => t.remove(), 300);
+      }, 3500);
+    }
+
+    function updateDigitHint(name, count, max) {
+      const hint = document.getElementById('hint_' + name);
+      if (!hint) return;
+      hint.textContent = count + ' / ' + max + ' digits entered';
+      hint.classList.remove('counting', 'complete');
+      if (count === max) {
+        hint.classList.add('complete');
+        hint.textContent = '✓ ' + max + ' / ' + max + ' digits — Complete!';
+      } else if (count > 0) {
+        hint.classList.add('counting');
+      }
+    }
+
+    // ── Restrict digits-only fields & live validate ──
+    Object.keys(digitsOnlyFields).forEach(name => {
+      const inp = document.querySelector('[name="' + name + '"]');
+      if (!inp) return;
+      const maxLen = digitsOnlyFields[name];
+      const wrap = inp.closest('.field');
+
+      // Block non-digit keys
+      inp.addEventListener('keypress', e => {
+        if (!/\d/.test(e.key)) e.preventDefault();
+        const digits = inp.value.replace(/\D/g, '');
+        if (digits.length >= maxLen) e.preventDefault();
+      });
+
+      // Paste handler — strip non-digits, enforce max
+      inp.addEventListener('paste', e => {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData('text');
+        const cleaned = pasted.replace(/\D/g, '').slice(0, maxLen);
+        inp.value = cleaned;
+        inp.dispatchEvent(new Event('input'));
+      });
+
+      // Live input — strip non-digits, enforce max, validate
+      inp.addEventListener('input', () => {
+        let digits = inp.value.replace(/\D/g, '');
+        if (digits.length > maxLen) digits = digits.slice(0, maxLen);
+        inp.value = digits;
+
+        updateDigitHint(name, digits.length, maxLen);
+
+        // Live validation
+        const rule = validationRules[name];
+        if (rule) {
+          if (digits.length === 0) {
+            markNeutral(wrap);
+          } else if (digits.length === maxLen && rule(digits)) {
+            markValid(wrap);
+          } else if (digits.length === maxLen && !rule(digits)) {
+            markInvalid(wrap, true);
+          } else {
+            markNeutral(wrap);
+          }
+        }
+      });
     });
+
+    // ── Live validation for PAN ──
+    (function() {
+      const inp = document.querySelector('[name="pan"]');
+      if (!inp) return;
+      const wrap = inp.closest('.field');
+      const hint = document.getElementById('hint_pan');
+
+      inp.addEventListener('input', () => {
+        let val = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (val.length > 10) val = val.slice(0, 10);
+        inp.value = val;
+
+        if (hint) {
+          if (val.length === 10 && validationRules.pan(val)) {
+            hint.textContent = '✓ Valid PAN format';
+            hint.className = 'hint complete';
+          } else if (val.length > 0) {
+            hint.textContent = val.length + ' / 10 characters — Format: ABCDE1234F';
+            hint.className = 'hint counting';
+          } else {
+            hint.textContent = 'Format: ABCDE1234F';
+            hint.className = 'hint';
+          }
+        }
+
+        if (val.length === 0) markNeutral(wrap);
+        else if (val.length === 10 && validationRules.pan(val)) markValid(wrap);
+        else if (val.length === 10) markInvalid(wrap, true);
+        else markNeutral(wrap);
+      });
+    })();
+
+    // ── Live validation for IFSC ──
+    (function() {
+      const inp = document.querySelector('[name="ifsc"]');
+      if (!inp) return;
+      const wrap = inp.closest('.field');
+      const hint = document.getElementById('hint_ifsc');
+
+      inp.addEventListener('input', () => {
+        let val = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (val.length > 11) val = val.slice(0, 11);
+        inp.value = val;
+
+        if (hint) {
+          if (val.length === 11 && validationRules.ifsc(val)) {
+            hint.textContent = '✓ Valid IFSC format';
+            hint.className = 'hint complete';
+          } else if (val.length > 0) {
+            hint.textContent = val.length + ' / 11 characters — Format: ABCD0123456';
+            hint.className = 'hint counting';
+          } else {
+            hint.textContent = 'Format: ABCD0123456 (11 characters)';
+            hint.className = 'hint';
+          }
+        }
+
+        if (val.length === 0) markNeutral(wrap);
+        else if (val.length === 11 && validationRules.ifsc(val)) markValid(wrap);
+        else if (val.length === 11) markInvalid(wrap, true);
+        else markNeutral(wrap);
+      });
+    })();
+
+    // ── Live validation for Email fields ──
+    ['associate_email', 'manager_email'].forEach(name => {
+      const inp = document.querySelector('[name="' + name + '"]');
+      if (!inp) return;
+      const wrap = inp.closest('.field');
+
+      inp.addEventListener('input', () => {
+        const val = inp.value.trim();
+        if (val.length === 0) {
+          markNeutral(wrap);
+        } else if (validationRules[name](val)) {
+          markValid(wrap);
+        } else if (val.includes('@') && val.includes('.')) {
+          // Almost valid but not quite
+          markNeutral(wrap);
+        } else {
+          markNeutral(wrap);
+        }
+      });
+
+      inp.addEventListener('blur', () => {
+        const val = inp.value.trim();
+        if (val.length === 0) return;
+        if (!validationRules[name](val)) markInvalid(wrap, true);
+        else markValid(wrap);
+      });
+    });
+
+    // ── Live validation for text/select/radio (just clear error when user types) ──
+    document.querySelectorAll('.field').forEach(wrap => {
+      wrap.querySelectorAll('input, select, textarea').forEach(inp => {
+        const name = inp.name;
+        // Skip fields already handled above
+        if (digitsOnlyFields[name] || ['pan', 'ifsc', 'associate_email', 'manager_email'].includes(name)) return;
+
+        ['input', 'change'].forEach(ev => {
+          inp.addEventListener(ev, () => {
+            if (wrap.classList.contains('invalid')) {
+              let val = '';
+              if (inp.type === 'radio') {
+                val = document.querySelector('input[name="' + name + '"]:checked') ? 'yes' : '';
+              } else {
+                val = inp.value.trim();
+              }
+              if (val) markValid(wrap);
+              else markNeutral(wrap);
+            }
+          });
+        });
+      });
+    });
+
+    // ── Final validation before submit ──
+    function validateAll() {
+      const fields = Array.from(document.querySelectorAll('.field'));
+      let ok = true;
+      let firstBad = null;
+
+      fields.forEach(wrap => {
+        const inp = wrap.querySelector('[required]');
+        if (!inp) return;
+
+        let valid = true;
+        const name = inp.name;
+
+        if (inp.type === 'radio') {
+          valid = !!document.querySelector('input[name="' + name + '"]:checked');
+        } else if (inp.tagName === 'SELECT') {
+          valid = inp.value.trim() !== '';
+        } else {
+          valid = inp.value.trim() !== '';
+        }
+
+        // Format checks
+        if (valid && validationRules[name]) {
+          let val = inp.value.trim();
+          if (name === 'pan' || name === 'ifsc') val = val.toUpperCase();
+          valid = validationRules[name](val);
+        }
+
+        if (valid) {
+          markValid(wrap);
+        } else {
+          markInvalid(wrap, true);
+          ok = false;
+          if (!firstBad) firstBad = wrap;
+        }
+      });
+
+      if (firstBad) firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return ok;
+    }
+
+    function collectData() {
+      const data = {};
+      document.querySelectorAll('input').forEach(i => {
+        if (!i.name) return;
+        if (i.type === 'radio') {
+          if (i.checked) data[i.name] = i.value;
+        } else {
+          let val = i.value.trim();
+          if (i.name === 'pan' || i.name === 'ifsc') val = val.toUpperCase();
+          data[i.name] = val;
+        }
+      });
+      document.querySelectorAll('select').forEach(s => {
+        if (s.name) data[s.name] = s.value;
+      });
+      document.querySelectorAll('textarea').forEach(t => {
+        if (t.name) data[t.name] = t.value.trim();
+      });
+      return data;
+    }
+
+    function resetForm() {
+      document.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+        else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+        else el.value = '';
+      });
+      document.querySelectorAll('.field').forEach(w => markNeutral(w));
+
+      // Reset all hints
+      Object.keys(digitsOnlyFields).forEach(name => {
+        const max = digitsOnlyFields[name];
+        updateDigitHint(name, 0, max);
+      });
+
+      const panHint = document.getElementById('hint_pan');
+      if (panHint) { panHint.textContent = 'Format: ABCDE1234F'; panHint.className = 'hint'; }
+
+      const ifscHint = document.getElementById('hint_ifsc');
+      if (ifscHint) { ifscHint.textContent = 'Format: ABCD0123456 (11 characters)'; ifscHint.className = 'hint'; }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Clear Button ──
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      if (!confirm('Clear all answers?')) return;
+      resetForm();
+    });
+
+    // ── Submit Button ──
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+      if (!validateAll()) {
+        showToast('Please fix the errors above.', 'error');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+      const payload = collectData();
+      payload.submitted_at = serverTimestamp();
+
+      try {
+        await addDoc(collection(db, 'promoters'), payload);
+        showToast('✅ Form submitted successfully!');
+        setTimeout(() => resetForm(), 1200);
+      } catch (error) {
+        console.error('Firebase error:', error);
+        showToast('❌ Submission failed. Check your internet.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Submit';
+      }
+    });
+
+    console.log('✅ Firebase Promoter Form Active with Live Validation!');
   </script>
+
 </body>
 </html>
