@@ -514,6 +514,7 @@
           <option>Wayanad</option>
           <option>Kasargod</option>
           <option>Kollam</option>
+          <option>Kasaragod</option>
         </select>
         <div class="error">Please select work location.</div>
       </div>
@@ -548,9 +549,9 @@
 
       <div class="field">
         <div class="label">Manager Email ID <span class="req">*</span></div>
-        <input type="email" name="manager_email" placeholder="example@email.com" required />
-        <div class="hint">Enter a valid email address</div>
-        <div class="error">Please enter a valid manager email.</div>
+        <input type="email" name="manager_email" placeholder="example@airtel.com" required />
+        <div class="hint">Must end with @airtel.com</div>
+        <div class="error">Manager Email must end with @airtel.com</div>
       </div>
 
       <div class="field">
@@ -568,8 +569,8 @@
 
       <div class="field">
         <div class="label">Shared By OLM ID <span class="req">*</span></div>
-        <input type="text" name="shared_by_olm" placeholder="Your answer" required />
-        <div class="error">Please enter Shared By OLM ID.</div>
+        <input type="text" name="shared_by_olm" placeholder="Must start with B0..." required />
+        <div class="error">Shared By OLM ID must start with B0</div>
       </div>
 
     </div>
@@ -654,7 +655,9 @@
       pan:                v => /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(v.toUpperCase()),
       ifsc:               v => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.toUpperCase()),
       associate_email:    v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
-      manager_email:      v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+      manager_email:      v => /^[^\s@]+@airtel\.com$/i.test(v.trim()),
+      pos_id:             v => /^[a-zA-Z0-9]+$/.test(v.trim()),
+      shared_by_olm:      v => /^B0/i.test(v.trim())
     };
 
     // ── Helpers ──
@@ -750,6 +753,62 @@
       });
     });
 
+    // ── Live validation for POS ID (alphanumeric only) ──
+    (function() {
+      const inp = document.querySelector('[name="pos_id"]');
+      if (!inp) return;
+      const wrap = inp.closest('.field');
+
+      inp.addEventListener('input', () => {
+        const val = inp.value.trim();
+
+        if (val.length === 0) {
+          markNeutral(wrap);
+          return;
+        }
+
+        if (validationRules.pos_id(val)) {
+          markValid(wrap);
+        } else {
+          markInvalid(wrap, true);
+        }
+      });
+
+      inp.addEventListener('blur', () => {
+        const val = inp.value.trim();
+        if (val.length === 0) return;
+        if (!validationRules.pos_id(val)) markInvalid(wrap, true);
+      });
+    })();
+
+    // ── Live validation for Shared By OLM ID (must start with B0) ──
+    (function() {
+      const inp = document.querySelector('[name="shared_by_olm"]');
+      if (!inp) return;
+      const wrap = inp.closest('.field');
+
+      inp.addEventListener('input', () => {
+        const val = inp.value.trim();
+
+        if (val.length === 0) {
+          markNeutral(wrap);
+          return;
+        }
+
+        if (validationRules.shared_by_olm(val)) {
+          markValid(wrap);
+        } else {
+          markInvalid(wrap, true);
+        }
+      });
+
+      inp.addEventListener('blur', () => {
+        const val = inp.value.trim();
+        if (val.length === 0) return;
+        if (!validationRules.shared_by_olm(val)) markInvalid(wrap, true);
+      });
+    })();
+
     // ── Live validation for PAN ──
     (function() {
       const inp = document.querySelector('[name="pan"]');
@@ -826,9 +885,6 @@
           markNeutral(wrap);
         } else if (validationRules[name](val)) {
           markValid(wrap);
-        } else if (val.includes('@') && val.includes('.')) {
-          // Almost valid but not quite
-          markNeutral(wrap);
         } else {
           markNeutral(wrap);
         }
@@ -847,7 +903,7 @@
       wrap.querySelectorAll('input, select, textarea').forEach(inp => {
         const name = inp.name;
         // Skip fields already handled above
-        if (digitsOnlyFields[name] || ['pan', 'ifsc', 'associate_email', 'manager_email'].includes(name)) return;
+        if (digitsOnlyFields[name] || ['pan', 'ifsc', 'associate_email', 'manager_email', 'pos_id', 'shared_by_olm'].includes(name)) return;
 
         ['input', 'change'].forEach(ev => {
           inp.addEventListener(ev, () => {
@@ -864,6 +920,37 @@
           });
         });
       });
+    });
+
+    // ── Cross-field validation: LAPU != Alternate Contact ──
+    function validateLapuNotEqualAlternate() {
+      const lapuInp = document.querySelector('[name="lapu_number"]');
+      const altInp  = document.querySelector('[name="alternate_contact"]');
+      if (!lapuInp || !altInp) return true;
+
+      const lapuWrap = lapuInp.closest('.field');
+      const altWrap  = altInp.closest('.field');
+
+      const lapu = lapuInp.value.trim();
+      const alt  = altInp.value.trim();
+
+      // Only check when both are 10 digits
+      if (/^\d{10}$/.test(lapu) && /^\d{10}$/.test(alt)) {
+        if (lapu === alt) {
+          markInvalid(lapuWrap, true);
+          markInvalid(altWrap, true);
+          showToast('❌ LAPU Number and Alternate Contact cannot be the same.', 'error');
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // Live check on both fields
+    ['lapu_number', 'alternate_contact'].forEach(name => {
+      const inp = document.querySelector('[name="' + name + '"]');
+      if (!inp) return;
+      inp.addEventListener('blur', () => validateLapuNotEqualAlternate());
     });
 
     // ── Final validation before submit ──
@@ -902,6 +989,15 @@
           if (!firstBad) firstBad = wrap;
         }
       });
+
+      // Extra cross-field check
+      if (ok) {
+        ok = validateLapuNotEqualAlternate();
+        if (!ok) {
+          const lapuInp = document.querySelector('[name="lapu_number"]');
+          if (lapuInp) firstBad = lapuInp.closest('.field');
+        }
+      }
 
       if (firstBad) firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return ok;
