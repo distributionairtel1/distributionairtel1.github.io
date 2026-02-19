@@ -365,9 +365,9 @@
     <div class="field">
       <div class="label">POS ID <span class="req">*</span></div>
       <input type="text" name="pos_id"
-             placeholder="e.g. ABC123 (letters AND numbers required)" required />
-      <div class="hint" id="hint_pos_id">Must contain both letters and numbers (e.g. ABC123)</div>
-      <div class="error">POS ID must contain both letters AND numbers (e.g. ABC123).</div>
+             placeholder="Enter POS ID (letters and numbers only)" required />
+      <div class="hint" id="hint_pos_id">Only letters and numbers allowed</div>
+      <div class="error">Please enter a valid POS ID.</div>
     </div>
 
     <div class="field">
@@ -679,10 +679,10 @@
     manager_email:           v => /^[^\s@]+@airtel\.com$/i.test(v.trim()),
     shared_by_olm:           v => /^B0/i.test(v.trim()),
     dob:                     v => !!v && calcAge(v) >= 18,
-    // ✅ POS ID: must have ≥1 letter AND ≥1 digit, no special chars
+    // ✅ POS ID: just check it's alphanumeric and not empty (no requirement for both letters AND numbers)
     pos_id: v => {
       const t = v.trim();
-      return /^[a-zA-Z0-9]+$/.test(t) && /[a-zA-Z]/.test(t) && /[0-9]/.test(t);
+      return /^[a-zA-Z0-9]+$/.test(t) && t.length > 0;
     },
     // ✅ Emergency person name: alphabets and spaces only
     emergency_person_name:   v => /^[a-zA-Z\s]+$/.test(v.trim()) && v.trim().length > 0
@@ -760,7 +760,7 @@
     });
   });
 
-  // ── POS ID ──
+  // ── POS ID — alphanumeric only (no validation for both letters AND numbers) ──
   (function () {
     const inp  = document.querySelector('[name="pos_id"]');
     if (!inp) return;
@@ -771,21 +771,12 @@
       if (!hint) return;
       hint.classList.remove('counting', 'complete');
       if (!val.length) {
-        hint.textContent = 'Must contain both letters and numbers (e.g. ABC123)';
+        hint.textContent = 'Only letters and numbers allowed';
         hint.className   = 'hint';
         return;
       }
-      const hasL = /[a-zA-Z]/.test(val), hasN = /[0-9]/.test(val);
-      if (hasL && hasN) {
-        hint.textContent = '✓ Valid alphanumeric POS ID — ' + val.length + ' characters';
-        hint.className   = 'hint complete';
-      } else if (hasL) {
-        hint.textContent = '⚠️ Add at least one number (e.g. ABC → ABC123)';
-        hint.className   = 'hint counting';
-      } else {
-        hint.textContent = '⚠️ Add at least one letter (e.g. 123 → A123)';
-        hint.className   = 'hint counting';
-      }
+      hint.textContent = '✓ ' + val.length + ' characters entered';
+      hint.className   = 'hint complete';
     }
 
     inp.addEventListener('keypress', e => {
@@ -809,8 +800,7 @@
       const val = inp.value;
       updatePosHint(val);
       if (!val.length) markNeutral(wrap);
-      else if (validationRules.pos_id(val)) markValid(wrap);
-      else markNeutral(wrap);
+      else markValid(wrap);
     });
     inp.addEventListener('blur', () => {
       const val = inp.value.trim();
@@ -1148,7 +1138,7 @@
     Object.keys(digitsOnlyFields).forEach(n => updateDigitHint(n, 0, digitsOnlyFields[n]));
 
     const ph = document.getElementById('hint_pos_id');
-    if (ph) { ph.textContent='Must contain both letters and numbers (e.g. ABC123)'; ph.className='hint'; }
+    if (ph) { ph.textContent='Only letters and numbers allowed'; ph.className='hint'; }
 
     // ✅ Reset emergency person name hint
     const eh = document.getElementById('hint_emergency_person_name');
@@ -1198,7 +1188,7 @@
     }
   });
 
-  console.log('✅ Emergency Contact Person Name — alphabets only validation active');
+  console.log('✅ POS ID — alphanumeric input only (no mixed validation required)');
 </script>
 
 </body>
