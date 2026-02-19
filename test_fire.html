@@ -362,7 +362,6 @@
       <div class="error">Please enter promoter full name.</div>
     </div>
 
-    <!-- ✅ POS ID — must be strictly alphanumeric (letters + numbers both required) -->
     <div class="field">
       <div class="label">POS ID <span class="req">*</span></div>
       <input type="text" name="pos_id"
@@ -402,10 +401,13 @@
       <div class="error">Please enter a valid 10-digit number.</div>
     </div>
 
+    <!-- ✅ UPDATED: Emergency Contact Person Name — alphabets only -->
     <div class="field">
       <div class="label">Emergency Contact Person Name <span class="req">*</span></div>
-      <input type="text" name="emergency_person_name" placeholder="Your answer" required />
-      <div class="error">Please enter emergency contact person name.</div>
+      <input type="text" name="emergency_person_name"
+             placeholder="Enter full name (letters only)" required />
+      <div class="hint" id="hint_emergency_person_name">Only alphabets and spaces allowed</div>
+      <div class="error">Name must contain only letters (no numbers or special characters).</div>
     </div>
 
     <div class="field">
@@ -663,30 +665,27 @@
     return d.toISOString().split('T')[0];
   }
 
-  // ══════════════════════════════════════════════════════
-  // ✅ Validation Rules
-  // pos_id: MUST have at least one letter AND one number
-  // ══════════════════════════════════════════════════════
+  // ── Validation Rules ──
   const validationRules = {
-    lapu_number:       v => /^\d{10}$/.test(v),
-    alternate_contact: v => /^\d{10}$/.test(v),
-    emergency_contact: v => /^\d{10}$/.test(v),
-    manager_contact:   v => /^\d{10}$/.test(v),
-    aadhaar:           v => /^\d{12}$/.test(v),
-    pincode:           v => /^\d{6}$/.test(v),
-    pan:               v => /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(v.toUpperCase()),
-    ifsc:              v => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.toUpperCase()),
-    associate_email:   v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
-    manager_email:     v => /^[^\s@]+@airtel\.com$/i.test(v.trim()),
-    shared_by_olm:     v => /^B0/i.test(v.trim()),
-    dob:               v => !!v && calcAge(v) >= 18,
-    // ✅ Must be alphanumeric AND contain ≥1 letter AND ≥1 digit
+    lapu_number:             v => /^\d{10}$/.test(v),
+    alternate_contact:       v => /^\d{10}$/.test(v),
+    emergency_contact:       v => /^\d{10}$/.test(v),
+    manager_contact:         v => /^\d{10}$/.test(v),
+    aadhaar:                 v => /^\d{12}$/.test(v),
+    pincode:                 v => /^\d{6}$/.test(v),
+    pan:                     v => /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(v.toUpperCase()),
+    ifsc:                    v => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.toUpperCase()),
+    associate_email:         v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+    manager_email:           v => /^[^\s@]+@airtel\.com$/i.test(v.trim()),
+    shared_by_olm:           v => /^B0/i.test(v.trim()),
+    dob:                     v => !!v && calcAge(v) >= 18,
+    // ✅ POS ID: must have ≥1 letter AND ≥1 digit, no special chars
     pos_id: v => {
       const t = v.trim();
-      return /^[a-zA-Z0-9]+$/.test(t)  // no special chars / spaces
-          && /[a-zA-Z]/.test(t)          // at least one letter
-          && /[0-9]/.test(t);            // at least one number
-    }
+      return /^[a-zA-Z0-9]+$/.test(t) && /[a-zA-Z]/.test(t) && /[0-9]/.test(t);
+    },
+    // ✅ Emergency person name: alphabets and spaces only
+    emergency_person_name:   v => /^[a-zA-Z\s]+$/.test(v.trim()) && v.trim().length > 0
   };
 
   // ── UI helpers ──
@@ -754,52 +753,41 @@
       updateDigitHint(name, d.length, max);
       const rule = validationRules[name];
       if (!rule) return;
-      if (!d.length)          markNeutral(wrap);
-      else if (d.length===max && rule(d)) markValid(wrap);
-      else if (d.length===max) markInvalid(wrap);
-      else                    markNeutral(wrap);
+      if (!d.length)                       markNeutral(wrap);
+      else if (d.length===max && rule(d))  markValid(wrap);
+      else if (d.length===max)             markInvalid(wrap);
+      else                                 markNeutral(wrap);
     });
   });
 
-  // ══════════════════════════════════════════════════════
-  // ✅ POS ID — strict alphanumeric (letters + numbers)
-  // ══════════════════════════════════════════════════════
+  // ── POS ID ──
   (function () {
     const inp  = document.querySelector('[name="pos_id"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     const hint = document.getElementById('hint_pos_id');
 
-    // ── Live hint updater ──
     function updatePosHint(val) {
       if (!hint) return;
       hint.classList.remove('counting', 'complete');
-
       if (!val.length) {
         hint.textContent = 'Must contain both letters and numbers (e.g. ABC123)';
         hint.className   = 'hint';
         return;
       }
-
-      const hasL = /[a-zA-Z]/.test(val);
-      const hasN = /[0-9]/.test(val);
-
+      const hasL = /[a-zA-Z]/.test(val), hasN = /[0-9]/.test(val);
       if (hasL && hasN) {
-        // ✅ Perfect — both present
         hint.textContent = '✓ Valid alphanumeric POS ID — ' + val.length + ' characters';
         hint.className   = 'hint complete';
-      } else if (hasL && !hasN) {
-        // ⚠️ Letters only — still needs a number
+      } else if (hasL) {
         hint.textContent = '⚠️ Add at least one number (e.g. ABC → ABC123)';
         hint.className   = 'hint counting';
-      } else if (!hasL && hasN) {
-        // ⚠️ Numbers only — still needs a letter
+      } else {
         hint.textContent = '⚠️ Add at least one letter (e.g. 123 → A123)';
         hint.className   = 'hint counting';
       }
     }
 
-    // Block special chars & spaces at keypress
     inp.addEventListener('keypress', e => {
       if (!/[a-zA-Z0-9]/.test(e.key)) {
         e.preventDefault();
@@ -810,40 +798,122 @@
         }
       }
     });
-
-    // Paste — strip invalid chars
     inp.addEventListener('paste', e => {
       e.preventDefault();
-      inp.value = (e.clipboardData || window.clipboardData)
+      inp.value = (e.clipboardData||window.clipboardData)
         .getData('text').replace(/[^a-zA-Z0-9]/g, '');
       inp.dispatchEvent(new Event('input'));
     });
-
-    // Live input
     inp.addEventListener('input', () => {
-      // Strip anything that slipped through
       inp.value = inp.value.replace(/[^a-zA-Z0-9]/g, '');
       const val = inp.value;
       updatePosHint(val);
-
-      if (!val.length) {
-        markNeutral(wrap);
-      } else if (validationRules.pos_id(val)) {
-        markValid(wrap);   // both letters + numbers present ✅
-      } else {
-        // Has content but missing letters OR numbers
-        markNeutral(wrap); // stay neutral (not red) while still typing
-      }
+      if (!val.length) markNeutral(wrap);
+      else if (validationRules.pos_id(val)) markValid(wrap);
+      else markNeutral(wrap);
     });
-
-    // On blur — final check, show red if incomplete
     inp.addEventListener('blur', () => {
       const val = inp.value.trim();
       if (!val.length) { markNeutral(wrap); return; }
-      if (validationRules.pos_id(val)) markValid(wrap);
-      else markInvalid(wrap); // ❌ red — missing letters or numbers
+      validationRules.pos_id(val) ? markValid(wrap) : markInvalid(wrap);
     });
   })();
+
+  // ══════════════════════════════════════════════════════
+  // ✅ Emergency Contact Person Name — alphabets only
+  // ══════════════════════════════════════════════════════
+  (function () {
+    const inp  = document.querySelector('[name="emergency_person_name"]');
+    if (!inp) return;
+    const wrap = inp.closest('.field');
+    const hint = document.getElementById('hint_emergency_person_name');
+
+    // Helper to refresh hint text after a warning clears
+    function refreshHint() {
+      if (!hint) return;
+      const val = inp.value.trim();
+      if (val.length > 0) {
+        hint.textContent = '✓ ' + val.length + ' characters entered';
+        hint.className   = 'hint complete';
+      } else {
+        hint.textContent = 'Only alphabets and spaces allowed';
+        hint.className   = 'hint';
+      }
+    }
+
+    // Block numbers and special characters at keypress
+    inp.addEventListener('keypress', e => {
+      if (!/[a-zA-Z\s]/.test(e.key)) {
+        e.preventDefault();
+        if (hint) {
+          hint.className   = 'hint counting';
+          hint.textContent = '⚠️ Only letters and spaces are allowed — no numbers or symbols';
+          setTimeout(refreshHint, 1800);
+        }
+      }
+    });
+
+    // Paste — strip non-alpha chars
+    inp.addEventListener('paste', e => {
+      e.preventDefault();
+      const cleaned = (e.clipboardData || window.clipboardData)
+        .getData('text')
+        .replace(/[^a-zA-Z\s]/g, '')  // strip non-alpha
+        .replace(/\s+/g, ' ');         // collapse multiple spaces
+      inp.value = cleaned;
+      inp.dispatchEvent(new Event('input'));
+    });
+
+    // Live input — strip invalid chars as typed
+    inp.addEventListener('input', () => {
+      // Sanitise: remove anything that isn't a letter or space
+      const pos    = inp.selectionStart;
+      const before = inp.value;
+      const after  = before.replace(/[^a-zA-Z\s]/g, '').replace(/\s+/g, ' ');
+
+      if (before !== after) {
+        inp.value = after;
+        // Restore cursor position as best we can
+        inp.setSelectionRange(Math.max(0, pos - (before.length - after.length)), 
+                              Math.max(0, pos - (before.length - after.length)));
+      }
+
+      const val = inp.value.trim();
+
+      if (!hint) return;
+      hint.classList.remove('counting', 'complete');
+
+      if (!val.length) {
+        markNeutral(wrap);
+        hint.textContent = 'Only alphabets and spaces allowed';
+        hint.className   = 'hint';
+      } else {
+        markValid(wrap);
+        hint.textContent = '✓ ' + val.length + ' characters entered';
+        hint.className   = 'hint complete';
+      }
+    });
+
+    // Blur — final validation
+    inp.addEventListener('blur', () => {
+      const val = inp.value.trim();
+      if (!val.length) {
+        markNeutral(wrap);
+        if (hint) { hint.textContent = 'Only alphabets and spaces allowed'; hint.className = 'hint'; }
+        return;
+      }
+      if (validationRules.emergency_person_name(val)) {
+        markValid(wrap);
+      } else {
+        markInvalid(wrap);
+        if (hint) {
+          hint.textContent = '⚠️ Only letters and spaces are allowed';
+          hint.className   = 'hint counting';
+        }
+      }
+    });
+  })();
+  // ══════════════════════════════════════════════════════
 
   // ── DOB — 18+ ──
   (function () {
@@ -906,9 +976,13 @@
       let v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
       inp.value = v;
       if (hint) {
-        if (v.length===10 && validationRules.pan(v)) { hint.textContent='✓ Valid PAN format'; hint.className='hint complete'; }
-        else if (v.length>0) { hint.textContent=v.length+' / 10 — Format: ABCDE1234F'; hint.className='hint counting'; }
-        else { hint.textContent='Format: ABCDE1234F'; hint.className='hint'; }
+        if (v.length===10 && validationRules.pan(v)) {
+          hint.textContent='✓ Valid PAN format'; hint.className='hint complete';
+        } else if (v.length>0) {
+          hint.textContent=v.length+' / 10 — Format: ABCDE1234F'; hint.className='hint counting';
+        } else {
+          hint.textContent='Format: ABCDE1234F'; hint.className='hint';
+        }
       }
       if (!v.length) markNeutral(wrap);
       else if (v.length===10 && validationRules.pan(v)) markValid(wrap);
@@ -927,9 +1001,13 @@
       let v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,11);
       inp.value = v;
       if (hint) {
-        if (v.length===11 && validationRules.ifsc(v)) { hint.textContent='✓ Valid IFSC format'; hint.className='hint complete'; }
-        else if (v.length>0) { hint.textContent=v.length+' / 11 — Format: ABCD0123456'; hint.className='hint counting'; }
-        else { hint.textContent='Format: ABCD0123456 (11 characters)'; hint.className='hint'; }
+        if (v.length===11 && validationRules.ifsc(v)) {
+          hint.textContent='✓ Valid IFSC format'; hint.className='hint complete';
+        } else if (v.length>0) {
+          hint.textContent=v.length+' / 11 — Format: ABCD0123456'; hint.className='hint counting';
+        } else {
+          hint.textContent='Format: ABCD0123456 (11 characters)'; hint.className='hint';
+        }
       }
       if (!v.length) markNeutral(wrap);
       else if (v.length===11 && validationRules.ifsc(v)) markValid(wrap);
@@ -958,7 +1036,8 @@
   // ── Generic clear-on-type for remaining fields ──
   const handledFields = [
     ...Object.keys(digitsOnlyFields),
-    'pan','ifsc','associate_email','manager_email','pos_id','shared_by_olm','dob'
+    'pan','ifsc','associate_email','manager_email',
+    'pos_id','shared_by_olm','dob','emergency_person_name'
   ];
   document.querySelectorAll('.field').forEach(wrap => {
     wrap.querySelectorAll('input, select, textarea').forEach(inp => {
@@ -1013,7 +1092,6 @@
         valid = inp.value.trim() !== '';
       }
 
-      // Format / rule check
       if (valid && validationRules[name]) {
         let val = inp.value.trim();
         if (name === 'pan' || name === 'ifsc') val = val.toUpperCase();
@@ -1072,6 +1150,10 @@
     const ph = document.getElementById('hint_pos_id');
     if (ph) { ph.textContent='Must contain both letters and numbers (e.g. ABC123)'; ph.className='hint'; }
 
+    // ✅ Reset emergency person name hint
+    const eh = document.getElementById('hint_emergency_person_name');
+    if (eh) { eh.textContent='Only alphabets and spaces allowed'; eh.className='hint'; }
+
     const dh = document.getElementById('hint_dob');
     if (dh) { dh.textContent='You must be at least 18 years old'; dh.className='hint'; }
 
@@ -1116,9 +1198,8 @@
     }
   });
 
-  console.log('✅ POS ID — strict alphanumeric (letters + numbers both required)');
+  console.log('✅ Emergency Contact Person Name — alphabets only validation active');
 </script>
 
 </body>
 </html>
-
