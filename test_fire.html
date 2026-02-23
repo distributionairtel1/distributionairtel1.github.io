@@ -138,6 +138,26 @@
       box-shadow: 0 0 0 3px rgba(46,125,50,.1);
     }
 
+    .field.conditional {
+      display: none;
+      animation: slideDown 0.3s ease;
+    }
+
+    .field.conditional.show {
+      display: block;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .label {
       font-size: 13px;
       font-weight: 600;
@@ -320,7 +340,6 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ✅ Aadhaar formatting styles */
     input[name="aadhaar"] {
       letter-spacing: 2px;
       font-family: 'Courier New', monospace;
@@ -362,6 +381,23 @@
         <option>WIFI First Promoter</option>
       </select>
       <div class="error">Please select a category.</div>
+    </div>
+
+    <div class="field">
+      <div class="label">Whether New Joinee or Rejoinee <span class="req">*</span></div>
+      <select name="joinee_type" id="joinee_type" required>
+        <option value="" disabled selected>Select an option</option>
+        <option value="New Joinee">New Joinee</option>
+        <option value="Rejoinee">Rejoinee</option>
+      </select>
+      <div class="error">Please select whether New Joinee or Rejoinee.</div>
+    </div>
+
+    <div class="field conditional" id="lwd_field">
+      <div class="label">Mention LWD (Last Working Day) <span class="req">*</span></div>
+      <input type="date" name="lwd" id="lwd_input" />
+      <div class="hint" id="hint_lwd">Enter your last working day from previous employment</div>
+      <div class="error">Please enter your Last Working Day.</div>
     </div>
 
     <div class="field">
@@ -447,7 +483,6 @@
       <div class="error">Please select tentative date of joining.</div>
     </div>
 
-    <!-- ✅ Aadhaar Number with XXXX-XXXX-XXXX format -->
     <div class="field">
       <div class="label">Aadhaar Number <span class="req">*</span></div>
       <input type="text" name="aadhaar" placeholder="XXXX-XXXX-XXXX"
@@ -560,6 +595,17 @@
     </div>
 
     <div class="field">
+      <div class="label">Zone <span class="req">*</span></div>
+      <select name="zone" required>
+        <option value="" disabled selected>Select a Zone</option>
+        <option value="KLS">KLS</option>
+        <option value="KLC">KLC</option>
+        <option value="KLN">KLN</option>
+      </select>
+      <div class="error">Please select a zone.</div>
+    </div>
+
+    <div class="field">
       <div class="label">Manager Name <span class="req">*</span></div>
       <input type="text" name="manager_name" placeholder="Your answer" required />
       <div class="error">Please enter manager name.</div>
@@ -634,11 +680,11 @@
 </div>
 
 <script type="module">
-  import { initializeApp }
-    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-  import { getFirestore, collection, addDoc, serverTimestamp }
-    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  // ✅ Firebase imports
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
+  // ✅ Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
     authDomain: "test-3eb90.firebaseapp.com",
@@ -649,14 +695,25 @@
     measurementId: "G-4H15CWG2FG"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+  // ✅ Initialize Firebase
+  let app, db;
+  try {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    console.log('✅ Firebase initialized successfully');
+  } catch (error) {
+    console.error('❌ Firebase initialization error:', error);
+    alert('Firebase initialization failed: ' + error.message);
+  }
 
-  // ── Digits-only fields (Aadhaar handled separately) ──
+  // ── Digits-only fields ──
   const digitsOnlyFields = {
-    lapu_number: 10, alternate_contact: 10,
-    emergency_contact: 10, manager_contact: 10,
-    pincode: 6, bank_account: 20
+    lapu_number: 10,
+    alternate_contact: 10,
+    emergency_contact: 10,
+    manager_contact: 10,
+    pincode: 6,
+    bank_account: 20
   };
 
   // ── Age helpers ──
@@ -667,6 +724,7 @@
     if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
     return age;
   }
+
   function getMax18Date() {
     const d = new Date();
     d.setFullYear(d.getFullYear() - 18);
@@ -675,20 +733,21 @@
 
   // ── Validation Rules ──
   const validationRules = {
-    lapu_number:             v => /^\d{10}$/.test(v),
-    alternate_contact:       v => /^\d{10}$/.test(v),
-    emergency_contact:       v => /^\d{10}$/.test(v),
-    manager_contact:         v => /^\d{10}$/.test(v),
-    aadhaar:                 v => /^\d{12}$/.test(v.replace(/-/g, '')),
-    pincode:                 v => /^\d{6}$/.test(v),
-    pan:                     v => /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(v.toUpperCase()),
-    ifsc:                    v => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.toUpperCase()),
-    associate_email:         v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
-    manager_email:           v => /^[^\s@]+@airtel\.com$/i.test(v.trim()),
-    shared_by_olm:           v => /^B0/i.test(v.trim()),
-    dob:                     v => !!v && calcAge(v) >= 18,
-    pos_id:                  v => /^[a-zA-Z0-9]+$/.test(v.trim()) && v.trim().length > 0,
-    emergency_person_name:   v => /^[a-zA-Z\s]+$/.test(v.trim()) && v.trim().length > 0
+    lapu_number: v => /^\d{10}$/.test(v),
+    alternate_contact: v => /^\d{10}$/.test(v),
+    emergency_contact: v => /^\d{10}$/.test(v),
+    manager_contact: v => /^\d{10}$/.test(v),
+    aadhaar: v => /^\d{12}$/.test(v.replace(/-/g, '')),
+    pincode: v => /^\d{6}$/.test(v),
+    pan: v => /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(v.toUpperCase()),
+    ifsc: v => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.toUpperCase()),
+    associate_email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+    manager_email: v => /^[^\s@]+@airtel\.com$/i.test(v.trim()),
+    shared_by_olm: v => /^B0/i.test(v.trim()),
+    dob: v => !!v && calcAge(v) >= 18,
+    pos_id: v => /^[a-zA-Z0-9]+$/.test(v.trim()) && v.trim().length > 0,
+    emergency_person_name: v => /^[a-zA-Z\s]+$/.test(v.trim()) && v.trim().length > 0,
+    lwd: v => !!v && v.trim().length > 0
   };
 
   // ── UI helpers ──
@@ -698,12 +757,14 @@
     const e = wrap.querySelector('.error');
     if (e) e.style.display = 'block';
   }
+
   function markValid(wrap) {
     wrap.classList.remove('invalid');
     wrap.classList.add('valid');
     const e = wrap.querySelector('.error');
     if (e) e.style.display = 'none';
   }
+
   function markNeutral(wrap) {
     wrap.classList.remove('invalid', 'valid');
     const e = wrap.querySelector('.error');
@@ -715,7 +776,10 @@
     t.className = 'toast' + (type === 'error' ? ' err' : '');
     t.textContent = msg;
     document.body.appendChild(t);
-    setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3500);
+    setTimeout(() => {
+      t.classList.add('out');
+      setTimeout(() => t.remove(), 300);
+    }, 3500);
   }
 
   function updateDigitHint(name, count, max) {
@@ -733,47 +797,124 @@
     }
   }
 
+  // ══════════════════════════════════════════════════════
+  // ✅ Joinee Type Conditional Logic
+  // ══════════════════════════════════════════════════════
+  (function() {
+    const joineeSelect = document.getElementById('joinee_type');
+    const lwdField = document.getElementById('lwd_field');
+    const lwdInput = document.getElementById('lwd_input');
+    const lwdHint = document.getElementById('hint_lwd');
+
+    if (!joineeSelect || !lwdField || !lwdInput) {
+      console.error('Joinee type elements not found');
+      return;
+    }
+
+    function toggleLWDField() {
+      const isRejoinee = joineeSelect.value === 'Rejoinee';
+
+      if (isRejoinee) {
+        lwdField.classList.add('show');
+        lwdInput.setAttribute('required', 'required');
+        console.log('✅ LWD field shown (Rejoinee selected)');
+      } else {
+        lwdField.classList.remove('show');
+        lwdInput.removeAttribute('required');
+        lwdInput.value = '';
+        markNeutral(lwdField);
+        if (lwdHint) {
+          lwdHint.textContent = 'Enter your last working day from previous employment';
+          lwdHint.className = 'hint';
+        }
+        console.log('✅ LWD field hidden (New Joinee selected)');
+      }
+    }
+
+    joineeSelect.addEventListener('change', () => {
+      toggleLWDField();
+      const wrap = joineeSelect.closest('.field');
+      if (joineeSelect.value) {
+        markValid(wrap);
+      }
+    });
+
+    // Validate LWD field
+    lwdInput.addEventListener('change', () => {
+      const wrap = lwdInput.closest('.field');
+      const val = lwdInput.value;
+
+      if (!val) {
+        markNeutral(wrap);
+        if (lwdHint) {
+          lwdHint.textContent = 'Enter your last working day from previous employment';
+          lwdHint.className = 'hint';
+        }
+        return;
+      }
+
+      const selectedDate = new Date(val);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate > today) {
+        markInvalid(wrap);
+        if (lwdHint) {
+          lwdHint.textContent = '⚠️ LWD cannot be a future date';
+          lwdHint.className = 'hint counting';
+        }
+      } else {
+        markValid(wrap);
+        if (lwdHint) {
+          lwdHint.textContent = '✓ Last Working Day recorded';
+          lwdHint.className = 'hint complete';
+        }
+      }
+    });
+  })();
+
   // ── Digits-only fields handler ──
   Object.keys(digitsOnlyFields).forEach(name => {
     const inp = document.querySelector('[name="' + name + '"]');
     if (!inp) return;
-    const max  = digitsOnlyFields[name];
+    const max = digitsOnlyFields[name];
     const wrap = inp.closest('.field');
 
     inp.addEventListener('keypress', e => {
       if (!/\d/.test(e.key)) e.preventDefault();
-      if (inp.value.replace(/\D/g,'').length >= max) e.preventDefault();
+      if (inp.value.replace(/\D/g, '').length >= max) e.preventDefault();
     });
+
     inp.addEventListener('paste', e => {
       e.preventDefault();
-      inp.value = (e.clipboardData||window.clipboardData)
-        .getData('text').replace(/\D/g,'').slice(0, max);
+      inp.value = (e.clipboardData || window.clipboardData)
+        .getData('text').replace(/\D/g, '').slice(0, max);
       inp.dispatchEvent(new Event('input'));
     });
+
     inp.addEventListener('input', () => {
-      let d = inp.value.replace(/\D/g,'').slice(0, max);
+      let d = inp.value.replace(/\D/g, '').slice(0, max);
       inp.value = d;
       updateDigitHint(name, d.length, max);
       const rule = validationRules[name];
       if (!rule) return;
-      if (!d.length)                       markNeutral(wrap);
-      else if (d.length===max && rule(d))  markValid(wrap);
-      else if (d.length===max)             markInvalid(wrap);
-      else                                 markNeutral(wrap);
+      if (!d.length) markNeutral(wrap);
+      else if (d.length === max && rule(d)) markValid(wrap);
+      else if (d.length === max) markInvalid(wrap);
+      else markNeutral(wrap);
     });
   });
 
   // ══════════════════════════════════════════════════════
   // ✅ AADHAAR NUMBER — XXXX-XXXX-XXXX format
   // ══════════════════════════════════════════════════════
-  (function () {
-    const inp  = document.querySelector('[name="aadhaar"]');
+  (function() {
+    const inp = document.querySelector('[name="aadhaar"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     const hint = document.getElementById('hint_aadhaar');
     const MAX_DIGITS = 12;
 
-    // Format as XXXX-XXXX-XXXX
     function formatAadhaar(value) {
       const digits = value.replace(/\D/g, '').slice(0, MAX_DIGITS);
       let formatted = '';
@@ -786,16 +927,14 @@
       return formatted;
     }
 
-    // Get just the digits
     function getDigits(value) {
       return value.replace(/\D/g, '');
     }
 
-    // Update hint display
     function updateAadhaarHint(digitCount) {
       if (!hint) return;
       hint.classList.remove('counting', 'complete');
-      
+
       if (digitCount === MAX_DIGITS) {
         hint.textContent = '✓ 12 / 12 digits — Complete!';
         hint.classList.add('complete');
@@ -807,7 +946,6 @@
       }
     }
 
-    // Block non-digits
     inp.addEventListener('keypress', e => {
       if (!/\d/.test(e.key)) {
         e.preventDefault();
@@ -818,7 +956,6 @@
       }
     });
 
-    // Handle paste
     inp.addEventListener('paste', e => {
       e.preventDefault();
       const pasted = (e.clipboardData || window.clipboardData).getData('text');
@@ -827,15 +964,14 @@
       inp.dispatchEvent(new Event('input'));
     });
 
-    // Handle input with cursor position preservation
     inp.addEventListener('input', () => {
       const cursorPos = inp.selectionStart;
       const oldValue = inp.value;
       const oldDigitsBeforeCursor = getDigits(oldValue.slice(0, cursorPos)).length;
-      
+
       const formatted = formatAadhaar(inp.value);
       inp.value = formatted;
-      
+
       let newPos = 0;
       let digitCount = 0;
       for (let i = 0; i < formatted.length && digitCount < oldDigitsBeforeCursor; i++) {
@@ -844,18 +980,18 @@
           digitCount++;
         }
       }
-      
+
       if (formatted[newPos] === '-') {
         newPos++;
       }
-      
+
       inp.setSelectionRange(newPos, newPos);
-      
+
       const digits = getDigits(formatted);
       const count = digits.length;
-      
+
       updateAadhaarHint(count);
-      
+
       if (!count) {
         markNeutral(wrap);
       } else if (count === MAX_DIGITS && validationRules.aadhaar(formatted)) {
@@ -867,19 +1003,18 @@
       }
     });
 
-    // Handle backspace across hyphens
     inp.addEventListener('keydown', e => {
       if (e.key === 'Backspace') {
         const cursorPos = inp.selectionStart;
         const selectionEnd = inp.selectionEnd;
-        
+
         if (cursorPos !== selectionEnd) return;
-        
+
         if (cursorPos > 0 && inp.value[cursorPos - 1] === '-') {
           e.preventDefault();
           const newValue = inp.value.slice(0, cursorPos - 2) + inp.value.slice(cursorPos);
           inp.value = formatAadhaar(newValue);
-          
+
           let newPos = cursorPos - 2;
           if (newPos < 0) newPos = 0;
           inp.setSelectionRange(newPos, newPos);
@@ -888,7 +1023,6 @@
       }
     });
 
-    // Blur validation
     inp.addEventListener('blur', () => {
       const digits = getDigits(inp.value);
       if (!digits.length) {
@@ -903,11 +1037,10 @@
       }
     });
   })();
-  // ══════════════════════════════════════════════════════
 
   // ── POS ID — alphanumeric only ──
-  (function () {
-    const inp  = document.querySelector('[name="pos_id"]');
+  (function() {
+    const inp = document.querySelector('[name="pos_id"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     const hint = document.getElementById('hint_pos_id');
@@ -917,29 +1050,31 @@
       hint.classList.remove('counting', 'complete');
       if (!val.length) {
         hint.textContent = 'Only letters and numbers allowed';
-        hint.className   = 'hint';
+        hint.className = 'hint';
         return;
       }
       hint.textContent = '✓ ' + val.length + ' characters entered';
-      hint.className   = 'hint complete';
+      hint.className = 'hint complete';
     }
 
     inp.addEventListener('keypress', e => {
       if (!/[a-zA-Z0-9]/.test(e.key)) {
         e.preventDefault();
         if (hint) {
-          hint.className   = 'hint counting';
+          hint.className = 'hint counting';
           hint.textContent = '⚠️ Only letters and numbers are allowed — no spaces or symbols';
           setTimeout(() => updatePosHint(inp.value), 1800);
         }
       }
     });
+
     inp.addEventListener('paste', e => {
       e.preventDefault();
-      inp.value = (e.clipboardData||window.clipboardData)
+      inp.value = (e.clipboardData || window.clipboardData)
         .getData('text').replace(/[^a-zA-Z0-9]/g, '');
       inp.dispatchEvent(new Event('input'));
     });
+
     inp.addEventListener('input', () => {
       inp.value = inp.value.replace(/[^a-zA-Z0-9]/g, '');
       const val = inp.value;
@@ -947,16 +1082,20 @@
       if (!val.length) markNeutral(wrap);
       else markValid(wrap);
     });
+
     inp.addEventListener('blur', () => {
       const val = inp.value.trim();
-      if (!val.length) { markNeutral(wrap); return; }
+      if (!val.length) {
+        markNeutral(wrap);
+        return;
+      }
       validationRules.pos_id(val) ? markValid(wrap) : markInvalid(wrap);
     });
   })();
 
   // ── Emergency Contact Person Name — alphabets only ──
-  (function () {
-    const inp  = document.querySelector('[name="emergency_person_name"]');
+  (function() {
+    const inp = document.querySelector('[name="emergency_person_name"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     const hint = document.getElementById('hint_emergency_person_name');
@@ -966,10 +1105,10 @@
       const val = inp.value.trim();
       if (val.length > 0) {
         hint.textContent = '✓ ' + val.length + ' characters entered';
-        hint.className   = 'hint complete';
+        hint.className = 'hint complete';
       } else {
         hint.textContent = 'Only alphabets and spaces allowed';
-        hint.className   = 'hint';
+        hint.className = 'hint';
       }
     }
 
@@ -977,7 +1116,7 @@
       if (!/[a-zA-Z\s]/.test(e.key)) {
         e.preventDefault();
         if (hint) {
-          hint.className   = 'hint counting';
+          hint.className = 'hint counting';
           hint.textContent = '⚠️ Only letters and spaces are allowed — no numbers or symbols';
           setTimeout(refreshHint, 1800);
         }
@@ -995,14 +1134,14 @@
     });
 
     inp.addEventListener('input', () => {
-      const pos    = inp.selectionStart;
+      const pos = inp.selectionStart;
       const before = inp.value;
-      const after  = before.replace(/[^a-zA-Z\s]/g, '').replace(/\s+/g, ' ');
+      const after = before.replace(/[^a-zA-Z\s]/g, '').replace(/\s+/g, ' ');
 
       if (before !== after) {
         inp.value = after;
-        inp.setSelectionRange(Math.max(0, pos - (before.length - after.length)), 
-                              Math.max(0, pos - (before.length - after.length)));
+        inp.setSelectionRange(Math.max(0, pos - (before.length - after.length)),
+          Math.max(0, pos - (before.length - after.length)));
       }
 
       const val = inp.value.trim();
@@ -1013,11 +1152,11 @@
       if (!val.length) {
         markNeutral(wrap);
         hint.textContent = 'Only alphabets and spaces allowed';
-        hint.className   = 'hint';
+        hint.className = 'hint';
       } else {
         markValid(wrap);
         hint.textContent = '✓ ' + val.length + ' characters entered';
-        hint.className   = 'hint complete';
+        hint.className = 'hint complete';
       }
     });
 
@@ -1025,7 +1164,10 @@
       const val = inp.value.trim();
       if (!val.length) {
         markNeutral(wrap);
-        if (hint) { hint.textContent = 'Only alphabets and spaces allowed'; hint.className = 'hint'; }
+        if (hint) {
+          hint.textContent = 'Only alphabets and spaces allowed';
+          hint.className = 'hint';
+        }
         return;
       }
       if (validationRules.emergency_person_name(val)) {
@@ -1034,15 +1176,15 @@
         markInvalid(wrap);
         if (hint) {
           hint.textContent = '⚠️ Only letters and spaces are allowed';
-          hint.className   = 'hint counting';
+          hint.className = 'hint counting';
         }
       }
     });
   })();
 
   // ── DOB — 18+ ──
-  (function () {
-    const inp  = document.querySelector('[name="dob"]');
+  (function() {
+    const inp = document.querySelector('[name="dob"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     const hint = document.getElementById('hint_dob');
@@ -1053,35 +1195,44 @@
       const val = inp.value;
       if (!val) {
         markNeutral(wrap);
-        if (hint) { hint.textContent = 'You must be at least 18 years old'; hint.className = 'hint'; }
+        if (hint) {
+          hint.textContent = 'You must be at least 18 years old';
+          hint.className = 'hint';
+        }
         return;
       }
       const age = calcAge(val);
       if (age >= 18) {
         markValid(wrap);
-        if (hint) { hint.textContent = '✓ Age ' + age + ' — Eligible to register'; hint.className = 'hint complete'; }
+        if (hint) {
+          hint.textContent = '✓ Age ' + age + ' — Eligible to register';
+          hint.className = 'hint complete';
+        }
       } else {
         markInvalid(wrap);
         const need = 18 - age;
         if (hint) {
           hint.textContent = '✗ Age ' + age + ' — Need ' + need + ' more year' + (need > 1 ? 's' : '');
-          hint.className   = 'hint counting';
+          hint.className = 'hint counting';
         }
       }
     }
 
     inp.addEventListener('change', validateDob);
-    inp.addEventListener('input',  validateDob);
+    inp.addEventListener('input', validateDob);
   })();
 
   // ── Shared By OLM ID ──
-  (function () {
-    const inp  = document.querySelector('[name="shared_by_olm"]');
+  (function() {
+    const inp = document.querySelector('[name="shared_by_olm"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     inp.addEventListener('input', () => {
       const v = inp.value.trim();
-      if (!v) { markNeutral(wrap); return; }
+      if (!v) {
+        markNeutral(wrap);
+        return;
+      }
       validationRules.shared_by_olm(v) ? markValid(wrap) : markInvalid(wrap);
     });
     inp.addEventListener('blur', () => {
@@ -1092,63 +1243,72 @@
   })();
 
   // ── PAN ──
-  (function () {
-    const inp  = document.querySelector('[name="pan"]');
+  (function() {
+    const inp = document.querySelector('[name="pan"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     const hint = document.getElementById('hint_pan');
     inp.addEventListener('input', () => {
-      let v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
+      let v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
       inp.value = v;
       if (hint) {
-        if (v.length===10 && validationRules.pan(v)) {
-          hint.textContent='✓ Valid PAN format'; hint.className='hint complete';
-        } else if (v.length>0) {
-          hint.textContent=v.length+' / 10 — Format: ABCDE1234F'; hint.className='hint counting';
+        if (v.length === 10 && validationRules.pan(v)) {
+          hint.textContent = '✓ Valid PAN format';
+          hint.className = 'hint complete';
+        } else if (v.length > 0) {
+          hint.textContent = v.length + ' / 10 — Format: ABCDE1234F';
+          hint.className = 'hint counting';
         } else {
-          hint.textContent='Format: ABCDE1234F'; hint.className='hint';
+          hint.textContent = 'Format: ABCDE1234F';
+          hint.className = 'hint';
         }
       }
       if (!v.length) markNeutral(wrap);
-      else if (v.length===10 && validationRules.pan(v)) markValid(wrap);
-      else if (v.length===10) markInvalid(wrap);
+      else if (v.length === 10 && validationRules.pan(v)) markValid(wrap);
+      else if (v.length === 10) markInvalid(wrap);
       else markNeutral(wrap);
     });
   })();
 
   // ── IFSC ──
-  (function () {
-    const inp  = document.querySelector('[name="ifsc"]');
+  (function() {
+    const inp = document.querySelector('[name="ifsc"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     const hint = document.getElementById('hint_ifsc');
     inp.addEventListener('input', () => {
-      let v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,11);
+      let v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 11);
       inp.value = v;
       if (hint) {
-        if (v.length===11 && validationRules.ifsc(v)) {
-          hint.textContent='✓ Valid IFSC format'; hint.className='hint complete';
-        } else if (v.length>0) {
-          hint.textContent=v.length+' / 11 — Format: ABCD0123456'; hint.className='hint counting';
+        if (v.length === 11 && validationRules.ifsc(v)) {
+          hint.textContent = '✓ Valid IFSC format';
+          hint.className = 'hint complete';
+        } else if (v.length > 0) {
+          hint.textContent = v.length + ' / 11 — Format: ABCD0123456';
+          hint.className = 'hint counting';
         } else {
-          hint.textContent='Format: ABCD0123456 (11 characters)'; hint.className='hint';
+          hint.textContent = 'Format: ABCD0123456 (11 characters)';
+          hint.className = 'hint';
         }
       }
       if (!v.length) markNeutral(wrap);
-      else if (v.length===11 && validationRules.ifsc(v)) markValid(wrap);
-      else if (v.length===11) markInvalid(wrap);
+      else if (v.length === 11 && validationRules.ifsc(v)) markValid(wrap);
+      else if (v.length === 11) markInvalid(wrap);
       else markNeutral(wrap);
     });
   })();
 
   // ── Email fields ──
-  ['associate_email','manager_email'].forEach(name => {
-    const inp  = document.querySelector('[name="' + name + '"]');
+  ['associate_email', 'manager_email'].forEach(name => {
+    const inp = document.querySelector('[name="' + name + '"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     inp.addEventListener('input', () => {
       const v = inp.value.trim();
-      if (!v) { markNeutral(wrap); return; }
+      if (!v) {
+        markNeutral(wrap);
+        return;
+      }
       validationRules[name](v) ? markValid(wrap) : markNeutral(wrap);
     });
     inp.addEventListener('blur', () => {
@@ -1161,18 +1321,19 @@
   // ── Generic clear-on-type for remaining fields ──
   const handledFields = [
     ...Object.keys(digitsOnlyFields),
-    'pan','ifsc','associate_email','manager_email',
-    'pos_id','shared_by_olm','dob','emergency_person_name','aadhaar'
+    'pan', 'ifsc', 'associate_email', 'manager_email',
+    'pos_id', 'shared_by_olm', 'dob', 'emergency_person_name', 'aadhaar', 'lwd', 'joinee_type', 'zone'
   ];
+
   document.querySelectorAll('.field').forEach(wrap => {
     wrap.querySelectorAll('input, select, textarea').forEach(inp => {
       if (handledFields.includes(inp.name)) return;
-      ['input','change'].forEach(ev => {
+      ['input', 'change'].forEach(ev => {
         inp.addEventListener(ev, () => {
           if (!wrap.classList.contains('invalid')) return;
-          const val = inp.type==='radio'
-            ? (document.querySelector('input[name="'+inp.name+'"]:checked') ? 'yes' : '')
-            : inp.value.trim();
+          const val = inp.type === 'radio' ?
+            (document.querySelector('input[name="' + inp.name + '"]:checked') ? 'yes' : '') :
+            inp.value.trim();
           val ? markValid(wrap) : markNeutral(wrap);
         });
       });
@@ -1184,7 +1345,8 @@
     const lI = document.querySelector('[name="lapu_number"]');
     const aI = document.querySelector('[name="alternate_contact"]');
     if (!lI || !aI) return true;
-    const l = lI.value.trim(), a = aI.value.trim();
+    const l = lI.value.trim(),
+      a = aI.value.trim();
     if (/^\d{10}$/.test(l) && /^\d{10}$/.test(a) && l === a) {
       markInvalid(lI.closest('.field'));
       markInvalid(aI.closest('.field'));
@@ -1193,21 +1355,31 @@
     }
     return true;
   }
-  ['lapu_number','alternate_contact'].forEach(name => {
+
+  ['lapu_number', 'alternate_contact'].forEach(name => {
     const inp = document.querySelector('[name="' + name + '"]');
     if (inp) inp.addEventListener('blur', validateLapuNotEqualAlternate);
   });
 
-  // ── validateAll ──
+  // ══════════════════════════════════════════════════════
+  // ✅ validateAll - FIXED
+  // ══════════════════════════════════════════════════════
   function validateAll() {
-    let ok = true, firstBad = null;
+    console.log('🔍 Starting validation...');
+    let ok = true,
+      firstBad = null;
 
     document.querySelectorAll('.field').forEach(wrap => {
+      // Skip hidden conditional fields
+      if (wrap.classList.contains('conditional') && !wrap.classList.contains('show')) {
+        return;
+      }
+
       const inp = wrap.querySelector('[required]');
       if (!inp) return;
 
       const name = inp.name;
-      let valid  = true;
+      let valid = true;
 
       if (inp.type === 'radio') {
         valid = !!document.querySelector('input[name="' + name + '"]:checked');
@@ -1223,12 +1395,23 @@
         valid = validationRules[name](val);
       }
 
+      // Special validation for LWD - check date is not in future
+      if (name === 'lwd' && valid && inp.value) {
+        const selectedDate = new Date(inp.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (selectedDate > today) {
+          valid = false;
+        }
+      }
+
       if (valid) {
         markValid(wrap);
       } else {
         markInvalid(wrap);
         ok = false;
         if (!firstBad) firstBad = wrap;
+        console.log('❌ Validation failed for:', name);
       }
     });
 
@@ -1240,71 +1423,131 @@
       }
     }
 
-    if (firstBad) firstBad.scrollIntoView({ behavior:'smooth', block:'center' });
+    if (firstBad) firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    console.log('🔍 Validation result:', ok ? '✅ PASSED' : '❌ FAILED');
     return ok;
   }
 
   // ══════════════════════════════════════════════════════
-  // ✅ collectData — KEEPS hyphens in Aadhaar (XXXX-XXXX-XXXX)
+  // ✅ collectData - FIXED: Properly collects ALL fields
   // ══════════════════════════════════════════════════════
   function collectData() {
+    console.log('📦 Collecting form data...');
     const data = {};
+
+    // Get joinee type first
+    const joineeTypeSelect = document.querySelector('[name="joinee_type"]');
+    const joineeType = joineeTypeSelect ? joineeTypeSelect.value : '';
+
+    // Collect all select fields FIRST (including joinee_type and zone)
+    document.querySelectorAll('select').forEach(s => {
+      if (s.name && s.value) {
+        data[s.name] = s.value;
+        console.log('  SELECT:', s.name, '=', s.value);
+      }
+    });
+
+    // Collect all input fields
     document.querySelectorAll('input').forEach(i => {
       if (!i.name) return;
-      if (i.type==='radio') { 
-        if (i.checked) data[i.name] = i.value; 
+
+      // Handle LWD based on joinee type
+      if (i.name === 'lwd') {
+        if (joineeType === 'Rejoinee' && i.value.trim()) {
+          data[i.name] = i.value.trim();
+        } else {
+          data[i.name] = 'N/A';
+        }
+        console.log('  INPUT (LWD):', i.name, '=', data[i.name]);
+        return;
+      }
+
+      if (i.type === 'radio') {
+        if (i.checked) {
+          data[i.name] = i.value;
+          console.log('  RADIO:', i.name, '=', i.value);
+        }
       } else {
         let v = i.value.trim();
         if (i.name === 'pan' || i.name === 'ifsc') v = v.toUpperCase();
-        // ✅ Aadhaar is stored AS-IS with hyphens (XXXX-XXXX-XXXX)
         data[i.name] = v;
+        console.log('  INPUT:', i.name, '=', v);
       }
     });
-    document.querySelectorAll('select').forEach(s => { if (s.name) data[s.name] = s.value; });
-    document.querySelectorAll('textarea').forEach(t => { if (t.name) data[t.name] = t.value.trim(); });
+
+    // Collect all textarea fields
+    document.querySelectorAll('textarea').forEach(t => {
+      if (t.name) {
+        data[t.name] = t.value.trim();
+        console.log('  TEXTAREA:', t.name, '=', t.value.trim());
+      }
+    });
+
+    console.log('📦 Final collected data:', data);
     return data;
   }
 
   // ── resetForm ──
   function resetForm() {
     document.querySelectorAll('input, select, textarea').forEach(el => {
-      if (el.type==='radio'||el.type==='checkbox') el.checked=false;
-      else if (el.tagName==='SELECT') el.selectedIndex=0;
-      else el.value='';
+      if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+      else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+      else el.value = '';
     });
     document.querySelectorAll('.field').forEach(w => markNeutral(w));
+
+    // Hide LWD field on reset
+    const lwdField = document.getElementById('lwd_field');
+    if (lwdField) {
+      lwdField.classList.remove('show');
+      const lwdInput = document.getElementById('lwd_input');
+      if (lwdInput) lwdInput.removeAttribute('required');
+    }
+
+    // Reset LWD hint
+    const lwdHint = document.getElementById('hint_lwd');
+    if (lwdHint) {
+      lwdHint.textContent = 'Enter your last working day from previous employment';
+      lwdHint.className = 'hint';
+    }
 
     Object.keys(digitsOnlyFields).forEach(n => updateDigitHint(n, 0, digitsOnlyFields[n]));
 
     const ph = document.getElementById('hint_pos_id');
-    if (ph) { ph.textContent='Only letters and numbers allowed'; ph.className='hint'; }
+    if (ph) { ph.textContent = 'Only letters and numbers allowed'; ph.className = 'hint'; }
 
     const eh = document.getElementById('hint_emergency_person_name');
-    if (eh) { eh.textContent='Only alphabets and spaces allowed'; eh.className='hint'; }
+    if (eh) { eh.textContent = 'Only alphabets and spaces allowed'; eh.className = 'hint'; }
 
     const dh = document.getElementById('hint_dob');
-    if (dh) { dh.textContent='You must be at least 18 years old'; dh.className='hint'; }
+    if (dh) { dh.textContent = 'You must be at least 18 years old'; dh.className = 'hint'; }
 
     const panh = document.getElementById('hint_pan');
-    if (panh) { panh.textContent='Format: ABCDE1234F'; panh.className='hint'; }
+    if (panh) { panh.textContent = 'Format: ABCDE1234F'; panh.className = 'hint'; }
 
     const ih = document.getElementById('hint_ifsc');
-    if (ih) { ih.textContent='Format: ABCD0123456 (11 characters)'; ih.className='hint'; }
+    if (ih) { ih.textContent = 'Format: ABCD0123456 (11 characters)'; ih.className = 'hint'; }
 
-    // ✅ Reset Aadhaar hint
     const ah = document.getElementById('hint_aadhaar');
-    if (ah) { ah.textContent='0 / 12 digits entered • Format: XXXX-XXXX-XXXX'; ah.className='hint'; }
+    if (ah) { ah.textContent = '0 / 12 digits entered • Format: XXXX-XXXX-XXXX'; ah.className = 'hint'; }
 
-    window.scrollTo({ top:0, behavior:'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    console.log('🔄 Form reset complete');
   }
 
-  // ── Buttons ──
+  // ══════════════════════════════════════════════════════
+  // ✅ Button Event Listeners
+  // ══════════════════════════════════════════════════════
   document.getElementById('clearBtn').addEventListener('click', () => {
     if (!confirm('Clear all answers?')) return;
     resetForm();
   });
 
   document.getElementById('submitBtn').addEventListener('click', async () => {
+    console.log('🚀 Submit button clicked');
+
+    // Validate form
     if (!validateAll()) {
       showToast('Please fix the errors above.', 'error');
       return;
@@ -1314,23 +1557,51 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Submitting...';
 
-    const payload = collectData();
-    payload.submitted_at = serverTimestamp();
-
     try {
-      await addDoc(collection(db, 'promoters'), payload);
+      // Collect data
+      const payload = collectData();
+      payload.submitted_at = serverTimestamp();
+
+      console.log('📤 Attempting to submit to Firebase...');
+      console.log('📤 Payload:', JSON.stringify(payload, null, 2));
+
+      // Check if Firebase is initialized
+      if (!db) {
+        throw new Error('Firebase database not initialized');
+      }
+
+      // Submit to Firebase
+      const docRef = await addDoc(collection(db, 'promoters'), payload);
+
+      console.log('✅ Document written with ID:', docRef.id);
       showToast('✅ Form submitted successfully!');
+
+      // Reset form after success
       setTimeout(() => resetForm(), 1200);
+
     } catch (err) {
-      console.error('Firebase error:', err);
-      showToast('❌ Submission failed. Check your internet.', 'error');
+      console.error('❌ Firebase error:', err);
+      console.error('❌ Error details:', err.message);
+      console.error('❌ Error stack:', err.stack);
+
+      showToast('❌ Submission failed: ' + err.message, 'error');
+
+      // Also show an alert for debugging
+      alert('Submission failed!\n\nError: ' + err.message + '\n\nCheck browser console for details.');
+
     } finally {
       btn.disabled = false;
       btn.innerHTML = 'Submit';
     }
   });
 
-  console.log('✅ Aadhaar stored with format: XXXX-XXXX-XXXX');
+  // ✅ Log when script loads successfully
+  console.log('═══════════════════════════════════════════');
+  console.log('✅ Form script loaded successfully');
+  console.log('✅ Firebase Project:', firebaseConfig.projectId);
+  console.log('✅ New fields: joinee_type, lwd, zone');
+  console.log('✅ LWD = "N/A" for New Joinee, actual date for Rejoinee');
+  console.log('═══════════════════════════════════════════');
 </script>
 
 </body>
