@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Retailer Enrollment Sheet 2026</title>
+    <title>Retailer Enrollment Sheet</title>
     <style>
         /* [STYLES REMAIN EXACTLY THE SAME AS ORIGINAL] */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -762,6 +762,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <script>
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;  // 1-12
+    const currentYear = now.getFullYear();    // 2026
+    
+    // Concatenate and update
+    document.getElementById("title").innerHTML = 
+        `Retailer Enrollment Sheet ${currentMonth} ${currentYear}`;
+    </script>
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -772,7 +781,10 @@
     </div>
 
     <div class="container">
-        <h2>Retailer Enrollment Sheet 2026</h2>
+        <h2  id="title">
+
+            
+        </h2>
         
         <!-- Basic Info Section -->
         <div class="form-section">
