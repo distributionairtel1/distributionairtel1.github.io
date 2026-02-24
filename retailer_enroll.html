@@ -772,8 +772,7 @@
     </div>
 
     <div class="container">
-        <h2>Retailer Enrollment Sheet March 2026</h2>
-        
+    <h2 id="pageHeading">Retailer Enrollment Sheet</h2>        
         <!-- Basic Info Section -->
         <div class="form-section">
             <table class="form-table" id="basicInfoTable">
@@ -2792,13 +2791,18 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
     // =============================================
     // INITIALIZE
     // =============================================
-    window.addEventListener('DOMContentLoaded', async () => {
-        initializeValidations();
-        calculateAll();
-        calculateDeviceShare();
-        const device = getDeviceInfo();
-        displayGPSInfo(null, null);
-    });
+window.addEventListener('DOMContentLoaded', async () => {
+    // Set dynamic month/year in heading
+    const now = new Date();
+    const monthYear = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    document.getElementById('pageHeading').textContent = `Retailer Enrollment Sheet ${monthYear}`;
+
+    initializeValidations();
+    calculateAll();
+    calculateDeviceShare();
+    const device = getDeviceInfo();
+    displayGPSInfo(null, null);
+});
 
     // =============================================
     // SWIFT APP INTEGRATION (iOS App Support)
