@@ -762,15 +762,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
-    <script>
-    const now = new Date();
-    const currentMonth = now.getMonth() + 1;  // 1-12
-    const currentYear = now.getFullYear();    // 2026
-    
-    // Concatenate and update
-    document.getElementById("title").innerHTML = 
-        `Retailer Enrollment Sheet ${currentMonth} ${currentYear}`;
-    </script>
+
 </head>
 <body>
     <!-- Loading Overlay -->
@@ -781,10 +773,7 @@
     </div>
 
     <div class="container">
-        <h2  id="title">
-
-            
-        </h2>
+     <h2 id="titlee">Retailer Enrollment Sheet 2026</h2>
         
         <!-- Basic Info Section -->
         <div class="form-section">
@@ -1014,6 +1003,13 @@
     </div>
 
 <script>
+    const nowe = new Date();
+    const currentMonthe = now.getMonth() + 1;  // 1-12
+    const currentYeare = now.getFullYear();    // 2026
+    
+    // Concatenate and update
+    document.getElementById("titlee").innerHTML = 
+        `Retailer Enrollment Sheet ${currentMonthe} ${currentYeare}`;
     // =============================================
     //  CONFIGURATION & GLOBALS
     // =============================================
