@@ -404,7 +404,7 @@
       stockCell.style.color = parseFloat(data.AVG_STOCK || 0) > parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0) ? 'green' : 'red';
 
       document.getElementById('grossEarningTotal').textContent = formatINR(data.TOTAL_GROSS_EARNINGS);
-      document.getElementById('lapuCommissionCircle').textContent = formatPercent(data.LAPU_COMMISSION_C);
+      document.getElementById('lapuCommissionCircle').textContent = parseFloat(data.LAPU_COMMISSION_C) + '%';
       document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
       document.getElementById('pliAvg').textContent = formatINR(data.PLI_AVG);
       document.getElementById('distSubsidy').textContent = formatINR(data.DIST_SUBSIDY);
@@ -814,103 +814,103 @@
         yR = drawRow('Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yR, RX, RW, false, false);
         yR += GAP;
 
-        // — Key Performance Metrics (Calculated) —
-        yR = drawSection('KEY PERFORMANCE METRICS', yR, RX, RW);
-        yR = drawRow('Earning per Site', sites > 0 ? fR(earnPerSite) : '-', yR, RX, RW, false, false);
-        yR = drawRow('Expense Ratio', gross > 0 ? expRatio.toFixed(1) + '%' : '-', yR, RX, RW, true, false);
-        yR = drawRow('Net Earning per Site', sites > 0 ? fR(netPerSite) : '-', yR, RX, RW, false, false);
+        // // — Key Performance Metrics (Calculated) —
+        // yR = drawSection('KEY PERFORMANCE METRICS', yR, RX, RW);
+        // yR = drawRow('Earning per Site', sites > 0 ? fR(earnPerSite) : '-', yR, RX, RW, false, false);
+        // yR = drawRow('Expense Ratio', gross > 0 ? expRatio.toFixed(1) + '%' : '-', yR, RX, RW, true, false);
+        // yR = drawRow('Net Earning per Site', sites > 0 ? fR(netPerSite) : '-', yR, RX, RW, false, false);
 
-        // ========== VERTICAL DIVIDER ==========
-        const maxY = Math.max(yL, yR);
-        pdf.setDrawColor(...C.border);
-        pdf.setLineWidth(0.3);
-        pdf.line(M + LW + COL_GAP / 2, 27, M + LW + COL_GAP / 2, maxY);
+        // // ========== VERTICAL DIVIDER ==========
+        // const maxY = Math.max(yL, yR);
+        // pdf.setDrawColor(...C.border);
+        // pdf.setLineWidth(0.3);
+        // pdf.line(M + LW + COL_GAP / 2, 27, M + LW + COL_GAP / 2, maxY);
 
-        // ========== HIGHLIGHT BOXES (full width) ==========
-        const hlY = maxY + GAP;
-        const halfW = (CW - COL_GAP) / 2;
-        drawHighlight('TAKE HOME', fR(takeHome), hlY, M, halfW, C.headerBg);
-        drawHighlight('RETURN ON INVESTMENT', roiStr, hlY, M + halfW + COL_GAP, halfW, isGood ? C.green : C.red);
+        // // ========== HIGHLIGHT BOXES (full width) ==========
+        // const hlY = maxY + GAP;
+        // const halfW = (CW - COL_GAP) / 2;
+        // drawHighlight('TAKE HOME', fR(takeHome), hlY, M, halfW, C.headerBg);
+        // drawHighlight('RETURN ON INVESTMENT', roiStr, hlY, M + halfW + COL_GAP, halfW, isGood ? C.green : C.red);
 
-        // ========== ANALYSIS SECTION (fills remaining page) ==========
-        const analysisY = hlY + HL_H + 2;
+        // // ========== ANALYSIS SECTION (fills remaining page) ==========
+        // const analysisY = hlY + HL_H + 2;
 
-        // Section header bar
-        pdf.setFillColor(...C.primary);
-        pdf.rect(M, analysisY, CW, 6, 'F');
-        pdf.setFillColor(...C.accent);
-        pdf.rect(M, analysisY, 2.5, 6, 'F');
-        pdf.setTextColor(...C.white);
-        pdf.setFontSize(7.5);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('REPORT SUMMARY & ANALYSIS', M + 6, analysisY + 4.2);
+        // // Section header bar
+        // pdf.setFillColor(...C.primary);
+        // pdf.rect(M, analysisY, CW, 6, 'F');
+        // pdf.setFillColor(...C.accent);
+        // pdf.rect(M, analysisY, 2.5, 6, 'F');
+        // pdf.setTextColor(...C.white);
+        // pdf.setFontSize(7.5);
+        // pdf.setFont('helvetica', 'bold');
+        // pdf.text('REPORT SUMMARY & ANALYSIS', M + 6, analysisY + 4.2);
 
-        // Content box (fills to footer)
-        const footerY = PH - 13;
-        const boxY = analysisY + 6;
-        const boxH = footerY - boxY - 1;
+        // // Content box (fills to footer)
+        // const footerY = PH - 13;
+        // const boxY = analysisY + 6;
+        // const boxH = footerY - boxY - 1;
 
-        pdf.setFillColor(255, 255, 255);
-        pdf.setDrawColor(...C.border);
-        pdf.setLineWidth(0.3);
-        pdf.roundedRect(M, boxY, CW, boxH, 2, 2, 'FD');
+        // pdf.setFillColor(255, 255, 255);
+        // pdf.setDrawColor(...C.border);
+        // pdf.setLineWidth(0.3);
+        // pdf.roundedRect(M, boxY, CW, boxH, 2, 2, 'FD');
 
-        // Left accent strip
-        pdf.setFillColor(...C.primary);
-        pdf.rect(M, boxY + 1, 2, boxH - 2, 'F');
+        // // Left accent strip
+        // pdf.setFillColor(...C.primary);
+        // pdf.rect(M, boxY + 1, 2, boxH - 2, 'F');
 
-        // Generate dynamic insights
-        const insights = [];
+        // // Generate dynamic insights
+        // const insights = [];
 
-        if (roiVal >= 20) insights.push('ROI Performance: EXCELLENT (' + roiStr + ') - Significantly above benchmarks');
-        else if (roiVal >= 10) insights.push('ROI Performance: GOOD (' + roiStr + ') - Meeting expected targets');
-        else if (roiVal >= 0) insights.push('ROI Performance: MODERATE (' + roiStr + ') - Room for improvement');
-        else insights.push('ROI Performance: CRITICAL (' + roiStr + ') - Immediate attention required');
+        // if (roiVal >= 20) insights.push('ROI Performance: EXCELLENT (' + roiStr + ') - Significantly above benchmarks');
+        // else if (roiVal >= 10) insights.push('ROI Performance: GOOD (' + roiStr + ') - Meeting expected targets');
+        // else if (roiVal >= 0) insights.push('ROI Performance: MODERATE (' + roiStr + ') - Room for improvement');
+        // else insights.push('ROI Performance: CRITICAL (' + roiStr + ') - Immediate attention required');
 
-        insights.push('Monthly Take Home: ' + fR(takeHome) + ' against Investment of ' + fR(investment));
+        // insights.push('Monthly Take Home: ' + fR(takeHome) + ' against Investment of ' + fR(investment));
 
-        if (norm > 0) {
-          const stockPct = (stock / norm * 100).toFixed(0);
-          if (stock > norm) insights.push('Stock Position: ' + fR(stock) + ' (' + stockPct + '% of norm) - Over-invested by ' + fR(stock - norm));
-          else insights.push('Stock Position: ' + fR(stock) + ' (' + stockPct + '% of norm) - Under-invested by ' + fR(norm - stock));
-        }
+        // if (norm > 0) {
+        //   const stockPct = (stock / norm * 100).toFixed(0);
+        //   if (stock > norm) insights.push('Stock Position: ' + fR(stock) + ' (' + stockPct + '% of norm) - Over-invested by ' + fR(stock - norm));
+        //   else insights.push('Stock Position: ' + fR(stock) + ' (' + stockPct + '% of norm) - Under-invested by ' + fR(norm - stock));
+        // }
 
-        const totalMissed = parseFloat(d.PLI_MISSED_OPPORTUNITY || 0) + parseFloat(d.ASC_SUBSIDY_OPPORTUNITY_MISSED || 0);
-        if (totalMissed > 0) insights.push('Revenue Opportunity Missed: ' + fR(totalMissed) + ' - Recovery action recommended');
+        // const totalMissed = parseFloat(d.PLI_MISSED_OPPORTUNITY || 0) + parseFloat(d.ASC_SUBSIDY_OPPORTUNITY_MISSED || 0);
+        // if (totalMissed > 0) insights.push('Revenue Opportunity Missed: ' + fR(totalMissed) + ' - Recovery action recommended');
 
-        if (sites > 0) insights.push('Per Site Analysis: Earning ' + fR(earnPerSite) + ' | Net ' + fR(netPerSite));
+        // if (sites > 0) insights.push('Per Site Analysis: Earning ' + fR(earnPerSite) + ' | Net ' + fR(netPerSite));
 
-        if (gross > 0) insights.push('Expense Ratio: ' + expRatio.toFixed(1) + '% of total gross earnings');
+        // if (gross > 0) insights.push('Expense Ratio: ' + expRatio.toFixed(1) + '% of total gross earnings');
 
-        const ascReq = parseFloat(d.ASC_REQUIRED || 0);
-        const ascActive = parseFloat(d.ACTIVE_ASC_COUNT_AS_PER_NORM || 0);
-        if (ascReq > ascActive) insights.push('ASC Gap: ' + (ascReq - ascActive).toFixed(0) + ' additional ASC needed for full subsidy');
+        // const ascReq = parseFloat(d.ASC_REQUIRED || 0);
+        // const ascActive = parseFloat(d.ACTIVE_ASC_COUNT_AS_PER_NORM || 0);
+        // if (ascReq > ascActive) insights.push('ASC Gap: ' + (ascReq - ascActive).toFixed(0) + ' additional ASC needed for full subsidy');
 
-        // Draw bullet points
-        const maxLines = Math.floor((boxH - 8) / 3.5);
-        let tY = boxY + 4.5;
-        pdf.setFontSize(7);
+        // // Draw bullet points
+        // const maxLines = Math.floor((boxH - 8) / 3.5);
+        // let tY = boxY + 4.5;
+        // pdf.setFontSize(7);
 
-        insights.slice(0, maxLines).forEach(line => {
-          // Bullet circle
-          pdf.setFillColor(...C.primary);
-          pdf.circle(M + 6, tY - 0.5, 0.7, 'F');
+        // insights.slice(0, maxLines).forEach(line => {
+        //   // Bullet circle
+        //   pdf.setFillColor(...C.primary);
+        //   pdf.circle(M + 6, tY - 0.5, 0.7, 'F');
 
-          // Text
-          pdf.setTextColor(...C.dark);
-          pdf.setFont('helvetica', 'normal');
-          let txt = String(line);
-          while (pdf.getTextWidth(txt) > CW - 14 && txt.length > 5) txt = txt.slice(0, -1);
-          if (txt.length < line.length) txt += '..';
-          pdf.text(txt, M + 9, tY);
-          tY += 3.5;
-        });
+        //   // Text
+        //   pdf.setTextColor(...C.dark);
+        //   pdf.setFont('helvetica', 'normal');
+        //   let txt = String(line);
+        //   while (pdf.getTextWidth(txt) > CW - 14 && txt.length > 5) txt = txt.slice(0, -1);
+        //   if (txt.length < line.length) txt += '..';
+        //   pdf.text(txt, M + 9, tY);
+        //   tY += 3.5;
+        // });
 
-        // Confidential note
-        pdf.setFontSize(5.5);
-        pdf.setTextColor(160, 160, 160);
-        pdf.setFont('helvetica', 'italic');
-        pdf.text('Confidential - For Internal Use Only', M + CW / 2, boxY + boxH - 2, { align: 'center' });
+        // // Confidential note
+        // pdf.setFontSize(5.5);
+        // pdf.setTextColor(160, 160, 160);
+        // pdf.setFont('helvetica', 'italic');
+        // pdf.text('Confidential - For Internal Use Only', M + CW / 2, boxY + boxH - 2, { align: 'center' });
 
         // ========== FOOTER ==========
         drawFooter();
@@ -974,3 +974,4 @@
   </script>
 </body>
 </html>
+
