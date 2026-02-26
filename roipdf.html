@@ -197,10 +197,10 @@
             <tbody>
               <tr><td>Distributor Number:</td><td class="display-field" id="distributorNumber">-</td></tr>
               <tr><td>Distributor Name:</td><td class="display-field" id="distributorName">-</td></tr>
-              <tr><td>Investment:</td><td class="display-field" id="total">-</td></tr>
+              <tr><td>Investment:</td><td class="display-field" id="investment">-</td></tr>
               <tr><td>Average Stock:</td><td class="display-field" id="avgStock">-</td></tr>
-              <tr><td>Gross earning:</td><td class="display-field" id="totalGrossEarnings">-</td></tr>
-              <tr><td>Expenses:</td><td class="display-field" id="totalExpenses">-</td></tr>
+              <tr><td>Gross earning:</td><td class="display-field" id="grossEarning">-</td></tr>
+              <tr><td>Expenses:</td><td class="display-field" id="expenses">-</td></tr>
               <tr><td>Take Home:</td><td class="display-field" id="takeHome">-</td></tr>
               <tr><td>ROI:</td><td class="display-field" id="roi">-</td></tr>
             </tbody>
@@ -216,7 +216,7 @@
           <table id="grossEarningsDetailsTable">
             <thead><tr><td class="section" colspan="2">Gross Earnings Details</td></tr></thead>
             <tbody>
-              <tr><td>Total Gross Earning:</td><td class="display-field" id="grossEarningTotal">-</td></tr>
+              <tr><td>Total Gross Earning:</td><td class="display-field" id="totalGrossEarnings">-</td></tr>
               <tr><td>LAPU Commission (as per circle):</td><td class="display-field" id="lapuCommissionCircle">-</td></tr>
               <tr><td>LAPU Commission (Amount):</td><td class="display-field" id="lapuCommissionAmount">-</td></tr>
               <tr><td>PLI (@0.2%) / DTH GPS (Avg):</td><td class="display-field" id="pliAvg">-</td></tr>
@@ -226,7 +226,7 @@
           <table id="expensesDetailsTable">
             <thead><tr><td class="section" colspan="2">Expenses Details</td></tr></thead>
             <tbody>
-              <tr><td>Total Expenses:</td><td class="display-field" id="expensesTotal">-</td></tr>
+              <tr><td>Total Expenses:</td><td class="display-field" id="totalExpenses">-</td></tr>
               <tr><td>ASC Required:</td><td class="display-field" id="ascRequired">-</td></tr>
               <tr><td>Active ASC Count (as per norm):</td><td class="display-field" id="activeAscCount">-</td></tr>
               <tr><td>ASC (FOS) Salary (@ ~Rs 13000):</td><td class="display-field" id="ascFosSalary">-</td></tr>
@@ -264,11 +264,11 @@
               <thead><tr><td class="section" colspan="2">Other Expenses</td></tr></thead>
               <tbody>
                 <tr><td colspan="2" class="subsection">Other Expenses Total: <span class="display-field" id="otherExpensesTotal">₹0</span></td></tr>
-                <tr><td>Rent:</td><td><input type="number" id="rentInput" name="rent" placeholder="3000-12000" min="3000" max="12000" oninput="validateInput(this)"></td></tr>
-                <tr><td>Electricity:</td><td><input type="number" id="electricityInput" name="electricity" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td></tr>
-                <tr><td>Misc:</td><td><input type="number" id="miscInput" name="misc" placeholder="500-3000" min="0" max="5000" oninput="validateInput(this)"></td></tr>
-                <tr><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="additional_mis_salary" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td></tr>
-                <tr><td>Store Net Earnings:</td><td><input type="number" id="storeNetEarningInput" name="store_net_earning" placeholder="Enter Store Net Earnings" min="0" oninput="validateInput(this)"></td></tr>
+                <tr><td>Rent:</td><td><input type="number" id="rentInput" name="RENT" placeholder="3000-12000" min="3000" max="12000" oninput="validateInput(this)"></td></tr>
+                <tr><td>Electricity:</td><td><input type="number" id="electricityInput" name="ELECTRICITY" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td></tr>
+                <tr><td>Misc:</td><td><input type="number" id="miscInput" name="MISC" placeholder="500-3000" min="0" max="5000" oninput="validateInput(this)"></td></tr>
+                <tr><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="ADDITIONAL_MIS_SALARY" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td></tr>
+                <tr><td>Store Net Earnings:</td><td><input type="number" id="storeNetEarningsInput" name="STORE_NET_EARNINGS" placeholder="Enter Store Net Earnings" min="0" oninput="validateInput(this)"></td></tr>
                 <tr><td colspan="2"><button type="submit" class="submit-btn">Submit Other Expenses</button></td></tr>
                 <tr><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
               </tbody>
@@ -303,7 +303,6 @@
     const db = firebase.firestore();
     let currentDistributorData = null;
     let currentDistributorId = '';
-    let baseTotalExpenses = 0;
     let expensesSubmitted = false;
 
     // ===== TOAST =====
@@ -330,7 +329,6 @@
     function indianFormat(num) {
       return new Intl.NumberFormat('en-IN').format(parseFloat(num || 0));
     }
-    // PDF-safe INR (no ₹ symbol issues)
     function pdfINR(num) {
       const val = parseFloat(num || 0);
       return 'Rs. ' + new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
@@ -342,14 +340,65 @@
       return new Intl.NumberFormat('en-IN').format(parseFloat(num || 0));
     }
 
+    // ===== CALCULATE ALL VALUES USING EXACT FIELD NAMES =====
+    function calculateAllValues(data) {
+      // INVESTMENT = TOTAL (TOTAL field contains INVESTMENT value)
+      const INVESTMENT = parseFloat(data.TOTAL || 0);
+      
+      // Get base values from Firebase fields
+      const LAPU_COMMISSION_A = parseFloat(data.LAPU_COMMISSION_A || 0);
+      const PLI_AVG = parseFloat(data.PLI_AVG || 0);
+      const DIST_SUBSIDY = parseFloat(data.DIST_SUBSIDY || 0);
+      const STORE_NET_EARNINGS = parseFloat(data.STORE_NET_EARNINGS || 0);
+      
+      // Get expense values from Firebase fields
+      const RENT = parseFloat(data.RENT || 0);
+      const ELECTRICITY = parseFloat(data.ELECTRICITY || 0);
+      const MISC = parseFloat(data.MISC || 0);
+      const ADDITIONAL_MIS_SALARY = parseFloat(data.ADDITIONAL_MIS_SALARY || 0);
+      
+      // TOTAL_EXPENSES (in Expenses Details) = ASC_FOS_SALARY_13000
+      const ASC_FOS_SALARY_13000 = parseFloat(data.ASC_FOS_SALARY_13000 || 0);
+      const TOTAL_EXPENSES = ASC_FOS_SALARY_13000;
+      
+      // OTHER_EXPENSES_TOTAL = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY
+      const OTHER_EXPENSES_TOTAL = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY;
+      
+      // EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL
+      const EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL;
+      
+      // TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY
+      const TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY;
+      
+      // GROSS_EARNING = TOTAL_GROSS_EARNINGS + STORE_NET_EARNINGS
+      const GROSS_EARNING = TOTAL_GROSS_EARNINGS + STORE_NET_EARNINGS;
+      
+      // TAKE_HOME = GROSS_EARNING - EXPENSES
+      const TAKE_HOME = GROSS_EARNING - EXPENSES;
+      
+      // ROI = TAKE_HOME / INVESTMENT (as decimal)
+      const ROI = INVESTMENT > 0 ? (TAKE_HOME / INVESTMENT) : 0;
+
+      return {
+        INVESTMENT: INVESTMENT,
+        TOTAL_GROSS_EARNINGS: TOTAL_GROSS_EARNINGS,
+        GROSS_EARNING: GROSS_EARNING,
+        TOTAL_EXPENSES: TOTAL_EXPENSES,
+        OTHER_EXPENSES_TOTAL: OTHER_EXPENSES_TOTAL,
+        EXPENSES: EXPENSES,
+        TAKE_HOME: TAKE_HOME,
+        ROI: ROI
+      };
+    }
+
     // ===== CHECK IF EXPENSES ARE FILLED =====
     function areExpensesFilled(data) {
-      const rent = parseFloat(data.rent || 0);
-      const elec = parseFloat(data.electricity || 0);
-      const misc = parseFloat(data.misc || 0);
-      const mis = parseFloat(data.additional_mis_salary || 0);
-      const storeNet = parseFloat(data.store_net_earning || 0);
-      return (rent > 0 || elec > 0 || misc > 0 || mis > 0 || storeNet > 0);
+      const RENT = parseFloat(data.RENT || 0);
+      const ELECTRICITY = parseFloat(data.ELECTRICITY || 0);
+      const MISC = parseFloat(data.MISC || 0);
+      const ADDITIONAL_MIS_SALARY = parseFloat(data.ADDITIONAL_MIS_SALARY || 0);
+      const STORE_NET_EARNINGS = parseFloat(data.STORE_NET_EARNINGS || 0);
+      return (RENT > 0 || ELECTRICITY > 0 || MISC > 0 || ADDITIONAL_MIS_SALARY > 0 || STORE_NET_EARNINGS > 0);
     }
 
     // ===== VALIDATION =====
@@ -365,30 +414,33 @@
 
     // ===== POPULATE =====
     function populateData(data) {
-      const gross = parseFloat(data.TOTAL_GROSS_EARNINGS || 0);
-      const expenses = parseFloat(data.TOTAL_EXPENSES || 0);
-      const takeHome = gross - expenses;
-      const investment = parseFloat(data.TOTAL || 0);
-      const roi = investment > 0 ? (takeHome / investment) : 0;
-
+      // Calculate all values
+      const calculated = calculateAllValues(data);
+      
       // Check if expenses have been filled
       expensesSubmitted = areExpensesFilled(data);
 
       document.getElementById('distributorNumber').textContent = data.DISTRIBUTOR_LAPU_NUMBER || '-';
       document.getElementById('distributorName').textContent = data.DISTRIBUTOR_NAME || '-';
-      document.getElementById('total').textContent = formatINR(data.TOTAL);
+      
+      // INVESTMENT = TOTAL (TOTAL field contains INVESTMENT value)
+      document.getElementById('investment').textContent = formatINR(calculated.INVESTMENT);
       document.getElementById('avgStock').textContent = formatINR(data.AVG_STOCK);
-      document.getElementById('totalGrossEarnings').textContent = formatINR(data.TOTAL_GROSS_EARNINGS);
-      document.getElementById('totalExpenses').textContent = formatINR(expenses);
+      
+      // GROSS_EARNING = TOTAL_GROSS_EARNINGS + STORE_NET_EARNINGS
+      document.getElementById('grossEarning').textContent = formatINR(calculated.GROSS_EARNING);
+      
+      // EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL
+      document.getElementById('expenses').textContent = formatINR(calculated.EXPENSES);
       
       // Show ROI and Take Home only if expenses are submitted
       const takeHomeEl = document.getElementById('takeHome');
       const roiEl = document.getElementById('roi');
       
       if (expensesSubmitted) {
-        takeHomeEl.textContent = formatINR(takeHome);
+        takeHomeEl.textContent = formatINR(calculated.TAKE_HOME);
         takeHomeEl.classList.remove('pending-field');
-        roiEl.textContent = formatPercent(roi);
+        roiEl.textContent = (calculated.ROI * 100).toFixed(2) + '%';
         roiEl.classList.remove('pending-field');
       } else {
         takeHomeEl.textContent = 'Submit expenses first';
@@ -397,14 +449,16 @@
         roiEl.classList.add('pending-field');
       }
 
+      // Investment Details - TOTAL contains INVESTMENT value
       document.getElementById('totalWithSecurity').textContent = formatINR(data.TOTAL);
       document.getElementById('lapuDthLapu').textContent = formatINR(data.LAPU_DTH_LAPU_2DAYS);
       const stockCell = document.getElementById('actualStockNorm');
       stockCell.textContent = formatINR(data.AVG_STOCK);
       stockCell.style.color = parseFloat(data.AVG_STOCK || 0) > parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0) ? 'green' : 'red';
 
-      document.getElementById('grossEarningTotal').textContent = formatINR(data.TOTAL_GROSS_EARNINGS);
-      document.getElementById('lapuCommissionCircle').textContent = parseFloat(data.LAPU_COMMISSION_C) + '%';
+      // TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY
+      document.getElementById('totalGrossEarnings').textContent = formatINR(calculated.TOTAL_GROSS_EARNINGS);
+      document.getElementById('lapuCommissionCircle').textContent = parseFloat(data.LAPU_COMMISSION_C || 0) + '%';
       document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
       document.getElementById('pliAvg').textContent = formatINR(data.PLI_AVG);
       document.getElementById('distSubsidy').textContent = formatINR(data.DIST_SUBSIDY);
@@ -418,7 +472,8 @@
       document.getElementById('avgMonthlyGross').textContent = indianFormat(data.AVG_MONTHLY_GROSS_IN);
       document.getElementById('lapuSecondary').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
 
-      document.getElementById('expensesTotal').textContent = formatINR(data.TOTAL_EXPENSES);
+      // TOTAL_EXPENSES = ASC_FOS_SALARY_13000
+      document.getElementById('totalExpenses').textContent = formatINR(calculated.TOTAL_EXPENSES);
       document.getElementById('ascRequired').textContent = formatNum(data.ASC_REQUIRED);
       document.getElementById('activeAscCount').textContent = formatNum(data.ACTIVE_ASC_COUNT_AS_PER_NORM);
       document.getElementById('ascFosSalary').textContent = formatINR(data.ASC_FOS_SALARY_13000);
@@ -427,14 +482,16 @@
       document.getElementById('ascSubsidyMissed').textContent = formatINR(data.ASC_SUBSIDY_OPPORTUNITY_MISSED);
       document.getElementById('additionalAscRequired').textContent = formatNum(data.ADDITIONAL_ACTIVE_ASC);
 
-      const clawbackValue = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || data['CLAWBACK/ PENALTY'] || data['CLAWBACK'] || 0;
+      // Handle CLAWBACK/PENALTY field
+      const clawbackValue = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || 0;
       document.getElementById('clawback').textContent = indianFormat(clawbackValue);
 
-      document.getElementById('rentInput').value = data.rent || '';
-      document.getElementById('electricityInput').value = data.electricity || '';
-      document.getElementById('miscInput').value = data.misc || '';
-      document.getElementById('misSalaryInput').value = data.additional_mis_salary || '';
-      document.getElementById('storeNetEarningInput').value = data.store_net_earning || '';
+      // Populate input fields with existing Firebase data
+      document.getElementById('rentInput').value = data.RENT || '';
+      document.getElementById('electricityInput').value = data.ELECTRICITY || '';
+      document.getElementById('miscInput').value = data.MISC || '';
+      document.getElementById('misSalaryInput').value = data.ADDITIONAL_MIS_SALARY || '';
+      document.getElementById('storeNetEarningsInput').value = data.STORE_NET_EARNINGS || '';
 
       updateOtherExpensesTotal();
       document.getElementById('mainContent').style.display = 'block';
@@ -442,12 +499,12 @@
     }
 
     function updateOtherExpensesTotal() {
-      const rent = parseFloat(document.getElementById('rentInput').value) || 0;
-      const elec = parseFloat(document.getElementById('electricityInput').value) || 0;
-      const misc = parseFloat(document.getElementById('miscInput').value) || 0;
-      const mis = parseFloat(document.getElementById('misSalaryInput').value) || 0;
-      const otherExpTotal = rent + elec + misc + mis;
-      document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(otherExpTotal);
+      const RENT = parseFloat(document.getElementById('rentInput').value) || 0;
+      const ELECTRICITY = parseFloat(document.getElementById('electricityInput').value) || 0;
+      const MISC = parseFloat(document.getElementById('miscInput').value) || 0;
+      const ADDITIONAL_MIS_SALARY = parseFloat(document.getElementById('misSalaryInput').value) || 0;
+      const OTHER_EXPENSES_TOTAL = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY;
+      document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(OTHER_EXPENSES_TOTAL);
     }
 
     // ===== LOAD DATA =====
@@ -466,8 +523,7 @@
           const doc = snapshot.docs[0];
           currentDistributorData = doc.data();
           currentDistributorId = doc.id;
-          const savedOther = (parseFloat(currentDistributorData.rent) || 0) + (parseFloat(currentDistributorData.electricity) || 0) + (parseFloat(currentDistributorData.misc) || 0) + (parseFloat(currentDistributorData.additional_mis_salary) || 0);
-          baseTotalExpenses = parseFloat(currentDistributorData.TOTAL_EXPENSES || 0) - savedOther;
+          
           populateData(currentDistributorData);
           showToast('✅ Data loaded successfully!');
         } else {
@@ -485,39 +541,77 @@
     document.getElementById('otherExpensesForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentDistributorId) { showToast('⚠️ Load distributor data first!', 'error'); return; }
+      
       const inputs = document.querySelectorAll('#otherExpensesTable input[type="number"]');
       let isValid = true;
       inputs.forEach(input => {
-        if (input.value !== '' && input.name !== 'store_net_earning') {
+        if (input.value !== '' && input.name !== 'STORE_NET_EARNINGS') {
           const n = Number(input.value), mn = Number(input.min) || 0, mx = Number(input.max) || Infinity;
           if (n < mn || n > mx) { isValid = false; input.style.borderColor = '#e74c3c'; }
         }
       });
       if (!isValid) { showToast('⚠️ Fix values outside range!', 'error'); return; }
+      
       const fd = new FormData(e.target);
-      const exp = { 
-        rent: parseFloat(fd.get('rent')) || 0, 
-        electricity: parseFloat(fd.get('electricity')) || 0, 
-        misc: parseFloat(fd.get('misc')) || 0, 
-        additional_mis_salary: parseFloat(fd.get('additional_mis_salary')) || 0,
-        store_net_earning: parseFloat(fd.get('store_net_earning')) || 0
+      
+      // Get user input values using EXACT FIELD NAMES
+      const RENT = parseFloat(fd.get('RENT')) || 0;
+      const ELECTRICITY = parseFloat(fd.get('ELECTRICITY')) || 0;
+      const MISC = parseFloat(fd.get('MISC')) || 0;
+      const ADDITIONAL_MIS_SALARY = parseFloat(fd.get('ADDITIONAL_MIS_SALARY')) || 0;
+      const STORE_NET_EARNINGS = parseFloat(fd.get('STORE_NET_EARNINGS')) || 0;
+      
+      // Create updated data object for calculations
+      const updatedData = {
+        ...currentDistributorData,
+        RENT: RENT,
+        ELECTRICITY: ELECTRICITY,
+        MISC: MISC,
+        ADDITIONAL_MIS_SALARY: ADDITIONAL_MIS_SALARY,
+        STORE_NET_EARNINGS: STORE_NET_EARNINGS
       };
+      
+      // Calculate all derived values
+      const calculated = calculateAllValues(updatedData);
+      
       try {
-        const ot = exp.rent + exp.electricity + exp.misc + exp.additional_mis_salary;
-        const nte = baseTotalExpenses + ot;
-        await db.collection('ROIWEB-B').doc(currentDistributorId).update({ 
-          rent: exp.rent, 
-          electricity: exp.electricity, 
-          misc: exp.misc, 
-          additional_mis_salary: exp.additional_mis_salary, 
-          store_net_earning: exp.store_net_earning,
-          TOTAL_EXPENSES: nte 
-        });
-        currentDistributorData = { ...currentDistributorData, ...exp, TOTAL_EXPENSES: nte };
+        // Prepare all fields to save to Firebase using EXACT FIELD NAMES
+        const fieldsToSave = {
+          // User input fields (EXACT FIELD NAMES)
+          RENT: RENT,
+          ELECTRICITY: ELECTRICITY,
+          MISC: MISC,
+          ADDITIONAL_MIS_SALARY: ADDITIONAL_MIS_SALARY,
+          STORE_NET_EARNINGS: STORE_NET_EARNINGS,
+          
+          // Calculated fields (EXACT FIELD NAMES)
+          INVESTMENT: calculated.INVESTMENT,  // INVESTMENT = TOTAL
+          OTHER_EXPENSES_TOTAL: calculated.OTHER_EXPENSES_TOTAL,
+          TOTAL_EXPENSES: calculated.TOTAL_EXPENSES,  // TOTAL_EXPENSES = ASC_FOS_SALARY_13000
+          EXPENSES: calculated.EXPENSES,  // EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL
+          TOTAL_GROSS_EARNINGS: calculated.TOTAL_GROSS_EARNINGS,
+          GROSS_EARNING: calculated.GROSS_EARNING,
+          TAKE_HOME: calculated.TAKE_HOME,
+          ROI: calculated.ROI
+        };
+        
+        // Update Firebase
+        await db.collection('ROIWEB-B').doc(currentDistributorId).update(fieldsToSave);
+        
+        // Update local data
+        currentDistributorData = { ...currentDistributorData, ...fieldsToSave };
         expensesSubmitted = true;
         populateData(currentDistributorData);
-        showToast('✅ Expenses saved!', 'success');
-      } catch (error) { showToast('❌ Save failed: ' + error.message, 'error'); }
+        
+        showToast('✅ All data saved successfully!', 'success');
+        
+        // Log saved fields for verification
+        console.log('Saved to Firebase with field names:', fieldsToSave);
+        
+      } catch (error) { 
+        showToast('❌ Save failed: ' + error.message, 'error'); 
+        console.error('Save error:', error);
+      }
     });
 
     // ================================================
@@ -575,28 +669,29 @@
           darkBlue:   [21, 67, 96],
         };
 
-        // ==================== CALCULATED VALUES ====================
-        const gross = parseFloat(d.TOTAL_GROSS_EARNINGS || 0);
-        const expenses = parseFloat(d.TOTAL_EXPENSES || 0);
-        const takeHome = gross - expenses;
-        const investment = parseFloat(d.TOTAL || 0);
-        const roiVal = investment > 0 ? (takeHome / investment) * 100 : 0;
-        const roiStr = roiVal.toFixed(2) + '%';
-        const isGood = roiVal >= 0;
+        // ==================== CALCULATED VALUES (using EXACT FIELD NAMES) ====================
+        const calculated = calculateAllValues(d);
+        
+        const INVESTMENT = calculated.INVESTMENT;
+        const TOTAL_GROSS_EARNINGS = calculated.TOTAL_GROSS_EARNINGS;
+        const GROSS_EARNING = calculated.GROSS_EARNING;
+        const TOTAL_EXPENSES = calculated.TOTAL_EXPENSES;
+        const OTHER_EXPENSES_TOTAL = calculated.OTHER_EXPENSES_TOTAL;
+        const EXPENSES = calculated.EXPENSES;
+        const TAKE_HOME = calculated.TAKE_HOME;
+        const ROI = calculated.ROI;
+        const roiPercent = (ROI * 100).toFixed(2) + '%';
+        const isGood = ROI >= 0;
 
-        const rent = parseFloat(d.rent || 0);
-        const elec = parseFloat(d.electricity || 0);
-        const miscV = parseFloat(d.misc || 0);
-        const misSal = parseFloat(d.additional_mis_salary || 0);
-        const otherExp = rent + elec + miscV + misSal;
-        const clawback = d['CLAWBACK/PENALTY'] || d['CLAWBACK_PENALTY'] || d['CLAWBACK/ PENALTY'] || d['CLAWBACK'] || 0;
+        // Get values using EXACT FIELD NAMES
+        const RENT = parseFloat(d.RENT || 0);
+        const ELECTRICITY = parseFloat(d.ELECTRICITY || 0);
+        const MISC = parseFloat(d.MISC || 0);
+        const ADDITIONAL_MIS_SALARY = parseFloat(d.ADDITIONAL_MIS_SALARY || 0);
+        const STORE_NET_EARNINGS = parseFloat(d.STORE_NET_EARNINGS || 0);
+        const clawback = d['CLAWBACK/PENALTY'] || d['CLAWBACK_PENALTY'] || 0;
 
-        const sites = parseFloat(d.SITE_COUNT || 0);
-        const earnPerSite = sites > 0 ? gross / sites : 0;
-        const expRatio = gross > 0 ? (expenses / gross * 100) : 0;
-        const netPerSite = sites > 0 ? takeHome / sites : 0;
-        const stock = parseFloat(d.AVG_STOCK || 0);
-        const norm = parseFloat(d.LAPU_DTH_LAPU_2DAYS || 0);
+        const SITE_COUNT = parseFloat(d.SITE_COUNT || 0);
 
         // ==================== FORMAT HELPERS ====================
         const fR = n => 'Rs. ' + new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(parseFloat(n || 0));
@@ -620,16 +715,14 @@
           pdf.setFont('helvetica', 'normal');
           pdf.text(String(d.DISTRIBUTOR_NAME || '-') + '  |  ' + String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), PW / 2, 16, { align: 'center' });
 
-          // ROI Badge (top right)
           const bW = 32;
           pdf.setFillColor(...(isGood ? C.green : C.red));
           pdf.roundedRect(PW - M - bW, 4, bW, 10, 2, 2, 'F');
           pdf.setTextColor(...C.white);
           pdf.setFontSize(7.5);
           pdf.setFont('helvetica', 'bold');
-          pdf.text('ROI: ' + roiStr, PW - M - bW / 2, 10.5, { align: 'center' });
+          pdf.text('ROI: ' + roiPercent, PW - M - bW / 2, 10.5, { align: 'center' });
 
-          // Date badge (top left)
           const dateStr = new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
           pdf.setFillColor(...C.accent);
           pdf.roundedRect(M, 5, 22, 8, 2, 2, 'F');
@@ -667,7 +760,6 @@
           pdf.rect(x, y, w, ROW_H, 'S');
           pdf.line(x + lblW, y, x + lblW, y + ROW_H);
 
-          // Label
           pdf.setFontSize(7.5);
           pdf.setTextColor(...C.dark);
           pdf.setFont('helvetica', 'normal');
@@ -676,7 +768,6 @@
           if (lbl.length < String(label || '-').length) lbl += '..';
           pdf.text(lbl, x + 2.5, y + ROW_H * 0.62);
 
-          // Value
           pdf.setFont('helvetica', 'bold');
           if (isHL) pdf.setTextColor(...C.green);
           else pdf.setTextColor(...C.highlight);
@@ -743,51 +834,45 @@
 
         // ========== LEFT COLUMN ==========
 
-        // — Distributor Summary —
         yL = drawSection('DISTRIBUTOR SUMMARY', yL, LX, LW);
         yL = drawRow('Distributor Number', String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), yL, LX, LW, false, false);
         yL = drawRow('Distributor Name', String(d.DISTRIBUTOR_NAME || '-'), yL, LX, LW, true, false);
-        yL = drawRow('Investment', fR(d.TOTAL), yL, LX, LW, false, false);
+        yL = drawRow('Investment', fR(INVESTMENT), yL, LX, LW, false, false);
         yL = drawRow('Average Stock', fR(d.AVG_STOCK), yL, LX, LW, true, false);
-        yL = drawRow('Gross Earning', fR(d.TOTAL_GROSS_EARNINGS), yL, LX, LW, false, false);
-        yL = drawRow('Expenses', fR(d.TOTAL_EXPENSES), yL, LX, LW, true, false);
-        yL = drawRow('Take Home', fR(takeHome), yL, LX, LW, false, true);
-        yL = drawRow('ROI', roiStr, yL, LX, LW, true, true);
+        yL = drawRow('Gross Earning', fR(GROSS_EARNING), yL, LX, LW, false, false);
+        yL = drawRow('Expenses', fR(EXPENSES), yL, LX, LW, true, false);
+        yL = drawRow('Take Home', fR(TAKE_HOME), yL, LX, LW, false, true);
+        yL = drawRow('ROI', roiPercent, yL, LX, LW, true, true);
         yL += GAP;
 
-        // — Investment Details —
         yL = drawSection('INVESTMENT DETAILS', yL, LX, LW);
         yL = drawRow('Total (with Security)', fR(d.TOTAL), yL, LX, LW, false, false);
         yL = drawRow('LAPU/DTH LAPU (3 days)', fR(d.LAPU_DTH_LAPU_2DAYS), yL, LX, LW, true, false);
         yL = drawRow('Actual Stock (Norm)', fR(d.AVG_STOCK), yL, LX, LW, false, false);
         yL += GAP;
 
-        // — Gross Earnings —
         yL = drawSection('GROSS EARNINGS DETAILS', yL, LX, LW);
-        yL = drawRow('Total Gross Earning', fR(d.TOTAL_GROSS_EARNINGS), yL, LX, LW, false, false);
-        yL = drawRow('LAPU Commission (Circle)', fP(d.LAPU_COMMISSION_C), yL, LX, LW, true, false);
+        yL = drawRow('Total Gross Earning', fR(TOTAL_GROSS_EARNINGS), yL, LX, LW, false, false);
+        yL = drawRow('LAPU Commission (Circle)', parseFloat(d.LAPU_COMMISSION_C || 0) + '%', yL, LX, LW, true, false);
         yL = drawRow('LAPU Commission (Amount)', fR(d.LAPU_COMMISSION_A), yL, LX, LW, false, false);
         yL = drawRow('PLI / DTH GPS (Avg)', fR(d.PLI_AVG), yL, LX, LW, true, false);
         yL = drawRow('Dist Subsidy', fR(d.DIST_SUBSIDY), yL, LX, LW, false, false);
         yL += GAP;
 
-        // — Expenses Details —
         yL = drawSection('EXPENSES DETAILS', yL, LX, LW);
-        yL = drawRow('Total Expenses', fR(d.TOTAL_EXPENSES), yL, LX, LW, false, false);
+        yL = drawRow('Total Expenses', fR(TOTAL_EXPENSES), yL, LX, LW, false, false);
         yL = drawRow('ASC Required', fN(d.ASC_REQUIRED), yL, LX, LW, true, false);
         yL = drawRow('Active ASC Count (Norm)', fN(d.ACTIVE_ASC_COUNT_AS_PER_NORM), yL, LX, LW, false, false);
         yL = drawRow('ASC (FOS) Salary @13000', fR(d.ASC_FOS_SALARY_13000), yL, LX, LW, true, false);
 
         // ========== RIGHT COLUMN ==========
 
-        // — Info Cards —
         const cW = (RW - 4) / 3;
         drawCard('TSM NAME', d.TSM_NAME, RX, yR, cW, CARD_H);
         drawCard('ZSM NAME', d.ZSM_NAME, RX + cW + 2, yR, cW, CARD_H);
         drawCard('ZONE', d.ZONE, RX + (cW + 2) * 2, yR, cW, CARD_H);
         yR += CARD_H + GAP;
 
-        // — Site Details —
         yR = drawSection('SITE DETAILS', yR, RX, RW);
         yR = drawRow('Site Count', fN(d.SITE_COUNT), yR, RX, RW, false, false);
         yR = drawRow('Offline Tertiary / Site', fR(d.OFFLINE_TERTIARY), yR, RX, RW, true, false);
@@ -796,121 +881,21 @@
         yR = drawRow('Lapu Secondary / Month', fR(d.LAPU_SECONDARY_PER_MONTH), yR, RX, RW, false, false);
         yR += GAP;
 
-        // — Other Expenses —
         yR = drawSection('OTHER EXPENSES', yR, RX, RW);
-        yR = drawRow('Other Expenses Total', fR(otherExp), yR, RX, RW, false, true);
-        yR = drawRow('Rent', fR(rent), yR, RX, RW, true, false);
-        yR = drawRow('Electricity', fR(elec), yR, RX, RW, false, false);
-        yR = drawRow('Misc', fR(miscV), yR, RX, RW, true, false);
-        yR = drawRow('MIS Salary', fR(misSal), yR, RX, RW, false, false);
-        yR = drawRow('Store Net Earnings', fR(d.store_net_earning || 0), yR, RX, RW, true, false);
+        yR = drawRow('Other Expenses Total', fR(OTHER_EXPENSES_TOTAL), yR, RX, RW, false, true);
+        yR = drawRow('Rent', fR(RENT), yR, RX, RW, true, false);
+        yR = drawRow('Electricity', fR(ELECTRICITY), yR, RX, RW, false, false);
+        yR = drawRow('Misc', fR(MISC), yR, RX, RW, true, false);
+        yR = drawRow('MIS Salary', fR(ADDITIONAL_MIS_SALARY), yR, RX, RW, false, false);
+        yR = drawRow('Store Net Earnings', fR(STORE_NET_EARNINGS), yR, RX, RW, true, false);
         yR = drawRow('Clawback / Penalty', fN(clawback), yR, RX, RW, false, false);
         yR += GAP;
 
-        // — Opportunity Lost —
         yR = drawSection('OPPORTUNITY LOST', yR, RX, RW);
         yR = drawRow('PLI Missed Opportunity', fR(d.PLI_MISSED_OPPORTUNITY), yR, RX, RW, false, false);
         yR = drawRow('ASC Subsidy Missed', fR(d.ASC_SUBSIDY_OPPORTUNITY_MISSED), yR, RX, RW, true, false);
         yR = drawRow('Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yR, RX, RW, false, false);
         yR += GAP;
-
-        // // — Key Performance Metrics (Calculated) —
-        // yR = drawSection('KEY PERFORMANCE METRICS', yR, RX, RW);
-        // yR = drawRow('Earning per Site', sites > 0 ? fR(earnPerSite) : '-', yR, RX, RW, false, false);
-        // yR = drawRow('Expense Ratio', gross > 0 ? expRatio.toFixed(1) + '%' : '-', yR, RX, RW, true, false);
-        // yR = drawRow('Net Earning per Site', sites > 0 ? fR(netPerSite) : '-', yR, RX, RW, false, false);
-
-        // // ========== VERTICAL DIVIDER ==========
-        // const maxY = Math.max(yL, yR);
-        // pdf.setDrawColor(...C.border);
-        // pdf.setLineWidth(0.3);
-        // pdf.line(M + LW + COL_GAP / 2, 27, M + LW + COL_GAP / 2, maxY);
-
-        // // ========== HIGHLIGHT BOXES (full width) ==========
-        // const hlY = maxY + GAP;
-        // const halfW = (CW - COL_GAP) / 2;
-        // drawHighlight('TAKE HOME', fR(takeHome), hlY, M, halfW, C.headerBg);
-        // drawHighlight('RETURN ON INVESTMENT', roiStr, hlY, M + halfW + COL_GAP, halfW, isGood ? C.green : C.red);
-
-        // // ========== ANALYSIS SECTION (fills remaining page) ==========
-        // const analysisY = hlY + HL_H + 2;
-
-        // // Section header bar
-        // pdf.setFillColor(...C.primary);
-        // pdf.rect(M, analysisY, CW, 6, 'F');
-        // pdf.setFillColor(...C.accent);
-        // pdf.rect(M, analysisY, 2.5, 6, 'F');
-        // pdf.setTextColor(...C.white);
-        // pdf.setFontSize(7.5);
-        // pdf.setFont('helvetica', 'bold');
-        // pdf.text('REPORT SUMMARY & ANALYSIS', M + 6, analysisY + 4.2);
-
-        // // Content box (fills to footer)
-        // const footerY = PH - 13;
-        // const boxY = analysisY + 6;
-        // const boxH = footerY - boxY - 1;
-
-        // pdf.setFillColor(255, 255, 255);
-        // pdf.setDrawColor(...C.border);
-        // pdf.setLineWidth(0.3);
-        // pdf.roundedRect(M, boxY, CW, boxH, 2, 2, 'FD');
-
-        // // Left accent strip
-        // pdf.setFillColor(...C.primary);
-        // pdf.rect(M, boxY + 1, 2, boxH - 2, 'F');
-
-        // // Generate dynamic insights
-        // const insights = [];
-
-        // if (roiVal >= 20) insights.push('ROI Performance: EXCELLENT (' + roiStr + ') - Significantly above benchmarks');
-        // else if (roiVal >= 10) insights.push('ROI Performance: GOOD (' + roiStr + ') - Meeting expected targets');
-        // else if (roiVal >= 0) insights.push('ROI Performance: MODERATE (' + roiStr + ') - Room for improvement');
-        // else insights.push('ROI Performance: CRITICAL (' + roiStr + ') - Immediate attention required');
-
-        // insights.push('Monthly Take Home: ' + fR(takeHome) + ' against Investment of ' + fR(investment));
-
-        // if (norm > 0) {
-        //   const stockPct = (stock / norm * 100).toFixed(0);
-        //   if (stock > norm) insights.push('Stock Position: ' + fR(stock) + ' (' + stockPct + '% of norm) - Over-invested by ' + fR(stock - norm));
-        //   else insights.push('Stock Position: ' + fR(stock) + ' (' + stockPct + '% of norm) - Under-invested by ' + fR(norm - stock));
-        // }
-
-        // const totalMissed = parseFloat(d.PLI_MISSED_OPPORTUNITY || 0) + parseFloat(d.ASC_SUBSIDY_OPPORTUNITY_MISSED || 0);
-        // if (totalMissed > 0) insights.push('Revenue Opportunity Missed: ' + fR(totalMissed) + ' - Recovery action recommended');
-
-        // if (sites > 0) insights.push('Per Site Analysis: Earning ' + fR(earnPerSite) + ' | Net ' + fR(netPerSite));
-
-        // if (gross > 0) insights.push('Expense Ratio: ' + expRatio.toFixed(1) + '% of total gross earnings');
-
-        // const ascReq = parseFloat(d.ASC_REQUIRED || 0);
-        // const ascActive = parseFloat(d.ACTIVE_ASC_COUNT_AS_PER_NORM || 0);
-        // if (ascReq > ascActive) insights.push('ASC Gap: ' + (ascReq - ascActive).toFixed(0) + ' additional ASC needed for full subsidy');
-
-        // // Draw bullet points
-        // const maxLines = Math.floor((boxH - 8) / 3.5);
-        // let tY = boxY + 4.5;
-        // pdf.setFontSize(7);
-
-        // insights.slice(0, maxLines).forEach(line => {
-        //   // Bullet circle
-        //   pdf.setFillColor(...C.primary);
-        //   pdf.circle(M + 6, tY - 0.5, 0.7, 'F');
-
-        //   // Text
-        //   pdf.setTextColor(...C.dark);
-        //   pdf.setFont('helvetica', 'normal');
-        //   let txt = String(line);
-        //   while (pdf.getTextWidth(txt) > CW - 14 && txt.length > 5) txt = txt.slice(0, -1);
-        //   if (txt.length < line.length) txt += '..';
-        //   pdf.text(txt, M + 9, tY);
-        //   tY += 3.5;
-        // });
-
-        // // Confidential note
-        // pdf.setFontSize(5.5);
-        // pdf.setTextColor(160, 160, 160);
-        // pdf.setFont('helvetica', 'italic');
-        // pdf.text('Confidential - For Internal Use Only', M + CW / 2, boxY + boxH - 2, { align: 'center' });
 
         // ========== FOOTER ==========
         drawFooter();
@@ -934,7 +919,6 @@
           setTimeout(() => URL.revokeObjectURL(url), 100);
         };
 
-        // Mobile: Share API, Desktop: Download
         const file = new File([pdfBlob], filename, { type: 'application/pdf' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
@@ -974,4 +958,3 @@
   </script>
 </body>
 </html>
-
