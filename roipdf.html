@@ -125,22 +125,9 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .store-net-row {
-      background-color: #d4efdf !important;
-    }
-    .store-net-row td {
-      font-weight: 700 !important;
-      color: #1e8449 !important;
-    }
-    .store-net-row input[type="number"] {
-      background-color: #d4efdf;
-      border-color: #27ae60 !important;
-      font-weight: 700;
-      color: #1e8449;
-    }
-    .store-net-row input[type="number"]:focus {
-      border-color: #1e8449 !important;
-      box-shadow: 0 0 5px rgba(39,174,96,0.5) !important;
+    .pending-field {
+      color: #e67e22 !important;
+      font-style: italic;
     }
 
     @media (max-width: 900px) {
@@ -281,7 +268,7 @@
                 <tr><td>Electricity:</td><td><input type="number" id="electricityInput" name="electricity" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td></tr>
                 <tr><td>Misc:</td><td><input type="number" id="miscInput" name="misc" placeholder="500-3000" min="0" max="5000" oninput="validateInput(this)"></td></tr>
                 <tr><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="additional_mis_salary" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td></tr>
-                <tr class="store-net-row"><td>Store Net Earnings:</td><td><input type="number" id="storeNetEarningInput" name="store_net_earning" placeholder="Enter Store Net Earnings" min="0" oninput="validateInput(this)"></td></tr>
+                <tr><td>Store Net Earnings:</td><td><input type="number" id="storeNetEarningInput" name="store_net_earning" placeholder="Enter Store Net Earnings" min="0" oninput="validateInput(this)"></td></tr>
                 <tr><td colspan="2"><button type="submit" class="submit-btn">Submit Other Expenses</button></td></tr>
                 <tr><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
               </tbody>
@@ -317,6 +304,7 @@
     let currentDistributorData = null;
     let currentDistributorId = '';
     let baseTotalExpenses = 0;
+    let expensesSubmitted = false;
 
     // ===== TOAST =====
     function showToast(message, type = 'success') {
@@ -354,6 +342,16 @@
       return new Intl.NumberFormat('en-IN').format(parseFloat(num || 0));
     }
 
+    // ===== CHECK IF EXPENSES ARE FILLED =====
+    function areExpensesFilled(data) {
+      const rent = parseFloat(data.rent || 0);
+      const elec = parseFloat(data.electricity || 0);
+      const misc = parseFloat(data.misc || 0);
+      const mis = parseFloat(data.additional_mis_salary || 0);
+      const storeNet = parseFloat(data.store_net_earning || 0);
+      return (rent > 0 || elec > 0 || misc > 0 || mis > 0 || storeNet > 0);
+    }
+
     // ===== VALIDATION =====
     function validateInput(elem) {
       const val = elem.value;
@@ -373,14 +371,31 @@
       const investment = parseFloat(data.TOTAL || 0);
       const roi = investment > 0 ? (takeHome / investment) : 0;
 
+      // Check if expenses have been filled
+      expensesSubmitted = areExpensesFilled(data);
+
       document.getElementById('distributorNumber').textContent = data.DISTRIBUTOR_LAPU_NUMBER || '-';
       document.getElementById('distributorName').textContent = data.DISTRIBUTOR_NAME || '-';
       document.getElementById('total').textContent = formatINR(data.TOTAL);
       document.getElementById('avgStock').textContent = formatINR(data.AVG_STOCK);
       document.getElementById('totalGrossEarnings').textContent = formatINR(data.TOTAL_GROSS_EARNINGS);
       document.getElementById('totalExpenses').textContent = formatINR(expenses);
-      document.getElementById('takeHome').textContent = formatINR(takeHome);
-      document.getElementById('roi').textContent = formatPercent(roi);
+      
+      // Show ROI and Take Home only if expenses are submitted
+      const takeHomeEl = document.getElementById('takeHome');
+      const roiEl = document.getElementById('roi');
+      
+      if (expensesSubmitted) {
+        takeHomeEl.textContent = formatINR(takeHome);
+        takeHomeEl.classList.remove('pending-field');
+        roiEl.textContent = formatPercent(roi);
+        roiEl.classList.remove('pending-field');
+      } else {
+        takeHomeEl.textContent = 'Submit expenses first';
+        takeHomeEl.classList.add('pending-field');
+        roiEl.textContent = 'Submit expenses first';
+        roiEl.classList.add('pending-field');
+      }
 
       document.getElementById('totalWithSecurity').textContent = formatINR(data.TOTAL);
       document.getElementById('lapuDthLapu').textContent = formatINR(data.LAPU_DTH_LAPU_2DAYS);
@@ -499,16 +514,20 @@
           TOTAL_EXPENSES: nte 
         });
         currentDistributorData = { ...currentDistributorData, ...exp, TOTAL_EXPENSES: nte };
+        expensesSubmitted = true;
         populateData(currentDistributorData);
         showToast('✅ Expenses saved!', 'success');
       } catch (error) { showToast('❌ Save failed: ' + error.message, 'error'); }
     });
 
     // ================================================
-    // 📄 LUXURY jsPDF POSITION-BASED PDF GENERATION
+    // 📄 LUXURY jsPDF PDF — FULL PAGE, POSITION-BASED
     // ================================================
     async function downloadPageAsPdf() {
-      if (!currentDistributorData) { showToast('⚠️ Load distributor data first!', 'error'); return; }
+      if (!currentDistributorData) {
+        showToast('⚠️ Load distributor data first!', 'error');
+        return;
+      }
 
       const btn = document.getElementById('downloadPdfBtn');
       btn.disabled = true;
@@ -516,318 +535,413 @@
 
       const overlay = document.createElement('div');
       overlay.className = 'pdf-overlay';
-      overlay.innerHTML = '<div class="pdf-overlay-content"><div class="pdf-spinner"></div><div style="font-weight:600;color:#2c3e50;">Generating PDF...</div><div style="font-size:12px;color:#7f8c8d;margin-top:5px;">Please wait</div></div>';
+      overlay.innerHTML = `<div class="pdf-overlay-content"><div class="pdf-spinner"></div><div style="font-weight:600;color:#2c3e50;">Generating PDF...</div><div style="font-size:12px;color:#7f8c8d;margin-top:5px;">Please wait</div></div>`;
       document.body.appendChild(overlay);
 
       try {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('portrait', 'mm', 'a4');
-        const data = currentDistributorData;
+        const d = currentDistributorData;
 
-        // ===== PAGE DIMENSIONS =====
-        const pageWidth = 210;
-        const pageHeight = 297;
-        const margin = 10;
-        const contentWidth = pageWidth - 2 * margin;
-        const colGap = 4;
-        const leftColW = 94;
-        const rightColW = contentWidth - leftColW - colGap;
-        const leftColX = margin;
-        const rightColX = margin + leftColW + colGap;
-        const rowH = 5.5;
-        const sectionH = 6.5;
-        const gap = 2;
+        // ==================== DIMENSIONS ====================
+        const PW = 210, PH = 297, M = 8;
+        const CW = PW - 2 * M;
+        const COL_GAP = 4;
+        const LW = (CW - COL_GAP) / 2;
+        const RW = LW;
+        const LX = M;
+        const RX = M + LW + COL_GAP;
+        const ROW_H = 8;
+        const SEC_H = 9;
+        const GAP = 3;
+        const CARD_H = 20;
+        const HL_H = 14;
 
-        // ===== LUXURY COLOR PALETTE =====
-        const P = {
-          headerBg:    [26, 82, 118],
-          primary:     [41, 128, 185],
-          secondary:   [234, 244, 249],
-          accent:      [243, 156, 18],
-          text:        [255, 255, 255],
-          darkText:    [44, 62, 80],
-          borderColor: [189, 195, 199],
-          green:       [39, 174, 96],
-          red:         [231, 76, 60],
-          lightGreen:  [212, 239, 223],
-          lightRow:    [249, 251, 252],
-          cardBg:      [234, 244, 249],
-          highlight:   [52, 73, 94],
+        // ==================== LUXURY PALETTE ====================
+        const C = {
+          headerBg:   [26, 82, 118],
+          primary:    [41, 128, 185],
+          secondary:  [234, 244, 249],
+          accent:     [243, 156, 18],
+          white:      [255, 255, 255],
+          dark:       [44, 62, 80],
+          border:     [189, 195, 199],
+          green:      [39, 174, 96],
+          red:        [231, 76, 60],
+          lightGreen: [212, 239, 223],
+          altRow:     [249, 251, 252],
+          cardBg:     [234, 244, 249],
+          highlight:  [52, 73, 94],
+          darkBlue:   [21, 67, 96],
         };
 
-        // ===== CALCULATED VALUES =====
-        const gross = parseFloat(data.TOTAL_GROSS_EARNINGS || 0);
-        const expenses = parseFloat(data.TOTAL_EXPENSES || 0);
+        // ==================== CALCULATED VALUES ====================
+        const gross = parseFloat(d.TOTAL_GROSS_EARNINGS || 0);
+        const expenses = parseFloat(d.TOTAL_EXPENSES || 0);
         const takeHome = gross - expenses;
-        const investment = parseFloat(data.TOTAL || 0);
+        const investment = parseFloat(d.TOTAL || 0);
         const roiVal = investment > 0 ? (takeHome / investment) * 100 : 0;
         const roiStr = roiVal.toFixed(2) + '%';
-        const isPositiveROI = roiVal >= 0;
+        const isGood = roiVal >= 0;
 
-        const rent = parseFloat(data.rent || 0);
-        const elec = parseFloat(data.electricity || 0);
-        const misc = parseFloat(data.misc || 0);
-        const misSal = parseFloat(data.additional_mis_salary || 0);
-        const otherExpTotal = rent + elec + misc + misSal;
-        
-        // Store Net Earnings from user input
-        const storeNetEarning = parseFloat(data.store_net_earning || 0);
+        const rent = parseFloat(d.rent || 0);
+        const elec = parseFloat(d.electricity || 0);
+        const miscV = parseFloat(d.misc || 0);
+        const misSal = parseFloat(d.additional_mis_salary || 0);
+        const otherExp = rent + elec + miscV + misSal;
+        const clawback = d['CLAWBACK/PENALTY'] || d['CLAWBACK_PENALTY'] || d['CLAWBACK/ PENALTY'] || d['CLAWBACK'] || 0;
 
-        const clawback = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || data['CLAWBACK/ PENALTY'] || data['CLAWBACK'] || 0;
+        const sites = parseFloat(d.SITE_COUNT || 0);
+        const earnPerSite = sites > 0 ? gross / sites : 0;
+        const expRatio = gross > 0 ? (expenses / gross * 100) : 0;
+        const netPerSite = sites > 0 ? takeHome / sites : 0;
+        const stock = parseFloat(d.AVG_STOCK || 0);
+        const norm = parseFloat(d.LAPU_DTH_LAPU_2DAYS || 0);
 
-        // ===== HELPER: Truncate text to fit width =====
-        function truncate(text, maxWidth) {
-          let t = String(text || '-');
-          while (pdf.getTextWidth(t) > maxWidth && t.length > 3) t = t.slice(0, -1);
-          if (t.length < String(text || '-').length) t += '..';
-          return t;
-        }
+        // ==================== FORMAT HELPERS ====================
+        const fR = n => 'Rs. ' + new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(parseFloat(n || 0));
+        const fP = n => (parseFloat(n || 0) * 100).toFixed(2) + '%';
+        const fN = n => new Intl.NumberFormat('en-IN').format(parseFloat(n || 0));
 
-        // ===== HELPER: Luxury Header =====
-        function addLuxuryHeader() {
-          pdf.setFillColor(...P.headerBg);
-          pdf.rect(0, 0, pageWidth, 22, 'F');
-          pdf.setFillColor(...P.accent);
-          pdf.rect(0, 22, pageWidth, 1.5, 'F');
+        // ==================== DRAW HELPERS ====================
 
-          pdf.setTextColor(...P.text);
-          pdf.setFontSize(14);
+        function drawHeader() {
+          pdf.setFillColor(...C.headerBg);
+          pdf.rect(0, 0, PW, 22, 'F');
+          pdf.setFillColor(...C.accent);
+          pdf.rect(0, 22, PW, 1.5, 'F');
+
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(15);
           pdf.setFont('helvetica', 'bold');
-          pdf.text('ROI DASHBOARD REPORT', pageWidth / 2, 9, { align: 'center' });
+          pdf.text('ROI DASHBOARD REPORT', PW / 2, 9, { align: 'center' });
 
           pdf.setFontSize(9);
           pdf.setFont('helvetica', 'normal');
-          const distInfo = (data.DISTRIBUTOR_NAME || '-') + '  |  ' + (data.DISTRIBUTOR_LAPU_NUMBER || '-');
-          pdf.text(distInfo, pageWidth / 2, 16, { align: 'center' });
+          pdf.text(String(d.DISTRIBUTOR_NAME || '-') + '  |  ' + String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), PW / 2, 16, { align: 'center' });
 
-          const badgeW = 30;
-          pdf.setFillColor(...(isPositiveROI ? P.green : P.red));
-          pdf.roundedRect(pageWidth - margin - badgeW, 4, badgeW, 9, 2, 2, 'F');
-          pdf.setTextColor(...P.text);
-          pdf.setFontSize(7);
+          // ROI Badge (top right)
+          const bW = 32;
+          pdf.setFillColor(...(isGood ? C.green : C.red));
+          pdf.roundedRect(PW - M - bW, 4, bW, 10, 2, 2, 'F');
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(7.5);
           pdf.setFont('helvetica', 'bold');
-          pdf.text('ROI: ' + roiStr, pageWidth - margin - badgeW / 2, 9.5, { align: 'center' });
+          pdf.text('ROI: ' + roiStr, PW - M - bW / 2, 10.5, { align: 'center' });
+
+          // Date badge (top left)
+          const dateStr = new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+          pdf.setFillColor(...C.accent);
+          pdf.roundedRect(M, 5, 22, 8, 2, 2, 'F');
+          pdf.setTextColor(...C.dark);
+          pdf.setFontSize(6.5);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(dateStr, M + 11, 10, { align: 'center' });
 
           return 27;
         }
 
-        // ===== HELPER: Section Title =====
-        function addSectionTitle(text, y, x, width) {
-          pdf.setFillColor(...P.primary);
-          pdf.rect(x, y, width, sectionH, 'F');
-          pdf.setFillColor(...P.accent);
-          pdf.rect(x, y, 2.5, sectionH, 'F');
-          pdf.setTextColor(...P.text);
-          pdf.setFontSize(8);
+        function drawSection(text, y, x, w) {
+          pdf.setFillColor(...C.primary);
+          pdf.rect(x, y, w, SEC_H, 'F');
+          pdf.setFillColor(...C.accent);
+          pdf.rect(x, y, 2.5, SEC_H, 'F');
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(8.5);
           pdf.setFont('helvetica', 'bold');
-          pdf.text(text, x + 6, y + 4.5);
-          return y + sectionH;
+          pdf.text(String(text), x + 6, y + SEC_H * 0.62);
+          return y + SEC_H;
         }
 
-        // ===== HELPER: Table Row =====
-        function addRow(label, value, y, x, width, isAlt, highlight) {
-          const labelW = width * 0.55;
-          const valW = width - labelW;
+        function drawRow(label, value, y, x, w, isAlt, isHL) {
+          const lblW = w * 0.55;
+          const valW = w - lblW;
 
-          if (highlight) pdf.setFillColor(...P.lightGreen);
-          else pdf.setFillColor(isAlt ? P.lightRow[0] : 255, isAlt ? P.lightRow[1] : 255, isAlt ? P.lightRow[2] : 255);
-          pdf.rect(x, y, width, rowH, 'F');
+          if (isHL) pdf.setFillColor(...C.lightGreen);
+          else if (isAlt) pdf.setFillColor(...C.altRow);
+          else pdf.setFillColor(255, 255, 255);
+          pdf.rect(x, y, w, ROW_H, 'F');
 
-          pdf.setDrawColor(...P.borderColor);
+          pdf.setDrawColor(...C.border);
           pdf.setLineWidth(0.15);
-          pdf.rect(x, y, width, rowH, 'S');
-          pdf.line(x + labelW, y, x + labelW, y + rowH);
+          pdf.rect(x, y, w, ROW_H, 'S');
+          pdf.line(x + lblW, y, x + lblW, y + ROW_H);
 
-          pdf.setFontSize(7);
-          pdf.setTextColor(...P.darkText);
+          // Label
+          pdf.setFontSize(7.5);
+          pdf.setTextColor(...C.dark);
           pdf.setFont('helvetica', 'normal');
-          pdf.text(truncate(label, labelW - 4), x + 2, y + 3.8);
+          let lbl = String(label || '-');
+          while (pdf.getTextWidth(lbl) > lblW - 5 && lbl.length > 4) lbl = lbl.slice(0, -1);
+          if (lbl.length < String(label || '-').length) lbl += '..';
+          pdf.text(lbl, x + 2.5, y + ROW_H * 0.62);
 
+          // Value
           pdf.setFont('helvetica', 'bold');
-          if (highlight) pdf.setTextColor(...P.green);
-          pdf.text(truncate(value, valW - 4), x + labelW + 2, y + 3.8);
-          pdf.setTextColor(...P.darkText);
+          if (isHL) pdf.setTextColor(...C.green);
+          else pdf.setTextColor(...C.highlight);
+          let val = String(value || '-');
+          while (pdf.getTextWidth(val) > valW - 5 && val.length > 4) val = val.slice(0, -1);
+          if (val.length < String(value || '-').length) val += '..';
+          pdf.text(val, x + lblW + 2.5, y + ROW_H * 0.62);
 
-          return y + rowH;
+          return y + ROW_H;
         }
 
-        // ===== HELPER: Info Card =====
-        function addInfoCard(title, value, x, y, w, h) {
-          pdf.setFillColor(...P.cardBg);
+        function drawCard(title, value, x, y, w, h) {
+          pdf.setFillColor(...C.cardBg);
           pdf.roundedRect(x, y, w, h, 2, 2, 'F');
-          pdf.setDrawColor(...P.borderColor);
+          pdf.setDrawColor(...C.border);
           pdf.setLineWidth(0.2);
           pdf.roundedRect(x, y, w, h, 2, 2, 'S');
 
-          pdf.setFillColor(...P.primary);
-          pdf.rect(x + 0.5, y + 0.5, w - 1, 1.5, 'F');
+          pdf.setFillColor(...C.primary);
+          pdf.rect(x + 1, y + 1, w - 2, 2, 'F');
 
-          pdf.setTextColor(...P.highlight);
-          pdf.setFontSize(5.5);
-          pdf.setFont('helvetica', 'bold');
-          pdf.text(title, x + w / 2, y + 6, { align: 'center' });
-
+          pdf.setTextColor(...C.highlight);
           pdf.setFontSize(6);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(String(title), x + w / 2, y + 8, { align: 'center' });
+
+          pdf.setFontSize(7);
           pdf.setFont('helvetica', 'normal');
-          pdf.setTextColor(...P.darkText);
-          pdf.text(truncate(value, w - 4), x + w / 2, y + 11, { align: 'center' });
+          pdf.setTextColor(...C.dark);
+          let v = String(value || '-');
+          while (pdf.getTextWidth(v) > w - 6 && v.length > 4) v = v.slice(0, -1);
+          if (v.length < String(value || '-').length) v += '..';
+          pdf.text(v, x + w / 2, y + 14, { align: 'center' });
         }
 
-        // ===== HELPER: Highlight Box =====
-        function addHighlightBox(label, value, y, x, w, color) {
-          const boxH = 14;
+        function drawHighlight(label, value, y, x, w, color) {
           pdf.setFillColor(...color);
-          pdf.roundedRect(x, y, w, boxH, 3, 3, 'F');
-
-          pdf.setTextColor(...P.text);
-          pdf.setFontSize(6.5);
+          pdf.roundedRect(x, y, w, HL_H, 3, 3, 'F');
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(7);
           pdf.setFont('helvetica', 'normal');
-          pdf.text(label, x + w / 2, y + 4.5, { align: 'center' });
-
+          pdf.text(String(label), x + w / 2, y + 4.5, { align: 'center' });
           pdf.setFontSize(11);
           pdf.setFont('helvetica', 'bold');
           pdf.text(String(value), x + w / 2, y + 11, { align: 'center' });
-
-          return y + boxH;
         }
 
-        // ===== HELPER: Footer =====
-        function addFooter() {
-          pdf.setDrawColor(...P.borderColor);
-          pdf.setLineWidth(0.3);
-          pdf.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
-
-          pdf.setFillColor(...P.accent);
-          pdf.rect(margin, pageHeight - 12, contentWidth, 0.5, 'F');
-
+        function drawFooter() {
+          const fY = PH - 13;
+          pdf.setFillColor(...C.accent);
+          pdf.rect(M, fY, CW, 0.5, 'F');
           pdf.setFontSize(6.5);
           pdf.setTextColor(130, 130, 130);
           pdf.setFont('helvetica', 'normal');
-          pdf.text('Page 1 of 1', margin, pageHeight - 7);
-          pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), pageWidth / 2, pageHeight - 7, { align: 'center' });
-          const docId = 'ROI-' + Date.now().toString(36).toUpperCase();
-          pdf.text(docId, pageWidth - margin, pageHeight - 7, { align: 'right' });
+          pdf.text('Page 1 of 1', M, fY + 5);
+          pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), PW / 2, fY + 5, { align: 'center' });
+          pdf.text('ROI-' + Date.now().toString(36).toUpperCase(), PW - M, fY + 5, { align: 'right' });
         }
 
-        // ==========================================
-        // 🎨 DRAW PDF — SINGLE PAGE, TWO COLUMNS
-        // ==========================================
+        // ==================== DRAW PAGE ====================
 
-        // ===== HEADER =====
-        let yLeft = addLuxuryHeader();
-        let yRight = yLeft;
+        let yL = drawHeader();
+        let yR = yL;
 
-        // =============== LEFT COLUMN ===============
+        // ========== LEFT COLUMN ==========
 
-        // Section 1: DISTRIBUTOR SUMMARY
-        yLeft = addSectionTitle('DISTRIBUTOR SUMMARY', yLeft, leftColX, leftColW);
-        yLeft = addRow('Distributor Number', data.DISTRIBUTOR_LAPU_NUMBER || '-', yLeft, leftColX, leftColW, false, false);
-        yLeft = addRow('Distributor Name', data.DISTRIBUTOR_NAME || '-', yLeft, leftColX, leftColW, true, false);
-        yLeft = addRow('Investment', pdfINR(data.TOTAL), yLeft, leftColX, leftColW, false, false);
-        yLeft = addRow('Average Stock', pdfINR(data.AVG_STOCK), yLeft, leftColX, leftColW, true, false);
-        yLeft = addRow('Gross Earning', pdfINR(data.TOTAL_GROSS_EARNINGS), yLeft, leftColX, leftColW, false, false);
-        yLeft = addRow('Expenses', pdfINR(data.TOTAL_EXPENSES), yLeft, leftColX, leftColW, true, false);
-        yLeft = addRow('Take Home', pdfINR(takeHome), yLeft, leftColX, leftColW, false, true);
-        yLeft = addRow('ROI', roiStr, yLeft, leftColX, leftColW, true, true);
-        yLeft += gap;
+        // — Distributor Summary —
+        yL = drawSection('DISTRIBUTOR SUMMARY', yL, LX, LW);
+        yL = drawRow('Distributor Number', String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), yL, LX, LW, false, false);
+        yL = drawRow('Distributor Name', String(d.DISTRIBUTOR_NAME || '-'), yL, LX, LW, true, false);
+        yL = drawRow('Investment', fR(d.TOTAL), yL, LX, LW, false, false);
+        yL = drawRow('Average Stock', fR(d.AVG_STOCK), yL, LX, LW, true, false);
+        yL = drawRow('Gross Earning', fR(d.TOTAL_GROSS_EARNINGS), yL, LX, LW, false, false);
+        yL = drawRow('Expenses', fR(d.TOTAL_EXPENSES), yL, LX, LW, true, false);
+        yL = drawRow('Take Home', fR(takeHome), yL, LX, LW, false, true);
+        yL = drawRow('ROI', roiStr, yL, LX, LW, true, true);
+        yL += GAP;
 
-        // Section 2: INVESTMENT DETAILS
-        yLeft = addSectionTitle('INVESTMENT DETAILS', yLeft, leftColX, leftColW);
-        yLeft = addRow('Total (with Security)', pdfINR(data.TOTAL), yLeft, leftColX, leftColW, false, false);
-        yLeft = addRow('LAPU/DTH LAPU (3 days)', pdfINR(data.LAPU_DTH_LAPU_2DAYS), yLeft, leftColX, leftColW, true, false);
-        yLeft = addRow('Actual Stock (Norm)', pdfINR(data.AVG_STOCK), yLeft, leftColX, leftColW, false, false);
-        yLeft += gap;
+        // — Investment Details —
+        yL = drawSection('INVESTMENT DETAILS', yL, LX, LW);
+        yL = drawRow('Total (with Security)', fR(d.TOTAL), yL, LX, LW, false, false);
+        yL = drawRow('LAPU/DTH LAPU (3 days)', fR(d.LAPU_DTH_LAPU_2DAYS), yL, LX, LW, true, false);
+        yL = drawRow('Actual Stock (Norm)', fR(d.AVG_STOCK), yL, LX, LW, false, false);
+        yL += GAP;
 
-        // Section 3: GROSS EARNINGS
-        yLeft = addSectionTitle('GROSS EARNINGS DETAILS', yLeft, leftColX, leftColW);
-        yLeft = addRow('Total Gross Earning', pdfINR(data.TOTAL_GROSS_EARNINGS), yLeft, leftColX, leftColW, false, false);
-        yLeft = addRow('LAPU Comm (Circle)', pdfPercent(data.LAPU_COMMISSION_C), yLeft, leftColX, leftColW, true, false);
-        yLeft = addRow('LAPU Comm (Amount)', pdfINR(data.LAPU_COMMISSION_A), yLeft, leftColX, leftColW, false, false);
-        yLeft = addRow('PLI / DTH GPS (Avg)', pdfINR(data.PLI_AVG), yLeft, leftColX, leftColW, true, false);
-        yLeft = addRow('Dist Subsidy', pdfINR(data.DIST_SUBSIDY), yLeft, leftColX, leftColW, false, false);
-        yLeft += gap;
+        // — Gross Earnings —
+        yL = drawSection('GROSS EARNINGS DETAILS', yL, LX, LW);
+        yL = drawRow('Total Gross Earning', fR(d.TOTAL_GROSS_EARNINGS), yL, LX, LW, false, false);
+        yL = drawRow('LAPU Commission (Circle)', fP(d.LAPU_COMMISSION_C), yL, LX, LW, true, false);
+        yL = drawRow('LAPU Commission (Amount)', fR(d.LAPU_COMMISSION_A), yL, LX, LW, false, false);
+        yL = drawRow('PLI / DTH GPS (Avg)', fR(d.PLI_AVG), yL, LX, LW, true, false);
+        yL = drawRow('Dist Subsidy', fR(d.DIST_SUBSIDY), yL, LX, LW, false, false);
+        yL += GAP;
 
-        // Section 4: EXPENSES DETAILS
-        yLeft = addSectionTitle('EXPENSES DETAILS', yLeft, leftColX, leftColW);
-        yLeft = addRow('Total Expenses', pdfINR(data.TOTAL_EXPENSES), yLeft, leftColX, leftColW, false, false);
-        yLeft = addRow('ASC Required', pdfNum(data.ASC_REQUIRED), yLeft, leftColX, leftColW, true, false);
-        yLeft = addRow('Active ASC Count', pdfNum(data.ACTIVE_ASC_COUNT_AS_PER_NORM), yLeft, leftColX, leftColW, false, false);
-        yLeft = addRow('ASC (FOS) Salary', pdfINR(data.ASC_FOS_SALARY_13000), yLeft, leftColX, leftColW, true, false);
+        // — Expenses Details —
+        yL = drawSection('EXPENSES DETAILS', yL, LX, LW);
+        yL = drawRow('Total Expenses', fR(d.TOTAL_EXPENSES), yL, LX, LW, false, false);
+        yL = drawRow('ASC Required', fN(d.ASC_REQUIRED), yL, LX, LW, true, false);
+        yL = drawRow('Active ASC Count (Norm)', fN(d.ACTIVE_ASC_COUNT_AS_PER_NORM), yL, LX, LW, false, false);
+        yL = drawRow('ASC (FOS) Salary @13000', fR(d.ASC_FOS_SALARY_13000), yL, LX, LW, true, false);
 
-        // =============== RIGHT COLUMN ===============
+        // ========== RIGHT COLUMN ==========
 
-        // Info Cards: TSM, ZSM, Zone
-        const cardW = (rightColW - 4) / 3;
-        const cardH = 14;
-        addInfoCard('TSM NAME', data.TSM_NAME || '-', rightColX, yRight, cardW, cardH);
-        addInfoCard('ZSM NAME', data.ZSM_NAME || '-', rightColX + cardW + 2, yRight, cardW, cardH);
-        addInfoCard('ZONE', data.ZONE || '-', rightColX + (cardW + 2) * 2, yRight, cardW, cardH);
-        yRight += cardH + gap;
+        // — Info Cards —
+        const cW = (RW - 4) / 3;
+        drawCard('TSM NAME', d.TSM_NAME, RX, yR, cW, CARD_H);
+        drawCard('ZSM NAME', d.ZSM_NAME, RX + cW + 2, yR, cW, CARD_H);
+        drawCard('ZONE', d.ZONE, RX + (cW + 2) * 2, yR, cW, CARD_H);
+        yR += CARD_H + GAP;
 
-        // Section 5: SITE DETAILS
-        yRight = addSectionTitle('SITE DETAILS', yRight, rightColX, rightColW);
-        yRight = addRow('Site Count', pdfNum(data.SITE_COUNT), yRight, rightColX, rightColW, false, false);
-        yRight = addRow('Offline Tertiary / Site', pdfINR(data.OFFLINE_TERTIARY), yRight, rightColX, rightColW, true, false);
-        yRight = addRow('Base', pdfINR(data.BASE), yRight, rightColX, rightColW, false, false);
-        yRight = addRow('Avg Monthly Gross', pdfNum(data.AVG_MONTHLY_GROSS_IN), yRight, rightColX, rightColW, true, false);
-        yRight = addRow('Lapu Secondary / Month', pdfINR(data.LAPU_SECONDARY_PER_MONTH), yRight, rightColX, rightColW, false, false);
-        yRight += gap;
+        // — Site Details —
+        yR = drawSection('SITE DETAILS', yR, RX, RW);
+        yR = drawRow('Site Count', fN(d.SITE_COUNT), yR, RX, RW, false, false);
+        yR = drawRow('Offline Tertiary / Site', fR(d.OFFLINE_TERTIARY), yR, RX, RW, true, false);
+        yR = drawRow('Base', fR(d.BASE), yR, RX, RW, false, false);
+        yR = drawRow('Avg Monthly Gross', fN(d.AVG_MONTHLY_GROSS_IN), yR, RX, RW, true, false);
+        yR = drawRow('Lapu Secondary / Month', fR(d.LAPU_SECONDARY_PER_MONTH), yR, RX, RW, false, false);
+        yR += GAP;
 
-        // Section 6: OTHER EXPENSES
-        yRight = addSectionTitle('OTHER EXPENSES', yRight, rightColX, rightColW);
-        yRight = addRow('Other Expenses Total', pdfINR(otherExpTotal), yRight, rightColX, rightColW, false, true);
-        yRight = addRow('Rent', pdfINR(rent), yRight, rightColX, rightColW, true, false);
-        yRight = addRow('Electricity', pdfINR(elec), yRight, rightColX, rightColW, false, false);
-        yRight = addRow('Misc', pdfINR(misc), yRight, rightColX, rightColW, true, false);
-        yRight = addRow('MIS Salary', pdfINR(misSal), yRight, rightColX, rightColW, false, false);
-        yRight = addRow('Store Net Earnings', pdfINR(storeNetEarning), yRight, rightColX, rightColW, true, true);
-        yRight = addRow('Clawback / Penalty', pdfNum(clawback), yRight, rightColX, rightColW, false, false);
-        yRight += gap;
+        // — Other Expenses —
+        yR = drawSection('OTHER EXPENSES', yR, RX, RW);
+        yR = drawRow('Other Expenses Total', fR(otherExp), yR, RX, RW, false, true);
+        yR = drawRow('Rent', fR(rent), yR, RX, RW, true, false);
+        yR = drawRow('Electricity', fR(elec), yR, RX, RW, false, false);
+        yR = drawRow('Misc', fR(miscV), yR, RX, RW, true, false);
+        yR = drawRow('MIS Salary', fR(misSal), yR, RX, RW, false, false);
+        yR = drawRow('Store Net Earnings', fR(d.store_net_earning || 0), yR, RX, RW, true, false);
+        yR = drawRow('Clawback / Penalty', fN(clawback), yR, RX, RW, false, false);
+        yR += GAP;
 
-        // Section 7: OPPORTUNITY LOST
-        yRight = addSectionTitle('OPPORTUNITY LOST', yRight, rightColX, rightColW);
-        yRight = addRow('PLI Missed Opportunity', pdfINR(data.PLI_MISSED_OPPORTUNITY), yRight, rightColX, rightColW, false, false);
-        yRight = addRow('ASC Subsidy Missed', pdfINR(data.ASC_SUBSIDY_OPPORTUNITY_MISSED), yRight, rightColX, rightColW, true, false);
-        yRight = addRow('Addl Active ASC Req.', pdfNum(data.ADDITIONAL_ACTIVE_ASC), yRight, rightColX, rightColW, false, false);
+        // — Opportunity Lost —
+        yR = drawSection('OPPORTUNITY LOST', yR, RX, RW);
+        yR = drawRow('PLI Missed Opportunity', fR(d.PLI_MISSED_OPPORTUNITY), yR, RX, RW, false, false);
+        yR = drawRow('ASC Subsidy Missed', fR(d.ASC_SUBSIDY_OPPORTUNITY_MISSED), yR, RX, RW, true, false);
+        yR = drawRow('Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yR, RX, RW, false, false);
+        yR += GAP;
 
-        // ===== HIGHLIGHT BOXES (full width, below both columns) =====
-        const maxY = Math.max(yLeft, yRight) + 5;
-        const halfW = (contentWidth - colGap) / 2;
+        // — Key Performance Metrics (Calculated) —
+        yR = drawSection('KEY PERFORMANCE METRICS', yR, RX, RW);
+        yR = drawRow('Earning per Site', sites > 0 ? fR(earnPerSite) : '-', yR, RX, RW, false, false);
+        yR = drawRow('Expense Ratio', gross > 0 ? expRatio.toFixed(1) + '%' : '-', yR, RX, RW, true, false);
+        yR = drawRow('Net Earning per Site', sites > 0 ? fR(netPerSite) : '-', yR, RX, RW, false, false);
 
-        // Take Home Box
-        addHighlightBox('TAKE HOME', pdfINR(takeHome), maxY, margin, halfW, P.headerBg);
+        // ========== VERTICAL DIVIDER ==========
+        const maxY = Math.max(yL, yR);
+        pdf.setDrawColor(...C.border);
+        pdf.setLineWidth(0.3);
+        pdf.line(M + LW + COL_GAP / 2, 27, M + LW + COL_GAP / 2, maxY);
 
-        // ROI Box
-        addHighlightBox('RETURN ON INVESTMENT', roiStr, maxY, margin + halfW + colGap, halfW, isPositiveROI ? P.green : P.red);
+        // ========== HIGHLIGHT BOXES (full width) ==========
+        const hlY = maxY + GAP;
+        const halfW = (CW - COL_GAP) / 2;
+        drawHighlight('TAKE HOME', fR(takeHome), hlY, M, halfW, C.headerBg);
+        drawHighlight('RETURN ON INVESTMENT', roiStr, hlY, M + halfW + COL_GAP, halfW, isGood ? C.green : C.red);
 
-        // ===== FOOTER =====
-        addFooter();
+        // ========== ANALYSIS SECTION (fills remaining page) ==========
+        const analysisY = hlY + HL_H + 2;
 
-        // ===== SAVE & SHARE =====
-        const distName = data.DISTRIBUTOR_NAME || 'Dashboard';
-        const distNum = data.DISTRIBUTOR_LAPU_NUMBER || '';
+        // Section header bar
+        pdf.setFillColor(...C.primary);
+        pdf.rect(M, analysisY, CW, 6, 'F');
+        pdf.setFillColor(...C.accent);
+        pdf.rect(M, analysisY, 2.5, 6, 'F');
+        pdf.setTextColor(...C.white);
+        pdf.setFontSize(7.5);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('REPORT SUMMARY & ANALYSIS', M + 6, analysisY + 4.2);
+
+        // Content box (fills to footer)
+        const footerY = PH - 13;
+        const boxY = analysisY + 6;
+        const boxH = footerY - boxY - 1;
+
+        pdf.setFillColor(255, 255, 255);
+        pdf.setDrawColor(...C.border);
+        pdf.setLineWidth(0.3);
+        pdf.roundedRect(M, boxY, CW, boxH, 2, 2, 'FD');
+
+        // Left accent strip
+        pdf.setFillColor(...C.primary);
+        pdf.rect(M, boxY + 1, 2, boxH - 2, 'F');
+
+        // Generate dynamic insights
+        const insights = [];
+
+        if (roiVal >= 20) insights.push('ROI Performance: EXCELLENT (' + roiStr + ') - Significantly above benchmarks');
+        else if (roiVal >= 10) insights.push('ROI Performance: GOOD (' + roiStr + ') - Meeting expected targets');
+        else if (roiVal >= 0) insights.push('ROI Performance: MODERATE (' + roiStr + ') - Room for improvement');
+        else insights.push('ROI Performance: CRITICAL (' + roiStr + ') - Immediate attention required');
+
+        insights.push('Monthly Take Home: ' + fR(takeHome) + ' against Investment of ' + fR(investment));
+
+        if (norm > 0) {
+          const stockPct = (stock / norm * 100).toFixed(0);
+          if (stock > norm) insights.push('Stock Position: ' + fR(stock) + ' (' + stockPct + '% of norm) - Over-invested by ' + fR(stock - norm));
+          else insights.push('Stock Position: ' + fR(stock) + ' (' + stockPct + '% of norm) - Under-invested by ' + fR(norm - stock));
+        }
+
+        const totalMissed = parseFloat(d.PLI_MISSED_OPPORTUNITY || 0) + parseFloat(d.ASC_SUBSIDY_OPPORTUNITY_MISSED || 0);
+        if (totalMissed > 0) insights.push('Revenue Opportunity Missed: ' + fR(totalMissed) + ' - Recovery action recommended');
+
+        if (sites > 0) insights.push('Per Site Analysis: Earning ' + fR(earnPerSite) + ' | Net ' + fR(netPerSite));
+
+        if (gross > 0) insights.push('Expense Ratio: ' + expRatio.toFixed(1) + '% of total gross earnings');
+
+        const ascReq = parseFloat(d.ASC_REQUIRED || 0);
+        const ascActive = parseFloat(d.ACTIVE_ASC_COUNT_AS_PER_NORM || 0);
+        if (ascReq > ascActive) insights.push('ASC Gap: ' + (ascReq - ascActive).toFixed(0) + ' additional ASC needed for full subsidy');
+
+        // Draw bullet points
+        const maxLines = Math.floor((boxH - 8) / 3.5);
+        let tY = boxY + 4.5;
+        pdf.setFontSize(7);
+
+        insights.slice(0, maxLines).forEach(line => {
+          // Bullet circle
+          pdf.setFillColor(...C.primary);
+          pdf.circle(M + 6, tY - 0.5, 0.7, 'F');
+
+          // Text
+          pdf.setTextColor(...C.dark);
+          pdf.setFont('helvetica', 'normal');
+          let txt = String(line);
+          while (pdf.getTextWidth(txt) > CW - 14 && txt.length > 5) txt = txt.slice(0, -1);
+          if (txt.length < line.length) txt += '..';
+          pdf.text(txt, M + 9, tY);
+          tY += 3.5;
+        });
+
+        // Confidential note
+        pdf.setFontSize(5.5);
+        pdf.setTextColor(160, 160, 160);
+        pdf.setFont('helvetica', 'italic');
+        pdf.text('Confidential - For Internal Use Only', M + CW / 2, boxY + boxH - 2, { align: 'center' });
+
+        // ========== FOOTER ==========
+        drawFooter();
+
+        // ========== SAVE & SHARE ==========
+        const distName = String(d.DISTRIBUTOR_NAME || 'Dashboard');
+        const distNum = String(d.DISTRIBUTOR_LAPU_NUMBER || '');
         const dateStr = new Date().toISOString().slice(0, 10);
         const filename = ('ROI_' + distName + '_' + distNum + '_' + dateStr + '.pdf').replace(/[^a-zA-Z0-9_\-\.]/g, '_');
 
         const pdfBlob = pdf.output('blob');
 
-        // Download helper
         const triggerDownload = (blob, name) => {
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.href = url; a.download = name;
+          a.href = url;
+          a.download = name;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           setTimeout(() => URL.revokeObjectURL(url), 100);
         };
 
-        // Try Web Share API (mobile), fallback to download
+        // Mobile: Share API, Desktop: Download
         const file = new File([pdfBlob], filename, { type: 'application/pdf' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({ files: [file], title: 'ROI Dashboard Report', text: 'ROI Report for ' + distName });
-          } catch (err) { triggerDownload(pdfBlob, filename); }
+          } catch (err) {
+            triggerDownload(pdfBlob, filename);
+          }
         } else {
           triggerDownload(pdfBlob, filename);
         }
@@ -835,7 +949,7 @@
         showToast('✅ PDF generated successfully!');
 
       } catch (error) {
-        console.error('PDF error:', error);
+        console.error('PDF generation error:', error);
         showToast('❌ PDF failed: ' + error.message, 'error');
       } finally {
         if (overlay.parentNode) overlay.remove();
