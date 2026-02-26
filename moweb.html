@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROI Dashboard - Firestore</title>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <style>
+    /* ===== BASE / DESKTOP STYLES ===== */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fc;
+      margin: 0;
+      padding: 20px 30px;
+      color: #2c3e50;
+      font-size: 15px;
+    }
+    h2 {
+      color: #1a5276;
+      font-weight: 700;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #2980b9;
+      padding-bottom: 8px;
+      font-size: 22px;
+    }
+
+    /* ===== INPUT & BUTTON BAR ===== */
+    .input-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .input-bar label {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    #distributorNumberInput {
+      width: 180px;
+      padding: 8px 10px;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+    #distributorNumberInput:focus {
+      border-color: #2980b9;
+      outline: none;
+      box-shadow: 0 0 4px rgba(41,128,185,0.4);
+    }
+    #loadBtn, #downloadPdfBtn {
+      padding: 8px 16px;
+      background-color: #2980b9;
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    #loadBtn:hover, #downloadPdfBtn:hover:not(:disabled) {
+      background-color: #1a5276;
+      transform: translateY(-1px);
+    }
+    #loadBtn:active, #downloadPdfBtn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    #downloadPdfBtn {
+      margin-bottom: 15px;
+    }
+    #downloadPdfBtn:disabled {
+      background-color: #7fb5d9;
+      cursor: not-allowed;
+    }
+
+    /* ===== TABLES ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 10px 14px;
+      vertical-align: top;
+      text-align: left;
+      word-wrap: break-word;
+    }
+    th {
+      background-color: #ecf0f1;
+      color: #34495e;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f9fbfc;
+    }
+    .section {
+      background-color: #eaf4f9;
+      font-weight: 700;
+      font-size: 15px;
+      color: #2c3e50;
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 2px solid #a7c7e7;
+    }
+    .subsection {
+      background-color: #d5eaf4;
+      font-weight: 600;
+    }
+    .display-field {
+      font-weight: 600;
+      color: #34495e;
+    }
+
+    /* ===== TWO-COLUMN LAYOUT ===== */
+    .distribution-hierarchy-container {
+      display: flex;
+      gap: 25px;
+      margin-bottom: 25px;
+    }
+    .distribution-section, .hierarchy-section {
+      flex: 1;
+      min-width: 0; /* prevents flex overflow */
+    }
+
+    /* ===== INFO CARDS ===== */
+    .info-cards-container {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .info-card {
+      background-color: #eaf4f9;
+      padding: 16px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      flex: 1;
+      text-align: center;
+      min-width: 0;
+    }
+    .info-key {
+      font-weight: 700;
+      color: #2c3e50;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .info-value {
+      font-weight: 600;
+      color: #34495e;
+      font-size: 13px;
+      word-break: break-word;
+    }
+
+    /* ===== OTHER EXPENSES FORM INPUTS ===== */
+    #otherExpensesTable input[type="number"] {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-sizing: border-box;
+    }
+    #otherExpensesTable input[type="number"]:focus {
+      border-color: #2980b9;
+      box-shadow: 0 0 5px rgba(41, 128, 185, 0.5);
+      outline: none;
+    }
+    #otherExpensesTable input[type="number"]:invalid {
+      border-color: #e74c3c;
+      box-shadow: 0 0 5px rgba(231, 76, 60, 0.5);
+    }
+    .submit-btn {
+      padding: 10px 20px;
+      background: #2980b9;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 8px;
+      transition: background-color 0.3s;
+      width: auto;
+    }
+    .submit-btn:hover {
+      background-color: #1a5276;
+    }
+
+    .error-msg {
+      color: #e74c3c;
+      font-size: 12px;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* ===== TOAST NOTIFICATIONS ===== */
+    .toast-container {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 10000;
+      max-width: 320px;
+      width: calc(100% - 30px);
+    }
+    .toast {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: translateX(110%);
+      opacity: 0;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 14px;
+      border-left: 4px solid #059669;
+    }
+    .toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .toast.error {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border-left-color: #dc2626;
+    }
+    .toast.success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-left-color: #059669;
+    }
+
+    /* ========================================= */
+    /* 📱 TABLET — max-width: 900px              */
+    /* ========================================= */
+    @media (max-width: 900px) {
+      body {
+        padding: 15px 20px;
+        font-size: 14px;
+      }
+      h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+      .distribution-hierarchy-container {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .info-cards-container {
+        gap: 10px;
+      }
+      .info-card {
+        padding: 14px 10px;
+      }
+      .info-key { font-size: 13px; }
+      .info-value { font-size: 12px; }
+      th, td {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+      .section {
+        font-size: 14px;
+        padding: 10px 12px;
+      }
+    }
+
+    /* ========================================= */
+    /* 📱 MOBILE — max-width: 600px              */
+    /* ========================================= */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
+      h2 {
+        font-size: 17px;
+        margin-bottom: 12px;
+        padding-bottom: 6px;
+        border-bottom-width: 2px;
+      }
+
+      /* Input bar stacks vertically */
+      .input-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .input-bar label {
+        font-size: 13px;
+      }
+      #distributorNumberInput {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+      }
+      #loadBtn, #downloadPdfBtn {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        text-align: center;
+      }
+      #downloadPdfBtn {
+        margin-bottom: 12px;
+      }
+
+      /* Two-column to single-column */
+      .distribution-hierarchy-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      /* Info cards stack vertically */
+      .info-cards-container {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .info-card {
+        padding: 12px 10px;
+      }
+      .info-key { font-size: 12px; margin-bottom: 4px; }
+      .info-value { font-size: 11px; }
+
+      /* Tables become scrollable */
+      .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 15px;
+      }
+      table {
+        margin-bottom: 12px;
+        min-width: 320px;
+        font-size: 11px;
+      }
+      th, td {
+        padding: 7px 8px;
+        font-size: 11px;
+      }
+      .section {
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+
+      /* Form inputs */
+      #otherExpensesTable input[type="number"] {
+        padding: 8px;
+        font-size: 13px;
+      }
+      .submit-btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 13px;
+      }
+
+      /* Toast smaller on mobile */
+      .toast-container {
+        max-width: 280px;
+        top: 10px;
+        right: 10px;
+        width: calc(100% - 20px);
+      }
+      .toast {
+        padding: 12px 14px;
+        font-size: 12px;
+      }
+    }
+
+    /* ========================================= */
+    /* 📱 VERY SMALL — max-width: 400px          */
+    /* ========================================= */
+    @media (max-width: 400px) {
+      body {
+        padding: 8px;
+        font-size: 11px;
+      }
+      h2 {
+        font-size: 15px;
+        margin-bottom: 10px;
+      }
+      th, td {
+        padding: 5px 6px;
+        font-size: 10px;
+      }
+      .section {
+        font-size: 11px;
+        padding: 7px 8px;
+      }
+      .info-key { font-size: 11px; }
+      .info-value { font-size: 10px; }
+      #otherExpensesTable input[type="number"] {
+        padding: 6px;
+        font-size: 12px;
+      }
+      .toast {
+        font-size: 11px;
+        padding: 10px 12px;
+      }
+    }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: white;
+        color: #2c3e50;
+        font-size: 12px;
+        transform-origin: top left;
+        transform: scale(0.75);
+      }
+      .distribution-hierarchy-container {
+        max-width: 100%;
+        gap: 10px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+      }
+      .distribution-section, .hierarchy-section {
+        flex: 0 0 48%;
+      }
+      h2 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        border-bottom-width: 2px;
+        padding-bottom: 4px;
+      }
+      table {
+        font-size: 11px;
+        margin-bottom: 15px;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      th, td {
+        padding: 6px 8px;
+      }
+      .distribution-section, .hierarchy-section, table {
+        page-break-inside: avoid;
+      }
+      #otherExpensesTable,
+      form,
+      #otherExpensesTable input[type="number"],
+      button {
+        display: table !important;
+      }
+      #loadBtn,
+      #downloadPdfBtn,
+      #distributorNumberInput,
+      .input-bar {
+        display: none !important;
+      }
+      .toast-container { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 🔥 TOAST CONTAINER 🔥 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <h2>ROI Dashboard</h2>
+
+  <!-- ✅ RESPONSIVE INPUT BAR -->
+  <div class="input-bar">
+    <label for="distributorNumberInput">Enter Distributor Number:</label>
+    <input type="text" id="distributorNumberInput" placeholder="E.g., 1234567890" value="">
+    <button id="loadBtn">Load Details</button>
+  </div>
+
+  <div id="messageContainer" style="display: none;"></div>
+
+  <button id="downloadPdfBtn" onclick="downloadPageAsPdf()" type="button" disabled>Download as PDF</button>
+
+  <div id="mainContent" style="display: none;">
+    <div class="distribution-hierarchy-container">
+      <div class="distribution-section">
+        <table>
+          <thead><tr><td class="section" colspan="2">Distributor</td></tr></thead>
+          <tbody>
+            <tr><td>Distributor Number:</td><td class="display-field" id="distributorNumber">-</td></tr>
+            <tr><td>Distributor Name:</td><td class="display-field" id="distributorName">-</td></tr>
+            <tr><td>Investment:</td><td class="display-field" id="total">-</td></tr>
+            <tr><td>Average Stock:</td><td class="display-field" id="avgStock">-</td></tr>
+            <tr><td>Gross earning:</td><td class="display-field" id="totalGrossEarnings">-</td></tr>
+            <tr><td>Expenses:</td><td class="display-field" id="totalExpenses">-</td></tr>
+            <tr><td>Take Home:</td><td class="display-field" id="takeHome">-</td></tr>
+            <tr><td>ROI:</td><td class="display-field" id="roi">-</td></tr>
+          </tbody>
+        </table>
+
+        <table id="investmentDetailsTable">
+          <thead><tr><td class="section" colspan="2">Investment Details</td></tr></thead>
+          <tbody>
+            <tr><td>Total(with Security):</td><td class="display-field" id="totalWithSecurity">-</td></tr>
+            <tr><td>LAPU/DTH LAPU (3 days):</td><td class="display-field" id="lapuDthLapu">-</td></tr>
+            <tr><td>Actual Stock(Norm):</td><td class="display-field" id="actualStockNorm">-</td></tr>
+          </tbody>
+        </table>
+
+        <table id="grossEarningsDetailsTable">
+          <thead><tr><td class="section" colspan="2">Gross Earnings Details</td></tr></thead>
+          <tbody>
+            <tr><td>Total Gross Earning:</td><td class="display-field" id="grossEarningTotal">-</td></tr>
+            <tr><td>LAPU Commission (as per circle):</td><td class="display-field" id="lapuCommissionCircle">-</td></tr>
+            <tr><td>LAPU Commission (Amount):</td><td class="display-field" id="lapuCommissionAmount">-</td></tr>
+            <tr><td>PLI (@0.2%) / DTH GPS (Avg):</td><td class="display-field" id="pliAvg">-</td></tr>
+            <tr><td>Dist Subsidy:</td><td class="display-field" id="distSubsidy">-</td></tr>
+          </tbody>
+        </table>
+
+        <table id="expensesDetailsTable">
+          <thead><tr><td class="section" colspan="2">Expenses Details</td></tr></thead>
+          <tbody>
+            <tr><td>Total Expenses:</td><td class="display-field" id="expensesTotal">-</td></tr>
+            <tr><td>ASC Required:</td><td class="display-field" id="ascRequired">-</td></tr>
+            <tr><td>Active ASC Count (as per norm):</td><td class="display-field" id="activeAscCount">-</td></tr>
+            <tr><td>ASC (FOS) Salary (@ ~Rs 13000):</td><td class="display-field" id="ascFosSalary">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="hierarchy-section">
+        <div class="info-cards-container">
+          <div class="info-card">
+            <div class="info-key">TSM Name</div>
+            <div class="info-value" id="tsmName">-</div>
+          </div>
+          <div class="info-card">
+            <div class="info-key">ZSM Name</div>
+            <div class="info-value" id="zsmName">-</div>
+          </div>
+          <div class="info-card">
+            <div class="info-key">Zone</div>
+            <div class="info-value" id="zone">-</div>
+          </div>
+        </div>
+
+        <table id="siteDetailsTable">
+          <thead><tr><td class="section" colspan="2">Site Details</td></tr></thead>
+          <tbody>
+            <tr><td>Site count:</td><td class="display-field" id="siteCount">-</td></tr>
+            <tr><td>Offline tertiary / Site:</td><td class="display-field" id="offlineTertiary">-</td></tr>
+            <tr><td>Base:</td><td class="display-field" id="base">-</td></tr>
+            <tr><td>Avg Monthly Gross:</td><td class="display-field" id="avgMonthlyGross">-</td></tr>
+            <tr><td>Lapu secondary per month:</td><td class="display-field" id="lapuSecondary">-</td></tr>
+          </tbody>
+        </table>
+
+        <form id="otherExpensesForm">
+          <table id="otherExpensesTable">
+            <thead><tr><td class="section" colspan="2">Other Expenses</td></tr></thead>
+            <tbody>
+              <tr><td colspan="2" class="subsection">Other Expenses Total: <span class="display-field" id="otherExpensesTotal">₹0</span></td></tr>
+              <tr>
+                <td>Rent:</td>
+                <td><input type="number" id="rentInput" name="rent" placeholder="3000–12000" min="3000" max="12000" oninput="validateInput(this)"></td>
+              </tr>
+              <tr>
+                <td>Electricity:</td>
+                <td><input type="number" id="electricityInput" name="electricity" placeholder="500–3000" min="500" max="3000" oninput="validateInput(this)"></td>
+              </tr>
+              <tr>
+                <td>Misc:</td>
+                <td><input type="number" id="miscInput" name="misc" placeholder="500–3000" min="0" max="5000" oninput="validateInput(this)"></td>
+              </tr>
+              <tr>
+                <td>MIS Salary:</td>
+                <td><input type="number" id="misSalaryInput" name="additional_mis_salary" placeholder="0–15000" min="0" max="15000" oninput="validateInput(this)"></td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <button type="submit" class="submit-btn">Submit Other Expenses</button>
+                </td>
+              </tr>
+              <tr><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
+            </tbody>
+          </table>
+        </form>
+
+        <table id="opportunityLostTable">
+          <thead><tr><td class="section" colspan="2">Opportunity Lost</td></tr></thead>
+          <tbody>
+            <tr><td>PLI missed opportunity:</td><td class="display-field" id="pliMissed">-</td></tr>
+            <tr><td>ASC Subsidy opportunity missed:</td><td class="display-field" id="ascSubsidyMissed">-</td></tr>
+            <tr><td>Additional active ASC required for full ASC subsidy:</td><td class="display-field" id="additionalAscRequired">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =======================================
+    // 🔥 FIREBASE CONFIG
+    // =======================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyDKiVPTJi_r-an81YHcJ6tzZKT93AIHAe8",
+      authDomain: "roiweb-b.firebaseapp.com",
+      projectId: "roiweb-b",
+      storageBucket: "roiweb-b.firebasestorage.app",
+      messagingSenderId: "497560856610",
+      appId: "1:497560856610:web:a0a2f0ba4d8d8ca9ddc27b",
+      measurementId: "G-L90C5374C0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    let currentDistributorData = null;
+    let currentDistributorId = '';
+    let baseTotalExpenses = 0;
+
+    // 🔥 TOAST
+    function showToast(message, type = 'success') {
+      const toastContainer = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      toastContainer.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // ===== UTILITY =====
+    function formatINR(num) {
+      return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(parseFloat(num || 0));
+    }
+    function formatPercent(num) {
+      return (parseFloat(num || 0) * 100).toFixed(2) + '%';
+    }
+    function formatNum(num) {
+      return parseFloat(num || 0).toLocaleString('en-IN');
+    }
+    function indianFormat(num) {
+      return new Intl.NumberFormat('en-IN').format(parseFloat(num || 0));
+    }
+
+    // ===== VALIDATION =====
+    function validateInput(elem) {
+      const val = elem.value;
+      const min = Number(elem.min) || 0;
+      const max = Number(elem.max) || Infinity;
+      if (!val || val === '') {
+        elem.style.borderColor = '#ccc';
+        updateOtherExpensesTotal();
+        return;
+      }
+      const numVal = Number(val);
+      if (numVal < min || numVal > max) {
+        elem.style.borderColor = '#e74c3c';
+      } else {
+        elem.style.borderColor = '#2980b9';
+      }
+      updateOtherExpensesTotal();
+    }
+
+    // ===== POPULATE =====
+    function populateData(data) {
+      const gross = parseFloat(data.TOTAL_GROSS_EARNINGS || 0);
+      const expenses = parseFloat(data.TOTAL_EXPENSES || 0);
+      const takeHome = gross - expenses;
+      const investment = parseFloat(data.TOTAL || 0);
+      const roi = investment > 0 ? (takeHome / investment) : 0;
+
+      document.getElementById('distributorNumber').textContent = data.DISTRIBUTOR_LAPU_NUMBER || '-';
+      document.getElementById('distributorName').textContent = data.DISTRIBUTOR_NAME || '-';
+      document.getElementById('total').textContent = formatINR(data.TOTAL);
+      document.getElementById('avgStock').textContent = formatINR(data.AVG_STOCK);
+      document.getElementById('totalGrossEarnings').textContent = formatINR(data.TOTAL_GROSS_EARNINGS);
+      document.getElementById('totalExpenses').textContent = formatINR(expenses);
+      document.getElementById('takeHome').textContent = formatINR(takeHome);
+      document.getElementById('roi').textContent = formatPercent(roi);
+
+      document.getElementById('totalWithSecurity').textContent = formatINR(data.TOTAL);
+      document.getElementById('lapuDthLapu').textContent = formatINR(data.LAPU_DTH_LAPU_2DAYS);
+      const stockCell = document.getElementById('actualStockNorm');
+      stockCell.textContent = formatINR(data.AVG_STOCK);
+      stockCell.style.color = parseFloat(data.AVG_STOCK || 0) > parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0) ? 'green' : 'red';
+
+      document.getElementById('grossEarningTotal').textContent = formatINR(data.TOTAL_GROSS_EARNINGS);
+      document.getElementById('lapuCommissionCircle').textContent = formatPercent(data.LAPU_COMMISSION_C);
+      document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
+      document.getElementById('pliAvg').textContent = formatINR(data.PLI_AVG);
+      document.getElementById('distSubsidy').textContent = formatINR(data.DIST_SUBSIDY);
+
+      document.getElementById('tsmName').textContent = data.TSM_NAME || '-';
+      document.getElementById('zsmName').textContent = data.ZSM_NAME || '-';
+      document.getElementById('zone').textContent = data.ZONE || '-';
+      document.getElementById('siteCount').textContent = formatNum(data.SITE_COUNT);
+      document.getElementById('offlineTertiary').textContent = formatINR(data.OFFLINE_TERTIARY);
+      document.getElementById('base').textContent = formatINR(data.BASE);
+      document.getElementById('avgMonthlyGross').textContent = indianFormat(data.AVG_MONTHLY_GROSS_IN);
+      document.getElementById('lapuSecondary').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
+
+      document.getElementById('expensesTotal').textContent = formatINR(data.TOTAL_EXPENSES);
+      document.getElementById('ascRequired').textContent = formatNum(data.ASC_REQUIRED);
+      document.getElementById('activeAscCount').textContent = formatNum(data.ACTIVE_ASC_COUNT_AS_PER_NORM);
+      document.getElementById('ascFosSalary').textContent = formatINR(data.ASC_FOS_SALARY_13000);
+
+      document.getElementById('pliMissed').textContent = formatINR(data.PLI_MISSED_OPPORTUNITY);
+      document.getElementById('ascSubsidyMissed').textContent = formatINR(data.ASC_SUBSIDY_OPPORTUNITY_MISSED);
+      document.getElementById('additionalAscRequired').textContent = formatNum(data.ADDITIONAL_ACTIVE_ASC);
+
+      const clawbackValue = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || data['CLAWBACK/ PENALTY'] || data['CLAWBACK'] || 0;
+      document.getElementById('clawback').textContent = indianFormat(clawbackValue);
+
+      document.getElementById('rentInput').value = data.rent || '';
+      document.getElementById('electricityInput').value = data.electricity || '';
+      document.getElementById('miscInput').value = data.misc || '';
+      document.getElementById('misSalaryInput').value = data.additional_mis_salary || '';
+
+      updateOtherExpensesTotal();
+      document.getElementById('mainContent').style.display = 'block';
+      document.getElementById('downloadPdfBtn').disabled = false;
+    }
+
+    function updateOtherExpensesTotal() {
+      const rent = parseFloat(document.getElementById('rentInput').value) || 0;
+      const electricity = parseFloat(document.getElementById('electricityInput').value) || 0;
+      const misc = parseFloat(document.getElementById('miscInput').value) || 0;
+      const misSalary = parseFloat(document.getElementById('misSalaryInput').value) || 0;
+      const total = rent + electricity + misc + misSalary;
+      document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(total);
+    }
+
+    // ===== LOAD DATA =====
+    async function loadData(distributorId) {
+      try {
+        document.getElementById('loadBtn').textContent = 'Loading...';
+        document.getElementById('loadBtn').disabled = true;
+
+        let snapshot;
+        if (!isNaN(distributorId) && distributorId.trim() !== '') {
+          snapshot = await db.collection('ROIWEB-B')
+            .where('DISTRIBUTOR_LAPU_NUMBER', '==', Number(distributorId))
+            .limit(1)
+            .get();
+          if (snapshot.empty) {
+            snapshot = await db.collection('ROIWEB-B')
+              .where('DISTRIBUTOR_LAPU_NUMBER', '==', distributorId)
+              .limit(1)
+              .get();
+          }
+        } else {
+          snapshot = await db.collection('ROIWEB-B')
+            .where('DISTRIBUTOR_LAPU_NUMBER', '==', distributorId)
+            .limit(1)
+            .get();
+        }
+
+        if (!snapshot.empty) {
+          const doc = snapshot.docs[0];
+          currentDistributorData = doc.data();
+          currentDistributorId = doc.id;
+          const savedOtherExpenses =
+            (parseFloat(currentDistributorData.rent) || 0) +
+            (parseFloat(currentDistributorData.electricity) || 0) +
+            (parseFloat(currentDistributorData.misc) || 0) +
+            (parseFloat(currentDistributorData.additional_mis_salary) || 0);
+          baseTotalExpenses = parseFloat(currentDistributorData.TOTAL_EXPENSES || 0) - savedOtherExpenses;
+          populateData(currentDistributorData);
+          showToast('✅ Data loaded successfully!');
+        } else {
+          document.getElementById('mainContent').style.display = 'none';
+          showToast('❌ Distributor Not Found', 'error');
+        }
+      } catch (error) {
+        showToast('❌ Error: ' + error.message, 'error');
+      } finally {
+        document.getElementById('loadBtn').textContent = 'Load Details';
+        document.getElementById('loadBtn').disabled = false;
+      }
+    }
+
+    // ===== SUBMIT EXPENSES =====
+    document.getElementById('otherExpensesForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentDistributorId) {
+        showToast('⚠️ Please load distributor data first!', 'error');
+        return;
+      }
+      const inputs = document.querySelectorAll('#otherExpensesTable input[type="number"]');
+      let isValid = true;
+      inputs.forEach(input => {
+        if (input.value !== '') {
+          const numVal = Number(input.value);
+          const min = Number(input.min) || 0;
+          const max = Number(input.max) || Infinity;
+          if (numVal < min || numVal > max) {
+            isValid = false;
+            input.style.borderColor = '#e74c3c';
+          }
+        }
+      });
+      if (!isValid) {
+        showToast('⚠️ Fix values outside allowed range!', 'error');
+        return;
+      }
+
+      const formData = new FormData(e.target);
+      const expenses = {
+        rent: parseFloat(formData.get('rent')) || 0,
+        electricity: parseFloat(formData.get('electricity')) || 0,
+        misc: parseFloat(formData.get('misc')) || 0,
+        additional_mis_salary: parseFloat(formData.get('additional_mis_salary')) || 0
+      };
+
+      try {
+        const otherExpensesTotal = expenses.rent + expenses.electricity + expenses.misc + expenses.additional_mis_salary;
+        const newTotalExpenses = baseTotalExpenses + otherExpensesTotal;
+        await db.collection('ROIWEB-B').doc(currentDistributorId).update({
+          rent: expenses.rent,
+          electricity: expenses.electricity,
+          misc: expenses.misc,
+          additional_mis_salary: expenses.additional_mis_salary,
+          TOTAL_EXPENSES: newTotalExpenses
+        });
+        currentDistributorData = { ...currentDistributorData, ...expenses, TOTAL_EXPENSES: newTotalExpenses };
+        populateData(currentDistributorData);
+        showToast('✅ Other Expenses saved successfully!', 'success');
+      } catch (error) {
+        showToast('❌ Save failed: ' + error.message, 'error');
+      }
+    });
+
+    // ===== EVENT LISTENERS =====
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('distributorNumberInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          document.getElementById('loadBtn').click();
+        }
+      });
+    });
+
+    document.getElementById('loadBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('distributorNumberInput').value.trim();
+      if (!id) {
+        showToast('Enter distributor number', 'error');
+        return;
+      }
+      document.getElementById('messageContainer').style.display = 'none';
+      loadData(id);
+    });
+
+    function downloadPageAsPdf() {
+      window.print();
+    }
+  </script>
+</body>
+</html>
