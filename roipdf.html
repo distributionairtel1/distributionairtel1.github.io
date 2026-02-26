@@ -72,7 +72,6 @@
     }
     .subsection { background-color: #d5eaf4; font-weight: 600; }
     .display-field { font-weight: 600; color: #34495e; }
-    .highlight-field { font-weight: 700; color: #27ae60; }
     .distribution-hierarchy-container {
       display: flex; gap: 25px; margin-bottom: 25px;
     }
@@ -96,13 +95,6 @@
       border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px;
     }
     .submit-btn:hover { background-color: #1a5276; }
-    .store-net-row {
-      background-color: #d4efdf !important;
-    }
-    .store-net-row td {
-      font-weight: 700;
-      color: #1e8449;
-    }
     .toast-container {
       position: fixed; top: 15px; right: 15px; z-index: 10000;
       max-width: 320px; width: calc(100% - 30px);
@@ -132,6 +124,24 @@
       animation: spin 0.8s linear infinite; margin: 0 auto 15px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    .store-net-row {
+      background-color: #d4efdf !important;
+    }
+    .store-net-row td {
+      font-weight: 700 !important;
+      color: #1e8449 !important;
+    }
+    .store-net-row input[type="number"] {
+      background-color: #d4efdf;
+      border-color: #27ae60 !important;
+      font-weight: 700;
+      color: #1e8449;
+    }
+    .store-net-row input[type="number"]:focus {
+      border-color: #1e8449 !important;
+      box-shadow: 0 0 5px rgba(39,174,96,0.5) !important;
+    }
 
     @media (max-width: 900px) {
       body { padding: 15px 20px; font-size: 14px; }
@@ -271,7 +281,7 @@
                 <tr><td>Electricity:</td><td><input type="number" id="electricityInput" name="electricity" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td></tr>
                 <tr><td>Misc:</td><td><input type="number" id="miscInput" name="misc" placeholder="500-3000" min="0" max="5000" oninput="validateInput(this)"></td></tr>
                 <tr><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="additional_mis_salary" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td></tr>
-                <tr class="store-net-row"><td>Store Net Earnings:</td><td class="highlight-field" id="storeNetEarnings">₹0</td></tr>
+                <tr class="store-net-row"><td>Store Net Earnings:</td><td><input type="number" id="storeNetEarningInput" name="store_net_earning" placeholder="Enter Store Net Earnings" min="0" oninput="validateInput(this)"></td></tr>
                 <tr><td colspan="2"><button type="submit" class="submit-btn">Submit Other Expenses</button></td></tr>
                 <tr><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
               </tbody>
@@ -409,6 +419,7 @@
       document.getElementById('electricityInput').value = data.electricity || '';
       document.getElementById('miscInput').value = data.misc || '';
       document.getElementById('misSalaryInput').value = data.additional_mis_salary || '';
+      document.getElementById('storeNetEarningInput').value = data.store_net_earning || '';
 
       updateOtherExpensesTotal();
       document.getElementById('mainContent').style.display = 'block';
@@ -422,17 +433,6 @@
       const mis = parseFloat(document.getElementById('misSalaryInput').value) || 0;
       const otherExpTotal = rent + elec + misc + mis;
       document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(otherExpTotal);
-      
-      // Calculate and update Store Net Earnings
-      if (currentDistributorData) {
-        const gross = parseFloat(currentDistributorData.TOTAL_GROSS_EARNINGS || 0);
-        const baseExp = baseTotalExpenses;
-        const totalExp = baseExp + otherExpTotal;
-        const storeNetEarnings = gross - totalExp;
-        const storeNetElement = document.getElementById('storeNetEarnings');
-        storeNetElement.textContent = '₹' + indianFormat(storeNetEarnings);
-        storeNetElement.style.color = storeNetEarnings >= 0 ? '#1e8449' : '#e74c3c';
-      }
     }
 
     // ===== LOAD DATA =====
@@ -473,18 +473,31 @@
       const inputs = document.querySelectorAll('#otherExpensesTable input[type="number"]');
       let isValid = true;
       inputs.forEach(input => {
-        if (input.value !== '') {
+        if (input.value !== '' && input.name !== 'store_net_earning') {
           const n = Number(input.value), mn = Number(input.min) || 0, mx = Number(input.max) || Infinity;
           if (n < mn || n > mx) { isValid = false; input.style.borderColor = '#e74c3c'; }
         }
       });
       if (!isValid) { showToast('⚠️ Fix values outside range!', 'error'); return; }
       const fd = new FormData(e.target);
-      const exp = { rent: parseFloat(fd.get('rent')) || 0, electricity: parseFloat(fd.get('electricity')) || 0, misc: parseFloat(fd.get('misc')) || 0, additional_mis_salary: parseFloat(fd.get('additional_mis_salary')) || 0 };
+      const exp = { 
+        rent: parseFloat(fd.get('rent')) || 0, 
+        electricity: parseFloat(fd.get('electricity')) || 0, 
+        misc: parseFloat(fd.get('misc')) || 0, 
+        additional_mis_salary: parseFloat(fd.get('additional_mis_salary')) || 0,
+        store_net_earning: parseFloat(fd.get('store_net_earning')) || 0
+      };
       try {
         const ot = exp.rent + exp.electricity + exp.misc + exp.additional_mis_salary;
         const nte = baseTotalExpenses + ot;
-        await db.collection('ROIWEB-B').doc(currentDistributorId).update({ rent: exp.rent, electricity: exp.electricity, misc: exp.misc, additional_mis_salary: exp.additional_mis_salary, TOTAL_EXPENSES: nte });
+        await db.collection('ROIWEB-B').doc(currentDistributorId).update({ 
+          rent: exp.rent, 
+          electricity: exp.electricity, 
+          misc: exp.misc, 
+          additional_mis_salary: exp.additional_mis_salary, 
+          store_net_earning: exp.store_net_earning,
+          TOTAL_EXPENSES: nte 
+        });
         currentDistributorData = { ...currentDistributorData, ...exp, TOTAL_EXPENSES: nte };
         populateData(currentDistributorData);
         showToast('✅ Expenses saved!', 'success');
@@ -527,19 +540,19 @@
 
         // ===== LUXURY COLOR PALETTE =====
         const P = {
-          headerBg:    [26, 82, 118],       // #1a5276 — dark blue
-          primary:     [41, 128, 185],       // #2980b9 — medium blue
-          secondary:   [234, 244, 249],      // #eaf4f9 — light blue
-          accent:      [243, 156, 18],       // #f39c12 — gold
-          text:        [255, 255, 255],      // white
-          darkText:    [44, 62, 80],         // #2c3e50
-          borderColor: [189, 195, 199],      // #bdc3c7
-          green:       [39, 174, 96],        // #27ae60
-          red:         [231, 76, 60],        // #e74c3c
-          lightGreen:  [212, 239, 223],      // #d4efdf
-          lightRow:    [249, 251, 252],      // #f9fbfc
-          cardBg:      [234, 244, 249],      // #eaf4f9
-          highlight:   [52, 73, 94],         // #34495e
+          headerBg:    [26, 82, 118],
+          primary:     [41, 128, 185],
+          secondary:   [234, 244, 249],
+          accent:      [243, 156, 18],
+          text:        [255, 255, 255],
+          darkText:    [44, 62, 80],
+          borderColor: [189, 195, 199],
+          green:       [39, 174, 96],
+          red:         [231, 76, 60],
+          lightGreen:  [212, 239, 223],
+          lightRow:    [249, 251, 252],
+          cardBg:      [234, 244, 249],
+          highlight:   [52, 73, 94],
         };
 
         // ===== CALCULATED VALUES =====
@@ -557,8 +570,8 @@
         const misSal = parseFloat(data.additional_mis_salary || 0);
         const otherExpTotal = rent + elec + misc + misSal;
         
-        // Store Net Earnings calculation
-        const storeNetEarnings = takeHome;
+        // Store Net Earnings from user input
+        const storeNetEarning = parseFloat(data.store_net_earning || 0);
 
         const clawback = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || data['CLAWBACK/ PENALTY'] || data['CLAWBACK'] || 0;
 
@@ -587,7 +600,6 @@
           const distInfo = (data.DISTRIBUTOR_NAME || '-') + '  |  ' + (data.DISTRIBUTOR_LAPU_NUMBER || '-');
           pdf.text(distInfo, pageWidth / 2, 16, { align: 'center' });
 
-          // ROI Badge (top-right)
           const badgeW = 30;
           pdf.setFillColor(...(isPositiveROI ? P.green : P.red));
           pdf.roundedRect(pageWidth - margin - badgeW, 4, badgeW, 9, 2, 2, 'F');
@@ -647,7 +659,6 @@
           pdf.setLineWidth(0.2);
           pdf.roundedRect(x, y, w, h, 2, 2, 'S');
 
-          // Accent top bar
           pdf.setFillColor(...P.primary);
           pdf.rect(x + 0.5, y + 0.5, w - 1, 1.5, 'F');
 
@@ -769,7 +780,7 @@
         yRight = addRow('Electricity', pdfINR(elec), yRight, rightColX, rightColW, false, false);
         yRight = addRow('Misc', pdfINR(misc), yRight, rightColX, rightColW, true, false);
         yRight = addRow('MIS Salary', pdfINR(misSal), yRight, rightColX, rightColW, false, false);
-        yRight = addRow('Store Net Earnings', pdfINR(storeNetEarnings), yRight, rightColX, rightColW, true, true);  // NEW LINE ADDED
+        yRight = addRow('Store Net Earnings', pdfINR(storeNetEarning), yRight, rightColX, rightColW, true, true);
         yRight = addRow('Clawback / Penalty', pdfNum(clawback), yRight, rightColX, rightColW, false, false);
         yRight += gap;
 
