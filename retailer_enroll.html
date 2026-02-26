@@ -1021,6 +1021,24 @@
     }
 
     // =============================================
+    // HELPER FUNCTION: GET DISPLAY MONTH/YEAR
+    // Shows next month if current date is 25th or later
+    // =============================================
+    function getDisplayMonthYear() {
+        const now = new Date();
+        const day = now.getDate();
+        
+        if (day >= 25) {
+            // Show next month
+            const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            return nextMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        } else {
+            // Show current month
+            return now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        }
+    }
+
+    // =============================================
     // VALIDATION RULES
     // =============================================
     const validationRules = {
@@ -2256,7 +2274,6 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
     document.getElementById('pdfBtn').addEventListener('click', async function () {
         
         // --- 1. VALIDATION FIRST ---
-        // Tier validation
 // --- 1. VALIDATION FIRST ---
 
 // Tier validation
@@ -2567,9 +2584,8 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
         }
         
         // --- PAGE 1 CONTENT ---
-            // Get current month and year dynamically
-            const currentDate = new Date();
-            const monthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+            // Get month/year using the helper function (shows next month from 25th onwards)
+            const monthYear = getDisplayMonthYear();
             
             yPos = addLuxuryHeader('RETAILER ENROLLMENT SHEET', monthYear, yPos);
             yPos = addSectionTitle('RETAILER INFORMATION', yPos);
@@ -2792,9 +2808,8 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
     // INITIALIZE
     // =============================================
 window.addEventListener('DOMContentLoaded', async () => {
-    // Set dynamic month/year in heading
-    const now = new Date();
-    const monthYear = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    // Set dynamic month/year in heading using the helper function
+    const monthYear = getDisplayMonthYear();
     document.getElementById('pageHeading').textContent = `Retailer Enrollment Sheet ${monthYear}`;
 
     initializeValidations();
