@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROI Dashboard - Firestore</title>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <!-- ✅ jsPDF CDN (position-based PDF) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fc;
+      margin: 0;
+      padding: 20px 30px;
+      color: #2c3e50;
+      font-size: 15px;
+    }
+    h2 {
+      color: #1a5276;
+      font-weight: 700;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #2980b9;
+      padding-bottom: 8px;
+      font-size: 22px;
+    }
+    .input-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .input-bar label { font-weight: 600; white-space: nowrap; }
+    #distributorNumberInput {
+      width: 180px; padding: 8px 10px; border: 1.5px solid #ccc;
+      border-radius: 6px; font-size: 15px; transition: border-color 0.3s;
+    }
+    #distributorNumberInput:focus {
+      border-color: #2980b9; outline: none;
+      box-shadow: 0 0 4px rgba(41,128,185,0.4);
+    }
+    #loadBtn, #downloadPdfBtn {
+      padding: 8px 16px; background-color: #2980b9; border: none;
+      color: white; font-weight: 600; border-radius: 6px; cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+      font-size: 14px; white-space: nowrap;
+    }
+    #loadBtn:hover, #downloadPdfBtn:hover:not(:disabled) {
+      background-color: #1a5276; transform: translateY(-1px);
+    }
+    #downloadPdfBtn { margin-bottom: 15px; }
+    #downloadPdfBtn:disabled { background-color: #7fb5d9; cursor: not-allowed; }
+
+    table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08); border-radius: 8px;
+      overflow: hidden; margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #e0e0e0; padding: 10px 14px;
+      vertical-align: top; text-align: left; word-wrap: break-word;
+    }
+    th { background-color: #ecf0f1; color: #34495e; font-weight: 700; }
+    tbody tr:nth-child(even) { background-color: #f9fbfc; }
+    .section {
+      background-color: #eaf4f9; font-weight: 700; font-size: 15px;
+      color: #2c3e50; padding: 12px 14px; border-bottom: 2px solid #a7c7e7;
+    }
+    .subsection { background-color: #d5eaf4; font-weight: 600; }
+    .display-field { font-weight: 600; color: #34495e; }
+    .distribution-hierarchy-container {
+      display: flex; gap: 25px; margin-bottom: 25px;
+    }
+    .distribution-section, .hierarchy-section { flex: 1; min-width: 0; }
+    .info-cards-container { display: flex; gap: 15px; margin-bottom: 20px; }
+    .info-card {
+      background-color: #eaf4f9; padding: 16px 12px; border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08); flex: 1; text-align: center; min-width: 0;
+    }
+    .info-key { font-weight: 700; color: #2c3e50; font-size: 14px; margin-bottom: 6px; }
+    .info-value { font-weight: 600; color: #34495e; font-size: 13px; word-break: break-word; }
+    #otherExpensesTable input[type="number"] {
+      width: 100%; padding: 8px 10px; font-size: 14px; border: 1.5px solid #ccc;
+      border-radius: 6px; transition: border-color 0.3s ease; box-sizing: border-box;
+    }
+    #otherExpensesTable input[type="number"]:focus {
+      border-color: #2980b9; box-shadow: 0 0 5px rgba(41,128,185,0.5); outline: none;
+    }
+    .submit-btn {
+      padding: 10px 20px; background: #2980b9; color: #fff; border: none;
+      border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px;
+    }
+    .submit-btn:hover { background-color: #1a5276; }
+    .toast-container {
+      position: fixed; top: 15px; right: 15px; z-index: 10000;
+      max-width: 320px; width: calc(100% - 30px);
+    }
+    .toast {
+      background: linear-gradient(135deg, #10b981, #059669); color: white;
+      padding: 14px 18px; margin-bottom: 10px; border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateX(110%);
+      opacity: 0; transition: all 0.3s ease; font-weight: 500; font-size: 14px;
+      border-left: 4px solid #059669;
+    }
+    .toast.show { transform: translateX(0); opacity: 1; }
+    .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); border-left-color: #dc2626; }
+
+    .pdf-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); display: flex;
+      justify-content: center; align-items: center; z-index: 99999;
+    }
+    .pdf-overlay-content {
+      background: white; padding: 30px 40px; border-radius: 12px;
+      text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    .pdf-spinner {
+      width: 40px; height: 40px; border: 4px solid #e0e0e0;
+      border-top: 4px solid #2980b9; border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin: 0 auto 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 900px) {
+      body { padding: 15px 20px; font-size: 14px; }
+      h2 { font-size: 20px; }
+      .distribution-hierarchy-container { flex-direction: column; gap: 15px; }
+      .info-card { padding: 14px 10px; }
+      .info-key { font-size: 13px; } .info-value { font-size: 12px; }
+      th, td { padding: 8px 10px; font-size: 13px; }
+      .section { font-size: 14px; padding: 10px 12px; }
+    }
+    @media (max-width: 600px) {
+      body { padding: 10px 12px; font-size: 12px; }
+      h2 { font-size: 17px; margin-bottom: 12px; }
+      .input-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+      #distributorNumberInput { width: 100%; font-size: 14px; padding: 10px; }
+      #loadBtn, #downloadPdfBtn { width: 100%; padding: 10px; font-size: 14px; text-align: center; }
+      .distribution-hierarchy-container { flex-direction: column; gap: 10px; }
+      .info-cards-container { flex-direction: column; gap: 8px; }
+      .info-card { padding: 12px 10px; }
+      .info-key { font-size: 12px; } .info-value { font-size: 11px; }
+      table { margin-bottom: 12px; font-size: 11px; }
+      th, td { padding: 7px 8px; font-size: 11px; }
+      .section { font-size: 12px; padding: 8px 10px; }
+      #otherExpensesTable input[type="number"] { padding: 8px; font-size: 13px; }
+      .submit-btn { width: 100%; padding: 10px; font-size: 13px; }
+      .toast-container { max-width: 280px; top: 10px; right: 10px; }
+      .toast { padding: 12px 14px; font-size: 12px; }
+    }
+    @media (max-width: 400px) {
+      body { padding: 8px; font-size: 11px; }
+      h2 { font-size: 15px; }
+      th, td { padding: 5px 6px; font-size: 10px; }
+      .section { font-size: 11px; padding: 7px 8px; }
+    }
+    @media print {
+      @page { size: A4 portrait; margin: 10mm; }
+      body { margin: 0; padding: 5mm; background: white; font-size: 10px; }
+      .input-bar, #downloadPdfBtn, .toast-container, .submit-btn { display: none !important; }
+      .distribution-hierarchy-container { flex-direction: row; gap: 8px; }
+      .distribution-section, .hierarchy-section { flex: 0 0 48%; }
+      table { font-size: 9px; margin-bottom: 8px; box-shadow: none; }
+      th, td { padding: 4px 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div id="pdfContent">
+    <h2 id="dashboardTitle">ROI Dashboard</h2>
+
+    <div class="input-bar" id="inputBar">
+      <label for="distributorNumberInput">Enter Distributor Number:</label>
+      <input type="text" id="distributorNumberInput" placeholder="E.g., 1234567890" value="">
+      <button id="loadBtn">Load Details</button>
+    </div>
+
+    <div id="messageContainer" style="display: none;"></div>
+    <button id="downloadPdfBtn" onclick="downloadPageAsPdf()" type="button" disabled>📄 Download as PDF</button>
+
+    <div id="mainContent" style="display: none;">
+      <div class="distribution-hierarchy-container">
+        <div class="distribution-section">
+          <table>
+            <thead><tr><td class="section" colspan="2">Distributor</td></tr></thead>
+            <tbody>
+              <tr><td>Distributor Number:</td><td class="display-field" id="distributorNumber">-</td></tr>
+              <tr><td>Distributor Name:</td><td class="display-field" id="distributorName">-</td></tr>
+              <tr><td>Investment:</td><td class="display-field" id="total">-</td></tr>
+              <tr><td>Average Stock:</td><td class="display-field" id="avgStock">-</td></tr>
+              <tr><td>Gross earning:</td><td class="display-field" id="totalGrossEarnings">-</td></tr>
+              <tr><td>Expenses:</td><td class="display-field" id="totalExpenses">-</td></tr>
+              <tr><td>Take Home:</td><td class="display-field" id="takeHome">-</td></tr>
+              <tr><td>ROI:</td><td class="display-field" id="roi">-</td></tr>
+            </tbody>
+          </table>
+          <table id="investmentDetailsTable">
+            <thead><tr><td class="section" colspan="2">Investment Details</td></tr></thead>
+            <tbody>
+              <tr><td>Total(with Security):</td><td class="display-field" id="totalWithSecurity">-</td></tr>
+              <tr><td>LAPU/DTH LAPU (3 days):</td><td class="display-field" id="lapuDthLapu">-</td></tr>
+              <tr><td>Actual Stock(Norm):</td><td class="display-field" id="actualStockNorm">-</td></tr>
+            </tbody>
+          </table>
+          <table id="grossEarningsDetailsTable">
+            <thead><tr><td class="section" colspan="2">Gross Earnings Details</td></tr></thead>
+            <tbody>
+              <tr><td>Total Gross Earning:</td><td class="display-field" id="grossEarningTotal">-</td></tr>
+              <tr><td>LAPU Commission (as per circle):</td><td class="display-field" id="lapuCommissionCircle">-</td></tr>
+              <tr><td>LAPU Commission (Amount):</td><td class="display-field" id="lapuCommissionAmount">-</td></tr>
+              <tr><td>PLI (@0.2%) / DTH GPS (Avg):</td><td class="display-field" id="pliAvg">-</td></tr>
+              <tr><td>Dist Subsidy:</td><td class="display-field" id="distSubsidy">-</td></tr>
+            </tbody>
+          </table>
+          <table id="expensesDetailsTable">
+            <thead><tr><td class="section" colspan="2">Expenses Details</td></tr></thead>
+            <tbody>
+              <tr><td>Total Expenses:</td><td class="display-field" id="expensesTotal">-</td></tr>
+              <tr><td>ASC Required:</td><td class="display-field" id="ascRequired">-</td></tr>
+              <tr><td>Active ASC Count (as per norm):</td><td class="display-field" id="activeAscCount">-</td></tr>
+              <tr><td>ASC (FOS) Salary (@ ~Rs 13000):</td><td class="display-field" id="ascFosSalary">-</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="hierarchy-section">
+          <div class="info-cards-container">
+            <div class="info-card">
+              <div class="info-key">TSM Name</div>
+              <div class="info-value" id="tsmName">-</div>
+            </div>
+            <div class="info-card">
+              <div class="info-key">ZSM Name</div>
+              <div class="info-value" id="zsmName">-</div>
+            </div>
+            <div class="info-card">
+              <div class="info-key">Zone</div>
+              <div class="info-value" id="zone">-</div>
+            </div>
+          </div>
+          <table id="siteDetailsTable">
+            <thead><tr><td class="section" colspan="2">Site Details</td></tr></thead>
+            <tbody>
+              <tr><td>Site count:</td><td class="display-field" id="siteCount">-</td></tr>
+              <tr><td>Offline tertiary / Site:</td><td class="display-field" id="offlineTertiary">-</td></tr>
+              <tr><td>Base:</td><td class="display-field" id="base">-</td></tr>
+              <tr><td>Avg Monthly Gross:</td><td class="display-field" id="avgMonthlyGross">-</td></tr>
+              <tr><td>Lapu secondary per month:</td><td class="display-field" id="lapuSecondary">-</td></tr>
+            </tbody>
+          </table>
+          <form id="otherExpensesForm">
+            <table id="otherExpensesTable">
+              <thead><tr><td class="section" colspan="2">Other Expenses</td></tr></thead>
+              <tbody>
+                <tr><td colspan="2" class="subsection">Other Expenses Total: <span class="display-field" id="otherExpensesTotal">₹0</span></td></tr>
+                <tr><td>Rent:</td><td><input type="number" id="rentInput" name="rent" placeholder="3000-12000" min="3000" max="12000" oninput="validateInput(this)"></td></tr>
+                <tr><td>Electricity:</td><td><input type="number" id="electricityInput" name="electricity" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td></tr>
+                <tr><td>Misc:</td><td><input type="number" id="miscInput" name="misc" placeholder="500-3000" min="0" max="5000" oninput="validateInput(this)"></td></tr>
+                <tr><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="additional_mis_salary" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td></tr>
+                <tr><td colspan="2"><button type="submit" class="submit-btn">Submit Other Expenses</button></td></tr>
+                <tr><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
+              </tbody>
+            </table>
+          </form>
+          <table id="opportunityLostTable">
+            <thead><tr><td class="section" colspan="2">Opportunity Lost</td></tr></thead>
+            <tbody>
+              <tr><td>PLI missed opportunity:</td><td class="display-field" id="pliMissed">-</td></tr>
+              <tr><td>ASC Subsidy opportunity missed:</td><td class="display-field" id="ascSubsidyMissed">-</td></tr>
+              <tr><td>Additional active ASC required for full ASC subsidy:</td><td class="display-field" id="additionalAscRequired">-</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== FIREBASE CONFIG =====
+    const firebaseConfig = {
+      apiKey: "AIzaSyDKiVPTJi_r-an81YHcJ6tzZKT93AIHAe8",
+      authDomain: "roiweb-b.firebaseapp.com",
+      projectId: "roiweb-b",
+      storageBucket: "roiweb-b.firebasestorage.app",
+      messagingSenderId: "497560856610",
+      appId: "1:497560856610:web:a0a2f0ba4d8d8ca9ddc27b",
+      measurementId: "G-L90C5374C0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    let currentDistributorData = null;
+    let currentDistributorId = '';
+    let baseTotalExpenses = 0;
+
+    // ===== TOAST =====
+    function showToast(message, type = 'success') {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.textContent = message;
+      c.appendChild(t);
+      setTimeout(() => t.classList.add('show'), 100);
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 4000);
+    }
+
+    // ===== UTILITY =====
+    function formatINR(num) {
+      return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(parseFloat(num || 0));
+    }
+    function formatPercent(num) {
+      return (parseFloat(num || 0) * 100).toFixed(2) + '%';
+    }
+    function formatNum(num) {
+      return parseFloat(num || 0).toLocaleString('en-IN');
+    }
+    function indianFormat(num) {
+      return new Intl.NumberFormat('en-IN').format(parseFloat(num || 0));
+    }
+    // PDF-safe INR (no ₹ symbol issues)
+    function pdfINR(num) {
+      const val = parseFloat(num || 0);
+      return 'Rs. ' + new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
+    }
+    function pdfPercent(num) {
+      return (parseFloat(num || 0) * 100).toFixed(2) + '%';
+    }
+    function pdfNum(num) {
+      return new Intl.NumberFormat('en-IN').format(parseFloat(num || 0));
+    }
+
+    // ===== VALIDATION =====
+    function validateInput(elem) {
+      const val = elem.value;
+      const min = Number(elem.min) || 0;
+      const max = Number(elem.max) || Infinity;
+      if (!val || val === '') { elem.style.borderColor = '#ccc'; updateOtherExpensesTotal(); return; }
+      const numVal = Number(val);
+      elem.style.borderColor = (numVal < min || numVal > max) ? '#e74c3c' : '#2980b9';
+      updateOtherExpensesTotal();
+    }
+
+    // ===== POPULATE =====
+    function populateData(data) {
+      const gross = parseFloat(data.TOTAL_GROSS_EARNINGS || 0);
+      const expenses = parseFloat(data.TOTAL_EXPENSES || 0);
+      const takeHome = gross - expenses;
+      const investment = parseFloat(data.TOTAL || 0);
+      const roi = investment > 0 ? (takeHome / investment) : 0;
+
+      document.getElementById('distributorNumber').textContent = data.DISTRIBUTOR_LAPU_NUMBER || '-';
+      document.getElementById('distributorName').textContent = data.DISTRIBUTOR_NAME || '-';
+      document.getElementById('total').textContent = formatINR(data.TOTAL);
+      document.getElementById('avgStock').textContent = formatINR(data.AVG_STOCK);
+      document.getElementById('totalGrossEarnings').textContent = formatINR(data.TOTAL_GROSS_EARNINGS);
+      document.getElementById('totalExpenses').textContent = formatINR(expenses);
+      document.getElementById('takeHome').textContent = formatINR(takeHome);
+      document.getElementById('roi').textContent = formatPercent(roi);
+
+      document.getElementById('totalWithSecurity').textContent = formatINR(data.TOTAL);
+      document.getElementById('lapuDthLapu').textContent = formatINR(data.LAPU_DTH_LAPU_2DAYS);
+      const stockCell = document.getElementById('actualStockNorm');
+      stockCell.textContent = formatINR(data.AVG_STOCK);
+      stockCell.style.color = parseFloat(data.AVG_STOCK || 0) > parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0) ? 'green' : 'red';
+
+      document.getElementById('grossEarningTotal').textContent = formatINR(data.TOTAL_GROSS_EARNINGS);
+      document.getElementById('lapuCommissionCircle').textContent = formatPercent(data.LAPU_COMMISSION_C);
+      document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
+      document.getElementById('pliAvg').textContent = formatINR(data.PLI_AVG);
+      document.getElementById('distSubsidy').textContent = formatINR(data.DIST_SUBSIDY);
+
+      document.getElementById('tsmName').textContent = data.TSM_NAME || '-';
+      document.getElementById('zsmName').textContent = data.ZSM_NAME || '-';
+      document.getElementById('zone').textContent = data.ZONE || '-';
+      document.getElementById('siteCount').textContent = formatNum(data.SITE_COUNT);
+      document.getElementById('offlineTertiary').textContent = formatINR(data.OFFLINE_TERTIARY);
+      document.getElementById('base').textContent = formatINR(data.BASE);
+      document.getElementById('avgMonthlyGross').textContent = indianFormat(data.AVG_MONTHLY_GROSS_IN);
+      document.getElementById('lapuSecondary').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
+
+      document.getElementById('expensesTotal').textContent = formatINR(data.TOTAL_EXPENSES);
+      document.getElementById('ascRequired').textContent = formatNum(data.ASC_REQUIRED);
+      document.getElementById('activeAscCount').textContent = formatNum(data.ACTIVE_ASC_COUNT_AS_PER_NORM);
+      document.getElementById('ascFosSalary').textContent = formatINR(data.ASC_FOS_SALARY_13000);
+
+      document.getElementById('pliMissed').textContent = formatINR(data.PLI_MISSED_OPPORTUNITY);
+      document.getElementById('ascSubsidyMissed').textContent = formatINR(data.ASC_SUBSIDY_OPPORTUNITY_MISSED);
+      document.getElementById('additionalAscRequired').textContent = formatNum(data.ADDITIONAL_ACTIVE_ASC);
+
+      const clawbackValue = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || data['CLAWBACK/ PENALTY'] || data['CLAWBACK'] || 0;
+      document.getElementById('clawback').textContent = indianFormat(clawbackValue);
+
+      document.getElementById('rentInput').value = data.rent || '';
+      document.getElementById('electricityInput').value = data.electricity || '';
+      document.getElementById('miscInput').value = data.misc || '';
+      document.getElementById('misSalaryInput').value = data.additional_mis_salary || '';
+
+      updateOtherExpensesTotal();
+      document.getElementById('mainContent').style.display = 'block';
+      document.getElementById('downloadPdfBtn').disabled = false;
+    }
+
+    function updateOtherExpensesTotal() {
+      const rent = parseFloat(document.getElementById('rentInput').value) || 0;
+      const elec = parseFloat(document.getElementById('electricityInput').value) || 0;
+      const misc = parseFloat(document.getElementById('miscInput').value) || 0;
+      const mis = parseFloat(document.getElementById('misSalaryInput').value) || 0;
+      document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(rent + elec + misc + mis);
+    }
+
+    // ===== LOAD DATA =====
+    async function loadData(distributorId) {
+      try {
+        document.getElementById('loadBtn').textContent = 'Loading...';
+        document.getElementById('loadBtn').disabled = true;
+        let snapshot;
+        if (!isNaN(distributorId) && distributorId.trim() !== '') {
+          snapshot = await db.collection('ROIWEB-B').where('DISTRIBUTOR_LAPU_NUMBER', '==', Number(distributorId)).limit(1).get();
+          if (snapshot.empty) snapshot = await db.collection('ROIWEB-B').where('DISTRIBUTOR_LAPU_NUMBER', '==', distributorId).limit(1).get();
+        } else {
+          snapshot = await db.collection('ROIWEB-B').where('DISTRIBUTOR_LAPU_NUMBER', '==', distributorId).limit(1).get();
+        }
+        if (!snapshot.empty) {
+          const doc = snapshot.docs[0];
+          currentDistributorData = doc.data();
+          currentDistributorId = doc.id;
+          const savedOther = (parseFloat(currentDistributorData.rent) || 0) + (parseFloat(currentDistributorData.electricity) || 0) + (parseFloat(currentDistributorData.misc) || 0) + (parseFloat(currentDistributorData.additional_mis_salary) || 0);
+          baseTotalExpenses = parseFloat(currentDistributorData.TOTAL_EXPENSES || 0) - savedOther;
+          populateData(currentDistributorData);
+          showToast('✅ Data loaded successfully!');
+        } else {
+          document.getElementById('mainContent').style.display = 'none';
+          showToast('❌ Distributor Not Found', 'error');
+        }
+      } catch (error) { showToast('❌ Error: ' + error.message, 'error'); }
+      finally {
+        document.getElementById('loadBtn').textContent = 'Load Details';
+        document.getElementById('loadBtn').disabled = false;
+      }
+    }
+
+    // ===== SUBMIT EXPENSES =====
+    document.getElementById('otherExpensesForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentDistributorId) { showToast('⚠️ Load distributor data first!', 'error'); return; }
+      const inputs = document.querySelectorAll('#otherExpensesTable input[type="number"]');
+      let isValid = true;
+      inputs.forEach(input => {
+        if (input.value !== '') {
+          const n = Number(input.value), mn = Number(input.min) || 0, mx = Number(input.max) || Infinity;
+          if (n < mn || n > mx) { isValid = false; input.style.borderColor = '#e74c3c'; }
+        }
+      });
+      if (!isValid) { showToast('⚠️ Fix values outside range!', 'error'); return; }
+      const fd = new FormData(e.target);
+      const exp = { rent: parseFloat(fd.get('rent')) || 0, electricity: parseFloat(fd.get('electricity')) || 0, misc: parseFloat(fd.get('misc')) || 0, additional_mis_salary: parseFloat(fd.get('additional_mis_salary')) || 0 };
+      try {
+        const ot = exp.rent + exp.electricity + exp.misc + exp.additional_mis_salary;
+        const nte = baseTotalExpenses + ot;
+        await db.collection('ROIWEB-B').doc(currentDistributorId).update({ rent: exp.rent, electricity: exp.electricity, misc: exp.misc, additional_mis_salary: exp.additional_mis_salary, TOTAL_EXPENSES: nte });
+        currentDistributorData = { ...currentDistributorData, ...exp, TOTAL_EXPENSES: nte };
+        populateData(currentDistributorData);
+        showToast('✅ Expenses saved!', 'success');
+      } catch (error) { showToast('❌ Save failed: ' + error.message, 'error'); }
+    });
+
+    // ================================================
+    // 📄 LUXURY jsPDF POSITION-BASED PDF GENERATION
+    // ================================================
+    async function downloadPageAsPdf() {
+      if (!currentDistributorData) { showToast('⚠️ Load distributor data first!', 'error'); return; }
+
+      const btn = document.getElementById('downloadPdfBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Generating...';
+
+      const overlay = document.createElement('div');
+      overlay.className = 'pdf-overlay';
+      overlay.innerHTML = '<div class="pdf-overlay-content"><div class="pdf-spinner"></div><div style="font-weight:600;color:#2c3e50;">Generating PDF...</div><div style="font-size:12px;color:#7f8c8d;margin-top:5px;">Please wait</div></div>';
+      document.body.appendChild(overlay);
+
+      try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('portrait', 'mm', 'a4');
+        const data = currentDistributorData;
+
+        // ===== PAGE DIMENSIONS =====
+        const pageWidth = 210;
+        const pageHeight = 297;
+        const margin = 10;
+        const contentWidth = pageWidth - 2 * margin;
+        const colGap = 4;
+        const leftColW = 94;
+        const rightColW = contentWidth - leftColW - colGap;
+        const leftColX = margin;
+        const rightColX = margin + leftColW + colGap;
+        const rowH = 5.5;
+        const sectionH = 6.5;
+        const gap = 2;
+
+        // ===== LUXURY COLOR PALETTE =====
+        const P = {
+          headerBg:    [26, 82, 118],       // #1a5276 — dark blue
+          primary:     [41, 128, 185],       // #2980b9 — medium blue
+          secondary:   [234, 244, 249],      // #eaf4f9 — light blue
+          accent:      [243, 156, 18],       // #f39c12 — gold
+          text:        [255, 255, 255],      // white
+          darkText:    [44, 62, 80],         // #2c3e50
+          borderColor: [189, 195, 199],      // #bdc3c7
+          green:       [39, 174, 96],        // #27ae60
+          red:         [231, 76, 60],        // #e74c3c
+          lightGreen:  [212, 239, 223],      // #d4efdf
+          lightRow:    [249, 251, 252],      // #f9fbfc
+          cardBg:      [234, 244, 249],      // #eaf4f9
+          highlight:   [52, 73, 94],         // #34495e
+        };
+
+        // ===== CALCULATED VALUES =====
+        const gross = parseFloat(data.TOTAL_GROSS_EARNINGS || 0);
+        const expenses = parseFloat(data.TOTAL_EXPENSES || 0);
+        const takeHome = gross - expenses;
+        const investment = parseFloat(data.TOTAL || 0);
+        const roiVal = investment > 0 ? (takeHome / investment) * 100 : 0;
+        const roiStr = roiVal.toFixed(2) + '%';
+        const isPositiveROI = roiVal >= 0;
+
+        const rent = parseFloat(data.rent || 0);
+        const elec = parseFloat(data.electricity || 0);
+        const misc = parseFloat(data.misc || 0);
+        const misSal = parseFloat(data.additional_mis_salary || 0);
+        const otherExpTotal = rent + elec + misc + misSal;
+
+        const clawback = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || data['CLAWBACK/ PENALTY'] || data['CLAWBACK'] || 0;
+
+        // ===== HELPER: Truncate text to fit width =====
+        function truncate(text, maxWidth) {
+          let t = String(text || '-');
+          while (pdf.getTextWidth(t) > maxWidth && t.length > 3) t = t.slice(0, -1);
+          if (t.length < String(text || '-').length) t += '..';
+          return t;
+        }
+
+        // ===== HELPER: Luxury Header =====
+        function addLuxuryHeader() {
+          pdf.setFillColor(...P.headerBg);
+          pdf.rect(0, 0, pageWidth, 22, 'F');
+          pdf.setFillColor(...P.accent);
+          pdf.rect(0, 22, pageWidth, 1.5, 'F');
+
+          pdf.setTextColor(...P.text);
+          pdf.setFontSize(14);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('ROI DASHBOARD REPORT', pageWidth / 2, 9, { align: 'center' });
+
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
+          const distInfo = (data.DISTRIBUTOR_NAME || '-') + '  |  ' + (data.DISTRIBUTOR_LAPU_NUMBER || '-');
+          pdf.text(distInfo, pageWidth / 2, 16, { align: 'center' });
+
+          // ROI Badge (top-right)
+          const badgeW = 30;
+          pdf.setFillColor(...(isPositiveROI ? P.green : P.red));
+          pdf.roundedRect(pageWidth - margin - badgeW, 4, badgeW, 9, 2, 2, 'F');
+          pdf.setTextColor(...P.text);
+          pdf.setFontSize(7);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('ROI: ' + roiStr, pageWidth - margin - badgeW / 2, 9.5, { align: 'center' });
+
+          return 27;
+        }
+
+        // ===== HELPER: Section Title =====
+        function addSectionTitle(text, y, x, width) {
+          pdf.setFillColor(...P.primary);
+          pdf.rect(x, y, width, sectionH, 'F');
+          pdf.setFillColor(...P.accent);
+          pdf.rect(x, y, 2.5, sectionH, 'F');
+          pdf.setTextColor(...P.text);
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(text, x + 6, y + 4.5);
+          return y + sectionH;
+        }
+
+        // ===== HELPER: Table Row =====
+        function addRow(label, value, y, x, width, isAlt, highlight) {
+          const labelW = width * 0.55;
+          const valW = width - labelW;
+
+          if (highlight) pdf.setFillColor(...P.lightGreen);
+          else pdf.setFillColor(isAlt ? P.lightRow[0] : 255, isAlt ? P.lightRow[1] : 255, isAlt ? P.lightRow[2] : 255);
+          pdf.rect(x, y, width, rowH, 'F');
+
+          pdf.setDrawColor(...P.borderColor);
+          pdf.setLineWidth(0.15);
+          pdf.rect(x, y, width, rowH, 'S');
+          pdf.line(x + labelW, y, x + labelW, y + rowH);
+
+          pdf.setFontSize(7);
+          pdf.setTextColor(...P.darkText);
+          pdf.setFont('helvetica', 'normal');
+          pdf.text(truncate(label, labelW - 4), x + 2, y + 3.8);
+
+          pdf.setFont('helvetica', 'bold');
+          if (highlight) pdf.setTextColor(...P.green);
+          pdf.text(truncate(value, valW - 4), x + labelW + 2, y + 3.8);
+          pdf.setTextColor(...P.darkText);
+
+          return y + rowH;
+        }
+
+        // ===== HELPER: Info Card =====
+        function addInfoCard(title, value, x, y, w, h) {
+          pdf.setFillColor(...P.cardBg);
+          pdf.roundedRect(x, y, w, h, 2, 2, 'F');
+          pdf.setDrawColor(...P.borderColor);
+          pdf.setLineWidth(0.2);
+          pdf.roundedRect(x, y, w, h, 2, 2, 'S');
+
+          // Accent top bar
+          pdf.setFillColor(...P.primary);
+          pdf.rect(x + 0.5, y + 0.5, w - 1, 1.5, 'F');
+
+          pdf.setTextColor(...P.highlight);
+          pdf.setFontSize(5.5);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(title, x + w / 2, y + 6, { align: 'center' });
+
+          pdf.setFontSize(6);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor(...P.darkText);
+          pdf.text(truncate(value, w - 4), x + w / 2, y + 11, { align: 'center' });
+        }
+
+        // ===== HELPER: Highlight Box =====
+        function addHighlightBox(label, value, y, x, w, color) {
+          const boxH = 14;
+          pdf.setFillColor(...color);
+          pdf.roundedRect(x, y, w, boxH, 3, 3, 'F');
+
+          pdf.setTextColor(...P.text);
+          pdf.setFontSize(6.5);
+          pdf.setFont('helvetica', 'normal');
+          pdf.text(label, x + w / 2, y + 4.5, { align: 'center' });
+
+          pdf.setFontSize(11);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(String(value), x + w / 2, y + 11, { align: 'center' });
+
+          return y + boxH;
+        }
+
+        // ===== HELPER: Footer =====
+        function addFooter() {
+          pdf.setDrawColor(...P.borderColor);
+          pdf.setLineWidth(0.3);
+          pdf.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+
+          pdf.setFillColor(...P.accent);
+          pdf.rect(margin, pageHeight - 12, contentWidth, 0.5, 'F');
+
+          pdf.setFontSize(6.5);
+          pdf.setTextColor(130, 130, 130);
+          pdf.setFont('helvetica', 'normal');
+          pdf.text('Page 1 of 1', margin, pageHeight - 7);
+          pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), pageWidth / 2, pageHeight - 7, { align: 'center' });
+          const docId = 'ROI-' + Date.now().toString(36).toUpperCase();
+          pdf.text(docId, pageWidth - margin, pageHeight - 7, { align: 'right' });
+        }
+
+        // ==========================================
+        // 🎨 DRAW PDF — SINGLE PAGE, TWO COLUMNS
+        // ==========================================
+
+        // ===== HEADER =====
+        let yLeft = addLuxuryHeader();
+        let yRight = yLeft;
+
+        // =============== LEFT COLUMN ===============
+
+        // Section 1: DISTRIBUTOR SUMMARY
+        yLeft = addSectionTitle('DISTRIBUTOR SUMMARY', yLeft, leftColX, leftColW);
+        yLeft = addRow('Distributor Number', data.DISTRIBUTOR_LAPU_NUMBER || '-', yLeft, leftColX, leftColW, false, false);
+        yLeft = addRow('Distributor Name', data.DISTRIBUTOR_NAME || '-', yLeft, leftColX, leftColW, true, false);
+        yLeft = addRow('Investment', pdfINR(data.TOTAL), yLeft, leftColX, leftColW, false, false);
+        yLeft = addRow('Average Stock', pdfINR(data.AVG_STOCK), yLeft, leftColX, leftColW, true, false);
+        yLeft = addRow('Gross Earning', pdfINR(data.TOTAL_GROSS_EARNINGS), yLeft, leftColX, leftColW, false, false);
+        yLeft = addRow('Expenses', pdfINR(data.TOTAL_EXPENSES), yLeft, leftColX, leftColW, true, false);
+        yLeft = addRow('Take Home', pdfINR(takeHome), yLeft, leftColX, leftColW, false, true);
+        yLeft = addRow('ROI', roiStr, yLeft, leftColX, leftColW, true, true);
+        yLeft += gap;
+
+        // Section 2: INVESTMENT DETAILS
+        yLeft = addSectionTitle('INVESTMENT DETAILS', yLeft, leftColX, leftColW);
+        yLeft = addRow('Total (with Security)', pdfINR(data.TOTAL), yLeft, leftColX, leftColW, false, false);
+        yLeft = addRow('LAPU/DTH LAPU (3 days)', pdfINR(data.LAPU_DTH_LAPU_2DAYS), yLeft, leftColX, leftColW, true, false);
+        yLeft = addRow('Actual Stock (Norm)', pdfINR(data.AVG_STOCK), yLeft, leftColX, leftColW, false, false);
+        yLeft += gap;
+
+        // Section 3: GROSS EARNINGS
+        yLeft = addSectionTitle('GROSS EARNINGS DETAILS', yLeft, leftColX, leftColW);
+        yLeft = addRow('Total Gross Earning', pdfINR(data.TOTAL_GROSS_EARNINGS), yLeft, leftColX, leftColW, false, false);
+        yLeft = addRow('LAPU Comm (Circle)', pdfPercent(data.LAPU_COMMISSION_C), yLeft, leftColX, leftColW, true, false);
+        yLeft = addRow('LAPU Comm (Amount)', pdfINR(data.LAPU_COMMISSION_A), yLeft, leftColX, leftColW, false, false);
+        yLeft = addRow('PLI / DTH GPS (Avg)', pdfINR(data.PLI_AVG), yLeft, leftColX, leftColW, true, false);
+        yLeft = addRow('Dist Subsidy', pdfINR(data.DIST_SUBSIDY), yLeft, leftColX, leftColW, false, false);
+        yLeft += gap;
+
+        // Section 4: EXPENSES DETAILS
+        yLeft = addSectionTitle('EXPENSES DETAILS', yLeft, leftColX, leftColW);
+        yLeft = addRow('Total Expenses', pdfINR(data.TOTAL_EXPENSES), yLeft, leftColX, leftColW, false, false);
+        yLeft = addRow('ASC Required', pdfNum(data.ASC_REQUIRED), yLeft, leftColX, leftColW, true, false);
+        yLeft = addRow('Active ASC Count', pdfNum(data.ACTIVE_ASC_COUNT_AS_PER_NORM), yLeft, leftColX, leftColW, false, false);
+        yLeft = addRow('ASC (FOS) Salary', pdfINR(data.ASC_FOS_SALARY_13000), yLeft, leftColX, leftColW, true, false);
+
+        // =============== RIGHT COLUMN ===============
+
+        // Info Cards: TSM, ZSM, Zone
+        const cardW = (rightColW - 4) / 3;
+        const cardH = 14;
+        addInfoCard('TSM NAME', data.TSM_NAME || '-', rightColX, yRight, cardW, cardH);
+        addInfoCard('ZSM NAME', data.ZSM_NAME || '-', rightColX + cardW + 2, yRight, cardW, cardH);
+        addInfoCard('ZONE', data.ZONE || '-', rightColX + (cardW + 2) * 2, yRight, cardW, cardH);
+        yRight += cardH + gap;
+
+        // Section 5: SITE DETAILS
+        yRight = addSectionTitle('SITE DETAILS', yRight, rightColX, rightColW);
+        yRight = addRow('Site Count', pdfNum(data.SITE_COUNT), yRight, rightColX, rightColW, false, false);
+        yRight = addRow('Offline Tertiary / Site', pdfINR(data.OFFLINE_TERTIARY), yRight, rightColX, rightColW, true, false);
+        yRight = addRow('Base', pdfINR(data.BASE), yRight, rightColX, rightColW, false, false);
+        yRight = addRow('Avg Monthly Gross', pdfNum(data.AVG_MONTHLY_GROSS_IN), yRight, rightColX, rightColW, true, false);
+        yRight = addRow('Lapu Secondary / Month', pdfINR(data.LAPU_SECONDARY_PER_MONTH), yRight, rightColX, rightColW, false, false);
+        yRight += gap;
+
+        // Section 6: OTHER EXPENSES
+        yRight = addSectionTitle('OTHER EXPENSES', yRight, rightColX, rightColW);
+        yRight = addRow('Other Expenses Total', pdfINR(otherExpTotal), yRight, rightColX, rightColW, false, true);
+        yRight = addRow('Rent', pdfINR(rent), yRight, rightColX, rightColW, true, false);
+        yRight = addRow('Electricity', pdfINR(elec), yRight, rightColX, rightColW, false, false);
+        yRight = addRow('Misc', pdfINR(misc), yRight, rightColX, rightColW, true, false);
+        yRight = addRow('MIS Salary', pdfINR(misSal), yRight, rightColX, rightColW, false, false);
+        yRight = addRow('Clawback / Penalty', pdfNum(clawback), yRight, rightColX, rightColW, true, false);
+        yRight += gap;
+
+        // Section 7: OPPORTUNITY LOST
+        yRight = addSectionTitle('OPPORTUNITY LOST', yRight, rightColX, rightColW);
+        yRight = addRow('PLI Missed Opportunity', pdfINR(data.PLI_MISSED_OPPORTUNITY), yRight, rightColX, rightColW, false, false);
+        yRight = addRow('ASC Subsidy Missed', pdfINR(data.ASC_SUBSIDY_OPPORTUNITY_MISSED), yRight, rightColX, rightColW, true, false);
+        yRight = addRow('Addl Active ASC Req.', pdfNum(data.ADDITIONAL_ACTIVE_ASC), yRight, rightColX, rightColW, false, false);
+
+        // ===== HIGHLIGHT BOXES (full width, below both columns) =====
+        const maxY = Math.max(yLeft, yRight) + 5;
+        const halfW = (contentWidth - colGap) / 2;
+
+        // Take Home Box
+        addHighlightBox('TAKE HOME', pdfINR(takeHome), maxY, margin, halfW, P.headerBg);
+
+        // ROI Box
+        addHighlightBox('RETURN ON INVESTMENT', roiStr, maxY, margin + halfW + colGap, halfW, isPositiveROI ? P.green : P.red);
+
+        // ===== FOOTER =====
+        addFooter();
+
+        // ===== SAVE & SHARE =====
+        const distName = data.DISTRIBUTOR_NAME || 'Dashboard';
+        const distNum = data.DISTRIBUTOR_LAPU_NUMBER || '';
+        const dateStr = new Date().toISOString().slice(0, 10);
+        const filename = ('ROI_' + distName + '_' + distNum + '_' + dateStr + '.pdf').replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+
+        const pdfBlob = pdf.output('blob');
+
+        // Download helper
+        const triggerDownload = (blob, name) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = name;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 100);
+        };
+
+        // Try Web Share API (mobile), fallback to download
+        const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file], title: 'ROI Dashboard Report', text: 'ROI Report for ' + distName });
+          } catch (err) { triggerDownload(pdfBlob, filename); }
+        } else {
+          triggerDownload(pdfBlob, filename);
+        }
+
+        showToast('✅ PDF generated successfully!');
+
+      } catch (error) {
+        console.error('PDF error:', error);
+        showToast('❌ PDF failed: ' + error.message, 'error');
+      } finally {
+        if (overlay.parentNode) overlay.remove();
+        btn.disabled = false;
+        btn.textContent = '📄 Download as PDF';
+      }
+    }
+
+    // ===== EVENT LISTENERS =====
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('distributorNumberInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('loadBtn').click(); }
+      });
+    });
+    document.getElementById('loadBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('distributorNumberInput').value.trim();
+      if (!id) { showToast('Enter distributor number', 'error'); return; }
+      document.getElementById('messageContainer').style.display = 'none';
+      loadData(id);
+    });
+  </script>
+</body>
+</html>
