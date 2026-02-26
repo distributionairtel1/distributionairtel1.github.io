@@ -72,6 +72,7 @@
     }
     .subsection { background-color: #d5eaf4; font-weight: 600; }
     .display-field { font-weight: 600; color: #34495e; }
+    .highlight-field { font-weight: 700; color: #27ae60; }
     .distribution-hierarchy-container {
       display: flex; gap: 25px; margin-bottom: 25px;
     }
@@ -95,6 +96,13 @@
       border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px;
     }
     .submit-btn:hover { background-color: #1a5276; }
+    .store-net-row {
+      background-color: #d4efdf !important;
+    }
+    .store-net-row td {
+      font-weight: 700;
+      color: #1e8449;
+    }
     .toast-container {
       position: fixed; top: 15px; right: 15px; z-index: 10000;
       max-width: 320px; width: calc(100% - 30px);
@@ -263,6 +271,7 @@
                 <tr><td>Electricity:</td><td><input type="number" id="electricityInput" name="electricity" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td></tr>
                 <tr><td>Misc:</td><td><input type="number" id="miscInput" name="misc" placeholder="500-3000" min="0" max="5000" oninput="validateInput(this)"></td></tr>
                 <tr><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="additional_mis_salary" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td></tr>
+                <tr class="store-net-row"><td>Store Net Earnings:</td><td class="highlight-field" id="storeNetEarnings">₹0</td></tr>
                 <tr><td colspan="2"><button type="submit" class="submit-btn">Submit Other Expenses</button></td></tr>
                 <tr><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
               </tbody>
@@ -411,7 +420,19 @@
       const elec = parseFloat(document.getElementById('electricityInput').value) || 0;
       const misc = parseFloat(document.getElementById('miscInput').value) || 0;
       const mis = parseFloat(document.getElementById('misSalaryInput').value) || 0;
-      document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(rent + elec + misc + mis);
+      const otherExpTotal = rent + elec + misc + mis;
+      document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(otherExpTotal);
+      
+      // Calculate and update Store Net Earnings
+      if (currentDistributorData) {
+        const gross = parseFloat(currentDistributorData.TOTAL_GROSS_EARNINGS || 0);
+        const baseExp = baseTotalExpenses;
+        const totalExp = baseExp + otherExpTotal;
+        const storeNetEarnings = gross - totalExp;
+        const storeNetElement = document.getElementById('storeNetEarnings');
+        storeNetElement.textContent = '₹' + indianFormat(storeNetEarnings);
+        storeNetElement.style.color = storeNetEarnings >= 0 ? '#1e8449' : '#e74c3c';
+      }
     }
 
     // ===== LOAD DATA =====
@@ -535,6 +556,9 @@
         const misc = parseFloat(data.misc || 0);
         const misSal = parseFloat(data.additional_mis_salary || 0);
         const otherExpTotal = rent + elec + misc + misSal;
+        
+        // Store Net Earnings calculation
+        const storeNetEarnings = takeHome;
 
         const clawback = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || data['CLAWBACK/ PENALTY'] || data['CLAWBACK'] || 0;
 
@@ -745,7 +769,8 @@
         yRight = addRow('Electricity', pdfINR(elec), yRight, rightColX, rightColW, false, false);
         yRight = addRow('Misc', pdfINR(misc), yRight, rightColX, rightColW, true, false);
         yRight = addRow('MIS Salary', pdfINR(misSal), yRight, rightColX, rightColW, false, false);
-        yRight = addRow('Clawback / Penalty', pdfNum(clawback), yRight, rightColX, rightColW, true, false);
+        yRight = addRow('Store Net Earnings', pdfINR(storeNetEarnings), yRight, rightColX, rightColW, true, true);  // NEW LINE ADDED
+        yRight = addRow('Clawback / Penalty', pdfNum(clawback), yRight, rightColX, rightColW, false, false);
         yRight += gap;
 
         // Section 7: OPPORTUNITY LOST
@@ -823,5 +848,4 @@
     });
   </script>
 </body>
-
 </html>
