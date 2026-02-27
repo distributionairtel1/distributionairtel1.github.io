@@ -43,17 +43,15 @@
       border-color: #2980b9; outline: none;
       box-shadow: 0 0 4px rgba(41,128,185,0.4);
     }
-    #loadBtn, #downloadPdfBtn {
+    #loadBtn {
       padding: 8px 16px; background-color: #2980b9; border: none;
       color: white; font-weight: 600; border-radius: 6px; cursor: pointer;
       transition: background-color 0.3s, transform 0.1s;
       font-size: 14px; white-space: nowrap;
     }
-    #loadBtn:hover, #downloadPdfBtn:hover:not(:disabled) {
+    #loadBtn:hover {
       background-color: #1a5276; transform: translateY(-1px);
     }
-    #downloadPdfBtn { margin-bottom: 15px; }
-    #downloadPdfBtn:disabled { background-color: #7fb5d9; cursor: not-allowed; }
 
     table {
       width: 100%; border-collapse: collapse; background: #fff;
@@ -93,8 +91,9 @@
     .submit-btn {
       padding: 10px 20px; background: #2980b9; color: #fff; border: none;
       border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px;
+      transition: background-color 0.3s, transform 0.1s;
     }
-    .submit-btn:hover { background-color: #1a5276; }
+    .submit-btn:hover { background-color: #1a5276; transform: translateY(-1px); }
     .toast-container {
       position: fixed; top: 15px; right: 15px; z-index: 10000;
       max-width: 320px; width: calc(100% - 30px);
@@ -108,6 +107,7 @@
     }
     .toast.show { transform: translateX(0); opacity: 1; }
     .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); border-left-color: #dc2626; }
+    .toast.warning { background: linear-gradient(135deg, #f59e0b, #d97706); border-left-color: #d97706; }
 
     .pdf-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -130,6 +130,359 @@
       font-style: italic;
     }
 
+    /* ==================== WORKFLOW CONTAINER ==================== */
+    .workflow-container {
+      margin-top: 30px;
+      padding: 0;
+    }
+
+    .workflow-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a5276;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #3498db;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .workflow-title::before {
+      content: '📋';
+      font-size: 22px;
+    }
+
+    /* ==================== STEP CARD DESIGN ==================== */
+    .step-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 0;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #e8ecef;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      transform: translateY(-2px);
+    }
+
+    .step-card.hidden {
+      display: none !important;
+    }
+
+    .step-card.completed {
+      border-color: #27ae60;
+    }
+
+    .step-card.completed .step-header {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    }
+
+    /* Step Header */
+    .step-header {
+      background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .step-number {
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.5);
+      flex-shrink: 0;
+    }
+
+    .step-number.completed {
+      background: #fff;
+      color: #27ae60;
+      border-color: #fff;
+    }
+
+    .step-title-container {
+      flex: 1;
+    }
+
+    .step-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 2px 0;
+    }
+
+    .step-subtitle {
+      font-size: 12px;
+      color: rgba(255,255,255,0.85);
+      margin: 0;
+    }
+
+    /* Step Body */
+    .step-body {
+      padding: 24px;
+    }
+
+    /* File Input Area */
+    .file-input-area {
+      border: 2px dashed #d5dbdb;
+      border-radius: 12px;
+      padding: 30px 20px;
+      text-align: center;
+      background: #fafbfc;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .file-input-area:hover {
+      border-color: #3498db;
+      background: #f0f7fc;
+    }
+
+    .file-input-area.has-file {
+      border-color: #27ae60;
+      background: #f0fdf4;
+      border-style: solid;
+    }
+
+    .file-input-area input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .file-input-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .file-input-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 6px;
+    }
+
+    .file-input-hint {
+      font-size: 12px;
+      color: #7f8c8d;
+    }
+
+    .file-name-display {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #e8f4f8;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2980b9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .file-name-display.empty {
+      background: #f5f5f5;
+      color: #95a5a6;
+      font-weight: 400;
+    }
+
+    /* Location Status */
+    .location-container {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border: 1px solid #e8ecef;
+    }
+
+    .location-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .location-icon {
+      font-size: 18px;
+    }
+
+    .location-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .location-status {
+      font-size: 12px;
+      color: #7f8c8d;
+      padding: 8px 12px;
+      background: #fff;
+      border-radius: 6px;
+      border: 1px solid #e8ecef;
+    }
+
+    .location-status.capturing {
+      color: #f39c12;
+      background: #fffbeb;
+      border-color: #fcd34d;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .location-status.success {
+      color: #27ae60;
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+
+    .location-status.error {
+      color: #e67e22;
+      background: #fffbeb;
+      border-color: #fcd34d;
+    }
+
+    .location-coords {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #27ae60;
+      margin-top: 6px;
+    }
+
+    /* Action Button */
+    .action-btn {
+      width: 100%;
+      padding: 16px 24px;
+      margin-top: 20px;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .action-btn.upload-btn {
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(39,174,96,0.3);
+    }
+
+    .action-btn.upload-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #229954 0%, #27ae60 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(39,174,96,0.4);
+    }
+
+    .action-btn.download-btn {
+      background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(41,128,185,0.3);
+    }
+
+    .action-btn.download-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(41,128,185,0.4);
+    }
+
+    .action-btn:disabled {
+      background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .action-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .action-btn .btn-icon {
+      font-size: 18px;
+    }
+
+    /* Upload Status Messages */
+    .upload-message {
+      margin-top: 16px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .upload-message.loading {
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fcd34d;
+    }
+
+    .upload-message.success {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #6ee7b7;
+    }
+
+    .upload-message.error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+
+    .upload-message .msg-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    /* Completion Badge */
+    .completion-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #ecfdf5;
+      color: #047857;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 16px;
+      border: 1px solid #a7f3d0;
+    }
+
     @media (max-width: 900px) {
       body { padding: 15px 20px; font-size: 14px; }
       h2 { font-size: 20px; }
@@ -138,13 +491,16 @@
       .info-key { font-size: 13px; } .info-value { font-size: 12px; }
       th, td { padding: 8px 10px; font-size: 13px; }
       .section { font-size: 14px; padding: 10px 12px; }
+      .step-card { margin-bottom: 16px; }
+      .step-header { padding: 14px 16px; }
+      .step-body { padding: 20px; }
     }
     @media (max-width: 600px) {
       body { padding: 10px 12px; font-size: 12px; }
       h2 { font-size: 17px; margin-bottom: 12px; }
       .input-bar { flex-direction: column; align-items: stretch; gap: 8px; }
       #distributorNumberInput { width: 100%; font-size: 14px; padding: 10px; }
-      #loadBtn, #downloadPdfBtn { width: 100%; padding: 10px; font-size: 14px; text-align: center; }
+      #loadBtn { width: 100%; padding: 10px; font-size: 14px; text-align: center; }
       .distribution-hierarchy-container { flex-direction: column; gap: 10px; }
       .info-cards-container { flex-direction: column; gap: 8px; }
       .info-card { padding: 12px 10px; }
@@ -156,17 +512,30 @@
       .submit-btn { width: 100%; padding: 10px; font-size: 13px; }
       .toast-container { max-width: 280px; top: 10px; right: 10px; }
       .toast { padding: 12px 14px; font-size: 12px; }
+      .step-card { border-radius: 12px; margin-bottom: 14px; }
+      .step-header { padding: 12px 14px; gap: 10px; }
+      .step-number { width: 32px; height: 32px; font-size: 14px; }
+      .step-title { font-size: 14px; }
+      .step-subtitle { font-size: 11px; }
+      .step-body { padding: 16px; }
+      .file-input-area { padding: 24px 16px; }
+      .file-input-icon { font-size: 40px; }
+      .file-input-text { font-size: 14px; }
+      .action-btn { padding: 14px 20px; font-size: 14px; }
+      .workflow-title { font-size: 16px; }
     }
     @media (max-width: 400px) {
       body { padding: 8px; font-size: 11px; }
       h2 { font-size: 15px; }
       th, td { padding: 5px 6px; font-size: 10px; }
       .section { font-size: 11px; padding: 7px 8px; }
+      .step-header { padding: 10px 12px; }
+      .step-body { padding: 14px; }
     }
     @media print {
       @page { size: A4 portrait; margin: 10mm; }
       body { margin: 0; padding: 5mm; background: white; font-size: 10px; }
-      .input-bar, #downloadPdfBtn, .toast-container, .submit-btn { display: none !important; }
+      .input-bar, .toast-container, .submit-btn, .workflow-container { display: none !important; }
       .distribution-hierarchy-container { flex-direction: row; gap: 8px; }
       .distribution-section, .hierarchy-section { flex: 0 0 48%; }
       table { font-size: 9px; margin-bottom: 8px; box-shadow: none; }
@@ -187,7 +556,6 @@
     </div>
 
     <div id="messageContainer" style="display: none;"></div>
-    <button id="downloadPdfBtn" onclick="downloadPageAsPdf()" type="button" disabled>📄 Download as PDF</button>
 
     <div id="mainContent" style="display: none;">
       <div class="distribution-hierarchy-container">
@@ -284,6 +652,111 @@
           </table>
         </div>
       </div>
+
+      <!-- ==================== WORKFLOW SECTION ==================== -->
+      <div class="workflow-container">
+        <div class="workflow-title">Document Submission Workflow</div>
+
+        <!-- STEP 1: NDC Certificate Upload -->
+        <div id="ndcUploadSection" class="step-card hidden">
+          <div class="step-header">
+            <div class="step-number" id="ndcStepNumber">1</div>
+            <div class="step-title-container">
+              <div class="step-title">Upload NDC Certificate</div>
+              <div class="step-subtitle">No Due Certificate (PDF only, max 5MB)</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="file-input-area" id="ndcFileArea">
+              <input type="file" id="ndcFileInput" accept=".pdf,application/pdf" onchange="handleNdcFileSelect(this)">
+              <span class="file-input-icon">📄</span>
+              <div class="file-input-text">Tap to select PDF file</div>
+              <div class="file-input-hint">or drag and drop here</div>
+            </div>
+            
+            <div class="file-name-display empty" id="ndcFileName">No file selected</div>
+            
+            <div class="location-container">
+              <div class="location-header">
+                <span class="location-icon">📍</span>
+                <span class="location-title">Location Capture</span>
+              </div>
+              <div class="location-status" id="ndcLocationStatus">Waiting for upload...</div>
+              <div class="location-coords" id="ndcLocationCoords" style="display: none;"></div>
+            </div>
+            
+            <button type="button" class="action-btn upload-btn" id="ndcUploadBtn" onclick="uploadNdcCertificate()" disabled>
+              <span class="btn-icon">⬆️</span>
+              <span>Upload NDC Certificate</span>
+            </button>
+            
+            <div class="upload-message" id="ndcUploadStatus" style="display: none;"></div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Download ROI PDF -->
+        <div id="downloadPdfSection" class="step-card hidden">
+          <div class="step-header">
+            <div class="step-number" id="downloadStepNumber">2</div>
+            <div class="step-title-container">
+              <div class="step-title">Download ROI Report</div>
+              <div class="step-subtitle">Generate and download PDF with signature boxes</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div style="text-align: center; padding: 20px 0;">
+              <span style="font-size: 56px; display: block; margin-bottom: 16px;">📥</span>
+              <p style="color: #5d6d7e; font-size: 14px; margin: 0 0 8px 0;">Click below to generate your ROI report</p>
+              <p style="color: #95a5a6; font-size: 12px; margin: 0;">The PDF will include signature boxes for ZSM, TSM, and Distributor</p>
+            </div>
+            
+            <button type="button" class="action-btn download-btn" id="downloadPdfBtn" onclick="downloadPageAsPdf()">
+              <span class="btn-icon">📄</span>
+              <span>Download ROI PDF</span>
+            </button>
+            
+            <div class="upload-message" id="downloadStatus" style="display: none;"></div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Upload Signed ROI PDF -->
+        <div id="roiUploadSection" class="step-card hidden">
+          <div class="step-header">
+            <div class="step-number" id="roiStepNumber">3</div>
+            <div class="step-title-container">
+              <div class="step-title">Upload Signed ROI PDF</div>
+              <div class="step-subtitle">Upload the signed document (PDF only, max 5MB)</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="file-input-area" id="roiFileArea">
+              <input type="file" id="roiFileInput" accept=".pdf,application/pdf" onchange="handleRoiFileSelect(this)">
+              <span class="file-input-icon">✍️</span>
+              <div class="file-input-text">Tap to select signed PDF</div>
+              <div class="file-input-hint">or drag and drop here</div>
+            </div>
+            
+            <div class="file-name-display empty" id="roiFileName">No file selected</div>
+            
+            <div class="location-container">
+              <div class="location-header">
+                <span class="location-icon">📍</span>
+                <span class="location-title">Location Capture</span>
+              </div>
+              <div class="location-status" id="roiLocationStatus">Waiting for upload...</div>
+              <div class="location-coords" id="roiLocationCoords" style="display: none;"></div>
+            </div>
+            
+            <button type="button" class="action-btn upload-btn" id="roiUploadBtn" onclick="uploadSignedRoi()" disabled>
+              <span class="btn-icon">⬆️</span>
+              <span>Upload Signed ROI</span>
+            </button>
+            
+            <div class="upload-message" id="roiUploadStatus" style="display: none;"></div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
@@ -304,6 +777,17 @@
     let currentDistributorData = null;
     let currentDistributorId = '';
     let expensesSubmitted = false;
+
+    // ===== GOOGLE APPS SCRIPT WEB APP URL =====
+    // ⚠️ REPLACE THIS WITH YOUR DEPLOYED APPS SCRIPT WEB APP URL
+    const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+    // ===== STATE MANAGEMENT =====
+    let ndcUploaded = false;
+    let pdfDownloaded = false;
+    let roiUploaded = false;
+    let ndcFile = null;
+    let roiFile = null;
 
     // ===== TOAST =====
     function showToast(message, type = 'success') {
@@ -333,61 +817,197 @@
       const val = parseFloat(num || 0);
       return 'Rs. ' + new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
     }
-    function pdfPercent(num) {
-      return (parseFloat(num || 0) * 100).toFixed(2) + '%';
-    }
-    function pdfNum(num) {
-      return new Intl.NumberFormat('en-IN').format(parseFloat(num || 0));
+
+    // ===== GET PREVIOUS MONTH =====
+    function getPreviousMonth() {
+      const now = new Date();
+      const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      return prevMonth.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
     }
 
-    // ===== CALCULATE ALL VALUES USING EXACT FIELD NAMES =====
+    // ===== ENHANCED LOCATION CAPTURE (iOS & Android Compatible) =====
+    function captureLocation(statusElId, coordsElId) {
+      return new Promise((resolve) => {
+        const statusEl = document.getElementById(statusElId);
+        const coordsEl = document.getElementById(coordsElId);
+        
+        // Update UI to show capturing
+        statusEl.textContent = '📡 Capturing location...';
+        statusEl.className = 'location-status capturing';
+        coordsEl.style.display = 'none';
+
+        // Check if geolocation is supported
+        if (!navigator.geolocation) {
+          statusEl.textContent = '⚠️ Location not supported by browser';
+          statusEl.className = 'location-status error';
+          resolve({ lat: 'Not Supported', lng: 'Not Supported', accuracy: null });
+          return;
+        }
+
+        // Check if page is served over HTTPS (required for iOS)
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+          statusEl.textContent = '⚠️ HTTPS required for location';
+          statusEl.className = 'location-status error';
+          resolve({ lat: 'HTTPS Required', lng: 'HTTPS Required', accuracy: null });
+          return;
+        }
+
+        let watchId = null;
+        let bestPosition = null;
+        let attempts = 0;
+        const maxAttempts = 3;
+        const timeoutDuration = 15000; // 15 seconds total
+
+        // Success callback
+        const onSuccess = (position) => {
+          attempts++;
+          
+          const newAccuracy = position.coords.accuracy;
+          
+          // Keep the most accurate position
+          if (!bestPosition || newAccuracy < bestPosition.coords.accuracy) {
+            bestPosition = position;
+          }
+
+          // Update status with current accuracy
+          statusEl.textContent = `📡 Getting precise location... (${Math.round(newAccuracy)}m accuracy)`;
+
+          // If accuracy is good enough (< 100m) or max attempts reached
+          if (newAccuracy < 100 || attempts >= maxAttempts) {
+            if (watchId) {
+              navigator.geolocation.clearWatch(watchId);
+            }
+            
+            const lat = bestPosition.coords.latitude;
+            const lng = bestPosition.coords.longitude;
+            const accuracy = Math.round(bestPosition.coords.accuracy);
+
+            statusEl.textContent = `✅ Location captured (±${accuracy}m)`;
+            statusEl.className = 'location-status success';
+            coordsEl.textContent = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+            coordsEl.style.display = 'block';
+
+            resolve({ lat, lng, accuracy });
+          }
+        };
+
+        // Error callback
+        const onError = (error) => {
+          if (watchId) {
+            navigator.geolocation.clearWatch(watchId);
+          }
+
+          let errorMessage = '';
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = '⚠️ Location permission denied';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = '⚠️ Location unavailable';
+              break;
+            case error.TIMEOUT:
+              errorMessage = '⚠️ Location request timed out';
+              break;
+            default:
+              errorMessage = '⚠️ Location error occurred';
+          }
+
+          // If we have a best position from previous attempts, use it
+          if (bestPosition) {
+            const lat = bestPosition.coords.latitude;
+            const lng = bestPosition.coords.longitude;
+            const accuracy = Math.round(bestPosition.coords.accuracy);
+
+            statusEl.textContent = `✅ Location captured (±${accuracy}m)`;
+            statusEl.className = 'location-status success';
+            coordsEl.textContent = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+            coordsEl.style.display = 'block';
+
+            resolve({ lat, lng, accuracy });
+          } else {
+            statusEl.textContent = errorMessage;
+            statusEl.className = 'location-status error';
+            resolve({ lat: 'Error', lng: 'Error', accuracy: null, error: errorMessage });
+          }
+        };
+
+        // Options for high accuracy (works better on mobile)
+        const options = {
+          enableHighAccuracy: true,  // Use GPS if available
+          timeout: timeoutDuration,
+          maximumAge: 0  // Don't use cached position
+        };
+
+        // First try to get a quick position
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            bestPosition = position;
+            
+            // Now watch for a more accurate position
+            watchId = navigator.geolocation.watchPosition(onSuccess, onError, options);
+            
+            // Set a timeout to stop watching after timeoutDuration
+            setTimeout(() => {
+              if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+                
+                if (bestPosition) {
+                  const lat = bestPosition.coords.latitude;
+                  const lng = bestPosition.coords.longitude;
+                  const accuracy = Math.round(bestPosition.coords.accuracy);
+
+                  statusEl.textContent = `✅ Location captured (±${accuracy}m)`;
+                  statusEl.className = 'location-status success';
+                  coordsEl.textContent = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+                  coordsEl.style.display = 'block';
+
+                  resolve({ lat, lng, accuracy });
+                }
+              }
+            }, timeoutDuration);
+          },
+          onError,
+          { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 } // Quick first attempt
+        );
+
+        // Fallback timeout
+        setTimeout(() => {
+          if (watchId) {
+            navigator.geolocation.clearWatch(watchId);
+          }
+          
+          if (!bestPosition) {
+            statusEl.textContent = '⚠️ Could not get location';
+            statusEl.className = 'location-status error';
+            resolve({ lat: 'Timeout', lng: 'Timeout', accuracy: null });
+          }
+        }, timeoutDuration + 2000);
+      });
+    }
+
+    // ===== CALCULATE ALL VALUES =====
     function calculateAllValues(data) {
-      // INVESTMENT = TOTAL (TOTAL field contains INVESTMENT value)
       const INVESTMENT = parseFloat(data.TOTAL || 0);
-      
-      // Get base values from Firebase fields
       const LAPU_COMMISSION_A = parseFloat(data.LAPU_COMMISSION_A || 0);
       const PLI_AVG = parseFloat(data.PLI_AVG || 0);
       const DIST_SUBSIDY = parseFloat(data.DIST_SUBSIDY || 0);
       const STORE_NET_EARNINGS = parseFloat(data.STORE_NET_EARNINGS || 0);
-      
-      // Get expense values from Firebase fields
       const RENT = parseFloat(data.RENT || 0);
       const ELECTRICITY = parseFloat(data.ELECTRICITY || 0);
       const MISC = parseFloat(data.MISC || 0);
       const ADDITIONAL_MIS_SALARY = parseFloat(data.ADDITIONAL_MIS_SALARY || 0);
-      
-      // TOTAL_EXPENSES (in Expenses Details) = ASC_FOS_SALARY_13000
       const ASC_FOS_SALARY_13000 = parseFloat(data.ASC_FOS_SALARY_13000 || 0);
       const TOTAL_EXPENSES = ASC_FOS_SALARY_13000;
-      
-      // OTHER_EXPENSES_TOTAL = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY
       const OTHER_EXPENSES_TOTAL = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY;
-      
-      // EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL
       const EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL;
-      
-      // TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY
       const TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY;
-      
-      // GROSS_EARNING = TOTAL_GROSS_EARNINGS + STORE_NET_EARNINGS
       const GROSS_EARNING = TOTAL_GROSS_EARNINGS + STORE_NET_EARNINGS;
-      
-      // TAKE_HOME = GROSS_EARNING - EXPENSES
       const TAKE_HOME = GROSS_EARNING - EXPENSES;
-      
-      // ROI = TAKE_HOME / INVESTMENT (as decimal)
       const ROI = INVESTMENT > 0 ? (TAKE_HOME / INVESTMENT) : 0;
 
       return {
-        INVESTMENT: INVESTMENT,
-        TOTAL_GROSS_EARNINGS: TOTAL_GROSS_EARNINGS,
-        GROSS_EARNING: GROSS_EARNING,
-        TOTAL_EXPENSES: TOTAL_EXPENSES,
-        OTHER_EXPENSES_TOTAL: OTHER_EXPENSES_TOTAL,
-        EXPENSES: EXPENSES,
-        TAKE_HOME: TAKE_HOME,
-        ROI: ROI
+        INVESTMENT, TOTAL_GROSS_EARNINGS, GROSS_EARNING, TOTAL_EXPENSES,
+        OTHER_EXPENSES_TOTAL, EXPENSES, TAKE_HOME, ROI
       };
     }
 
@@ -399,6 +1019,233 @@
       const ADDITIONAL_MIS_SALARY = parseFloat(data.ADDITIONAL_MIS_SALARY || 0);
       const STORE_NET_EARNINGS = parseFloat(data.STORE_NET_EARNINGS || 0);
       return (RENT > 0 || ELECTRICITY > 0 || MISC > 0 || ADDITIONAL_MIS_SALARY > 0 || STORE_NET_EARNINGS > 0);
+    }
+
+    // ===== UPDATE UI VISIBILITY =====
+    function updateUIVisibility() {
+      const ndcSection = document.getElementById('ndcUploadSection');
+      const downloadSection = document.getElementById('downloadPdfSection');
+      const roiSection = document.getElementById('roiUploadSection');
+
+      // Show NDC upload after expenses submitted
+      if (expensesSubmitted) {
+        ndcSection.classList.remove('hidden');
+      } else {
+        ndcSection.classList.add('hidden');
+      }
+
+      // Show Download PDF section after NDC uploaded
+      if (ndcUploaded) {
+        downloadSection.classList.remove('hidden');
+        document.getElementById('ndcStepNumber').classList.add('completed');
+        document.getElementById('ndcStepNumber').textContent = '✓';
+        document.getElementById('ndcUploadSection').classList.add('completed');
+      } else {
+        downloadSection.classList.add('hidden');
+      }
+
+      // Show ROI upload after PDF downloaded
+      if (pdfDownloaded) {
+        roiSection.classList.remove('hidden');
+        document.getElementById('downloadStepNumber').classList.add('completed');
+        document.getElementById('downloadStepNumber').textContent = '✓';
+        document.getElementById('downloadPdfSection').classList.add('completed');
+      } else {
+        roiSection.classList.add('hidden');
+      }
+
+      // Mark ROI step complete
+      if (roiUploaded) {
+        document.getElementById('roiStepNumber').classList.add('completed');
+        document.getElementById('roiStepNumber').textContent = '✓';
+        document.getElementById('roiUploadSection').classList.add('completed');
+      }
+    }
+
+    // ===== FILE HANDLERS =====
+    function handleNdcFileSelect(input) {
+      const file = input.files[0];
+      const fileNameEl = document.getElementById('ndcFileName');
+      const uploadBtn = document.getElementById('ndcUploadBtn');
+      const fileArea = document.getElementById('ndcFileArea');
+      
+      if (file) {
+        if (file.type !== 'application/pdf') {
+          showToast('⚠️ Please select a PDF file only', 'error');
+          input.value = '';
+          fileNameEl.textContent = 'No file selected';
+          fileNameEl.classList.add('empty');
+          fileArea.classList.remove('has-file');
+          uploadBtn.disabled = true;
+          ndcFile = null;
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('⚠️ File size must be less than 5MB', 'error');
+          input.value = '';
+          fileNameEl.textContent = 'No file selected';
+          fileNameEl.classList.add('empty');
+          fileArea.classList.remove('has-file');
+          uploadBtn.disabled = true;
+          ndcFile = null;
+          return;
+        }
+        ndcFile = file;
+        fileNameEl.textContent = '📄 ' + file.name;
+        fileNameEl.classList.remove('empty');
+        fileArea.classList.add('has-file');
+        uploadBtn.disabled = false;
+      } else {
+        ndcFile = null;
+        fileNameEl.textContent = 'No file selected';
+        fileNameEl.classList.add('empty');
+        fileArea.classList.remove('has-file');
+        uploadBtn.disabled = true;
+      }
+    }
+
+    function handleRoiFileSelect(input) {
+      const file = input.files[0];
+      const fileNameEl = document.getElementById('roiFileName');
+      const uploadBtn = document.getElementById('roiUploadBtn');
+      const fileArea = document.getElementById('roiFileArea');
+      
+      if (file) {
+        if (file.type !== 'application/pdf') {
+          showToast('⚠️ Please select a PDF file only', 'error');
+          input.value = '';
+          fileNameEl.textContent = 'No file selected';
+          fileNameEl.classList.add('empty');
+          fileArea.classList.remove('has-file');
+          uploadBtn.disabled = true;
+          roiFile = null;
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('⚠️ File size must be less than 5MB', 'error');
+          input.value = '';
+          fileNameEl.textContent = 'No file selected';
+          fileNameEl.classList.add('empty');
+          fileArea.classList.remove('has-file');
+          uploadBtn.disabled = true;
+          roiFile = null;
+          return;
+        }
+        roiFile = file;
+        fileNameEl.textContent = '📄 ' + file.name;
+        fileNameEl.classList.remove('empty');
+        fileArea.classList.add('has-file');
+        uploadBtn.disabled = false;
+      } else {
+        roiFile = null;
+        fileNameEl.textContent = 'No file selected';
+        fileNameEl.classList.add('empty');
+        fileArea.classList.remove('has-file');
+        uploadBtn.disabled = true;
+      }
+    }
+
+    // ===== UPLOAD TO GOOGLE SHEETS/DRIVE =====
+    async function uploadToGoogleSheets(file, uploadType) {
+      const statusEl = document.getElementById(uploadType === 'ndc' ? 'ndcUploadStatus' : 'roiUploadStatus');
+      const uploadBtn = document.getElementById(uploadType === 'ndc' ? 'ndcUploadBtn' : 'roiUploadBtn');
+      const statusElId = uploadType === 'ndc' ? 'ndcLocationStatus' : 'roiLocationStatus';
+      const coordsElId = uploadType === 'ndc' ? 'ndcLocationCoords' : 'roiLocationCoords';
+      
+      statusEl.style.display = 'flex';
+      statusEl.className = 'upload-message loading';
+      statusEl.innerHTML = '<span class="msg-icon">⏳</span><span>Capturing location...</span>';
+      uploadBtn.disabled = true;
+
+      // Capture location with enhanced accuracy
+      const location = await captureLocation(statusElId, coordsElId);
+
+      statusEl.innerHTML = '<span class="msg-icon">📤</span><span>Uploading file...</span>';
+
+      // Convert file to base64
+      const base64Data = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.readAsDataURL(file);
+      });
+
+      // Prepare location string
+      let locationStr = '';
+      if (location.lat !== 'Error' && location.lat !== 'Timeout' && location.lat !== 'Not Supported' && location.lat !== 'HTTPS Required') {
+        locationStr = `${location.lat},${location.lng}`;
+        if (location.accuracy) {
+          locationStr += ` (±${location.accuracy}m)`;
+        }
+      } else {
+        locationStr = `${location.lat}`;
+      }
+
+      const payload = {
+        uploadType: uploadType,
+        fileName: file.name,
+        fileData: base64Data,
+        distributorNumber: currentDistributorData?.DISTRIBUTOR_LAPU_NUMBER || '',
+        distributorName: currentDistributorData?.DISTRIBUTOR_NAME || '',
+        location: locationStr,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        statusEl.className = 'upload-message success';
+        statusEl.innerHTML = '<span class="msg-icon">✅</span><span>Upload successful!</span>';
+        return true;
+      } catch (error) {
+        console.error('Upload error:', error);
+        statusEl.className = 'upload-message error';
+        statusEl.innerHTML = `<span class="msg-icon">❌</span><span>Upload failed: ${error.message}</span>`;
+        uploadBtn.disabled = false;
+        return false;
+      }
+    }
+
+    async function uploadNdcCertificate() {
+      if (!ndcFile) {
+        showToast('⚠️ Please select a file first', 'error');
+        return;
+      }
+
+      const success = await uploadToGoogleSheets(ndcFile, 'ndc');
+      
+      if (success) {
+        ndcUploaded = true;
+        showToast('✅ NDC Certificate uploaded! You can now download the PDF.');
+        document.getElementById('ndcUploadBtn').disabled = true;
+        document.getElementById('ndcFileInput').disabled = true;
+        document.getElementById('ndcFileArea').style.pointerEvents = 'none';
+        document.getElementById('ndcFileArea').style.opacity = '0.7';
+        updateUIVisibility();
+      }
+    }
+
+    async function uploadSignedRoi() {
+      if (!roiFile) {
+        showToast('⚠️ Please select a file first', 'error');
+        return;
+      }
+
+      const success = await uploadToGoogleSheets(roiFile, 'roi');
+      
+      if (success) {
+        roiUploaded = true;
+        showToast('✅ Signed ROI uploaded successfully! Process complete.');
+        document.getElementById('roiUploadBtn').disabled = true;
+        document.getElementById('roiFileInput').disabled = true;
+        document.getElementById('roiFileArea').style.pointerEvents = 'none';
+        document.getElementById('roiFileArea').style.opacity = '0.7';
+        updateUIVisibility();
+      }
     }
 
     // ===== VALIDATION =====
@@ -414,26 +1261,16 @@
 
     // ===== POPULATE =====
     function populateData(data) {
-      // Calculate all values
       const calculated = calculateAllValues(data);
-      
-      // Check if expenses have been filled
       expensesSubmitted = areExpensesFilled(data);
 
       document.getElementById('distributorNumber').textContent = data.DISTRIBUTOR_LAPU_NUMBER || '-';
       document.getElementById('distributorName').textContent = data.DISTRIBUTOR_NAME || '-';
-      
-      // INVESTMENT = TOTAL (TOTAL field contains INVESTMENT value)
       document.getElementById('investment').textContent = formatINR(calculated.INVESTMENT);
       document.getElementById('avgStock').textContent = formatINR(data.AVG_STOCK);
-      
-      // GROSS_EARNING = TOTAL_GROSS_EARNINGS + STORE_NET_EARNINGS
       document.getElementById('grossEarning').textContent = formatINR(calculated.GROSS_EARNING);
-      
-      // EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL
       document.getElementById('expenses').textContent = formatINR(calculated.EXPENSES);
-      
-      // Show ROI and Take Home only if expenses are submitted
+
       const takeHomeEl = document.getElementById('takeHome');
       const roiEl = document.getElementById('roi');
       
@@ -449,14 +1286,12 @@
         roiEl.classList.add('pending-field');
       }
 
-      // Investment Details - TOTAL contains INVESTMENT value
       document.getElementById('totalWithSecurity').textContent = formatINR(data.TOTAL);
       document.getElementById('lapuDthLapu').textContent = formatINR(data.LAPU_DTH_LAPU_2DAYS);
       const stockCell = document.getElementById('actualStockNorm');
       stockCell.textContent = formatINR(data.AVG_STOCK);
       stockCell.style.color = parseFloat(data.AVG_STOCK || 0) > parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0) ? 'green' : 'red';
 
-      // TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY
       document.getElementById('totalGrossEarnings').textContent = formatINR(calculated.TOTAL_GROSS_EARNINGS);
       document.getElementById('lapuCommissionCircle').textContent = parseFloat(data.LAPU_COMMISSION_C || 0) + '%';
       document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
@@ -472,7 +1307,6 @@
       document.getElementById('avgMonthlyGross').textContent = indianFormat(data.AVG_MONTHLY_GROSS_IN);
       document.getElementById('lapuSecondary').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
 
-      // TOTAL_EXPENSES = ASC_FOS_SALARY_13000
       document.getElementById('totalExpenses').textContent = formatINR(calculated.TOTAL_EXPENSES);
       document.getElementById('ascRequired').textContent = formatNum(data.ASC_REQUIRED);
       document.getElementById('activeAscCount').textContent = formatNum(data.ACTIVE_ASC_COUNT_AS_PER_NORM);
@@ -482,11 +1316,9 @@
       document.getElementById('ascSubsidyMissed').textContent = formatINR(data.ASC_SUBSIDY_OPPORTUNITY_MISSED);
       document.getElementById('additionalAscRequired').textContent = formatNum(data.ADDITIONAL_ACTIVE_ASC);
 
-      // Handle CLAWBACK/PENALTY field
       const clawbackValue = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || 0;
       document.getElementById('clawback').textContent = indianFormat(clawbackValue);
 
-      // Populate input fields with existing Firebase data
       document.getElementById('rentInput').value = data.RENT || '';
       document.getElementById('electricityInput').value = data.ELECTRICITY || '';
       document.getElementById('miscInput').value = data.MISC || '';
@@ -495,7 +1327,55 @@
 
       updateOtherExpensesTotal();
       document.getElementById('mainContent').style.display = 'block';
-      document.getElementById('downloadPdfBtn').disabled = false;
+      
+      // Reset upload states for new distributor
+      ndcUploaded = false;
+      pdfDownloaded = false;
+      roiUploaded = false;
+      ndcFile = null;
+      roiFile = null;
+      
+      // Reset NDC section
+      document.getElementById('ndcFileInput').value = '';
+      document.getElementById('ndcFileInput').disabled = false;
+      document.getElementById('ndcFileName').textContent = 'No file selected';
+      document.getElementById('ndcFileName').classList.add('empty');
+      document.getElementById('ndcUploadBtn').disabled = true;
+      document.getElementById('ndcUploadStatus').style.display = 'none';
+      document.getElementById('ndcStepNumber').classList.remove('completed');
+      document.getElementById('ndcStepNumber').textContent = '1';
+      document.getElementById('ndcLocationStatus').textContent = 'Waiting for upload...';
+      document.getElementById('ndcLocationStatus').className = 'location-status';
+      document.getElementById('ndcLocationCoords').style.display = 'none';
+      document.getElementById('ndcUploadSection').classList.remove('completed');
+      document.getElementById('ndcFileArea').style.pointerEvents = 'auto';
+      document.getElementById('ndcFileArea').style.opacity = '1';
+      document.getElementById('ndcFileArea').classList.remove('has-file');
+      
+      // Reset Download section
+      document.getElementById('downloadStepNumber').classList.remove('completed');
+      document.getElementById('downloadStepNumber').textContent = '2';
+      document.getElementById('downloadPdfSection').classList.remove('completed');
+      document.getElementById('downloadStatus').style.display = 'none';
+      
+      // Reset ROI section
+      document.getElementById('roiFileInput').value = '';
+      document.getElementById('roiFileInput').disabled = false;
+      document.getElementById('roiFileName').textContent = 'No file selected';
+      document.getElementById('roiFileName').classList.add('empty');
+      document.getElementById('roiUploadBtn').disabled = true;
+      document.getElementById('roiUploadStatus').style.display = 'none';
+      document.getElementById('roiStepNumber').classList.remove('completed');
+      document.getElementById('roiStepNumber').textContent = '3';
+      document.getElementById('roiLocationStatus').textContent = 'Waiting for upload...';
+      document.getElementById('roiLocationStatus').className = 'location-status';
+      document.getElementById('roiLocationCoords').style.display = 'none';
+      document.getElementById('roiUploadSection').classList.remove('completed');
+      document.getElementById('roiFileArea').style.pointerEvents = 'auto';
+      document.getElementById('roiFileArea').style.opacity = '1';
+      document.getElementById('roiFileArea').classList.remove('has-file');
+      
+      updateUIVisibility();
     }
 
     function updateOtherExpensesTotal() {
@@ -523,7 +1403,6 @@
           const doc = snapshot.docs[0];
           currentDistributorData = doc.data();
           currentDistributorId = doc.id;
-          
           populateData(currentDistributorData);
           showToast('✅ Data loaded successfully!');
         } else {
@@ -553,69 +1432,51 @@
       if (!isValid) { showToast('⚠️ Fix values outside range!', 'error'); return; }
       
       const fd = new FormData(e.target);
-      
-      // Get user input values using EXACT FIELD NAMES
       const RENT = parseFloat(fd.get('RENT')) || 0;
       const ELECTRICITY = parseFloat(fd.get('ELECTRICITY')) || 0;
       const MISC = parseFloat(fd.get('MISC')) || 0;
       const ADDITIONAL_MIS_SALARY = parseFloat(fd.get('ADDITIONAL_MIS_SALARY')) || 0;
       const STORE_NET_EARNINGS = parseFloat(fd.get('STORE_NET_EARNINGS')) || 0;
       
-      // Create updated data object for calculations
       const updatedData = {
         ...currentDistributorData,
-        RENT: RENT,
-        ELECTRICITY: ELECTRICITY,
-        MISC: MISC,
-        ADDITIONAL_MIS_SALARY: ADDITIONAL_MIS_SALARY,
-        STORE_NET_EARNINGS: STORE_NET_EARNINGS
+        RENT, ELECTRICITY, MISC, ADDITIONAL_MIS_SALARY, STORE_NET_EARNINGS
       };
       
-      // Calculate all derived values
       const calculated = calculateAllValues(updatedData);
       
       try {
-        // Prepare all fields to save to Firebase using EXACT FIELD NAMES
         const fieldsToSave = {
-          // User input fields (EXACT FIELD NAMES)
-          RENT: RENT,
-          ELECTRICITY: ELECTRICITY,
-          MISC: MISC,
-          ADDITIONAL_MIS_SALARY: ADDITIONAL_MIS_SALARY,
-          STORE_NET_EARNINGS: STORE_NET_EARNINGS,
-          
-          // Calculated fields (EXACT FIELD NAMES)
-          INVESTMENT: calculated.INVESTMENT,  // INVESTMENT = TOTAL
+          RENT, ELECTRICITY, MISC, ADDITIONAL_MIS_SALARY, STORE_NET_EARNINGS,
+          INVESTMENT: calculated.INVESTMENT,
           OTHER_EXPENSES_TOTAL: calculated.OTHER_EXPENSES_TOTAL,
-          TOTAL_EXPENSES: calculated.TOTAL_EXPENSES,  // TOTAL_EXPENSES = ASC_FOS_SALARY_13000
-          EXPENSES: calculated.EXPENSES,  // EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL
+          TOTAL_EXPENSES: calculated.TOTAL_EXPENSES,
+          EXPENSES: calculated.EXPENSES,
           TOTAL_GROSS_EARNINGS: calculated.TOTAL_GROSS_EARNINGS,
           GROSS_EARNING: calculated.GROSS_EARNING,
           TAKE_HOME: calculated.TAKE_HOME,
           ROI: calculated.ROI
         };
         
-        // Update Firebase
         await db.collection('ROIWEB-B').doc(currentDistributorId).update(fieldsToSave);
-        
-        // Update local data
         currentDistributorData = { ...currentDistributorData, ...fieldsToSave };
         expensesSubmitted = true;
         populateData(currentDistributorData);
         
-        showToast('✅ All data saved successfully!', 'success');
+        showToast('✅ Expenses saved! Now upload NDC Certificate.', 'success');
+        updateUIVisibility();
         
-        // Log saved fields for verification
-        console.log('Saved to Firebase with field names:', fieldsToSave);
-        
+        // Scroll to NDC upload section
+        setTimeout(() => {
+          document.getElementById('ndcUploadSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
       } catch (error) { 
         showToast('❌ Save failed: ' + error.message, 'error'); 
-        console.error('Save error:', error);
       }
     });
 
     // ================================================
-    // 📄 LUXURY jsPDF PDF — FULL PAGE, POSITION-BASED
+    // 📄 PDF GENERATION WITH SIGNATURE BOXES
     // ================================================
     async function downloadPageAsPdf() {
       if (!currentDistributorData) {
@@ -624,8 +1485,13 @@
       }
 
       const btn = document.getElementById('downloadPdfBtn');
+      const statusEl = document.getElementById('downloadStatus');
       btn.disabled = true;
-      btn.textContent = '⏳ Generating...';
+      btn.innerHTML = '<span class="btn-icon">⏳</span><span>Generating...</span>';
+      
+      statusEl.style.display = 'flex';
+      statusEl.className = 'upload-message loading';
+      statusEl.innerHTML = '<span class="msg-icon">⏳</span><span>Generating PDF...</span>';
 
       const overlay = document.createElement('div');
       overlay.className = 'pdf-overlay';
@@ -637,7 +1503,6 @@
         const pdf = new jsPDF('portrait', 'mm', 'a4');
         const d = currentDistributorData;
 
-        // ==================== DIMENSIONS ====================
         const PW = 210, PH = 297, M = 8;
         const CW = PW - 2 * M;
         const COL_GAP = 4;
@@ -649,29 +1514,16 @@
         const SEC_H = 9;
         const GAP = 3;
         const CARD_H = 20;
-        const HL_H = 14;
 
-        // ==================== LUXURY PALETTE ====================
         const C = {
-          headerBg:   [26, 82, 118],
-          primary:    [41, 128, 185],
-          secondary:  [234, 244, 249],
-          accent:     [243, 156, 18],
-          white:      [255, 255, 255],
-          dark:       [44, 62, 80],
-          border:     [189, 195, 199],
-          green:      [39, 174, 96],
-          red:        [231, 76, 60],
-          lightGreen: [212, 239, 223],
-          altRow:     [249, 251, 252],
-          cardBg:     [234, 244, 249],
-          highlight:  [52, 73, 94],
-          darkBlue:   [21, 67, 96],
+          headerBg: [26, 82, 118], primary: [41, 128, 185], secondary: [234, 244, 249],
+          accent: [243, 156, 18], white: [255, 255, 255], dark: [44, 62, 80],
+          border: [189, 195, 199], green: [39, 174, 96], red: [231, 76, 60],
+          lightGreen: [212, 239, 223], altRow: [249, 251, 252], cardBg: [234, 244, 249],
+          highlight: [52, 73, 94], darkBlue: [21, 67, 96]
         };
 
-        // ==================== CALCULATED VALUES (using EXACT FIELD NAMES) ====================
         const calculated = calculateAllValues(d);
-        
         const INVESTMENT = calculated.INVESTMENT;
         const TOTAL_GROSS_EARNINGS = calculated.TOTAL_GROSS_EARNINGS;
         const GROSS_EARNING = calculated.GROSS_EARNING;
@@ -683,7 +1535,6 @@
         const roiPercent = (ROI * 100).toFixed(2) + '%';
         const isGood = ROI >= 0;
 
-        // Get values using EXACT FIELD NAMES
         const RENT = parseFloat(d.RENT || 0);
         const ELECTRICITY = parseFloat(d.ELECTRICITY || 0);
         const MISC = parseFloat(d.MISC || 0);
@@ -691,14 +1542,8 @@
         const STORE_NET_EARNINGS = parseFloat(d.STORE_NET_EARNINGS || 0);
         const clawback = d['CLAWBACK/PENALTY'] || d['CLAWBACK_PENALTY'] || 0;
 
-        const SITE_COUNT = parseFloat(d.SITE_COUNT || 0);
-
-        // ==================== FORMAT HELPERS ====================
         const fR = n => 'Rs. ' + new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(parseFloat(n || 0));
-        const fP = n => (parseFloat(n || 0) * 100).toFixed(2) + '%';
         const fN = n => new Intl.NumberFormat('en-IN').format(parseFloat(n || 0));
-
-        // ==================== DRAW HELPERS ====================
 
         function drawHeader() {
           pdf.setFillColor(...C.headerBg);
@@ -723,13 +1568,13 @@
           pdf.setFont('helvetica', 'bold');
           pdf.text('ROI: ' + roiPercent, PW - M - bW / 2, 10.5, { align: 'center' });
 
-          const dateStr = new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+          const dateStr = getPreviousMonth();
           pdf.setFillColor(...C.accent);
-          pdf.roundedRect(M, 5, 22, 8, 2, 2, 'F');
+          pdf.roundedRect(M, 5, 24, 8, 2, 2, 'F');
           pdf.setTextColor(...C.dark);
           pdf.setFontSize(6.5);
           pdf.setFont('helvetica', 'bold');
-          pdf.text(dateStr, M + 11, 10, { align: 'center' });
+          pdf.text(dateStr, M + 12, 10, { align: 'center' });
 
           return 27;
         }
@@ -803,36 +1648,77 @@
           pdf.text(v, x + w / 2, y + 14, { align: 'center' });
         }
 
-        function drawHighlight(label, value, y, x, w, color) {
-          pdf.setFillColor(...color);
-          pdf.roundedRect(x, y, w, HL_H, 3, 3, 'F');
+        function drawSignatureBoxes(y) {
+          const boxW = (CW - 2 * GAP) / 3;
+          const boxH = 28;
+          const sigY = y;
+
+          pdf.setFillColor(...C.primary);
+          pdf.rect(M, sigY, CW, SEC_H, 'F');
+          pdf.setFillColor(...C.accent);
+          pdf.rect(M, sigY, 2.5, SEC_H, 'F');
           pdf.setTextColor(...C.white);
-          pdf.setFontSize(7);
-          pdf.setFont('helvetica', 'normal');
-          pdf.text(String(label), x + w / 2, y + 4.5, { align: 'center' });
-          pdf.setFontSize(11);
+          pdf.setFontSize(8.5);
           pdf.setFont('helvetica', 'bold');
-          pdf.text(String(value), x + w / 2, y + 11, { align: 'center' });
+          pdf.text('SIGNATURES & APPROVAL', M + 6, sigY + SEC_H * 0.62);
+
+          const startY = sigY + SEC_H + 2;
+
+          const boxes = [
+            { title: 'ZSM Signature', name: d.ZSM_NAME || '-' },
+            { title: 'TSM Signature', name: d.TSM_NAME || '-' },
+            { title: 'Distributor Signature', name: d.DISTRIBUTOR_NAME || '-' }
+          ];
+
+          boxes.forEach((box, idx) => {
+            const boxX = M + idx * (boxW + GAP);
+            
+            pdf.setFillColor(255, 255, 255);
+            pdf.setDrawColor(...C.border);
+            pdf.setLineWidth(0.3);
+            pdf.roundedRect(boxX, startY, boxW, boxH, 2, 2, 'FD');
+
+            pdf.setFillColor(...C.headerBg);
+            pdf.rect(boxX + 1, startY + 1, boxW - 2, 6, 'F');
+            pdf.setTextColor(...C.white);
+            pdf.setFontSize(6.5);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(box.title, boxX + boxW / 2, startY + 5, { align: 'center' });
+
+            pdf.setTextColor(...C.dark);
+            pdf.setFontSize(6);
+            pdf.setFont('helvetica', 'normal');
+            let name = String(box.name);
+            while (pdf.getTextWidth(name) > boxW - 8 && name.length > 4) name = name.slice(0, -1);
+            if (name.length < String(box.name).length) name += '..';
+            pdf.text(name, boxX + boxW / 2, startY + 11, { align: 'center' });
+
+            pdf.setDrawColor(...C.dark);
+            pdf.setLineWidth(0.2);
+            pdf.line(boxX + 5, startY + boxH - 6, boxX + boxW - 5, startY + boxH - 6);
+
+            pdf.setFontSize(5);
+            pdf.setTextColor(130, 130, 130);
+            pdf.text('Date: _______________', boxX + boxW / 2, startY + boxH - 2, { align: 'center' });
+          });
+
+          return startY + boxH + GAP;
         }
 
         function drawFooter() {
-          const fY = PH - 13;
+          const fY = PH - 10;
           pdf.setFillColor(...C.accent);
           pdf.rect(M, fY, CW, 0.5, 'F');
-          pdf.setFontSize(6.5);
+          pdf.setFontSize(6);
           pdf.setTextColor(130, 130, 130);
           pdf.setFont('helvetica', 'normal');
-          pdf.text('Page 1 of 1', M, fY + 5);
-          pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), PW / 2, fY + 5, { align: 'center' });
-          pdf.text('ROI-' + Date.now().toString(36).toUpperCase(), PW - M, fY + 5, { align: 'right' });
+          pdf.text('Page 1 of 1', M, fY + 4);
+          pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), PW / 2, fY + 4, { align: 'center' });
+          pdf.text('ROI-' + Date.now().toString(36).toUpperCase(), PW - M, fY + 4, { align: 'right' });
         }
-
-        // ==================== DRAW PAGE ====================
 
         let yL = drawHeader();
         let yR = yL;
-
-        // ========== LEFT COLUMN ==========
 
         yL = drawSection('DISTRIBUTOR SUMMARY', yL, LX, LW);
         yL = drawRow('Distributor Number', String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), yL, LX, LW, false, false);
@@ -865,8 +1751,6 @@
         yL = drawRow('Active ASC Count (Norm)', fN(d.ACTIVE_ASC_COUNT_AS_PER_NORM), yL, LX, LW, false, false);
         yL = drawRow('ASC (FOS) Salary @13000', fR(d.ASC_FOS_SALARY_13000), yL, LX, LW, true, false);
 
-        // ========== RIGHT COLUMN ==========
-
         const cW = (RW - 4) / 3;
         drawCard('TSM NAME', d.TSM_NAME, RX, yR, cW, CARD_H);
         drawCard('ZSM NAME', d.ZSM_NAME, RX + cW + 2, yR, cW, CARD_H);
@@ -895,12 +1779,11 @@
         yR = drawRow('PLI Missed Opportunity', fR(d.PLI_MISSED_OPPORTUNITY), yR, RX, RW, false, false);
         yR = drawRow('ASC Subsidy Missed', fR(d.ASC_SUBSIDY_OPPORTUNITY_MISSED), yR, RX, RW, true, false);
         yR = drawRow('Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yR, RX, RW, false, false);
-        yR += GAP;
 
-        // ========== FOOTER ==========
+        const maxY = Math.max(yL, yR);
+        drawSignatureBoxes(maxY + 5);
         drawFooter();
 
-        // ========== SAVE & SHARE ==========
         const distName = String(d.DISTRIBUTOR_NAME || 'Dashboard');
         const distNum = String(d.DISTRIBUTOR_LAPU_NUMBER || '');
         const dateStr = new Date().toISOString().slice(0, 10);
@@ -930,24 +1813,37 @@
           triggerDownload(pdfBlob, filename);
         }
 
-        showToast('✅ PDF generated successfully!');
+        pdfDownloaded = true;
+        updateUIVisibility();
+        
+        statusEl.className = 'upload-message success';
+        statusEl.innerHTML = '<span class="msg-icon">✅</span><span>PDF downloaded! Now sign and upload.</span>';
+        showToast('✅ PDF generated! Sign and upload the signed copy.');
+        
+        // Scroll to ROI upload section
+        setTimeout(() => {
+          document.getElementById('roiUploadSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 500);
 
       } catch (error) {
         console.error('PDF generation error:', error);
+        statusEl.className = 'upload-message error';
+        statusEl.innerHTML = `<span class="msg-icon">❌</span><span>PDF failed: ${error.message}</span>`;
         showToast('❌ PDF failed: ' + error.message, 'error');
       } finally {
         if (overlay.parentNode) overlay.remove();
         btn.disabled = false;
-        btn.textContent = '📄 Download as PDF';
+        btn.innerHTML = '<span class="btn-icon">📄</span><span>Download ROI PDF</span>';
       }
     }
 
-    // ===== EVENT LISTENERS =====
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('distributorNumberInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') { e.preventDefault(); document.getElementById('loadBtn').click(); }
       });
+      updateUIVisibility();
     });
+    
     document.getElementById('loadBtn').addEventListener('click', (e) => {
       e.preventDefault();
       const id = document.getElementById('distributorNumberInput').value.trim();
