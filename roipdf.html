@@ -70,6 +70,53 @@
     }
     .subsection { background-color: #d5eaf4; font-weight: 600; }
     .display-field { font-weight: 600; color: #34495e; }
+    
+    /* ==================== NUMBERING COLUMN ==================== */
+    .sno-col {
+      width: 40px;
+      text-align: center;
+      font-weight: 600;
+      color: #7f8c8d;
+      background-color: #f8f9fa;
+    }
+    .sno-header {
+      width: 40px;
+      text-align: center;
+      background-color: #ecf0f1;
+      font-weight: 700;
+      color: #34495e;
+    }
+    
+    /* ==================== SUBTOTAL ROW ==================== */
+    .subtotal-row {
+      background: linear-gradient(135deg, #d5eaf4 0%, #e8f4f8 100%) !important;
+      font-weight: 700;
+      border-top: 2px solid #2980b9;
+    }
+    .subtotal-row td {
+      color: #1a5276;
+      font-size: 14px;
+    }
+    .subtotal-label {
+      text-align: right;
+      padding-right: 15px;
+    }
+    .subtotal-value {
+      font-weight: 700;
+      color: #2980b9 !important;
+      font-size: 15px;
+    }
+    
+    /* ==================== STOCK STATUS ==================== */
+    .stock-positive {
+      color: #27ae60 !important;
+      font-weight: 700;
+    }
+    .stock-negative {
+      color: #e74c3c !important;
+      font-weight: 700;
+    }
+    
     .distribution-hierarchy-container {
       display: flex; gap: 25px; margin-bottom: 25px;
     }
@@ -250,7 +297,6 @@
       list-style: none;
     }
 
-    /* ==================== COMPACT UPLOAD ITEM (Line by Line) ==================== */
     .upload-item {
       padding: 14px 16px;
       border-bottom: 1px solid #ecf0f1;
@@ -328,7 +374,6 @@
       color: #047857;
     }
 
-    /* Compact File Input */
     .compact-file-row {
       display: flex;
       align-items: center;
@@ -380,7 +425,6 @@
       font-weight: 600;
     }
 
-    /* Compact Location */
     .compact-location {
       display: flex;
       align-items: center;
@@ -408,7 +452,6 @@
       background: #fef5e7;
     }
 
-    /* Compact Action Button */
     .compact-action-btn {
       width: 100%;
       padding: 12px 16px;
@@ -447,7 +490,6 @@
       cursor: not-allowed;
     }
 
-    /* Compact Message */
     .compact-message {
       font-size: 12px;
       padding: 8px 12px;
@@ -477,7 +519,6 @@
       color: #b91c1c;
     }
 
-    /* Download Section Special */
     .download-info {
       text-align: center;
       padding: 10px 0;
@@ -502,6 +543,7 @@
       .info-key { font-size: 13px; } .info-value { font-size: 12px; }
       th, td { padding: 8px 10px; font-size: 13px; }
       .section { font-size: 14px; padding: 10px 12px; }
+      .sno-col { width: 35px; }
     }
     @media (max-width: 600px) {
       body { padding: 12px; font-size: 13px; }
@@ -520,8 +562,8 @@
       .submit-btn { width: 100%; padding: 12px; font-size: 14px; }
       .toast-container { max-width: 300px; top: 10px; right: 10px; }
       .toast { padding: 12px 14px; font-size: 13px; }
+      .sno-col { width: 30px; font-size: 11px; }
       
-      /* Compact Upload Mobile */
       .upload-container { margin-top: 20px; border-radius: 10px; }
       .upload-header { padding: 12px 14px; }
       .upload-header-title { font-size: 14px; }
@@ -532,7 +574,6 @@
       .compact-action-btn { padding: 12px 14px; font-size: 13px; }
       .download-info-icon { font-size: 28px; }
       
-      /* Success Modal Mobile */
       .success-modal { padding: 30px 24px; }
       .success-icon { width: 70px; height: 70px; }
       .success-icon span { font-size: 35px; }
@@ -547,6 +588,7 @@
       .upload-item { padding: 10px 12px; }
       .compact-file-row { flex-wrap: wrap; }
       .compact-file-name { width: 100%; margin-top: 6px; }
+      .sno-col { width: 28px; font-size: 10px; }
     }
     @media print {
       @page { size: A4 portrait; margin: 10mm; }
@@ -590,44 +632,179 @@
     <div id="mainContent" style="display: none;">
       <div class="distribution-hierarchy-container">
         <div class="distribution-section">
+          <!-- DISTRIBUTOR TABLE WITH NUMBERING -->
           <table>
-            <thead><tr><td class="section" colspan="2">Distributor</td></tr></thead>
+            <thead>
+              <tr><td class="section" colspan="3">Distributor Summary</td></tr>
+              <tr>
+                <th class="sno-header">#</th>
+                <th>Parameter</th>
+                <th>Value</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Distributor Number:</td><td class="display-field" id="distributorNumber">-</td></tr>
-              <tr><td>Distributor Name:</td><td class="display-field" id="distributorName">-</td></tr>
-              <tr><td>Investment:</td><td class="display-field" id="investment">-</td></tr>
-              <tr><td>Average Stock:</td><td class="display-field" id="avgStock">-</td></tr>
-              <tr><td>Gross earning:</td><td class="display-field" id="grossEarning">-</td></tr>
-              <tr><td>Expenses:</td><td class="display-field" id="expenses">-</td></tr>
-              <tr><td>Take Home:</td><td class="display-field" id="takeHome">-</td></tr>
-              <tr><td>ROI:</td><td class="display-field" id="roi">-</td></tr>
+              <tr>
+                <td class="sno-col">1</td>
+                <td>Distributor Number</td>
+                <td class="display-field" id="distributorNumber">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">2</td>
+                <td>Distributor Name</td>
+                <td class="display-field" id="distributorName">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">3</td>
+                <td>Investment</td>
+                <td class="display-field" id="investment">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">4</td>
+                <td>Average Stock</td>
+                <td class="display-field" id="avgStock">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">5</td>
+                <td>Gross Earning</td>
+                <td class="display-field" id="grossEarning">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">6</td>
+                <td>Expenses</td>
+                <td class="display-field" id="expenses">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">7</td>
+                <td>Take Home</td>
+                <td class="display-field" id="takeHome">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">8</td>
+                <td>ROI</td>
+                <td class="display-field" id="roi">-</td>
+              </tr>
+              <tr class="subtotal-row">
+                <td class="sno-col">-</td>
+                <td class="subtotal-label"><strong>Net Summary: Take Home</strong></td>
+                <td class="subtotal-value" id="distributorSubtotal">-</td>
+              </tr>
             </tbody>
           </table>
+
+          <!-- INVESTMENT DETAILS TABLE -->
           <table id="investmentDetailsTable">
-            <thead><tr><td class="section" colspan="2">Investment Details</td></tr></thead>
+            <thead>
+              <tr><td class="section" colspan="3">Investment Details</td></tr>
+              <tr>
+                <th class="sno-header">#</th>
+                <th>Parameter</th>
+                <th>Value</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Total(with Security):</td><td class="display-field" id="totalWithSecurity">-</td></tr>
-              <tr><td>LAPU/DTH LAPU (3 days):</td><td class="display-field" id="lapuDthLapu">-</td></tr>
-              <tr><td>Actual Stock(Norm):</td><td class="display-field" id="actualStockNorm">-</td></tr>
+              <tr>
+                <td class="sno-col">1</td>
+                <td>Total (with Security)</td>
+                <td class="display-field" id="totalWithSecurity">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">2</td>
+                <td>LAPU/DTH LAPU (Norm)</td>
+                <td class="display-field" id="lapuDthLapu">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">3</td>
+                <td>Actual Stock</td>
+                <td class="display-field" id="actualStockNorm">-</td>
+              </tr>
+              <tr class="subtotal-row">
+                <td class="sno-col">-</td>
+                <td class="subtotal-label"><strong>Total Investment</strong></td>
+                <td class="subtotal-value" id="investmentSubtotal">-</td>
+              </tr>
             </tbody>
           </table>
+
+          <!-- GROSS EARNINGS DETAILS TABLE -->
           <table id="grossEarningsDetailsTable">
-            <thead><tr><td class="section" colspan="2">Gross Earnings Details</td></tr></thead>
+            <thead>
+              <tr><td class="section" colspan="3">Gross Earnings Details</td></tr>
+              <tr>
+                <th class="sno-header">#</th>
+                <th>Parameter</th>
+                <th>Value</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Total Gross Earning:</td><td class="display-field" id="totalGrossEarnings">-</td></tr>
-              <tr><td>LAPU Commission (as per circle):</td><td class="display-field" id="lapuCommissionCircle">-</td></tr>
-              <tr><td>LAPU Commission (Amount):</td><td class="display-field" id="lapuCommissionAmount">-</td></tr>
-              <tr><td>PLI (@0.2%) / DTH GPS (Avg):</td><td class="display-field" id="pliAvg">-</td></tr>
-              <tr><td>Dist Subsidy:</td><td class="display-field" id="distSubsidy">-</td></tr>
+              <tr>
+                <td class="sno-col">1</td>
+                <td>LAPU Commission (Amount)</td>
+                <td class="display-field" id="lapuCommissionAmount">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">2</td>
+                <td>PLI (@0.2%) / DTH GPS (Avg)</td>
+                <td class="display-field" id="pliAvg">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">3</td>
+                <td>Dist Subsidy</td>
+                <td class="display-field" id="distSubsidy">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">4</td>
+                <td>Store Net Earnings</td>
+                <td class="display-field" id="storeNetEarningsDisplay">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">5</td>
+                <td>Lapu Secondary per Month</td>
+                <td class="display-field" id="lapuSecondaryGross">-</td>
+              </tr>
+              <tr class="subtotal-row">
+                <td class="sno-col">-</td>
+                <td class="subtotal-label"><strong>Total Gross Earnings</strong></td>
+                <td class="subtotal-value" id="grossEarningsSubtotal">-</td>
+              </tr>
             </tbody>
           </table>
+
+          <!-- EXPENSES DETAILS TABLE -->
           <table id="expensesDetailsTable">
-            <thead><tr><td class="section" colspan="2">Expenses Details</td></tr></thead>
+            <thead>
+              <tr><td class="section" colspan="3">Expenses Details</td></tr>
+              <tr>
+                <th class="sno-header">#</th>
+                <th>Parameter</th>
+                <th>Value</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Total Expenses:</td><td class="display-field" id="totalExpenses">-</td></tr>
-              <tr><td>ASC Required:</td><td class="display-field" id="ascRequired">-</td></tr>
-              <tr><td>Active ASC Count (as per norm):</td><td class="display-field" id="activeAscCount">-</td></tr>
-              <tr><td>ASC (FOS) Salary (@ ~Rs 13000):</td><td class="display-field" id="ascFosSalary">-</td></tr>
+              <tr>
+                <td class="sno-col">1</td>
+                <td>ASC Required</td>
+                <td class="display-field" id="ascRequired">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">2</td>
+                <td>Active ASC Count (as per norm)</td>
+                <td class="display-field" id="activeAscCount">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">3</td>
+                <td>ASC (FOS) Salary (@ ~Rs 13000)</td>
+                <td class="display-field" id="ascFosSalary">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">4</td>
+                <td>Other Expenses Total</td>
+                <td class="display-field" id="otherExpensesDisplayMain">-</td>
+              </tr>
+              <tr class="subtotal-row">
+                <td class="sno-col">-</td>
+                <td class="subtotal-label"><strong>Total Expenses</strong></td>
+                <td class="subtotal-value" id="expensesSubtotal">-</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -647,39 +824,139 @@
               <div class="info-value" id="zone">-</div>
             </div>
           </div>
+
+          <!-- SITE DETAILS TABLE -->
           <table id="siteDetailsTable">
-            <thead><tr><td class="section" colspan="2">Site Details</td></tr></thead>
+            <thead>
+              <tr><td class="section" colspan="3">Site Details</td></tr>
+              <tr>
+                <th class="sno-header">#</th>
+                <th>Parameter</th>
+                <th>Value</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Site count:</td><td class="display-field" id="siteCount">-</td></tr>
-              <tr><td>Offline tertiary / Site:</td><td class="display-field" id="offlineTertiary">-</td></tr>
-              <tr><td>Base:</td><td class="display-field" id="base">-</td></tr>
-              <tr><td>Avg Monthly Gross:</td><td class="display-field" id="avgMonthlyGross">-</td></tr>
-              <tr><td>Lapu secondary per month:</td><td class="display-field" id="lapuSecondary">-</td></tr>
+              <tr>
+                <td class="sno-col">1</td>
+                <td>Site Count</td>
+                <td class="display-field" id="siteCount">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">2</td>
+                <td>Offline Tertiary / Site</td>
+                <td class="display-field" id="offlineTertiary">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">3</td>
+                <td>Base</td>
+                <td class="display-field" id="base">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">4</td>
+                <td>Avg Monthly Gross</td>
+                <td class="display-field" id="avgMonthlyGross">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">5</td>
+                <td>Lapu Secondary per Month</td>
+                <td class="display-field" id="lapuSecondarySite">-</td>
+              </tr>
+              <tr class="subtotal-row">
+                <td class="sno-col">-</td>
+                <td class="subtotal-label"><strong>Total Sites</strong></td>
+                <td class="subtotal-value" id="siteSubtotal">-</td>
+              </tr>
             </tbody>
           </table>
+
+          <!-- OTHER EXPENSES FORM -->
           <form id="otherExpensesForm">
             <table id="otherExpensesTable">
-              <thead><tr><td class="section" colspan="2">Other Expenses</td></tr></thead>
+              <thead>
+                <tr><td class="section" colspan="3">Other Expenses (Input Required)</td></tr>
+                <tr>
+                  <th class="sno-header">#</th>
+                  <th>Expense Type</th>
+                  <th>Amount (₹)</th>
+                </tr>
+              </thead>
               <tbody>
-                <tr><td colspan="2" class="subsection">Other Expenses Total: <span class="display-field" id="otherExpensesTotal">₹0</span></td></tr>
-                <tr><td>Rent:</td><td><input type="number" id="rentInput" name="RENT" placeholder="3000-60000" min="3000" max="60000" oninput="validateInput(this)"></td></tr>
-                <tr><td>Electricity:</td><td><input type="number" id="electricityInput" name="ELECTRICITY" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td></tr>
-                <tr><td>Misc:</td><td><input type="number" id="miscInput" name="MISC" placeholder="500-3000" min="0" max="5000" oninput="validateInput(this)"></td></tr>
-                <tr><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="ADDITIONAL_MIS_SALARY" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td></tr>
-                <tr><td>Store Net Earnings:</td><td><input type="number" id="storeNetEarningsInput" name="STORE_NET_EARNINGS" placeholder="Enter Store Net Earnings" min="0" oninput="validateInput(this)"></td></tr>
-                <tr><td colspan="2"><button type="submit" class="submit-btn">Submit Other Expenses</button></td></tr>
-                <tr><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
+                <tr>
+                  <td class="sno-col">1</td>
+                  <td>Rent</td>
+                  <td><input type="number" id="rentInput" name="RENT" placeholder="3000-60000" min="3000" max="60000" oninput="validateInput(this)"></td>
+                </tr>
+                <tr>
+                  <td class="sno-col">2</td>
+                  <td>Electricity</td>
+                  <td><input type="number" id="electricityInput" name="ELECTRICITY" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td>
+                </tr>
+                <tr>
+                  <td class="sno-col">3</td>
+                  <td>Misc</td>
+                  <td><input type="number" id="miscInput" name="MISC" placeholder="0-5000" min="0" max="5000" oninput="validateInput(this)"></td>
+                </tr>
+                <tr>
+                  <td class="sno-col">4</td>
+                  <td>MIS Salary</td>
+                  <td><input type="number" id="misSalaryInput" name="ADDITIONAL_MIS_SALARY" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td>
+                </tr>
+                <tr>
+                  <td class="sno-col">5</td>
+                  <td>Store Net Earnings</td>
+                  <td><input type="number" id="storeNetEarningsInput" name="STORE_NET_EARNINGS" placeholder="Enter amount" min="0" oninput="validateInput(this)"></td>
+                </tr>
+                <tr>
+                  <td class="sno-col">6</td>
+                  <td>Clawback/Penalty (as per circle avg)</td>
+                  <td class="display-field" id="clawback">-</td>
+                </tr>
+                <tr class="subtotal-row">
+                  <td class="sno-col">-</td>
+                  <td class="subtotal-label"><strong>Other Expenses Total</strong></td>
+                  <td class="subtotal-value" id="otherExpensesTotal">₹0</td>
+                </tr>
+                <tr>
+                  <td colspan="3"><button type="submit" class="submit-btn">Submit Other Expenses</button></td>
+                </tr>
               </tbody>
             </table>
           </form>
+
+          <!-- OPPORTUNITY LOST TABLE -->
           <table id="opportunityLostTable">
-            <thead><tr><td class="section" colspan="2">Opportunity Lost</td></tr></thead>
+            <thead>
+              <tr><td class="section" colspan="3">Opportunity Lost</td></tr>
+              <tr>
+                <th class="sno-header">#</th>
+                <th>Parameter</th>
+                <th>Value</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>PLI missed opportunity:</td><td class="display-field" id="pliMissed">-</td></tr>
-              <tr><td>ASC Support opportunity missed:</td><td class="display-field" id="ascSubsidyMissed">-</td></tr>
-              <tr><td>Additional active ASC required for full ASC Support:</td><td class="display-field" id="additionalAscRequired">-</td></tr>
+              <tr>
+                <td class="sno-col">1</td>
+                <td>PLI Missed Opportunity</td>
+                <td class="display-field" id="pliMissed">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">2</td>
+                <td>ASC Support Opportunity Missed</td>
+                <td class="display-field" id="ascSubsidyMissed">-</td>
+              </tr>
+              <tr>
+                <td class="sno-col">3</td>
+                <td>Additional Active ASC Required for Full ASC Support</td>
+                <td class="display-field" id="additionalAscRequired">-</td>
+              </tr>
+              <tr class="subtotal-row">
+                <td class="sno-col">-</td>
+                <td class="subtotal-label"><strong>Total Opportunity Lost</strong></td>
+                <td class="subtotal-value" id="opportunitySubtotal">-</td>
+              </tr>
             </tbody>
           </table>
+
         </div>
       </div>
 
@@ -711,11 +988,11 @@
             </div>
             
             <div class="compact-location" id="ndcLocation">
-            Location will be captured on upload
+            📍 Location will be captured on upload
             </div>
             
             <button type="button" class="compact-action-btn upload" id="ndcUploadBtn" onclick="uploadNdcCertificate()" disabled>
-              Upload NDC
+              ⬆️ Upload NDC
             </button>
             
             <div class="compact-message" id="ndcMessage"></div>
@@ -728,19 +1005,16 @@
               <div class="upload-item-info">
                 <p class="upload-item-title">Download ROI Report</p>
                 <p class="upload-item-subtitle">Download the ROI report in PDF format</p>
-
-                <!-- <p class="upload-item-subtitle">PDF with signature boxes</p> -->
               </div>
               <span class="upload-item-status pending" id="downloadStatus">Pending</span>
             </div>
             
             <div class="download-info">
-              <div class="download-info-icon"></div>
-              <!-- <p class="download-info-text">Generate PDF → Print → Sign → Upload</p> -->
+              <div class="download-info-icon">📄</div>
             </div>
             
             <button type="button" class="compact-action-btn download" id="downloadPdfBtn" onclick="downloadPageAsPdf()">
-            Download ROI Report
+            📥 Download ROI Report
             </button>
             
             <div class="compact-message" id="downloadMessage"></div>
@@ -766,11 +1040,11 @@
             </div>
             
             <div class="compact-location" id="roiLocation">
-            Location will be captured on upload
+            📍 Location will be captured on upload
             </div>
             
             <button type="button" class="compact-action-btn upload" id="roiUploadBtn" onclick="uploadSignedRoi()" disabled>
-              Upload Signed ROI
+              ⬆️ Upload Signed ROI
             </button>
             
             <div class="compact-message" id="roiMessage"></div>
@@ -966,6 +1240,7 @@
       const PLI_AVG = parseFloat(data.PLI_AVG || 0);
       const DIST_SUBSIDY = parseFloat(data.DIST_SUBSIDY || 0);
       const STORE_NET_EARNINGS = parseFloat(data.STORE_NET_EARNINGS || 0);
+      const LAPU_SECONDARY = parseFloat(data.LAPU_SECONDARY_PER_MONTH || 0);
       const RENT = parseFloat(data.RENT || 0);
       const ELECTRICITY = parseFloat(data.ELECTRICITY || 0);
       const MISC = parseFloat(data.MISC || 0);
@@ -974,12 +1249,22 @@
       const TOTAL_EXPENSES = ASC_FOS_SALARY_13000;
       const OTHER_EXPENSES_TOTAL = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY;
       const EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL;
-      const TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY;
-      const GROSS_EARNING = TOTAL_GROSS_EARNINGS + STORE_NET_EARNINGS;
+      const TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY + STORE_NET_EARNINGS + LAPU_SECONDARY;
+      const GROSS_EARNING = TOTAL_GROSS_EARNINGS;
       const TAKE_HOME = GROSS_EARNING - EXPENSES;
       const ROI = INVESTMENT > 0 ? (TAKE_HOME / INVESTMENT) : 0;
 
-      return { INVESTMENT, TOTAL_GROSS_EARNINGS, GROSS_EARNING, TOTAL_EXPENSES, OTHER_EXPENSES_TOTAL, EXPENSES, TAKE_HOME, ROI };
+      // Calculate opportunity lost total
+      const PLI_MISSED = parseFloat(data.PLI_MISSED_OPPORTUNITY || 0);
+      const ASC_SUBSIDY_MISSED = parseFloat(data.ASC_SUBSIDY_OPPORTUNITY_MISSED || 0);
+      const OPPORTUNITY_LOST_TOTAL = PLI_MISSED + ASC_SUBSIDY_MISSED;
+
+      return { 
+        INVESTMENT, TOTAL_GROSS_EARNINGS, GROSS_EARNING, TOTAL_EXPENSES, 
+        OTHER_EXPENSES_TOTAL, EXPENSES, TAKE_HOME, ROI, 
+        STORE_NET_EARNINGS, LAPU_SECONDARY, OPPORTUNITY_LOST_TOTAL,
+        PLI_MISSED, ASC_SUBSIDY_MISSED
+      };
     }
 
     function areExpensesFilled(data) {
@@ -991,20 +1276,32 @@
       return (RENT > 0 || ELECTRICITY > 0 || MISC > 0 || ADDITIONAL_MIS_SALARY > 0 || STORE_NET_EARNINGS > 0);
     }
 
+    // ===== UPDATE STOCK COLOR =====
+    function updateStockColor(avgStock, norm) {
+      const stockEl = document.getElementById('actualStockNorm');
+      const stock = parseFloat(avgStock || 0);
+      const normValue = parseFloat(norm || 0);
+      
+      // Update cell styling - Green if stock >= norm, Red otherwise
+      if (stock >= normValue) {
+        stockEl.className = 'display-field stock-positive';
+      } else {
+        stockEl.className = 'display-field stock-negative';
+      }
+    }
+
     // ===== UPDATE UI VISIBILITY =====
     function updateUIVisibility() {
       const ndcItem = document.getElementById('ndcUploadItem');
       const downloadItem = document.getElementById('downloadPdfItem');
       const roiItem = document.getElementById('roiUploadItem');
 
-      // Show NDC after expenses submitted
       if (expensesSubmitted) {
         ndcItem.classList.add('visible');
       } else {
         ndcItem.classList.remove('visible');
       }
 
-      // Show Download after NDC uploaded
       if (ndcUploaded) {
         downloadItem.classList.add('visible');
         ndcItem.classList.add('completed');
@@ -1016,7 +1313,6 @@
         downloadItem.classList.remove('visible');
       }
 
-      // Show ROI upload after PDF downloaded
       if (pdfDownloaded) {
         roiItem.classList.add('visible');
         downloadItem.classList.add('completed');
@@ -1028,7 +1324,6 @@
         roiItem.classList.remove('visible');
       }
 
-      // Mark ROI complete
       if (roiUploaded) {
         roiItem.classList.add('completed');
         document.getElementById('roiBadge').classList.add('done');
@@ -1195,7 +1490,6 @@
         document.getElementById('roiFileInput').disabled = true;
         updateUIVisibility();
         
-        // Show success overlay after short delay
         setTimeout(() => {
           showSuccessOverlay();
         }, 500);
@@ -1218,6 +1512,7 @@
       const calculated = calculateAllValues(data);
       expensesSubmitted = areExpensesFilled(data);
 
+      // Distributor Summary
       document.getElementById('distributorNumber').textContent = data.DISTRIBUTOR_LAPU_NUMBER || '-';
       document.getElementById('distributorName').textContent = data.DISTRIBUTOR_NAME || '-';
       document.getElementById('investment').textContent = formatINR(calculated.INVESTMENT);
@@ -1231,48 +1526,87 @@
       if (expensesSubmitted) {
         takeHomeEl.textContent = formatINR(calculated.TAKE_HOME);
         takeHomeEl.classList.remove('pending-field');
+        
+        // Take Home color
+        if (calculated.TAKE_HOME >= 0) {
+          takeHomeEl.classList.add('stock-positive');
+          takeHomeEl.classList.remove('stock-negative');
+        } else {
+          takeHomeEl.classList.add('stock-negative');
+          takeHomeEl.classList.remove('stock-positive');
+        }
+        
         roiEl.textContent = (calculated.ROI * 100).toFixed(2) + '%';
         roiEl.classList.remove('pending-field');
+        
+        // ROI color
+        if (calculated.ROI >= 0) {
+          roiEl.classList.add('stock-positive');
+          roiEl.classList.remove('stock-negative');
+        } else {
+          roiEl.classList.add('stock-negative');
+          roiEl.classList.remove('stock-positive');
+        }
+        
+        // Distributor subtotal
+        document.getElementById('distributorSubtotal').textContent = formatINR(calculated.TAKE_HOME);
       } else {
         takeHomeEl.textContent = 'Submit expenses first';
         takeHomeEl.classList.add('pending-field');
+        takeHomeEl.classList.remove('stock-positive', 'stock-negative');
         roiEl.textContent = 'Submit expenses first';
         roiEl.classList.add('pending-field');
+        roiEl.classList.remove('stock-positive', 'stock-negative');
+        document.getElementById('distributorSubtotal').textContent = 'Pending';
       }
 
+      // Investment Details
       document.getElementById('totalWithSecurity').textContent = formatINR(data.TOTAL);
       document.getElementById('lapuDthLapu').textContent = formatINR(data.LAPU_DTH_LAPU_2DAYS);
-      const stockCell = document.getElementById('actualStockNorm');
-      stockCell.textContent = formatINR(data.AVG_STOCK);
-      stockCell.style.color = parseFloat(data.AVG_STOCK || 0) > parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0) ? 'green' : 'red';
+      document.getElementById('actualStockNorm').textContent = formatINR(data.AVG_STOCK);
+      document.getElementById('investmentSubtotal').textContent = formatINR(data.TOTAL);
+      
+      // Stock color (Green if stock >= norm, Red otherwise)
+      updateStockColor(data.AVG_STOCK, data.LAPU_DTH_LAPU_2DAYS);
 
-      document.getElementById('totalGrossEarnings').textContent = formatINR(calculated.TOTAL_GROSS_EARNINGS);
-      document.getElementById('lapuCommissionCircle').textContent = parseFloat(data.LAPU_COMMISSION_C || 0) + '%';
+      // Gross Earnings Details
       document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
       document.getElementById('pliAvg').textContent = formatINR(data.PLI_AVG);
       document.getElementById('distSubsidy').textContent = formatINR(data.DIST_SUBSIDY);
+      document.getElementById('storeNetEarningsDisplay').textContent = formatINR(calculated.STORE_NET_EARNINGS);
+      document.getElementById('lapuSecondaryGross').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
+      document.getElementById('grossEarningsSubtotal').textContent = formatINR(calculated.GROSS_EARNING);
 
+      // Hierarchy info
       document.getElementById('tsmName').textContent = data.TSM_NAME || '-';
       document.getElementById('zsmName').textContent = data.ZSM_NAME || '-';
       document.getElementById('zone').textContent = data.ZONE || '-';
+
+      // Site Details
       document.getElementById('siteCount').textContent = formatNum(data.SITE_COUNT);
       document.getElementById('offlineTertiary').textContent = formatINR(data.OFFLINE_TERTIARY);
       document.getElementById('base').textContent = formatINR(data.BASE);
       document.getElementById('avgMonthlyGross').textContent = indianFormat(data.AVG_MONTHLY_GROSS_IN);
-      document.getElementById('lapuSecondary').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
+      document.getElementById('lapuSecondarySite').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
+      document.getElementById('siteSubtotal').textContent = formatNum(data.SITE_COUNT) + ' Sites';
 
-      document.getElementById('totalExpenses').textContent = formatINR(calculated.TOTAL_EXPENSES);
+      // Expenses Details
       document.getElementById('ascRequired').textContent = formatNum(data.ASC_REQUIRED);
       document.getElementById('activeAscCount').textContent = formatNum(data.ACTIVE_ASC_COUNT_AS_PER_NORM);
       document.getElementById('ascFosSalary').textContent = formatINR(data.ASC_FOS_SALARY_13000);
+      document.getElementById('otherExpensesDisplayMain').textContent = formatINR(calculated.OTHER_EXPENSES_TOTAL);
+      document.getElementById('expensesSubtotal').textContent = formatINR(calculated.EXPENSES);
 
+      // Opportunity Lost
       document.getElementById('pliMissed').textContent = formatINR(data.PLI_MISSED_OPPORTUNITY);
       document.getElementById('ascSubsidyMissed').textContent = formatINR(data.ASC_SUBSIDY_OPPORTUNITY_MISSED);
       document.getElementById('additionalAscRequired').textContent = formatNum(data.ADDITIONAL_ACTIVE_ASC);
+      document.getElementById('opportunitySubtotal').textContent = formatINR(calculated.OPPORTUNITY_LOST_TOTAL);
 
       const clawbackValue = data['CLAWBACK/PENALTY'] || data['CLAWBACK_PENALTY'] || 0;
       document.getElementById('clawback').textContent = indianFormat(clawbackValue);
 
+      // Input fields
       document.getElementById('rentInput').value = data.RENT || '';
       document.getElementById('electricityInput').value = data.ELECTRICITY || '';
       document.getElementById('miscInput').value = data.MISC || '';
@@ -1295,7 +1629,7 @@
       document.getElementById('ndcMessage').className = 'compact-message';
       document.getElementById('ndcBadge').classList.remove('done');
       document.getElementById('ndcBadge').textContent = '1';
-      document.getElementById('ndcLocation').textContent = 'Location will be captured on upload';
+      document.getElementById('ndcLocation').textContent = '📍 Location will be captured on upload';
       document.getElementById('ndcLocation').className = 'compact-location';
       document.getElementById('ndcUploadItem').classList.remove('completed');
       document.getElementById('ndcFileLabel').classList.remove('disabled');
@@ -1319,7 +1653,7 @@
       document.getElementById('roiMessage').className = 'compact-message';
       document.getElementById('roiBadge').classList.remove('done');
       document.getElementById('roiBadge').textContent = '3';
-      document.getElementById('roiLocation').textContent = 'Location will be captured on upload';
+      document.getElementById('roiLocation').textContent = '📍 Location will be captured on upload';
       document.getElementById('roiLocation').className = 'compact-location';
       document.getElementById('roiUploadItem').classList.remove('completed');
       document.getElementById('roiFileLabel').classList.remove('disabled');
@@ -1334,7 +1668,8 @@
       const ELECTRICITY = parseFloat(document.getElementById('electricityInput').value) || 0;
       const MISC = parseFloat(document.getElementById('miscInput').value) || 0;
       const ADDITIONAL_MIS_SALARY = parseFloat(document.getElementById('misSalaryInput').value) || 0;
-      document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY);
+      const total = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY;
+      document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(total);
     }
 
     // ===== LOAD DATA =====
@@ -1416,7 +1751,7 @@
       }
     });
 
-    // ===== PDF GENERATION =====
+    // ===== PDF GENERATION WITH NUMBERING & SUBTOTALS =====
     async function downloadPageAsPdf() {
       if (!currentDistributorData) { showToast('⚠️ Load data first!', 'error'); return; }
 
@@ -1442,16 +1777,17 @@
         const RW = LW;
         const LX = M;
         const RX = M + LW + COL_GAP;
-        const ROW_H = 8;
-        const SEC_H = 9;
-        const GAP = 3;
-        const CARD_H = 20;
+        const ROW_H = 7;
+        const SEC_H = 8;
+        const GAP = 2;
+        const CARD_H = 18;
 
         const C = {
           headerBg: [26, 82, 118], primary: [41, 128, 185], accent: [243, 156, 18],
           white: [255, 255, 255], dark: [44, 62, 80], border: [189, 195, 199],
           green: [39, 174, 96], red: [231, 76, 60], lightGreen: [212, 239, 223],
-          altRow: [249, 251, 252], cardBg: [234, 244, 249], highlight: [52, 73, 94]
+          lightRed: [250, 219, 219], altRow: [249, 251, 252], cardBg: [234, 244, 249], 
+          highlight: [52, 73, 94], subtotalBg: [213, 234, 244]
         };
 
         const calculated = calculateAllValues(d);
@@ -1463,6 +1799,11 @@
         const ADDITIONAL_MIS_SALARY = parseFloat(d.ADDITIONAL_MIS_SALARY || 0);
         const STORE_NET_EARNINGS = parseFloat(d.STORE_NET_EARNINGS || 0);
         const clawback = d['CLAWBACK/PENALTY'] || d['CLAWBACK_PENALTY'] || 0;
+
+        // Stock comparison
+        const avgStock = parseFloat(d.AVG_STOCK || 0);
+        const normStock = parseFloat(d.LAPU_DTH_LAPU_2DAYS || 0);
+        const stockIsGood = avgStock >= normStock;
 
         const fR = n => 'Rs. ' + new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(parseFloat(n || 0));
         const fN = n => new Intl.NumberFormat('en-IN').format(parseFloat(n || 0));
@@ -1500,37 +1841,87 @@
           pdf.setFillColor(...C.accent);
           pdf.rect(x, y, 2.5, SEC_H, 'F');
           pdf.setTextColor(...C.white);
-          pdf.setFontSize(8.5);
+          pdf.setFontSize(8);
           pdf.setFont('helvetica', 'bold');
           pdf.text(String(text), x + 6, y + SEC_H * 0.62);
           return y + SEC_H;
         }
 
-        function drawRow(label, value, y, x, w, isAlt, isHL) {
-          const lblW = w * 0.55;
-          if (isHL) pdf.setFillColor(...C.lightGreen);
-          else if (isAlt) pdf.setFillColor(...C.altRow);
-          else pdf.setFillColor(255, 255, 255);
+        // Modified drawRow with numbering
+        function drawRow(sno, label, value, y, x, w, isAlt, isHL, stockStatus = null) {
+          const snoW = 8;
+          const lblW = (w - snoW) * 0.58;
+          const valW = w - snoW - lblW;
+          
+          // Background color
+          if (isHL) {
+            pdf.setFillColor(...C.lightGreen);
+          } else if (stockStatus === 'good') {
+            pdf.setFillColor(...C.lightGreen);
+          } else if (stockStatus === 'bad') {
+            pdf.setFillColor(...C.lightRed);
+          } else if (isAlt) {
+            pdf.setFillColor(...C.altRow);
+          } else {
+            pdf.setFillColor(255, 255, 255);
+          }
           pdf.rect(x, y, w, ROW_H, 'F');
+          
+          // Border
           pdf.setDrawColor(...C.border);
           pdf.setLineWidth(0.15);
           pdf.rect(x, y, w, ROW_H, 'S');
-          pdf.line(x + lblW, y, x + lblW, y + ROW_H);
-          pdf.setFontSize(7.5);
+          pdf.line(x + snoW, y, x + snoW, y + ROW_H);
+          pdf.line(x + snoW + lblW, y, x + snoW + lblW, y + ROW_H);
+          
+          // S.No.
+          pdf.setFontSize(6.5);
+          pdf.setTextColor(127, 140, 141);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(String(sno), x + snoW/2, y + ROW_H * 0.62, { align: 'center' });
+          
+          // Label
           pdf.setTextColor(...C.dark);
           pdf.setFont('helvetica', 'normal');
           let lbl = String(label || '-');
-          while (pdf.getTextWidth(lbl) > lblW - 5 && lbl.length > 4) lbl = lbl.slice(0, -1);
+          while (pdf.getTextWidth(lbl) > lblW - 4 && lbl.length > 4) lbl = lbl.slice(0, -1);
           if (lbl.length < String(label || '-').length) lbl += '..';
-          pdf.text(lbl, x + 2.5, y + ROW_H * 0.62);
+          pdf.text(lbl, x + snoW + 2, y + ROW_H * 0.62);
+          
+          // Value
           pdf.setFont('helvetica', 'bold');
-          if (isHL) pdf.setTextColor(...C.green);
-          else pdf.setTextColor(...C.highlight);
+          if (isHL) {
+            pdf.setTextColor(...C.green);
+          } else if (stockStatus === 'good') {
+            pdf.setTextColor(...C.green);
+          } else if (stockStatus === 'bad') {
+            pdf.setTextColor(...C.red);
+          } else {
+            pdf.setTextColor(...C.highlight);
+          }
           let val = String(value || '-');
-          while (pdf.getTextWidth(val) > (w - lblW) - 5 && val.length > 4) val = val.slice(0, -1);
+          while (pdf.getTextWidth(val) > valW - 4 && val.length > 4) val = val.slice(0, -1);
           if (val.length < String(value || '-').length) val += '..';
-          pdf.text(val, x + lblW + 2.5, y + ROW_H * 0.62);
+          pdf.text(val, x + snoW + lblW + 2, y + ROW_H * 0.62);
+          
           return y + ROW_H;
+        }
+
+        // Subtotal row
+        function drawSubtotal(label, value, y, x, w) {
+          pdf.setFillColor(...C.subtotalBg);
+          pdf.rect(x, y, w, ROW_H + 1, 'F');
+          pdf.setDrawColor(...C.primary);
+          pdf.setLineWidth(0.5);
+          pdf.line(x, y, x + w, y);
+          
+          pdf.setFontSize(7);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setTextColor(...C.primary);
+          pdf.text(String(label), x + 10, y + (ROW_H + 1) * 0.6);
+          pdf.text(String(value), x + w - 4, y + (ROW_H + 1) * 0.6, { align: 'right' });
+          
+          return y + ROW_H + 1;
         }
 
         function drawCard(title, value, x, y, w, h) {
@@ -1542,27 +1933,27 @@
           pdf.setFillColor(...C.primary);
           pdf.rect(x + 1, y + 1, w - 2, 2, 'F');
           pdf.setTextColor(...C.highlight);
-          pdf.setFontSize(6);
+          pdf.setFontSize(5.5);
           pdf.setFont('helvetica', 'bold');
-          pdf.text(String(title), x + w / 2, y + 8, { align: 'center' });
-          pdf.setFontSize(7);
+          pdf.text(String(title), x + w / 2, y + 7, { align: 'center' });
+          pdf.setFontSize(6.5);
           pdf.setFont('helvetica', 'normal');
           pdf.setTextColor(...C.dark);
           let v = String(value || '-');
           while (pdf.getTextWidth(v) > w - 6 && v.length > 4) v = v.slice(0, -1);
           if (v.length < String(value || '-').length) v += '..';
-          pdf.text(v, x + w / 2, y + 14, { align: 'center' });
+          pdf.text(v, x + w / 2, y + 13, { align: 'center' });
         }
 
         function drawSignatureBoxes(y) {
           const boxW = (CW - 2 * GAP) / 3;
-          const boxH = 28;
+          const boxH = 26;
           pdf.setFillColor(...C.primary);
           pdf.rect(M, y, CW, SEC_H, 'F');
           pdf.setFillColor(...C.accent);
           pdf.rect(M, y, 2.5, SEC_H, 'F');
           pdf.setTextColor(...C.white);
-          pdf.setFontSize(8.5);
+          pdf.setFontSize(8);
           pdf.setFont('helvetica', 'bold');
           pdf.text('SIGNATURES & APPROVAL', M + 6, y + SEC_H * 0.62);
           const startY = y + SEC_H + 2;
@@ -1578,22 +1969,22 @@
             pdf.setLineWidth(0.3);
             pdf.roundedRect(boxX, startY, boxW, boxH, 2, 2, 'FD');
             pdf.setFillColor(...C.headerBg);
-            pdf.rect(boxX + 1, startY + 1, boxW - 2, 6, 'F');
+            pdf.rect(boxX + 1, startY + 1, boxW - 2, 5, 'F');
             pdf.setTextColor(...C.white);
-            pdf.setFontSize(6.5);
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(box.title, boxX + boxW / 2, startY + 5, { align: 'center' });
-            pdf.setTextColor(...C.dark);
             pdf.setFontSize(6);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(box.title, boxX + boxW / 2, startY + 4.5, { align: 'center' });
+            pdf.setTextColor(...C.dark);
+            pdf.setFontSize(5.5);
             pdf.setFont('helvetica', 'normal');
             let name = String(box.name);
             while (pdf.getTextWidth(name) > boxW - 8 && name.length > 4) name = name.slice(0, -1);
             if (name.length < String(box.name).length) name += '..';
-            pdf.text(name, boxX + boxW / 2, startY + 11, { align: 'center' });
+            pdf.text(name, boxX + boxW / 2, startY + 10, { align: 'center' });
             pdf.setDrawColor(...C.dark);
             pdf.setLineWidth(0.2);
-            pdf.line(boxX + 5, startY + boxH - 6, boxX + boxW - 5, startY + boxH - 6);
-            pdf.setFontSize(5);
+            pdf.line(boxX + 5, startY + boxH - 5, boxX + boxW - 5, startY + boxH - 5);
+            pdf.setFontSize(4.5);
             pdf.setTextColor(130, 130, 130);
             pdf.text('Date: _______________', boxX + boxW / 2, startY + boxH - 2, { align: 'center' });
           });
@@ -1615,68 +2006,85 @@
         let yL = drawHeader();
         let yR = yL;
 
+        // LEFT COLUMN
+        // Distributor Summary
         yL = drawSection('DISTRIBUTOR SUMMARY', yL, LX, LW);
-        yL = drawRow('Distributor Number', String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), yL, LX, LW, false, false);
-        yL = drawRow('Distributor Name', String(d.DISTRIBUTOR_NAME || '-'), yL, LX, LW, true, false);
-        yL = drawRow('Investment', fR(calculated.INVESTMENT), yL, LX, LW, false, false);
-        yL = drawRow('Average Stock', fR(d.AVG_STOCK), yL, LX, LW, true, false);
-        yL = drawRow('Gross Earning', fR(calculated.GROSS_EARNING), yL, LX, LW, false, false);
-        yL = drawRow('Expenses', fR(calculated.EXPENSES), yL, LX, LW, true, false);
-        yL = drawRow('Take Home', fR(calculated.TAKE_HOME), yL, LX, LW, false, true);
-        yL = drawRow('ROI', roiPercent, yL, LX, LW, true, true);
+        yL = drawRow(1, 'Distributor Number', String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), yL, LX, LW, false, false);
+        yL = drawRow(2, 'Distributor Name', String(d.DISTRIBUTOR_NAME || '-'), yL, LX, LW, true, false);
+        yL = drawRow(3, 'Investment', fR(calculated.INVESTMENT), yL, LX, LW, false, false);
+        yL = drawRow(4, 'Average Stock', fR(d.AVG_STOCK), yL, LX, LW, true, false, stockIsGood ? 'good' : 'bad');
+        yL = drawRow(5, 'Gross Earning', fR(calculated.GROSS_EARNING), yL, LX, LW, false, false);
+        yL = drawRow(6, 'Expenses', fR(calculated.EXPENSES), yL, LX, LW, true, false);
+        yL = drawRow(7, 'Take Home', fR(calculated.TAKE_HOME), yL, LX, LW, false, calculated.TAKE_HOME >= 0);
+        yL = drawRow(8, 'ROI', roiPercent, yL, LX, LW, true, calculated.ROI >= 0);
+        yL = drawSubtotal('SUBTOTAL (Take Home):', fR(calculated.TAKE_HOME), yL, LX, LW);
         yL += GAP;
 
+        // Investment Details
         yL = drawSection('INVESTMENT DETAILS', yL, LX, LW);
-        yL = drawRow('Total (with Security)', fR(d.TOTAL), yL, LX, LW, false, false);
-        yL = drawRow('LAPU/DTH LAPU (3 days)', fR(d.LAPU_DTH_LAPU_2DAYS), yL, LX, LW, true, false);
-        yL = drawRow('Actual Stock (Norm)', fR(d.AVG_STOCK), yL, LX, LW, false, false);
+        yL = drawRow(1, 'Total (with Security)', fR(d.TOTAL), yL, LX, LW, false, false);
+        yL = drawRow(2, 'LAPU/DTH LAPU (Norm)', fR(d.LAPU_DTH_LAPU_2DAYS), yL, LX, LW, true, false);
+        yL = drawRow(3, 'Actual Stock', fR(d.AVG_STOCK), yL, LX, LW, false, false, stockIsGood ? 'good' : 'bad');
+        yL = drawSubtotal('SUBTOTAL (Investment):', fR(d.TOTAL), yL, LX, LW);
         yL += GAP;
 
+        // Gross Earnings Details
         yL = drawSection('GROSS EARNINGS DETAILS', yL, LX, LW);
-        yL = drawRow('Total Gross Earning', fR(calculated.TOTAL_GROSS_EARNINGS), yL, LX, LW, false, false);
-        yL = drawRow('LAPU Commission (Circle)', parseFloat(d.LAPU_COMMISSION_C || 0) + '%', yL, LX, LW, true, false);
-        yL = drawRow('LAPU Commission (Amount)', fR(d.LAPU_COMMISSION_A), yL, LX, LW, false, false);
-        yL = drawRow('PLI / DTH GPS (Avg)', fR(d.PLI_AVG), yL, LX, LW, true, false);
-        yL = drawRow('Dist Subsidy', fR(d.DIST_SUBSIDY), yL, LX, LW, false, false);
+        yL = drawRow(1, 'LAPU Commission (Amount)', fR(d.LAPU_COMMISSION_A), yL, LX, LW, false, false);
+        yL = drawRow(2, 'PLI / DTH GPS (Avg)', fR(d.PLI_AVG), yL, LX, LW, true, false);
+        yL = drawRow(3, 'Dist Subsidy', fR(d.DIST_SUBSIDY), yL, LX, LW, false, false);
+        yL = drawRow(4, 'Store Net Earnings', fR(STORE_NET_EARNINGS), yL, LX, LW, true, false);
+        yL = drawRow(5, 'Lapu Secondary / Month', fR(d.LAPU_SECONDARY_PER_MONTH), yL, LX, LW, false, false);
+        yL = drawSubtotal('SUBTOTAL (Gross Earning):', fR(calculated.GROSS_EARNING), yL, LX, LW);
         yL += GAP;
 
+        // Expenses Details
         yL = drawSection('EXPENSES DETAILS', yL, LX, LW);
-        yL = drawRow('Total Expenses', fR(calculated.TOTAL_EXPENSES), yL, LX, LW, false, false);
-        yL = drawRow('ASC Required', fN(d.ASC_REQUIRED), yL, LX, LW, true, false);
-        yL = drawRow('Active ASC Count (Norm)', fN(d.ACTIVE_ASC_COUNT_AS_PER_NORM), yL, LX, LW, false, false);
-        yL = drawRow('ASC (FOS) Salary @13000', fR(d.ASC_FOS_SALARY_13000), yL, LX, LW, true, false);
+        yL = drawRow(1, 'ASC Required', fN(d.ASC_REQUIRED), yL, LX, LW, false, false);
+        yL = drawRow(2, 'Active ASC Count (Norm)', fN(d.ACTIVE_ASC_COUNT_AS_PER_NORM), yL, LX, LW, true, false);
+        yL = drawRow(3, 'ASC (FOS) Salary @13000', fR(d.ASC_FOS_SALARY_13000), yL, LX, LW, false, false);
+        yL = drawRow(4, 'Other Expenses', fR(calculated.OTHER_EXPENSES_TOTAL), yL, LX, LW, true, false);
+        yL = drawSubtotal('SUBTOTAL (Expenses):', fR(calculated.EXPENSES), yL, LX, LW);
 
+        // RIGHT COLUMN
+        // Cards
         const cW = (RW - 4) / 3;
         drawCard('TSM NAME', d.TSM_NAME, RX, yR, cW, CARD_H);
         drawCard('ZSM NAME', d.ZSM_NAME, RX + cW + 2, yR, cW, CARD_H);
         drawCard('ZONE', d.ZONE, RX + (cW + 2) * 2, yR, cW, CARD_H);
         yR += CARD_H + GAP;
 
+        // Site Details
         yR = drawSection('SITE DETAILS', yR, RX, RW);
-        yR = drawRow('Site Count', fN(d.SITE_COUNT), yR, RX, RW, false, false);
-        yR = drawRow('Offline Tertiary / Site', fR(d.OFFLINE_TERTIARY), yR, RX, RW, true, false);
-        yR = drawRow('Base', fR(d.BASE), yR, RX, RW, false, false);
-        yR = drawRow('Avg Monthly Gross', fN(d.AVG_MONTHLY_GROSS_IN), yR, RX, RW, true, false);
-        yR = drawRow('Lapu Secondary / Month', fR(d.LAPU_SECONDARY_PER_MONTH), yR, RX, RW, false, false);
+        yR = drawRow(1, 'Site Count', fN(d.SITE_COUNT), yR, RX, RW, false, false);
+        yR = drawRow(2, 'Offline Tertiary / Site', fR(d.OFFLINE_TERTIARY), yR, RX, RW, true, false);
+        yR = drawRow(3, 'Base', fR(d.BASE), yR, RX, RW, false, false);
+        yR = drawRow(4, 'Avg Monthly Gross', fN(d.AVG_MONTHLY_GROSS_IN), yR, RX, RW, true, false);
+        yR = drawRow(5, 'Lapu Secondary / Month', fR(d.LAPU_SECONDARY_PER_MONTH), yR, RX, RW, false, false);
+        yR = drawSubtotal('SUBTOTAL (Sites):', fN(d.SITE_COUNT) + ' Sites', yR, RX, RW);
         yR += GAP;
 
+        // Other Expenses
         yR = drawSection('OTHER EXPENSES', yR, RX, RW);
-        yR = drawRow('Other Expenses Total', fR(calculated.OTHER_EXPENSES_TOTAL), yR, RX, RW, false, true);
-        yR = drawRow('Rent', fR(RENT), yR, RX, RW, true, false);
-        yR = drawRow('Electricity', fR(ELECTRICITY), yR, RX, RW, false, false);
-        yR = drawRow('Misc', fR(MISC), yR, RX, RW, true, false);
-        yR = drawRow('MIS Salary', fR(ADDITIONAL_MIS_SALARY), yR, RX, RW, false, false);
-        yR = drawRow('Store Net Earnings', fR(STORE_NET_EARNINGS), yR, RX, RW, true, false);
-        yR = drawRow('Clawback / Penalty', fN(clawback), yR, RX, RW, false, false);
+        yR = drawRow(1, 'Rent', fR(RENT), yR, RX, RW, false, false);
+        yR = drawRow(2, 'Electricity', fR(ELECTRICITY), yR, RX, RW, true, false);
+        yR = drawRow(3, 'Misc', fR(MISC), yR, RX, RW, false, false);
+        yR = drawRow(4, 'MIS Salary', fR(ADDITIONAL_MIS_SALARY), yR, RX, RW, true, false);
+        yR = drawRow(5, 'Store Net Earnings', fR(STORE_NET_EARNINGS), yR, RX, RW, false, false);
+        yR = drawRow(6, 'Clawback / Penalty', fN(clawback), yR, RX, RW, true, false);
+        yR = drawSubtotal('SUBTOTAL (Other Exp):', fR(calculated.OTHER_EXPENSES_TOTAL), yR, RX, RW);
         yR += GAP;
 
+        // Opportunity Lost
         yR = drawSection('OPPORTUNITY LOST', yR, RX, RW);
-        yR = drawRow('PLI Missed Opportunity', fR(d.PLI_MISSED_OPPORTUNITY), yR, RX, RW, false, false);
-        yR = drawRow('ASC Subsidy Missed', fR(d.ASC_SUBSIDY_OPPORTUNITY_MISSED), yR, RX, RW, true, false);
-        yR = drawRow('Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yR, RX, RW, false, false);
+        yR = drawRow(1, 'PLI Missed Opportunity', fR(d.PLI_MISSED_OPPORTUNITY), yR, RX, RW, false, false);
+        yR = drawRow(2, 'ASC Subsidy Missed', fR(d.ASC_SUBSIDY_OPPORTUNITY_MISSED), yR, RX, RW, true, false);
+        yR = drawRow(3, 'Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yR, RX, RW, false, false);
+        yR = drawSubtotal('SUBTOTAL (Opp Lost):', fR(calculated.OPPORTUNITY_LOST_TOTAL), yR, RX, RW);
 
+        // Signatures
         const maxY = Math.max(yL, yR);
-        drawSignatureBoxes(maxY + 5);
+        drawSignatureBoxes(maxY + 4);
         drawFooter();
 
         const distName = String(d.DISTRIBUTOR_NAME || 'Dashboard');
@@ -1718,7 +2126,7 @@
       } finally {
         if (overlay.parentNode) overlay.remove();
         btn.disabled = false;
-        btn.textContent = '📄 Download PDF';
+        btn.textContent = '📥 Download ROI Report';
       }
     }
 
@@ -1738,5 +2146,3 @@
   </script>
 </body>
 </html>
-
-
