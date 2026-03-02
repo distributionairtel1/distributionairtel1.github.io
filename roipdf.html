@@ -64,32 +64,69 @@
     }
     th { background-color: #ecf0f1; color: #34495e; font-weight: 700; }
     tbody tr:nth-child(even) { background-color: #f9fbfc; }
+    
+    /* Section header with total */
     .section {
-      background-color: #eaf4f9; font-weight: 700; font-size: 15px;
-      color: #2c3e50; padding: 12px 14px; border-bottom: 2px solid #a7c7e7;
+      background-color: #eaf4f9; 
+      font-weight: 700; 
+      font-size: 15px;
+      color: #2c3e50; 
+      padding: 12px 14px; 
+      border-bottom: 2px solid #a7c7e7;
     }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .section-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #2c3e50;
+    }
+    
+    .section-total-container {
+      text-align: right;
+    }
+    
+    .section-total {
+      font-weight: 700;
+      font-size: 15px;
+      color: #1a5276;
+    }
+    
+    .section-sum-formula {
+      font-size: 11px;
+      color: #16a085;
+      font-style: italic;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    
     .subsection { background-color: #d5eaf4; font-weight: 600; }
     .display-field { font-weight: 600; color: #34495e; }
     
     /* Serial number column */
     .serial-col {
-      width: 30px;
+      width: 35px;
       text-align: center;
       font-weight: 600;
       color: #7f8c8d;
       background-color: #f8f9fa;
+      font-size: 13px;
     }
     
-    /* Sum formula span */
-    .sum-formula {
-      display: block;
-      font-size: 11px;
-      color: #16a085;
-      font-style: italic;
-      font-weight: 500;
-      margin-top: 4px;
-      padding-top: 4px;
-      border-top: 1px dashed #a3e4d7;
+    /* Input in tables */
+    .table-input {
+      width: 100%; padding: 8px 10px; font-size: 14px; border: 1.5px solid #ccc;
+      border-radius: 6px; transition: border-color 0.3s ease; box-sizing: border-box;
+    }
+    .table-input:focus {
+      border-color: #2980b9; box-shadow: 0 0 5px rgba(41,128,185,0.5); outline: none;
     }
     
     .distribution-hierarchy-container {
@@ -103,19 +140,70 @@
     }
     .info-key { font-weight: 700; color: #2c3e50; font-size: 14px; margin-bottom: 6px; }
     .info-value { font-weight: 600; color: #34495e; font-size: 13px; word-break: break-word; }
-    #otherExpensesTable input[type="number"] {
+    
+    /* Hide mobile info cards on desktop */
+    .info-cards-mobile {
+      display: none !important;
+    }
+    
+    #otherExpensesTable input[type="number"],
+    #grossEarningsDetailsTable input[type="number"] {
       width: 100%; padding: 8px 10px; font-size: 14px; border: 1.5px solid #ccc;
       border-radius: 6px; transition: border-color 0.3s ease; box-sizing: border-box;
     }
-    #otherExpensesTable input[type="number"]:focus {
+    #otherExpensesTable input[type="number"]:focus,
+    #grossEarningsDetailsTable input[type="number"]:focus {
       border-color: #2980b9; box-shadow: 0 0 5px rgba(41,128,185,0.5); outline: none;
     }
-    .submit-btn {
-      padding: 10px 20px; background: #2980b9; color: #fff; border: none;
-      border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px;
-      transition: background-color 0.3s, transform 0.1s;
+    
+    /* Common Submit Button Container */
+    .submit-container {
+      display: flex;
+      justify-content: center;
+      margin: 25px 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
-    .submit-btn:hover { background-color: #1a5276; transform: translateY(-1px); }
+    
+    .submit-btn {
+      padding: 14px 40px;
+      background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(41, 128, 185, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(41, 128, 185, 0.4);
+    }
+    
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+    
+    .submit-btn:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    
+    .submit-btn .btn-icon {
+      font-size: 18px;
+    }
+    
     .toast-container {
       position: fixed; top: 15px; right: 15px; z-index: 10000;
       max-width: 320px; width: calc(100% - 30px);
@@ -272,7 +360,6 @@
       list-style: none;
     }
 
-    /* ==================== COMPACT UPLOAD ITEM (Line by Line) ==================== */
     .upload-item {
       padding: 14px 16px;
       border-bottom: 1px solid #ecf0f1;
@@ -350,7 +437,6 @@
       color: #047857;
     }
 
-    /* Compact File Input */
     .compact-file-row {
       display: flex;
       align-items: center;
@@ -402,7 +488,6 @@
       font-weight: 600;
     }
 
-    /* Compact Location */
     .compact-location {
       display: flex;
       align-items: center;
@@ -430,7 +515,6 @@
       background: #fef5e7;
     }
 
-    /* Compact Action Button */
     .compact-action-btn {
       width: 100%;
       padding: 12px 16px;
@@ -469,7 +553,6 @@
       cursor: not-allowed;
     }
 
-    /* Compact Message */
     .compact-message {
       font-size: 12px;
       padding: 8px 12px;
@@ -499,7 +582,6 @@
       color: #b91c1c;
     }
 
-    /* Download Section Special */
     .download-info {
       text-align: center;
       padding: 10px 0;
@@ -516,74 +598,97 @@
       margin: 0;
     }
 
-    @media (max-width: 900px) {
-      body { padding: 15px 20px; font-size: 14px; }
-      h2 { font-size: 20px; }
-      .distribution-hierarchy-container { flex-direction: column; gap: 15px; }
-      .info-card { padding: 14px 10px; }
-      .info-key { font-size: 13px; } .info-value { font-size: 12px; }
-      th, td { padding: 8px 10px; font-size: 13px; }
-      .section { font-size: 14px; padding: 10px 12px; }
-      .serial-col { width: 25px; font-size: 12px; }
-      .sum-formula { font-size: 10px; }
-    }
-    @media (max-width: 600px) {
-      body { padding: 12px; font-size: 13px; }
-      h2 { font-size: 18px; margin-bottom: 14px; }
-      .input-bar { flex-direction: column; align-items: stretch; gap: 8px; }
-      #distributorNumberInput { width: 100%; font-size: 16px; padding: 12px; }
-      #loadBtn { width: 100%; padding: 12px; font-size: 15px; text-align: center; }
-      .distribution-hierarchy-container { flex-direction: column; gap: 12px; }
-      .info-cards-container { flex-direction: column; gap: 8px; }
-      .info-card { padding: 12px 10px; }
-      .info-key { font-size: 12px; } .info-value { font-size: 11px; }
-      table { margin-bottom: 12px; font-size: 12px; }
-      th, td { padding: 8px 10px; font-size: 12px; }
-      .section { font-size: 13px; padding: 10px 12px; }
-      .serial-col { width: 22px; font-size: 11px; padding: 6px 4px; }
-      .sum-formula { font-size: 9px; }
-      #otherExpensesTable input[type="number"] { padding: 10px; font-size: 16px; }
-      .submit-btn { width: 100%; padding: 12px; font-size: 14px; }
-      .toast-container { max-width: 300px; top: 10px; right: 10px; }
-      .toast { padding: 12px 14px; font-size: 13px; }
-      
-      /* Compact Upload Mobile */
-      .upload-container { margin-top: 20px; border-radius: 10px; }
-      .upload-header { padding: 12px 14px; }
-      .upload-header-title { font-size: 14px; }
-      .upload-item { padding: 12px 14px; }
-      .upload-step-badge { width: 24px; height: 24px; font-size: 11px; }
-      .upload-item-title { font-size: 13px; }
-      .compact-file-btn { padding: 10px 14px; font-size: 12px; }
-      .compact-action-btn { padding: 12px 14px; font-size: 13px; }
-      .download-info-icon { font-size: 28px; }
-      
-      /* Success Modal Mobile */
-      .success-modal { padding: 30px 24px; }
-      .success-icon { width: 70px; height: 70px; }
-      .success-icon span { font-size: 35px; }
-      .success-title { font-size: 20px; }
-      .success-message { font-size: 13px; }
-    }
-    @media (max-width: 400px) {
-      body { padding: 8px; font-size: 12px; }
-      h2 { font-size: 16px; }
-      th, td { padding: 6px 8px; font-size: 11px; }
-      .section { font-size: 12px; padding: 8px 10px; }
-      .serial-col { width: 20px; font-size: 10px; padding: 4px 2px; }
-      .upload-item { padding: 10px 12px; }
-      .compact-file-row { flex-wrap: wrap; }
-      .compact-file-name { width: 100%; margin-top: 6px; }
-    }
-    @media print {
-      @page { size: A4 portrait; margin: 10mm; }
-      body { margin: 0; padding: 5mm; background: white; font-size: 10px; }
-      .input-bar, .toast-container, .submit-btn, .upload-container { display: none !important; }
-      .distribution-hierarchy-container { flex-direction: row; gap: 8px; }
-      .distribution-section, .hierarchy-section { flex: 0 0 48%; }
-      table { font-size: 9px; margin-bottom: 8px; box-shadow: none; }
-      th, td { padding: 4px 6px; }
-    }
+@media (max-width: 900px) {
+  body { padding: 15px 20px; font-size: 14px; }
+  h2 { font-size: 20px; }
+  .distribution-hierarchy-container { flex-direction: column; gap: 15px; }
+  .info-card { padding: 14px 10px; }
+  .info-key { font-size: 13px; } .info-value { font-size: 12px; }
+  th, td { padding: 8px 10px; font-size: 13px; }
+  .section { font-size: 14px; padding: 10px 12px; }
+  .section-title { font-size: 14px; }
+  .section-total { font-size: 14px; }
+  .section-sum-formula { font-size: 10px; }
+  .serial-col { width: 30px; font-size: 12px; }
+  .submit-btn { padding: 12px 30px; font-size: 15px; }
+  
+  .info-cards-mobile {
+    display: flex !important;
+  }
+  
+  .hierarchy-section > .info-cards-container:not(.info-cards-mobile) {
+    display: none !important;
+  }
+}
+@media (max-width: 600px) {
+  body { padding: 12px; font-size: 13px; }
+  h2 { font-size: 18px; margin-bottom: 14px; }
+  .input-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+  #distributorNumberInput { width: 100%; font-size: 16px; padding: 12px; }
+  #loadBtn { width: 100%; padding: 12px; font-size: 15px; text-align: center; }
+  .distribution-hierarchy-container { flex-direction: column; gap: 12px; }
+  .info-cards-container { flex-direction: row; gap: 8px; }
+  .info-card { padding: 12px 10px; }
+  .info-key { font-size: 12px; } .info-value { font-size: 11px; }
+  table { margin-bottom: 12px; font-size: 12px; }
+  th, td { padding: 8px 10px; font-size: 12px; }
+  .section { font-size: 13px; padding: 10px 12px; }
+  /* Keep horizontal layout for section header */
+  .section-header { flex-direction: row; align-items: flex-start; }
+  .section-total-container { text-align: right; }
+  .section-title { font-size: 12px; }
+  .section-total { font-size: 12px; }
+  .section-sum-formula { font-size: 8px; }
+  .serial-col { width: 28px; font-size: 11px; padding: 6px 4px; }
+  #otherExpensesTable input[type="number"],
+  #grossEarningsDetailsTable input[type="number"] { padding: 10px; font-size: 16px; }
+  .submit-container { padding: 15px; margin: 20px 0; }
+  .submit-btn { width: 100%; padding: 14px 20px; font-size: 15px; justify-content: center; }
+  .toast-container { max-width: 300px; top: 10px; right: 10px; }
+  .toast { padding: 12px 14px; font-size: 13px; }
+  
+  .upload-container { margin-top: 20px; border-radius: 10px; }
+  .upload-header { padding: 12px 14px; }
+  .upload-header-title { font-size: 14px; }
+  .upload-item { padding: 12px 14px; }
+  .upload-step-badge { width: 24px; height: 24px; font-size: 11px; }
+  .upload-item-title { font-size: 13px; }
+  .compact-file-btn { padding: 10px 14px; font-size: 12px; }
+  .compact-action-btn { padding: 12px 14px; font-size: 13px; }
+  .download-info-icon { font-size: 28px; }
+  
+  .success-modal { padding: 30px 24px; }
+  .success-icon { width: 70px; height: 70px; }
+  .success-icon span { font-size: 35px; }
+  .success-title { font-size: 20px; }
+  .success-message { font-size: 13px; }
+}
+@media (max-width: 400px) {
+  body { padding: 8px; font-size: 12px; }
+  h2 { font-size: 16px; }
+  th, td { padding: 6px 8px; font-size: 11px; }
+  .section { font-size: 12px; padding: 8px 10px; }
+  /* Keep horizontal layout for section header */
+  .section-header { flex-direction: row; align-items: flex-start; }
+  .section-total-container { text-align: right; }
+  .section-title { font-size: 11px; flex-shrink: 0; }
+  .section-total { font-size: 11px; }
+  .section-sum-formula { font-size: 7px; }
+  .serial-col { width: 25px; font-size: 10px; padding: 4px 2px; }
+  .upload-item { padding: 10px 12px; }
+  .compact-file-row { flex-wrap: wrap; }
+  .compact-file-name { width: 100%; margin-top: 6px; }
+  .info-cards-container { flex-direction: column; gap: 8px; }
+}
+@media print {
+  @page { size: A4 portrait; margin: 10mm; }
+  body { margin: 0; padding: 5mm; background: white; font-size: 10px; }
+  .input-bar, .toast-container, .submit-container, .upload-container, .info-cards-mobile { display: none !important; }
+  .distribution-hierarchy-container { flex-direction: row; gap: 8px; }
+  .distribution-section, .hierarchy-section { flex: 0 0 48%; }
+  table { font-size: 9px; margin-bottom: 8px; box-shadow: none; }
+  th, td { padding: 4px 6px; }
+}
   </style>
 </head>
 <body>
@@ -615,125 +720,187 @@
     <div id="messageContainer" style="display: none;"></div>
 
     <div id="mainContent" style="display: none;">
-      <div class="distribution-hierarchy-container">
-        <!-- LEFT SECTION: Distributor, Investment, Gross Earnings, Opportunity Lost -->
-        <div class="distribution-section">
-          <!-- Distributor Table -->
-          <table>
-            <thead><tr><td class="section" colspan="3">Distributor</td></tr></thead>
-            <tbody>
-              <tr><td class="serial-col">1</td><td>Distributor Number:</td><td class="display-field" id="distributorNumber">-</td></tr>
-              <tr><td class="serial-col">2</td><td>Distributor Name:</td><td class="display-field" id="distributorName">-</td></tr>
-              <tr><td class="serial-col">3</td><td>Investment:</td><td class="display-field" id="investment">-</td></tr>
-              <tr><td class="serial-col">4</td><td>Average Stock:</td><td class="display-field" id="avgStock">-</td></tr>
-              <tr><td class="serial-col">5</td><td>Gross Earning:</td><td class="display-field" id="grossEarning">-</td></tr>
-              <tr><td class="serial-col">6</td><td>Expenses:</td><td class="display-field" id="expenses">-</td></tr>
-              <tr><td class="serial-col">7</td><td>Take Home:</td><td class="display-field" id="takeHome">-</td></tr>
-              <tr><td class="serial-col">8</td><td>ROI:</td><td class="display-field" id="roi">-</td></tr>
-            </tbody>
-          </table>
-
-          <!-- Investment Details Table -->
-          <table id="investmentDetailsTable">
-            <thead><tr><td class="section" colspan="3">Investment Details</td></tr></thead>
-            <tbody>
-              <tr>
-                <td class="serial-col">1</td>
-                <td>Total (with Security):</td>
-                <td class="display-field">
-                  <span id="totalWithSecurity">-</span>
-                  <span class="sum-formula" id="investmentSumFormula">Sum of 2+3 = ₹0</span>
-                </td>
-              </tr>
-              <tr><td class="serial-col">2</td><td>LAPU/DTH LAPU (3 days):</td><td class="display-field" id="lapuDthLapu">-</td></tr>
-              <tr><td class="serial-col">3</td><td>Actual Stock (Norm):</td><td class="display-field" id="actualStockNorm">-</td></tr>
-            </tbody>
-          </table>
-
-          <!-- Gross Earnings Details Table -->
-          <table id="grossEarningsDetailsTable">
-            <thead><tr><td class="section" colspan="3">Gross Earnings Details</td></tr></thead>
-            <tbody>
-              <tr>
-                <td class="serial-col">1</td>
-                <td>Total Gross Earning:</td>
-                <td class="display-field">
-                  <span id="totalGrossEarnings">-</span>
-                  <span class="sum-formula" id="grossEarningsSumFormula">Sum of 3+4+5 = ₹0</span>
-                </td>
-              </tr>
-              <tr><td class="serial-col">2</td><td>LAPU Commission (as per circle):</td><td class="display-field" id="lapuCommissionCircle">-</td></tr>
-              <tr><td class="serial-col">3</td><td>LAPU Commission (Amount):</td><td class="display-field" id="lapuCommissionAmount">-</td></tr>
-              <tr><td class="serial-col">4</td><td>PLI (@0.2%) / DTH GPS (Avg):</td><td class="display-field" id="pliAvg">-</td></tr>
-              <tr><td class="serial-col">5</td><td>Dist Subsidy:</td><td class="display-field" id="distSubsidy">-</td></tr>
-              <tr><td class="serial-col">6</td><td>Lapu Secondary per Month:</td><td class="display-field" id="lapuSecondary">-</td></tr>
-            </tbody>
-          </table>
-
-          <!-- Opportunity Lost Table -->
-          <table id="opportunityLostTable">
-            <thead><tr><td class="section" colspan="3">Opportunity Lost</td></tr></thead>
-            <tbody>
-              <tr><td class="serial-col">1</td><td>PLI Missed Opportunity:</td><td class="display-field" id="pliMissed">-</td></tr>
-              <tr><td class="serial-col">2</td><td>ASC Support Opportunity Missed:</td><td class="display-field" id="ascSubsidyMissed">-</td></tr>
-              <tr><td class="serial-col">3</td><td>Additional Active ASC Required for Full ASC Support:</td><td class="display-field" id="additionalAscRequired">-</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- RIGHT SECTION: Info Cards, Expenses Details, Other Expenses -->
-        <div class="hierarchy-section">
-          <div class="info-cards-container">
-            <div class="info-card">
-              <div class="info-key">TSM Name</div>
-              <div class="info-value" id="tsmName">-</div>
-            </div>
-            <div class="info-card">
-              <div class="info-key">ZSM Name</div>
-              <div class="info-value" id="zsmName">-</div>
-            </div>
-            <div class="info-card">
-              <div class="info-key">Zone</div>
-              <div class="info-value" id="zone">-</div>
-            </div>
-          </div>
-
-          <!-- Expenses Details Table -->
-          <table id="expensesDetailsTable">
-            <thead><tr><td class="section" colspan="3">Expenses Details</td></tr></thead>
-            <tbody>
-              <tr>
-                <td class="serial-col">1</td>
-                <td>Total Expenses:</td>
-                <td class="display-field">
-                  <span id="totalExpenses">-</span>
-                  <span class="sum-formula" id="expensesSumFormula">Sum of 4 = ₹0</span>
-                </td>
-              </tr>
-              <tr><td class="serial-col">2</td><td>ASC Required:</td><td class="display-field" id="ascRequired">-</td></tr>
-              <tr><td class="serial-col">3</td><td>Active ASC Count (as per norm):</td><td class="display-field" id="activeAscCount">-</td></tr>
-              <tr><td class="serial-col">4</td><td>ASC (FOS) Salary (@ ~Rs 13000):</td><td class="display-field" id="ascFosSalary">-</td></tr>
-            </tbody>
-          </table>
-
-          <!-- Other Expenses Table -->
-          <form id="otherExpensesForm">
-            <table id="otherExpensesTable">
-              <thead><tr><td class="section" colspan="3">Other Expenses</td></tr></thead>
+      <form id="expensesForm">
+        <div class="distribution-hierarchy-container">
+          <!-- LEFT SECTION -->
+          <div class="distribution-section">
+            <!-- Distributor Table -->
+            <table>
+              <thead>
+                <tr><td class="section" colspan="3">Distributor</td></tr>
+              </thead>
               <tbody>
-                <tr><td class="serial-col"></td><td colspan="2" class="subsection">Other Expenses Total: <span class="display-field" id="otherExpensesTotal">₹0</span></td></tr>
-                <tr><td class="serial-col">1</td><td>Rent:</td><td><input type="number" id="rentInput" name="RENT" placeholder="3000-60000" min="3000" max="60000" oninput="validateInput(this)"></td></tr>
-                <tr><td class="serial-col">2</td><td>Electricity:</td><td><input type="number" id="electricityInput" name="ELECTRICITY" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td></tr>
-                <tr><td class="serial-col">3</td><td>Misc:</td><td><input type="number" id="miscInput" name="MISC" placeholder="500-3000" min="0" max="5000" oninput="validateInput(this)"></td></tr>
-                <tr><td class="serial-col">4</td><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="ADDITIONAL_MIS_SALARY" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td></tr>
-                <tr><td class="serial-col">5</td><td>Store Net Earnings:</td><td><input type="number" id="storeNetEarningsInput" name="STORE_NET_EARNINGS" placeholder="Enter Store Net Earnings" min="0" oninput="validateInput(this)"></td></tr>
-                <tr><td class="serial-col"></td><td colspan="2"><button type="submit" class="submit-btn">Submit Other Expenses</button></td></tr>
-                <tr><td class="serial-col">6</td><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
+                <tr><td class="serial-col">I</td><td>Distributor Number:</td><td class="display-field" id="distributorNumber">-</td></tr>
+                <tr><td class="serial-col">II</td><td>Distributor Name:</td><td class="display-field" id="distributorName">-</td></tr>
+                <tr><td class="serial-col">III</td><td>Investment:</td><td class="display-field" id="investment">-</td></tr>
+                <tr><td class="serial-col">IV</td><td>Average Stock:</td><td class="display-field" id="avgStock">-</td></tr>
+                <tr><td class="serial-col">V</td><td>Gross Earning:</td><td class="display-field" id="grossEarning">-</td></tr>
+                <tr><td class="serial-col">VI</td><td>Expenses:</td><td class="display-field" id="expenses">-</td></tr>
+                <tr><td class="serial-col">VII</td><td>Take Home:</td><td class="display-field" id="takeHome">-</td></tr>
+                <tr><td class="serial-col">VIII</td><td>ROI:</td><td class="display-field" id="roi">-</td></tr>
               </tbody>
             </table>
-          </form>
+
+            <!-- Mobile Only Info Cards -->
+            <div class="info-cards-container info-cards-mobile">
+              <div class="info-card">
+                <div class="info-key">TSM Name</div>
+                <div class="info-value" id="tsmNameMobile">-</div>
+              </div>
+              <div class="info-card">
+                <div class="info-key">ZSM Name</div>
+                <div class="info-value" id="zsmNameMobile">-</div>
+              </div>
+              <div class="info-card">
+                <div class="info-key">Zone</div>
+                <div class="info-value" id="zoneMobile">-</div>
+              </div>
+            </div>
+
+            <!-- Investment Details Table -->
+            <table id="investmentDetailsTable">
+              <thead>
+                <tr>
+                  <td class="section" colspan="3">
+                    <div class="section-header">
+                      <span class="section-title">Investment Details</span>
+                      <div class="section-total-container">
+                        <span class="section-total" id="investmentTotal">₹0</span>
+                        <div class="section-sum-formula" id="investmentSumFormula">Sum of I+II</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="serial-col">I</td><td>LAPU/DTH LAPU (3 days):</td><td class="display-field" id="lapuDthLapu">-</td></tr>
+                <tr><td class="serial-col">II</td><td>Actual Stock (Norm):</td><td class="display-field" id="actualStockNorm">-</td></tr>
+              </tbody>
+            </table>
+
+            <!-- Gross Earnings Details Table -->
+            <table id="grossEarningsDetailsTable">
+              <thead>
+                <tr>
+                  <td class="section" colspan="3">
+                    <div class="section-header">
+                      <span class="section-title">Gross Earnings Details</span>
+                      <div class="section-total-container">
+                        <span class="section-total" id="grossEarningsTotal">₹0</span>
+                        <div class="section-sum-formula" id="grossEarningsSumFormula">Sum of I+II+III</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="serial-col">I</td><td>LAPU Commission (Amount):</td><td class="display-field" id="lapuCommissionAmount">-</td></tr>
+                <tr><td class="serial-col">II</td><td>PLI (@0.2%) / DTH GPS (Avg):</td><td class="display-field" id="pliAvg">-</td></tr>
+                <tr><td class="serial-col">III</td><td>Dist Subsidy:</td><td class="display-field" id="distSubsidy">-</td></tr>
+                <tr><td class="serial-col">IV</td><td>Lapu Secondary per Month:</td><td class="display-field" id="lapuSecondary">-</td></tr>
+                <tr><td class="serial-col">V</td><td>Store Net Earnings:</td><td><input type="number" id="storeNetEarningsInput" name="STORE_NET_EARNINGS" class="table-input" placeholder="Enter Store Net Earnings" min="0" oninput="validateInput(this)"></td></tr>
+              </tbody>
+            </table>
+
+            <!-- Opportunity Lost Table -->
+            <table id="opportunityLostTable">
+              <thead>
+                <tr>
+                  <td class="section" colspan="3">
+                    <div class="section-header">
+                      <span class="section-title">Opportunity Lost</span>
+                      <div class="section-total-container">
+                        <span class="section-total" id="opportunityLostTotal">₹0</span>
+                        <div class="section-sum-formula" id="opportunityLostSumFormula">Sum of I+II</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="serial-col">I</td><td>PLI Missed Opportunity:</td><td class="display-field" id="pliMissed">-</td></tr>
+                <tr><td class="serial-col">II</td><td>ASC Support Opportunity Missed:</td><td class="display-field" id="ascSubsidyMissed">-</td></tr>
+                <tr><td class="serial-col">III</td><td>Additional Active ASC Required:</td><td class="display-field" id="additionalAscRequired">-</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- RIGHT SECTION -->
+          <div class="hierarchy-section">
+            <!-- Desktop Info Cards -->
+            <div class="info-cards-container">
+              <div class="info-card">
+                <div class="info-key">TSM Name</div>
+                <div class="info-value" id="tsmName">-</div>
+              </div>
+              <div class="info-card">
+                <div class="info-key">ZSM Name</div>
+                <div class="info-value" id="zsmName">-</div>
+              </div>
+              <div class="info-card">
+                <div class="info-key">Zone</div>
+                <div class="info-value" id="zone">-</div>
+              </div>
+            </div>
+
+            <!-- Expenses Details Table -->
+            <table id="expensesDetailsTable">
+              <thead>
+                <tr>
+                  <td class="section" colspan="3">
+                    <div class="section-header">
+                      <span class="section-title">Expenses Details</span>
+                      <div class="section-total-container">
+                        <span class="section-total" id="expensesTotal">₹0</span>
+                        <div class="section-sum-formula" id="expensesSumFormula">Sum of III</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="serial-col">I</td><td>ASC Required:</td><td class="display-field" id="ascRequired">-</td></tr>
+                <tr><td class="serial-col">II</td><td>Active ASC Count (as per norm):</td><td class="display-field" id="activeAscCount">-</td></tr>
+                <tr><td class="serial-col">III</td><td>ASC (FOS) Salary (@ ~Rs 13000):</td><td class="display-field" id="ascFosSalary">-</td></tr>
+              </tbody>
+            </table>
+
+            <!-- Other Expenses Table -->
+            <table id="otherExpensesTable">
+              <thead>
+                <tr>
+                  <td class="section" colspan="3">
+                    <div class="section-header">
+                      <span class="section-title">Other Expenses</span>
+                      <div class="section-total-container">
+                        <span class="section-total" id="otherExpensesTotal">₹0</span>
+                        <div class="section-sum-formula" id="otherExpensesSumFormula">Sum of I+II+III+IV</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="serial-col">I</td><td>Rent:</td><td><input type="number" id="rentInput" name="RENT" placeholder="3000-60000" min="3000" max="60000" oninput="validateInput(this)"></td></tr>
+                <tr><td class="serial-col">II</td><td>Electricity:</td><td><input type="number" id="electricityInput" name="ELECTRICITY" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)"></td></tr>
+                <tr><td class="serial-col">III</td><td>Misc:</td><td><input type="number" id="miscInput" name="MISC" placeholder="500-3000" min="0" max="5000" oninput="validateInput(this)"></td></tr>
+                <tr><td class="serial-col">IV</td><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="ADDITIONAL_MIS_SALARY" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)"></td></tr>
+                <tr><td class="serial-col">V</td><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+
+        <!-- Common Submit Button -->
+        <!-- <div class="submit-container"> -->
+            <center>
+            <button type="submit" class="submit-btn" id="submitExpensesBtn">
+            <span class="btn-icon"></span>
+            Submit All Expenses
+          </button>
+          </center>
+        <!-- </div> -->
+      </form>
 
       <!-- ==================== COMPACT UPLOAD SECTION ==================== -->
       <div class="upload-container" id="uploadContainer">
@@ -848,27 +1015,37 @@
     let currentDistributorId = '';
     let expensesSubmitted = false;
 
-    // ===== GOOGLE APPS SCRIPT WEB APP URL =====
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWWiG5RTaQClygDhO6XIErI7ecZ8Rf4VQ8mMRlMb8Bm_jPhckah-UtE5nTUu5e_dvO/exec';
 
-    // ===== STATE MANAGEMENT =====
     let ndcUploaded = false;
     let pdfDownloaded = false;
     let roiUploaded = false;
     let ndcFile = null;
     let roiFile = null;
 
-    // ===== REFRESH TO HOME =====
+    function toRoman(num) {
+      const romanNumerals = [
+        ['X', 10], ['IX', 9], ['VIII', 8], ['VII', 7], ['VI', 6],
+        ['V', 5], ['IV', 4], ['III', 3], ['II', 2], ['I', 1]
+      ];
+      let result = '';
+      for (let [roman, value] of romanNumerals) {
+        while (num >= value) {
+          result += roman;
+          num -= value;
+        }
+      }
+      return result;
+    }
+
     function refreshToHome() {
       window.location.reload();
     }
 
-    // ===== SHOW SUCCESS OVERLAY =====
     function showSuccessOverlay() {
       document.getElementById('successOverlay').style.display = 'flex';
     }
 
-    // ===== TOAST =====
     function showToast(message, type = 'success') {
       const c = document.getElementById('toastContainer');
       const t = document.createElement('div');
@@ -879,12 +1056,8 @@
       setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 4000);
     }
 
-    // ===== UTILITY =====
     function formatINR(num) {
       return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(parseFloat(num || 0));
-    }
-    function formatPercent(num) {
-      return (parseFloat(num || 0) * 100).toFixed(2) + '%';
     }
     function formatNum(num) {
       return parseFloat(num || 0).toLocaleString('en-IN');
@@ -892,23 +1065,19 @@
     function indianFormat(num) {
       return new Intl.NumberFormat('en-IN').format(parseFloat(num || 0));
     }
-    function pdfINR(num) {
-      const val = parseFloat(num || 0);
-      return 'Rs. ' + new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
-    }
 
-    // ===== GET PREVIOUS MONTH =====
+    // function getPreviousMonth() {
+    // const now = new Date();
+    // const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    // return prevMonth.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+    // }
+    
     function getPreviousMonth() {
-      const now = new Date();
-      const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      return prevMonth.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+     return 'Jan 2026';
     }
-
-    // ===== ENHANCED LOCATION CAPTURE =====
     function captureLocation(locationElId) {
       return new Promise((resolve) => {
         const locationEl = document.getElementById(locationElId);
-        
         locationEl.textContent = '📡 Capturing location...';
         locationEl.className = 'compact-location capturing';
 
@@ -935,20 +1104,15 @@
         const onSuccess = (position) => {
           attempts++;
           const newAccuracy = position.coords.accuracy;
-          
           if (!bestPosition || newAccuracy < bestPosition.coords.accuracy) {
             bestPosition = position;
           }
-
           locationEl.textContent = `📡 Getting location... (${Math.round(newAccuracy)}m)`;
-
           if (newAccuracy < 100 || attempts >= maxAttempts) {
             if (watchId) navigator.geolocation.clearWatch(watchId);
-            
             const lat = bestPosition.coords.latitude;
             const lng = bestPosition.coords.longitude;
             const accuracy = Math.round(bestPosition.coords.accuracy);
-
             locationEl.textContent = `✅ ${lat.toFixed(5)}, ${lng.toFixed(5)} (±${accuracy}m)`;
             locationEl.className = 'compact-location success';
             resolve({ lat, lng, accuracy });
@@ -957,7 +1121,6 @@
 
         const onError = (error) => {
           if (watchId) navigator.geolocation.clearWatch(watchId);
-
           if (bestPosition) {
             const lat = bestPosition.coords.latitude;
             const lng = bestPosition.coords.longitude;
@@ -978,7 +1141,6 @@
           (position) => {
             bestPosition = position;
             watchId = navigator.geolocation.watchPosition(onSuccess, onError, options);
-            
             setTimeout(() => {
               if (watchId) {
                 navigator.geolocation.clearWatch(watchId);
@@ -1008,7 +1170,6 @@
       });
     }
 
-    // ===== CALCULATE ALL VALUES =====
     function calculateAllValues(data) {
       const INVESTMENT = parseFloat(data.TOTAL || 0);
       const LAPU_COMMISSION_A = parseFloat(data.LAPU_COMMISSION_A || 0);
@@ -1028,16 +1189,21 @@
       const TAKE_HOME = GROSS_EARNING - EXPENSES;
       const ROI = INVESTMENT > 0 ? (TAKE_HOME / INVESTMENT) : 0;
 
-      // Investment breakdown
       const LAPU_DTH_LAPU = parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0);
       const AVG_STOCK = parseFloat(data.AVG_STOCK || 0);
       const INVESTMENT_SUM = LAPU_DTH_LAPU + AVG_STOCK;
+
+      const PLI_MISSED = parseFloat(data.PLI_MISSED_OPPORTUNITY || 0);
+      const ASC_SUBSIDY_MISSED = parseFloat(data.ASC_SUBSIDY_OPPORTUNITY_MISSED || 0);
+      const TOTAL_OPPORTUNITY_LOST = PLI_MISSED + ASC_SUBSIDY_MISSED;
 
       return { 
         INVESTMENT, TOTAL_GROSS_EARNINGS, GROSS_EARNING, TOTAL_EXPENSES, 
         OTHER_EXPENSES_TOTAL, EXPENSES, TAKE_HOME, ROI,
         LAPU_DTH_LAPU, AVG_STOCK, INVESTMENT_SUM,
-        LAPU_COMMISSION_A, PLI_AVG, DIST_SUBSIDY, ASC_FOS_SALARY_13000
+        LAPU_COMMISSION_A, PLI_AVG, DIST_SUBSIDY, ASC_FOS_SALARY_13000,
+        PLI_MISSED, ASC_SUBSIDY_MISSED, TOTAL_OPPORTUNITY_LOST,
+        RENT, ELECTRICITY, MISC, ADDITIONAL_MIS_SALARY
       };
     }
 
@@ -1050,20 +1216,17 @@
       return (RENT > 0 || ELECTRICITY > 0 || MISC > 0 || ADDITIONAL_MIS_SALARY > 0 || STORE_NET_EARNINGS > 0);
     }
 
-    // ===== UPDATE UI VISIBILITY =====
     function updateUIVisibility() {
       const ndcItem = document.getElementById('ndcUploadItem');
       const downloadItem = document.getElementById('downloadPdfItem');
       const roiItem = document.getElementById('roiUploadItem');
 
-      // Show NDC after expenses submitted
       if (expensesSubmitted) {
         ndcItem.classList.add('visible');
       } else {
         ndcItem.classList.remove('visible');
       }
 
-      // Show Download after NDC uploaded
       if (ndcUploaded) {
         downloadItem.classList.add('visible');
         ndcItem.classList.add('completed');
@@ -1075,7 +1238,6 @@
         downloadItem.classList.remove('visible');
       }
 
-      // Show ROI upload after PDF downloaded
       if (pdfDownloaded) {
         roiItem.classList.add('visible');
         downloadItem.classList.add('completed');
@@ -1087,7 +1249,6 @@
         roiItem.classList.remove('visible');
       }
 
-      // Mark ROI complete
       if (roiUploaded) {
         roiItem.classList.add('completed');
         document.getElementById('roiBadge').classList.add('done');
@@ -1097,7 +1258,6 @@
       }
     }
 
-    // ===== FILE HANDLERS =====
     function handleNdcFileSelect(input) {
       const file = input.files[0];
       const fileNameEl = document.getElementById('ndcFileName');
@@ -1170,14 +1330,12 @@
       }
     }
 
-    // ===== SHOW MESSAGE =====
     function showMessage(elId, text, type) {
       const el = document.getElementById(elId);
       el.className = `compact-message show ${type}`;
       el.textContent = text;
     }
 
-    // ===== UPLOAD TO GOOGLE SHEETS =====
     async function uploadToGoogleSheets(file, uploadType) {
       const msgEl = uploadType === 'ndc' ? 'ndcMessage' : 'roiMessage';
       const locEl = uploadType === 'ndc' ? 'ndcLocation' : 'roiLocation';
@@ -1187,7 +1345,6 @@
       uploadBtn.disabled = true;
 
       const location = await captureLocation(locEl);
-
       showMessage(msgEl, '📤 Uploading file...', 'loading');
 
       const base64Data = await new Promise((resolve) => {
@@ -1253,15 +1410,12 @@
         document.getElementById('roiFileLabel').classList.add('disabled');
         document.getElementById('roiFileInput').disabled = true;
         updateUIVisibility();
-        
-        // Show success overlay after short delay
         setTimeout(() => {
           showSuccessOverlay();
         }, 500);
       }
     }
 
-    // ===== VALIDATION =====
     function validateInput(elem) {
       const val = elem.value;
       const min = Number(elem.min) || 0;
@@ -1272,24 +1426,28 @@
       updateOtherExpensesTotal();
     }
 
-    // ===== UPDATE SUM FORMULAS =====
     function updateSumFormulas(calculated) {
-      // Investment Details: Sum of 2+3
-      const investmentSum = calculated.LAPU_DTH_LAPU + calculated.AVG_STOCK;
-      document.getElementById('investmentSumFormula').textContent = 
-        `Sum of 2+3 = ${formatINR(investmentSum)}`;
+      // Investment Details
+      document.getElementById('investmentTotal').textContent = formatINR(calculated.INVESTMENT_SUM);
+      document.getElementById('investmentSumFormula').textContent = `Sum of I+II = ${formatINR(calculated.INVESTMENT_SUM)}`;
 
-      // Gross Earnings: Sum of 3+4+5
-      const grossEarningsSum = calculated.LAPU_COMMISSION_A + calculated.PLI_AVG + calculated.DIST_SUBSIDY;
-      document.getElementById('grossEarningsSumFormula').textContent = 
-        `Sum of 3+4+5 = ${formatINR(grossEarningsSum)}`;
+      // Gross Earnings
+      document.getElementById('grossEarningsTotal').textContent = formatINR(calculated.TOTAL_GROSS_EARNINGS);
+      document.getElementById('grossEarningsSumFormula').textContent = `Sum of I+II+III = ${formatINR(calculated.TOTAL_GROSS_EARNINGS)}`;
 
-      // Expenses Details: Sum of 4
-      document.getElementById('expensesSumFormula').textContent = 
-        `Sum of 4 = ${formatINR(calculated.ASC_FOS_SALARY_13000)}`;
+      // Expenses Details
+      document.getElementById('expensesTotal').textContent = formatINR(calculated.TOTAL_EXPENSES);
+      document.getElementById('expensesSumFormula').textContent = `Sum of III = ${formatINR(calculated.ASC_FOS_SALARY_13000)}`;
+
+      // Opportunity Lost
+      document.getElementById('opportunityLostTotal').textContent = formatINR(calculated.TOTAL_OPPORTUNITY_LOST);
+      document.getElementById('opportunityLostSumFormula').textContent = `Sum of I+II = ${formatINR(calculated.TOTAL_OPPORTUNITY_LOST)}`;
+
+      // Other Expenses
+      document.getElementById('otherExpensesTotal').textContent = formatINR(calculated.OTHER_EXPENSES_TOTAL);
+      document.getElementById('otherExpensesSumFormula').textContent = `Sum of I+II+III+IV = ${formatINR(calculated.OTHER_EXPENSES_TOTAL)}`;
     }
 
-    // ===== POPULATE =====
     function populateData(data) {
       const calculated = calculateAllValues(data);
       expensesSubmitted = areExpensesFilled(data);
@@ -1316,24 +1474,26 @@
         roiEl.classList.add('pending-field');
       }
 
-      document.getElementById('totalWithSecurity').textContent = formatINR(data.TOTAL);
       document.getElementById('lapuDthLapu').textContent = formatINR(data.LAPU_DTH_LAPU_2DAYS);
       const stockCell = document.getElementById('actualStockNorm');
       stockCell.textContent = formatINR(data.AVG_STOCK);
       stockCell.style.color = parseFloat(data.AVG_STOCK || 0) > parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0) ? 'green' : 'red';
 
-      document.getElementById('totalGrossEarnings').textContent = formatINR(calculated.TOTAL_GROSS_EARNINGS);
-      document.getElementById('lapuCommissionCircle').textContent = parseFloat(data.LAPU_COMMISSION_C || 0) + '%';
       document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
       document.getElementById('pliAvg').textContent = formatINR(data.PLI_AVG);
       document.getElementById('distSubsidy').textContent = formatINR(data.DIST_SUBSIDY);
       document.getElementById('lapuSecondary').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
 
+      // Desktop info cards
       document.getElementById('tsmName').textContent = data.TSM_NAME || '-';
       document.getElementById('zsmName').textContent = data.ZSM_NAME || '-';
       document.getElementById('zone').textContent = data.ZONE || '-';
 
-      document.getElementById('totalExpenses').textContent = formatINR(calculated.TOTAL_EXPENSES);
+      // Mobile info cards
+      document.getElementById('tsmNameMobile').textContent = data.TSM_NAME || '-';
+      document.getElementById('zsmNameMobile').textContent = data.ZSM_NAME || '-';
+      document.getElementById('zoneMobile').textContent = data.ZONE || '-';
+
       document.getElementById('ascRequired').textContent = formatNum(data.ASC_REQUIRED);
       document.getElementById('activeAscCount').textContent = formatNum(data.ACTIVE_ASC_COUNT_AS_PER_NORM);
       document.getElementById('ascFosSalary').textContent = formatINR(data.ASC_FOS_SALARY_13000);
@@ -1351,7 +1511,6 @@
       document.getElementById('misSalaryInput').value = data.ADDITIONAL_MIS_SALARY || '';
       document.getElementById('storeNetEarningsInput').value = data.STORE_NET_EARNINGS || '';
 
-      updateOtherExpensesTotal();
       updateSumFormulas(calculated);
       
       document.getElementById('mainContent').style.display = 'block';
@@ -1408,10 +1567,11 @@
       const ELECTRICITY = parseFloat(document.getElementById('electricityInput').value) || 0;
       const MISC = parseFloat(document.getElementById('miscInput').value) || 0;
       const ADDITIONAL_MIS_SALARY = parseFloat(document.getElementById('misSalaryInput').value) || 0;
-      document.getElementById('otherExpensesTotal').textContent = '₹' + indianFormat(RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY);
+      const total = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY;
+      document.getElementById('otherExpensesTotal').textContent = formatINR(total);
+      document.getElementById('otherExpensesSumFormula').textContent = `Sum of I+II+III+IV = ${formatINR(total)}`;
     }
 
-    // ===== LOAD DATA =====
     async function loadData(distributorId) {
       try {
         document.getElementById('loadBtn').textContent = 'Loading...';
@@ -1440,14 +1600,16 @@
       }
     }
 
-    // ===== SUBMIT EXPENSES =====
-    document.getElementById('otherExpensesForm').addEventListener('submit', async (e) => {
+    document.getElementById('expensesForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentDistributorId) { showToast('⚠️ Load distributor data first!', 'error'); return; }
       
-      const inputs = document.querySelectorAll('#otherExpensesTable input[type="number"]');
+      const submitBtn = document.getElementById('submitExpensesBtn');
+      const originalBtnText = submitBtn.innerHTML;
+      
+      const allInputs = document.querySelectorAll('#expensesForm input[type="number"]');
       let isValid = true;
-      inputs.forEach(input => {
+      allInputs.forEach(input => {
         if (input.value !== '' && input.name !== 'STORE_NET_EARNINGS') {
           const n = Number(input.value), mn = Number(input.min) || 0, mx = Number(input.max) || Infinity;
           if (n < mn || n > mx) { isValid = false; input.style.borderColor = '#e74c3c'; }
@@ -1455,12 +1617,14 @@
       });
       if (!isValid) { showToast('⚠️ Fix values outside range!', 'error'); return; }
       
-      const fd = new FormData(e.target);
-      const RENT = parseFloat(fd.get('RENT')) || 0;
-      const ELECTRICITY = parseFloat(fd.get('ELECTRICITY')) || 0;
-      const MISC = parseFloat(fd.get('MISC')) || 0;
-      const ADDITIONAL_MIS_SALARY = parseFloat(fd.get('ADDITIONAL_MIS_SALARY')) || 0;
-      const STORE_NET_EARNINGS = parseFloat(fd.get('STORE_NET_EARNINGS')) || 0;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+      
+      const RENT = parseFloat(document.getElementById('rentInput').value) || 0;
+      const ELECTRICITY = parseFloat(document.getElementById('electricityInput').value) || 0;
+      const MISC = parseFloat(document.getElementById('miscInput').value) || 0;
+      const ADDITIONAL_MIS_SALARY = parseFloat(document.getElementById('misSalaryInput').value) || 0;
+      const STORE_NET_EARNINGS = parseFloat(document.getElementById('storeNetEarningsInput').value) || 0;
       
       const updatedData = { ...currentDistributorData, RENT, ELECTRICITY, MISC, ADDITIONAL_MIS_SALARY, STORE_NET_EARNINGS };
       const calculated = calculateAllValues(updatedData);
@@ -1479,7 +1643,7 @@
         expensesSubmitted = true;
         populateData(currentDistributorData);
         
-        showToast('✅ Expenses saved! Upload NDC now.', 'success');
+        showToast('✅ All expenses saved successfully! Upload NDC now.', 'success');
         updateUIVisibility();
         
         setTimeout(() => {
@@ -1487,10 +1651,12 @@
         }, 300);
       } catch (error) { 
         showToast('❌ Save failed: ' + error.message, 'error'); 
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
       }
     });
 
-    // ===== PDF GENERATION =====
     async function downloadPageAsPdf() {
       if (!currentDistributorData) { showToast('⚠️ Load data first!', 'error'); return; }
 
@@ -1517,17 +1683,16 @@
         const LX = M;
         const RX = M + LW + COL_GAP;
         const ROW_H = 7;
-        const ROW_H_WITH_SUM = 11;
-        const SEC_H = 8;
+        const SEC_H = 12;
         const GAP = 3;
         const CARD_H = 18;
 
         const C = {
-          headerBg: [26, 82, 118], primary: [41, 128, 185], accent: [243, 156, 18],
-          white: [255, 255, 255], dark: [44, 62, 80], border: [189, 195, 199],
-          green: [39, 174, 96], red: [231, 76, 60], lightGreen: [212, 239, 223],
-          altRow: [249, 251, 252], cardBg: [234, 244, 249], highlight: [52, 73, 94],
-          sumText: [22, 160, 133]
+        headerBg: [26, 82, 118], primary: [41, 128, 185], accent: [243, 156, 18],
+        white: [255, 255, 255], dark: [44, 62, 80], border: [189, 195, 199],
+        green: [39, 174, 96], red: [231, 76, 60], lightGreen: [212, 239, 223],
+        altRow: [249, 251, 252], cardBg: [234, 244, 249], highlight: [52, 73, 94],
+        sumText: [253, 235, 171]   
         };
 
         const calculated = calculateAllValues(d);
@@ -1570,45 +1735,68 @@
           return 27;
         }
 
-        function drawSection(text, y, x, w) {
+        function drawSectionWithTotal(title, total, sumFormula, y, x, w) {
           pdf.setFillColor(...C.primary);
           pdf.rect(x, y, w, SEC_H, 'F');
           pdf.setFillColor(...C.accent);
           pdf.rect(x, y, 2.5, SEC_H, 'F');
+          
+          // Title on left
           pdf.setTextColor(...C.white);
           pdf.setFontSize(8);
           pdf.setFont('helvetica', 'bold');
-          pdf.text(String(text), x + 6, y + SEC_H * 0.62);
+          pdf.text(String(title), x + 6, y + 5);
+          
+          // Total on right
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(total, x + w - 4, y + 5, { align: 'right' });
+          
+          // Sum formula below total
+          pdf.setFontSize(5.5);
+          pdf.setTextColor(...C.sumText);
+          pdf.setFont('helvetica', 'italic');
+          pdf.text(sumFormula, x + w - 4, y + 9.5, { align: 'right' });
+          
           return y + SEC_H;
         }
 
-        function drawRow(serial, label, value, y, x, w, isAlt, isHL, sumFormula = null) {
-          const rowHeight = sumFormula ? ROW_H_WITH_SUM : ROW_H;
-          const serialW = 8;
+        function drawSection(text, y, x, w) {
+          pdf.setFillColor(...C.primary);
+          pdf.rect(x, y, w, 8, 'F');
+          pdf.setFillColor(...C.accent);
+          pdf.rect(x, y, 2.5, 8, 'F');
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(String(text), x + 6, y + 5.5);
+          return y + 8;
+        }
+
+        function drawRow(serial, label, value, y, x, w, isAlt, isHL) {
+          const serialW = 10;
           const lblW = (w - serialW) * 0.55;
           const valW = w - serialW - lblW;
           
           if (isHL) pdf.setFillColor(...C.lightGreen);
           else if (isAlt) pdf.setFillColor(...C.altRow);
           else pdf.setFillColor(255, 255, 255);
-          pdf.rect(x, y, w, rowHeight, 'F');
+          pdf.rect(x, y, w, ROW_H, 'F');
           pdf.setDrawColor(...C.border);
           pdf.setLineWidth(0.15);
-          pdf.rect(x, y, w, rowHeight, 'S');
-          pdf.line(x + serialW, y, x + serialW, y + rowHeight);
-          pdf.line(x + serialW + lblW, y, x + serialW + lblW, y + rowHeight);
+          pdf.rect(x, y, w, ROW_H, 'S');
+          pdf.line(x + serialW, y, x + serialW, y + ROW_H);
+          pdf.line(x + serialW + lblW, y, x + serialW + lblW, y + ROW_H);
           
-          // Serial number
           pdf.setFillColor(248, 249, 250);
-          pdf.rect(x, y, serialW, rowHeight, 'F');
+          pdf.rect(x, y, serialW, ROW_H, 'F');
           pdf.setDrawColor(...C.border);
-          pdf.rect(x, y, serialW, rowHeight, 'S');
-          pdf.setFontSize(6.5);
+          pdf.rect(x, y, serialW, ROW_H, 'S');
+          pdf.setFontSize(6);
           pdf.setTextColor(127, 140, 141);
           pdf.setFont('helvetica', 'bold');
           pdf.text(String(serial), x + serialW/2, y + 5, { align: 'center' });
           
-          // Label
           pdf.setFontSize(7);
           pdf.setTextColor(...C.dark);
           pdf.setFont('helvetica', 'normal');
@@ -1617,7 +1805,6 @@
           if (lbl.length < String(label || '-').length) lbl += '..';
           pdf.text(lbl, x + serialW + 2, y + 5);
           
-          // Value
           pdf.setFont('helvetica', 'bold');
           if (isHL) pdf.setTextColor(...C.green);
           else pdf.setTextColor(...C.highlight);
@@ -1626,15 +1813,7 @@
           if (val.length < String(value || '-').length) val += '..';
           pdf.text(val, x + serialW + lblW + 2, y + 5);
           
-          // Sum formula below value
-          if (sumFormula) {
-            pdf.setFontSize(5.5);
-            pdf.setTextColor(...C.sumText);
-            pdf.setFont('helvetica', 'italic');
-            pdf.text(sumFormula, x + serialW + lblW + 2, y + 9.5);
-          }
-          
-          return y + rowHeight;
+          return y + ROW_H;
         }
 
         function drawCard(title, value, x, y, w, h) {
@@ -1662,14 +1841,14 @@
           const boxW = (CW - 2 * GAP) / 3;
           const boxH = 26;
           pdf.setFillColor(...C.primary);
-          pdf.rect(M, y, CW, SEC_H, 'F');
+          pdf.rect(M, y, CW, 8, 'F');
           pdf.setFillColor(...C.accent);
-          pdf.rect(M, y, 2.5, SEC_H, 'F');
+          pdf.rect(M, y, 2.5, 8, 'F');
           pdf.setTextColor(...C.white);
           pdf.setFontSize(8);
           pdf.setFont('helvetica', 'bold');
-          pdf.text('SIGNATURES & APPROVAL', M + 6, y + SEC_H * 0.62);
-          const startY = y + SEC_H + 2;
+          pdf.text('SIGNATURES & APPROVAL', M + 6, y + 5.5);
+          const startY = y + 10;
           const boxes = [
             { title: 'ZSM Signature', name: d.ZSM_NAME || '-' },
             { title: 'TSM Signature', name: d.TSM_NAME || '-' },
@@ -1719,46 +1898,42 @@
         let yL = drawHeader();
         let yR = yL;
 
-        // LEFT COLUMN: Distributor, Investment, Gross Earnings, Opportunity Lost
+        // LEFT COLUMN
         
         // Distributor Table
         yL = drawSection('DISTRIBUTOR SUMMARY', yL, LX, LW);
-        yL = drawRow(1, 'Distributor Number', String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), yL, LX, LW, false, false);
-        yL = drawRow(2, 'Distributor Name', String(d.DISTRIBUTOR_NAME || '-'), yL, LX, LW, true, false);
-        yL = drawRow(3, 'Investment', fR(calculated.INVESTMENT), yL, LX, LW, false, false);
-        yL = drawRow(4, 'Average Stock', fR(d.AVG_STOCK), yL, LX, LW, true, false);
-        yL = drawRow(5, 'Gross Earning', fR(calculated.GROSS_EARNING), yL, LX, LW, false, false);
-        yL = drawRow(6, 'Expenses', fR(calculated.EXPENSES), yL, LX, LW, true, false);
-        yL = drawRow(7, 'Take Home', fR(calculated.TAKE_HOME), yL, LX, LW, false, true);
-        yL = drawRow(8, 'ROI', roiPercent, yL, LX, LW, true, true);
+        yL = drawRow('I', 'Distributor Number', String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), yL, LX, LW, false, false);
+        yL = drawRow('II', 'Distributor Name', String(d.DISTRIBUTOR_NAME || '-'), yL, LX, LW, true, false);
+        yL = drawRow('III', 'Investment', fR(calculated.INVESTMENT), yL, LX, LW, false, false);
+        yL = drawRow('IV', 'Average Stock', fR(d.AVG_STOCK), yL, LX, LW, true, false);
+        yL = drawRow('V', 'Gross Earning', fR(calculated.GROSS_EARNING), yL, LX, LW, false, false);
+        yL = drawRow('VI', 'Expenses', fR(calculated.EXPENSES), yL, LX, LW, true, false);
+        yL = drawRow('VII', 'Take Home', fR(calculated.TAKE_HOME), yL, LX, LW, false, true);
+        yL = drawRow('VIII', 'ROI', roiPercent, yL, LX, LW, true, true);
         yL += GAP;
 
         // Investment Details Table
-        const investmentSum = calculated.LAPU_DTH_LAPU + calculated.AVG_STOCK;
-        yL = drawSection('INVESTMENT DETAILS', yL, LX, LW);
-        yL = drawRow(1, 'Total (with Security)', fR(d.TOTAL), yL, LX, LW, false, false, 'Sum of 2+3 = ' + fR(investmentSum));
-        yL = drawRow(2, 'LAPU/DTH LAPU (3 days)', fR(d.LAPU_DTH_LAPU_2DAYS), yL, LX, LW, true, false);
-        yL = drawRow(3, 'Actual Stock (Norm)', fR(d.AVG_STOCK), yL, LX, LW, false, false);
+        yL = drawSectionWithTotal('INVESTMENT DETAILS', fR(calculated.INVESTMENT_SUM), 'Sum of I+II', yL, LX, LW);
+        yL = drawRow('I', 'LAPU/DTH LAPU (3 days)', fR(d.LAPU_DTH_LAPU_2DAYS), yL, LX, LW, false, false);
+        yL = drawRow('II', 'Actual Stock (Norm)', fR(d.AVG_STOCK), yL, LX, LW, true, false);
         yL += GAP;
 
         // Gross Earnings Details Table
-        const grossSum = calculated.LAPU_COMMISSION_A + calculated.PLI_AVG + calculated.DIST_SUBSIDY;
-        yL = drawSection('GROSS EARNINGS DETAILS', yL, LX, LW);
-        yL = drawRow(1, 'Total Gross Earning', fR(calculated.TOTAL_GROSS_EARNINGS), yL, LX, LW, false, false, 'Sum of 3+4+5 = ' + fR(grossSum));
-        yL = drawRow(2, 'LAPU Commission (Circle)', parseFloat(d.LAPU_COMMISSION_C || 0) + '%', yL, LX, LW, true, false);
-        yL = drawRow(3, 'LAPU Commission (Amount)', fR(d.LAPU_COMMISSION_A), yL, LX, LW, false, false);
-        yL = drawRow(4, 'PLI / DTH GPS (Avg)', fR(d.PLI_AVG), yL, LX, LW, true, false);
-        yL = drawRow(5, 'Dist Subsidy', fR(d.DIST_SUBSIDY), yL, LX, LW, false, false);
-        yL = drawRow(6, 'Lapu Secondary per Month', fR(d.LAPU_SECONDARY_PER_MONTH), yL, LX, LW, true, false);
+        yL = drawSectionWithTotal('GROSS EARNINGS DETAILS', fR(calculated.TOTAL_GROSS_EARNINGS), 'Sum of I+II+III', yL, LX, LW);
+        yL = drawRow('I', 'LAPU Commission (Amount)', fR(d.LAPU_COMMISSION_A), yL, LX, LW, false, false);
+        yL = drawRow('II', 'PLI / DTH GPS (Avg)', fR(d.PLI_AVG), yL, LX, LW, true, false);
+        yL = drawRow('III', 'Dist Subsidy', fR(d.DIST_SUBSIDY), yL, LX, LW, false, false);
+        yL = drawRow('IV', 'Lapu Secondary per Month', fR(d.LAPU_SECONDARY_PER_MONTH), yL, LX, LW, true, false);
+        yL = drawRow('V', 'Store Net Earnings', fR(STORE_NET_EARNINGS), yL, LX, LW, false, false);
         yL += GAP;
 
         // Opportunity Lost Table
-        yL = drawSection('OPPORTUNITY LOST', yL, LX, LW);
-        yL = drawRow(1, 'PLI Missed Opportunity', fR(d.PLI_MISSED_OPPORTUNITY), yL, LX, LW, false, false);
-        yL = drawRow(2, 'ASC Subsidy Missed', fR(d.ASC_SUBSIDY_OPPORTUNITY_MISSED), yL, LX, LW, true, false);
-        yL = drawRow(3, 'Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yL, LX, LW, false, false);
+        yL = drawSectionWithTotal('OPPORTUNITY LOST', fR(calculated.TOTAL_OPPORTUNITY_LOST), 'Sum of I+II', yL, LX, LW);
+        yL = drawRow('I', 'PLI Missed Opportunity', fR(d.PLI_MISSED_OPPORTUNITY), yL, LX, LW, false, false);
+        yL = drawRow('II', 'ASC Subsidy Missed', fR(d.ASC_SUBSIDY_OPPORTUNITY_MISSED), yL, LX, LW, true, false);
+        yL = drawRow('III', 'Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yL, LX, LW, false, false);
 
-        // RIGHT COLUMN: Info Cards, Expenses Details, Other Expenses
+        // RIGHT COLUMN
         
         // Info Cards
         const cW = (RW - 4) / 3;
@@ -1768,22 +1943,19 @@
         yR += CARD_H + GAP;
 
         // Expenses Details Table
-        yR = drawSection('EXPENSES DETAILS', yR, RX, RW);
-        yR = drawRow(1, 'Total Expenses', fR(calculated.TOTAL_EXPENSES), yR, RX, RW, false, false, 'Sum of 4 = ' + fR(calculated.ASC_FOS_SALARY_13000));
-        yR = drawRow(2, 'ASC Required', fN(d.ASC_REQUIRED), yR, RX, RW, true, false);
-        yR = drawRow(3, 'Active ASC Count (Norm)', fN(d.ACTIVE_ASC_COUNT_AS_PER_NORM), yR, RX, RW, false, false);
-        yR = drawRow(4, 'ASC (FOS) Salary @13000', fR(d.ASC_FOS_SALARY_13000), yR, RX, RW, true, false);
+        yR = drawSectionWithTotal('EXPENSES DETAILS', fR(calculated.TOTAL_EXPENSES), 'Sum of III', yR, RX, RW);
+        yR = drawRow('I', 'ASC Required', fN(d.ASC_REQUIRED), yR, RX, RW, false, false);
+        yR = drawRow('II', 'Active ASC Count (Norm)', fN(d.ACTIVE_ASC_COUNT_AS_PER_NORM), yR, RX, RW, true, false);
+        yR = drawRow('III', 'ASC (FOS) Salary @13000', fR(d.ASC_FOS_SALARY_13000), yR, RX, RW, false, false);
         yR += GAP;
 
         // Other Expenses Table
-        yR = drawSection('OTHER EXPENSES', yR, RX, RW);
-        yR = drawRow('', 'Other Expenses Total', fR(calculated.OTHER_EXPENSES_TOTAL), yR, RX, RW, false, true);
-        yR = drawRow(1, 'Rent', fR(RENT), yR, RX, RW, true, false);
-        yR = drawRow(2, 'Electricity', fR(ELECTRICITY), yR, RX, RW, false, false);
-        yR = drawRow(3, 'Misc', fR(MISC), yR, RX, RW, true, false);
-        yR = drawRow(4, 'MIS Salary', fR(ADDITIONAL_MIS_SALARY), yR, RX, RW, false, false);
-        yR = drawRow(5, 'Store Net Earnings', fR(STORE_NET_EARNINGS), yR, RX, RW, true, false);
-        yR = drawRow(6, 'Clawback / Penalty', fN(clawback), yR, RX, RW, false, false);
+        yR = drawSectionWithTotal('OTHER EXPENSES', fR(calculated.OTHER_EXPENSES_TOTAL), 'Sum of I+II+III+IV', yR, RX, RW);
+        yR = drawRow('I', 'Rent', fR(RENT), yR, RX, RW, false, false);
+        yR = drawRow('II', 'Electricity', fR(ELECTRICITY), yR, RX, RW, true, false);
+        yR = drawRow('III', 'Misc', fR(MISC), yR, RX, RW, false, false);
+        yR = drawRow('IV', 'MIS Salary', fR(ADDITIONAL_MIS_SALARY), yR, RX, RW, true, false);
+        yR = drawRow('V', 'Clawback / Penalty', fN(clawback), yR, RX, RW, false, false);
 
         const maxY = Math.max(yL, yR);
         drawSignatureBoxes(maxY + 5);
