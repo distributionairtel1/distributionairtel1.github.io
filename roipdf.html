@@ -1417,10 +1417,16 @@
     }
 
     function validateInput(elem) {
-      const val = elem.value;
+      const val = elem.value.trim();  // Trim whitespace for better validation
       const min = Number(elem.min) || 0;
       const max = Number(elem.max) || Infinity;
-      if (!val || val === '') { elem.style.borderColor = '#ccc'; updateOtherExpensesTotal(); return; }
+      
+      if (!val || val === '') { 
+        elem.style.borderColor = '#e74c3c';  // Red border for empty (required) fields
+        updateOtherExpensesTotal(); 
+        return; 
+      }
+      
       const numVal = Number(val);
       elem.style.borderColor = (numVal < min || numVal > max) ? '#e74c3c' : '#2980b9';
       updateOtherExpensesTotal();
@@ -2020,4 +2026,5 @@
   </script>
 </body>
 </html>
+
 
