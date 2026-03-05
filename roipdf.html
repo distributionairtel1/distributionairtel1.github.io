@@ -801,7 +801,12 @@
                 <tr><td class="serial-col">I</td><td>LAPU Commission (Amount):</td><td class="display-field" id="lapuCommissionAmount">-</td></tr>
                 <tr><td class="serial-col">II</td><td>PLI (@0.2%) / DTH GPS (Avg):</td><td class="display-field" id="pliAvg">-</td></tr>
                 <tr><td class="serial-col">III</td><td>Dist Subsidy:</td><td class="display-field" id="distSubsidy">-</td></tr>
-                <tr><td class="serial-col">IV</td><td>Lapu Secondary per Month:</td><td class="display-field" id="lapuSecondary">-</td></tr>
+                <tr>
+                  <td class="serial-col">VI</td>
+                  <td>ASC Manpower Support:</td>
+                  <td class="display-field" id="ascManpowerSupport">-</td>
+                </tr>
+                <tr hidden ><td class="serial-col">IV</td><td>Lapu Secondary per Month:</td><td class="display-field" id="lapuSecondary">-</td></tr>
                 <tr>
                   <td class="serial-col">V</td>
                   <td>Store Net Earnings:</td>
@@ -1201,7 +1206,8 @@
       const TOTAL_EXPENSES = ASC_FOS_SALARY_13000;
       const OTHER_EXPENSES_TOTAL = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY;
       const EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL;
-      const TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY + STORE_NET_EARNINGS;
+      const ASC_MANPOWER_SUPPORT = parseFloat(data.ASC_MANPOWER_SUPPORT || 0);
+      const TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY + ASC_MANPOWER_SUPPORT + STORE_NET_EARNINGS;
       const GROSS_EARNING = TOTAL_GROSS_EARNINGS;
       const TAKE_HOME = GROSS_EARNING - EXPENSES;
       const ROI = INVESTMENT > 0 ? (TAKE_HOME / INVESTMENT) : 0;
@@ -1456,7 +1462,7 @@
 
       // Gross Earnings
       document.getElementById('grossEarningsTotal').textContent = formatINR(calculated.TOTAL_GROSS_EARNINGS);
-      document.getElementById('grossEarningsSumFormula').textContent = `Sum of I+II+III = ${formatINR(calculated.TOTAL_GROSS_EARNINGS)}`;
+      document.getElementById('grossEarningsSumFormula').textContent = `Sum of I+II+III+IV+V = ${formatINR(calculated.TOTAL_GROSS_EARNINGS)}`;
 
       // Expenses Details
       document.getElementById('expensesTotal').textContent = formatINR(calculated.TOTAL_EXPENSES);
@@ -1510,6 +1516,7 @@
       document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
       document.getElementById('pliAvg').textContent = formatINR(data.PLI_AVG);
       document.getElementById('distSubsidy').textContent = formatINR(data.DIST_SUBSIDY);
+      document.getElementById('ascManpowerSupport').textContent = formatINR(data.ASC_MANPOWER_SUPPORT || 0);
       document.getElementById('lapuSecondary').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
 
       // Desktop info cards
@@ -1620,12 +1627,17 @@
 
       const STORE_NET_EARNINGS =
         parseFloat(document.getElementById('storeNetEarningsInput').value) || 0;
+      
+      const ASC_MANPOWER_SUPPORT = 
+      parseFloat(document.getElementById('ascManpowerSupport').textContent.replace(/[₹,]/g,'')
+      ) || 0;
 
       const total =
         LAPU_COMMISSION +
         PLI_AVG +
         DIST_SUBSIDY +
-        STORE_NET_EARNINGS;
+        STORE_NET_EARNINGS +
+        ASC_MANPOWER_SUPPORT;
 
       document.getElementById('grossEarningsTotal').textContent = formatINR(total);
 
