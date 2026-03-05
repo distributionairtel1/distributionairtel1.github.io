@@ -733,7 +733,7 @@
                 <tr><td class="serial-col">I</td><td>Distributor Number:</td><td class="display-field" id="distributorNumber">-</td></tr>
                 <tr><td class="serial-col">II</td><td>Distributor Name:</td><td class="display-field" id="distributorName">-</td></tr>
                 <tr><td class="serial-col">III</td><td>Investment:</td><td class="display-field" id="investment">-</td></tr>
-                <tr><td class="serial-col">IV</td><td>Average Stock:</td><td class="display-field" id="avgStock">-</td></tr>
+                <tr hidden><td class="serial-col">IV</td><td>Average Stock:</td><td class="display-field" id="avgStock">-</td></tr>
                 <tr><td class="serial-col">V</td><td>Gross Earning:</td><td class="display-field" id="grossEarning">-</td></tr>
                 <tr><td class="serial-col">VI</td><td>Expenses:</td><td class="display-field" id="expenses">-</td></tr>
                 <tr><td class="serial-col">VII</td><td>Take Home:</td><td class="display-field" id="takeHome">-</td></tr>
@@ -773,8 +773,12 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td class="serial-col">I</td><td>LAPU/DTH LAPU (3 days):</td><td class="display-field" id="lapuDthLapu">-</td></tr>
-                <tr><td class="serial-col">II</td><td>Actual Stock (Norm):</td><td class="display-field" id="actualStockNorm">-</td></tr>
+                <tr><td class="serial-col">I</td><td>LAPU/DTH LAPU (3 days|Norm):</td><td class="display-field" id="lapuDthLapu">-</td></tr>
+                <tr><td class="serial-col">II</td><td>Actual Stock:</td><td class="display-field" id="actualStockNorm">-</td></tr>
+                  <td>III</td>
+                  <td>Security Deposit:</td>
+                  <td id="securityDeposit">₹0</td>
+                  </tr>             
               </tbody>
             </table>
 
@@ -798,7 +802,20 @@
                 <tr><td class="serial-col">II</td><td>PLI (@0.2%) / DTH GPS (Avg):</td><td class="display-field" id="pliAvg">-</td></tr>
                 <tr><td class="serial-col">III</td><td>Dist Subsidy:</td><td class="display-field" id="distSubsidy">-</td></tr>
                 <tr><td class="serial-col">IV</td><td>Lapu Secondary per Month:</td><td class="display-field" id="lapuSecondary">-</td></tr>
-                <tr><td class="serial-col">V</td><td>Store Net Earnings:</td><td><input type="number" id="storeNetEarningsInput" name="STORE_NET_EARNINGS" class="table-input" placeholder="Enter Store Net Earnings" min="0" oninput="validateInput(this)" requried></td></tr>
+                <tr>
+                  <td class="serial-col">V</td>
+                  <td>Store Net Earnings:</td>
+                  <td>
+                  <input type="number"
+                  id="storeNetEarningsInput"
+                  name="STORE_NET_EARNINGS"
+                  class="table-input"
+                  placeholder="Enter Store Net Earnings"
+                  min="0"
+                  oninput="validateInput(this); updateGrossEarningsTotal();"
+                  required>
+                  </td>
+                  </tr>
               </tbody>
             </table>
 
@@ -1184,15 +1201,15 @@
       const TOTAL_EXPENSES = ASC_FOS_SALARY_13000;
       const OTHER_EXPENSES_TOTAL = RENT + ELECTRICITY + MISC + ADDITIONAL_MIS_SALARY;
       const EXPENSES = TOTAL_EXPENSES + OTHER_EXPENSES_TOTAL;
-      const TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY;
-      const GROSS_EARNING = TOTAL_GROSS_EARNINGS + STORE_NET_EARNINGS;
+      const TOTAL_GROSS_EARNINGS = LAPU_COMMISSION_A + PLI_AVG + DIST_SUBSIDY + STORE_NET_EARNINGS;
+      const GROSS_EARNING = TOTAL_GROSS_EARNINGS;
       const TAKE_HOME = GROSS_EARNING - EXPENSES;
       const ROI = INVESTMENT > 0 ? (TAKE_HOME / INVESTMENT) : 0;
-
+      
       const LAPU_DTH_LAPU = parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0);
       const AVG_STOCK = parseFloat(data.AVG_STOCK || 0);
-      const INVESTMENT_SUM = LAPU_DTH_LAPU + AVG_STOCK;
-
+      const SECURITY = parseFloat(data.SECURITY || 0);
+      const INVESTMENT_SUM = LAPU_DTH_LAPU + AVG_STOCK + SECURITY;
       const PLI_MISSED = parseFloat(data.PLI_MISSED_OPPORTUNITY || 0);
       const ASC_SUBSIDY_MISSED = parseFloat(data.ASC_SUBSIDY_OPPORTUNITY_MISSED || 0);
       const TOTAL_OPPORTUNITY_LOST = PLI_MISSED + ASC_SUBSIDY_MISSED;
@@ -1435,7 +1452,7 @@
     function updateSumFormulas(calculated) {
       // Investment Details
       document.getElementById('investmentTotal').textContent = formatINR(calculated.INVESTMENT_SUM);
-      document.getElementById('investmentSumFormula').textContent = `Sum of I+II = ${formatINR(calculated.INVESTMENT_SUM)}`;
+      document.getElementById('investmentSumFormula').textContent = `Sum of II+III = ${formatINR(calculated.INVESTMENT_SUM)}`;
 
       // Gross Earnings
       document.getElementById('grossEarningsTotal').textContent = formatINR(calculated.TOTAL_GROSS_EARNINGS);
@@ -1480,11 +1497,16 @@
         roiEl.classList.add('pending-field');
       }
 
-      document.getElementById('lapuDthLapu').textContent = formatINR(data.LAPU_DTH_LAPU_2DAYS);
+      const LAPU_TERTIARY = parseFloat(data.LAPU_TERTIARY || 0);
+      const LAPU_DTH_LAPU = (LAPU_TERTIARY / 31) * 3;
+      document.getElementById('lapuDthLapu').textContent = formatINR(LAPU_DTH_LAPU);      
       const stockCell = document.getElementById('actualStockNorm');
       stockCell.textContent = formatINR(data.AVG_STOCK);
-      stockCell.style.color = parseFloat(data.AVG_STOCK || 0) > parseFloat(data.LAPU_DTH_LAPU_2DAYS || 0) ? 'green' : 'red';
+      stockCell.style.color = parseFloat(data.AVG_STOCK || 0) > LAPU_DTH_LAPU ? 'green' : 'red';
+      const SECURITY_DEPOSIT = parseFloat(data.SECURITY || 0);
+      document.getElementById('securityDeposit').textContent = formatINR(SECURITY_DEPOSIT);
 
+      
       document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
       document.getElementById('pliAvg').textContent = formatINR(data.PLI_AVG);
       document.getElementById('distSubsidy').textContent = formatINR(data.DIST_SUBSIDY);
@@ -1578,6 +1600,38 @@
       document.getElementById('otherExpensesSumFormula').textContent = `Sum of I+II+III+IV = ${formatINR(total)}`;
     }
 
+    function updateGrossEarningsTotal() {
+
+      const LAPU_COMMISSION = parseFloat(
+        document.getElementById('lapuCommissionAmount').textContent.replace(/[₹,]/g,'')
+      ) || 0;
+
+      const PLI_AVG = parseFloat(
+        document.getElementById('pliAvg').textContent.replace(/[₹,]/g,'')
+      ) || 0;
+
+      const DIST_SUBSIDY = parseFloat(
+        document.getElementById('distSubsidy').textContent.replace(/[₹,]/g,'')
+      ) || 0;
+
+      const LAPU_SECONDARY = parseFloat(
+        document.getElementById('lapuSecondary').textContent.replace(/[₹,]/g,'')
+      ) || 0;
+
+      const STORE_NET_EARNINGS =
+        parseFloat(document.getElementById('storeNetEarningsInput').value) || 0;
+
+      const total =
+        LAPU_COMMISSION +
+        PLI_AVG +
+        DIST_SUBSIDY +
+        STORE_NET_EARNINGS;
+
+      document.getElementById('grossEarningsTotal').textContent = formatINR(total);
+
+      document.getElementById('grossEarningsSumFormula').textContent =
+        `Sum of I+II+III+V = ${formatINR(total)}`;
+    }
     async function loadData(distributorId) {
       try {
         document.getElementById('loadBtn').textContent = 'Loading...';
@@ -2026,6 +2080,3 @@
   </script>
 </body>
 </html>
-
-
-
