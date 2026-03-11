@@ -1037,7 +1037,7 @@
     let currentDistributorId = '';
     let expensesSubmitted = false;
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWWiG5RTaQClygDhO6XIErI7ecZ8Rf4VQ8mMRlMb8Bm_jPhckah-UtE5nTUu5e_dvO/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx47P04YL-X0qLecwcAL3s1uI6L8CAB-9wvq3unRSsIpuXh2S7qRVYLGKjjVheUnOek/exec';
 
     let ndcUploaded = false;
     let pdfDownloaded = false;
@@ -1426,7 +1426,8 @@
     async function uploadSignedRoi() {
       if (!roiFile) { showToast('⚠️ Select a file first', 'error'); return; }
       
-      const success = await uploadToGoogleSheets(roiFile, 'roi');
+      // Change 'roi' to 'roi_signed' to differentiate from the downloaded ROI PDF
+      const success = await uploadToGoogleSheets(roiFile, 'roi_signed');
       if (success) {
         roiUploaded = true;
         document.getElementById('roiUploadBtn').disabled = true;
@@ -2092,4 +2093,5 @@
   </script>
 </body>
 </html>
+
 
