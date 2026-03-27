@@ -914,14 +914,12 @@
         </div>
 
         <!-- Common Submit Button -->
-        <!-- <div class="submit-container"> -->
-            <center>
-            <button type="submit" class="submit-btn" id="submitExpensesBtn">
+        <center>
+          <button type="submit" class="submit-btn" id="submitExpensesBtn">
             <span class="btn-icon"></span>
             Submit 
           </button>
-          </center>
-        <!-- </div> -->
+        </center>
       </form>
 
       <!-- ==================== COMPACT UPLOAD SECTION ==================== -->
@@ -952,7 +950,7 @@
             </div>
             
             <div class="compact-location" id="ndcLocation">
-            Location will be captured on upload
+              Location will be captured on upload
             </div>
             
             <button type="button" class="compact-action-btn upload" id="ndcUploadBtn" onclick="uploadNdcCertificate()" disabled>
@@ -978,7 +976,7 @@
             </div>
             
             <button type="button" class="compact-action-btn download" id="downloadPdfBtn" onclick="downloadPageAsPdf()">
-            Download ROI Report
+              Download ROI Report
             </button>
             
             <div class="compact-message" id="downloadMessage"></div>
@@ -1004,7 +1002,7 @@
             </div>
             
             <div class="compact-location" id="roiLocation">
-            Location will be captured on upload
+              Location will be captured on upload
             </div>
             
             <button type="button" class="compact-action-btn upload" id="roiUploadBtn" onclick="uploadSignedRoi()" disabled>
@@ -1037,7 +1035,10 @@
     let currentDistributorId = '';
     let expensesSubmitted = false;
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx47P04YL-X0qLecwcAL3s1uI6L8CAB-9wvq3unRSsIpuXh2S7qRVYLGKjjVheUnOek/exec';
+    // ========== IMPORTANT: UPDATE THIS WITH YOUR NEW APPS SCRIPT URL ==========
+    // Deploy the Apps Script as Web App and paste the URL here
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqkB_Dg5RvH90agG-Uw0MZv0D2Vnv7OICki-2BVc_u1J1FZhwTkpUiHQS5psTRKCfW/exec';
+    // ==========================================================================
 
     let ndcUploaded = false;
     let pdfDownloaded = false;
@@ -1088,15 +1089,10 @@
       return new Intl.NumberFormat('en-IN').format(parseFloat(num || 0));
     }
 
-    // function getPreviousMonth() {
-    // const now = new Date();
-    // const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    // return prevMonth.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
-    // }
-    
     function getPreviousMonth() {
-     return 'Jan 2026';
+      return 'Jan 2026';
     }
+
     function captureLocation(locationElId) {
       return new Promise((resolve) => {
         const locationEl = document.getElementById(locationElId);
@@ -1359,6 +1355,7 @@
       el.textContent = text;
     }
 
+    // ========== IMPROVED UPLOAD FUNCTION ==========
     async function uploadToGoogleSheets(file, uploadType) {
       const msgEl = uploadType === 'ndc' ? 'ndcMessage' : 'roiMessage';
       const locEl = uploadType === 'ndc' ? 'ndcLocation' : 'roiLocation';
@@ -1367,15 +1364,19 @@
       showMessage(msgEl, '⏳ Capturing location...', 'loading');
       uploadBtn.disabled = true;
 
+      // Capture location first
       const location = await captureLocation(locEl);
       showMessage(msgEl, '📤 Uploading file...', 'loading');
 
-      const base64Data = await new Promise((resolve) => {
+      // Convert file to base64
+      const base64Data = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
         reader.readAsDataURL(file);
       });
 
+      // Format location string
       let locationStr = '';
       if (location.lat !== 'Error' && location.lat !== 'Timeout' && location.lat !== 'Not Supported' && location.lat !== 'HTTPS Required') {
         locationStr = `${location.lat},${location.lng}`;
@@ -1384,30 +1385,93 @@
         locationStr = `${location.lat}`;
       }
 
+      // Prepare payload
       const payload = {
-        uploadType, fileName: file.name, fileData: base64Data,
+        uploadType: uploadType,
+        fileName: file.name,
+        fileData: base64Data,
         distributorNumber: currentDistributorData?.DISTRIBUTOR_LAPU_NUMBER || '',
         distributorName: currentDistributorData?.DISTRIBUTOR_NAME || '',
-        location: locationStr, timestamp: new Date().toISOString()
+        location: locationStr,
+        timestamp: new Date().toISOString()
       };
 
       try {
-        await fetch(APPS_SCRIPT_URL, {
-          method: 'POST', mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+        // Try fetch with proper settings (not no-cors)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout for large files
+
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal
         });
-        showMessage(msgEl, '✅ Uploaded successfully!', 'success');
-        return true;
+
+        clearTimeout(timeoutId);
+
+        // Try to parse response
+        let result;
+        try {
+          result = await response.json();
+        } catch (e) {
+          // If JSON parsing fails, check if response is OK
+          if (response.ok) {
+            result = { success: true, message: 'Upload completed' };
+          } else {
+            throw new Error('Invalid response from server');
+          }
+        }
+
+        if (result.success) {
+          showMessage(msgEl, '✅ ' + (result.message || 'Uploaded successfully!'), 'success');
+          console.log('Upload success:', result);
+          return true;
+        } else {
+          throw new Error(result.message || 'Upload failed');
+        }
+
       } catch (error) {
-        showMessage(msgEl, '❌ Upload failed', 'error');
+        console.error('Upload error:', error);
+        
+        // Check if it's a CORS error - if so, try alternative method
+        if (error.message.includes('Failed to fetch') || error.message.includes('CORS') || error.name === 'TypeError') {
+          console.log('Trying alternative upload method...');
+          
+          // Alternative: Use no-cors and assume success (less reliable)
+          try {
+            await fetch(APPS_SCRIPT_URL, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(payload)
+            });
+            
+            // With no-cors we can't verify success, but we'll assume it worked
+            showMessage(msgEl, '✅ Upload submitted (pending verification)', 'success');
+            showToast('📤 Upload submitted! Check your Google Sheet to verify.', 'warning');
+            return true;
+          } catch (fallbackError) {
+            console.error('Fallback upload also failed:', fallbackError);
+          }
+        }
+        
+        showMessage(msgEl, '❌ Upload failed: ' + error.message, 'error');
+        showToast('❌ Upload failed: ' + error.message, 'error');
         uploadBtn.disabled = false;
         return false;
       }
     }
 
     async function uploadNdcCertificate() {
-      if (!ndcFile) { showToast('⚠️ Select a file first', 'error'); return; }
+      if (!ndcFile) { 
+        showToast('⚠️ Select a file first', 'error'); 
+        return; 
+      }
       
       const success = await uploadToGoogleSheets(ndcFile, 'ndc');
       if (success) {
@@ -1424,9 +1488,11 @@
     }
 
     async function uploadSignedRoi() {
-      if (!roiFile) { showToast('⚠️ Select a file first', 'error'); return; }
+      if (!roiFile) { 
+        showToast('⚠️ Select a file first', 'error'); 
+        return; 
+      }
       
-      // Change 'roi' to 'roi_signed' to differentiate from the downloaded ROI PDF
       const success = await uploadToGoogleSheets(roiFile, 'roi_signed');
       if (success) {
         roiUploaded = true;
@@ -1441,12 +1507,12 @@
     }
 
     function validateInput(elem) {
-      const val = elem.value.trim();  // Trim whitespace for better validation
+      const val = elem.value.trim();
       const min = Number(elem.min) || 0;
       const max = Number(elem.max) || Infinity;
       
       if (!val || val === '') { 
-        elem.style.borderColor = '#e74c3c';  // Red border for empty (required) fields
+        elem.style.borderColor = '#e74c3c';
         updateOtherExpensesTotal(); 
         return; 
       }
@@ -1457,23 +1523,18 @@
     }
 
     function updateSumFormulas(calculated) {
-      // Investment Details
       document.getElementById('investmentTotal').textContent = formatINR(calculated.INVESTMENT_SUM);
       document.getElementById('investmentSumFormula').textContent = `Sum of II+III = ${formatINR(calculated.INVESTMENT_SUM)}`;
 
-      // Gross Earnings
       document.getElementById('grossEarningsTotal').textContent = formatINR(calculated.TOTAL_GROSS_EARNINGS);
       document.getElementById('grossEarningsSumFormula').textContent = `Sum of I+II+III+IV+V = ${formatINR(calculated.TOTAL_GROSS_EARNINGS)}`;
 
-      // Expenses Details
       document.getElementById('expensesTotal').textContent = formatINR(calculated.TOTAL_EXPENSES);
       document.getElementById('expensesSumFormula').textContent = `Sum of III = ${formatINR(calculated.ASC_FOS_SALARY_13000)}`;
 
-      // Opportunity Lost
       document.getElementById('opportunityLostTotal').textContent = formatINR(calculated.TOTAL_OPPORTUNITY_LOST);
       document.getElementById('opportunityLostSumFormula').textContent = `Sum of I+II = ${formatINR(calculated.TOTAL_OPPORTUNITY_LOST)}`;
 
-      // Other Expenses
       document.getElementById('otherExpensesTotal').textContent = formatINR(calculated.OTHER_EXPENSES_TOTAL);
       document.getElementById('otherExpensesSumFormula').textContent = `Sum of I+II+III+IV = ${formatINR(calculated.OTHER_EXPENSES_TOTAL)}`;
     }
@@ -1513,19 +1574,16 @@
       const SECURITY_DEPOSIT = parseFloat(data.SECURITY || 0);
       document.getElementById('securityDeposit').textContent = formatINR(SECURITY_DEPOSIT);
 
-      
       document.getElementById('lapuCommissionAmount').textContent = formatINR(data.LAPU_COMMISSION_A);
       document.getElementById('pliAvg').textContent = formatINR(data.PLI_AVG);
       document.getElementById('distSubsidy').textContent = formatINR(data.DIST_SUBSIDY);
       document.getElementById('ascManpowerSupport').textContent = formatINR(data.ASC_MANPOWER_SUPPORT || 0);
       document.getElementById('lapuSecondary').textContent = formatINR(data.LAPU_SECONDARY_PER_MONTH);
 
-      // Desktop info cards
       document.getElementById('tsmName').textContent = data.TSM_NAME || '-';
       document.getElementById('zsmName').textContent = data.ZSM_NAME || '-';
       document.getElementById('zone').textContent = data.ZONE || '-';
 
-      // Mobile info cards
       document.getElementById('tsmNameMobile').textContent = data.TSM_NAME || '-';
       document.getElementById('zsmNameMobile').textContent = data.ZSM_NAME || '-';
       document.getElementById('zoneMobile').textContent = data.ZONE || '-';
@@ -1609,7 +1667,6 @@
     }
 
     function updateGrossEarningsTotal() {
-
       const LAPU_COMMISSION = parseFloat(
         document.getElementById('lapuCommissionAmount').textContent.replace(/[₹,]/g,'')
       ) || 0;
@@ -1641,10 +1698,10 @@
         ASC_MANPOWER_SUPPORT;
 
       document.getElementById('grossEarningsTotal').textContent = formatINR(total);
-
       document.getElementById('grossEarningsSumFormula').textContent =
         `Sum of I+II+III+V = ${formatINR(total)}`;
     }
+
     async function loadData(distributorId) {
       try {
         document.getElementById('loadBtn').textContent = 'Loading...';
@@ -1761,11 +1818,11 @@
         const CARD_H = 18;
 
         const C = {
-        headerBg: [26, 82, 118], primary: [41, 128, 185], accent: [243, 156, 18],
-        white: [255, 255, 255], dark: [44, 62, 80], border: [189, 195, 199],
-        green: [39, 174, 96], red: [231, 76, 60], lightGreen: [212, 239, 223],
-        altRow: [249, 251, 252], cardBg: [234, 244, 249], highlight: [52, 73, 94],
-        sumText: [253, 235, 171]   
+          headerBg: [26, 82, 118], primary: [41, 128, 185], accent: [243, 156, 18],
+          white: [255, 255, 255], dark: [44, 62, 80], border: [189, 195, 199],
+          green: [39, 174, 96], red: [231, 76, 60], lightGreen: [212, 239, 223],
+          altRow: [249, 251, 252], cardBg: [234, 244, 249], highlight: [52, 73, 94],
+          sumText: [253, 235, 171]   
         };
 
         const calculated = calculateAllValues(d);
@@ -1814,18 +1871,15 @@
           pdf.setFillColor(...C.accent);
           pdf.rect(x, y, 2.5, SEC_H, 'F');
           
-          // Title on left
           pdf.setTextColor(...C.white);
           pdf.setFontSize(8);
           pdf.setFont('helvetica', 'bold');
           pdf.text(String(title), x + 6, y + 5);
           
-          // Total on right
           pdf.setFontSize(8);
           pdf.setFont('helvetica', 'bold');
           pdf.text(total, x + w - 4, y + 5, { align: 'right' });
           
-          // Sum formula below total
           pdf.setFontSize(5.5);
           pdf.setTextColor(...C.sumText);
           pdf.setFont('helvetica', 'italic');
@@ -1972,8 +2026,6 @@
         let yR = yL;
 
         // LEFT COLUMN
-        
-        // Distributor Table
         yL = drawSection('DISTRIBUTOR SUMMARY', yL, LX, LW);
         yL = drawRow('I', 'Distributor Number', String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), yL, LX, LW, false, false);
         yL = drawRow('II', 'Distributor Name', String(d.DISTRIBUTOR_NAME || '-'), yL, LX, LW, true, false);
@@ -1985,13 +2037,11 @@
         yL = drawRow('VIII', 'ROI', roiPercent, yL, LX, LW, true, true);
         yL += GAP;
 
-        // Investment Details Table
         yL = drawSectionWithTotal('INVESTMENT DETAILS', fR(calculated.INVESTMENT_SUM), 'Sum of I+II', yL, LX, LW);
         yL = drawRow('I', 'LAPU/DTH LAPU (3 days)', fR(d.LAPU_DTH_LAPU_2DAYS), yL, LX, LW, false, false);
         yL = drawRow('II', 'Actual Stock (Norm)', fR(d.AVG_STOCK), yL, LX, LW, true, false);
         yL += GAP;
 
-        // Gross Earnings Details Table
         yL = drawSectionWithTotal('GROSS EARNINGS DETAILS', fR(calculated.TOTAL_GROSS_EARNINGS), 'Sum of I+II+III', yL, LX, LW);
         yL = drawRow('I', 'LAPU Commission (Amount)', fR(d.LAPU_COMMISSION_A), yL, LX, LW, false, false);
         yL = drawRow('II', 'PLI / DTH GPS (Avg)', fR(d.PLI_AVG), yL, LX, LW, true, false);
@@ -2000,29 +2050,24 @@
         yL = drawRow('V', 'Store Net Earnings', fR(STORE_NET_EARNINGS), yL, LX, LW, false, false);
         yL += GAP;
 
-        // Opportunity Lost Table
         yL = drawSectionWithTotal('OPPORTUNITY LOST', fR(calculated.TOTAL_OPPORTUNITY_LOST), 'Sum of I+II', yL, LX, LW);
         yL = drawRow('I', 'PLI Missed Opportunity', fR(d.PLI_MISSED_OPPORTUNITY), yL, LX, LW, false, false);
         yL = drawRow('II', 'ASC Subsidy Missed', fR(d.ASC_SUBSIDY_OPPORTUNITY_MISSED), yL, LX, LW, true, false);
         yL = drawRow('III', 'Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yL, LX, LW, false, false);
 
         // RIGHT COLUMN
-        
-        // Info Cards
         const cW = (RW - 4) / 3;
         drawCard('TSM NAME', d.TSM_NAME, RX, yR, cW, CARD_H);
         drawCard('ZSM NAME', d.ZSM_NAME, RX + cW + 2, yR, cW, CARD_H);
         drawCard('ZONE', d.ZONE, RX + (cW + 2) * 2, yR, cW, CARD_H);
         yR += CARD_H + GAP;
 
-        // Expenses Details Table
         yR = drawSectionWithTotal('EXPENSES DETAILS', fR(calculated.TOTAL_EXPENSES), 'Sum of III', yR, RX, RW);
         yR = drawRow('I', 'ASC Required', fN(d.ASC_REQUIRED), yR, RX, RW, false, false);
         yR = drawRow('II', 'Active ASC Count (Norm)', fN(d.ACTIVE_ASC_COUNT_AS_PER_NORM), yR, RX, RW, true, false);
         yR = drawRow('III', 'ASC (FOS) Salary @13000', fR(d.ASC_FOS_SALARY_13000), yR, RX, RW, false, false);
         yR += GAP;
 
-        // Other Expenses Table
         yR = drawSectionWithTotal('OTHER EXPENSES', fR(calculated.OTHER_EXPENSES_TOTAL), 'Sum of I+II+III+IV', yR, RX, RW);
         yR = drawRow('I', 'Rent', fR(RENT), yR, RX, RW, false, false);
         yR = drawRow('II', 'Electricity', fR(ELECTRICITY), yR, RX, RW, true, false);
@@ -2093,5 +2138,3 @@
   </script>
 </body>
 </html>
-
-
