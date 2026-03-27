@@ -461,6 +461,7 @@
     .compact-file-btn.disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      pointer-events: none;
     }
 
     .compact-file-btn input[type="file"] {
@@ -546,6 +547,16 @@
       cursor: not-allowed;
     }
 
+    .compact-action-btn.remove {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: #fff;
+      margin-top: 8px;
+    }
+
+    .compact-action-btn.remove:hover:not(:disabled) {
+      background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+    }
+
     .compact-message {
       font-size: 12px;
       padding: 8px 12px;
@@ -589,6 +600,241 @@
       font-size: 12px;
       color: #7f8c8d;
       margin: 0;
+    }
+
+    /* Validation Summary Styles */
+    .validation-summary {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .validation-summary.show {
+      display: block;
+    }
+
+    .validation-summary.error {
+      background: #f8d7da;
+      border-color: #f5c6cb;
+    }
+
+    .validation-summary.success {
+      background: #d4edda;
+      border-color: #c3e6cb;
+    }
+
+    .validation-summary-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #856404;
+    }
+
+    .validation-summary.error .validation-summary-title {
+      color: #721c24;
+    }
+
+    .validation-summary.success .validation-summary-title {
+      color: #155724;
+    }
+
+    .validation-summary-list {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 13px;
+    }
+
+    .validation-summary-list li {
+      margin-bottom: 4px;
+      color: #856404;
+    }
+
+    .validation-summary.error .validation-summary-list li {
+      color: #721c24;
+    }
+
+    /* Uploaded File Preview */
+    .uploaded-file-preview {
+      background: #ecfdf5;
+      border: 1px solid #10b981;
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .uploaded-file-preview .file-icon {
+      font-size: 24px;
+    }
+
+    .uploaded-file-preview .file-details {
+      flex: 1;
+    }
+
+    .uploaded-file-preview .file-name {
+      font-weight: 600;
+      color: #047857;
+      font-size: 13px;
+    }
+
+    .uploaded-file-preview .file-time {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .uploaded-file-preview .file-status {
+      background: #10b981;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Confirmation Modal */
+    .confirm-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100001;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .confirm-modal {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 360px;
+      width: 90%;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease;
+    }
+
+    .confirm-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 28px;
+    }
+
+    .confirm-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2c3e50;
+      text-align: center;
+      margin: 0 0 10px 0;
+    }
+
+    .confirm-message {
+      font-size: 13px;
+      color: #7f8c8d;
+      text-align: center;
+      margin: 0 0 20px 0;
+      line-height: 1.5;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .confirm-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .confirm-btn.cancel {
+      background: #e5e7eb;
+      color: #4b5563;
+    }
+
+    .confirm-btn.cancel:hover {
+      background: #d1d5db;
+    }
+
+    .confirm-btn.confirm {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: #fff;
+    }
+
+    .confirm-btn.confirm:hover {
+      background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+    }
+
+    /* Data Status Indicator */
+    .data-status-bar {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .data-status-bar.show {
+      display: block;
+    }
+
+    .data-status-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .data-status-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .data-status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #fff;
+      border: 1px solid #e9ecef;
+    }
+
+    .data-status-item.filled {
+      background: #ecfdf5;
+      border-color: #10b981;
+      color: #047857;
+    }
+
+    .data-status-item.missing {
+      background: #fef2f2;
+      border-color: #ef4444;
+      color: #b91c1c;
+    }
+
+    .data-status-item .status-icon {
+      font-size: 14px;
     }
 
 @media (max-width: 900px) {
@@ -654,6 +900,9 @@
   .success-icon span { font-size: 35px; }
   .success-title { font-size: 20px; }
   .success-message { font-size: 13px; }
+  
+  .confirm-modal { padding: 20px; }
+  .confirm-buttons { flex-direction: column; }
 }
 @media (max-width: 400px) {
   body { padding: 8px; font-size: 12px; }
@@ -670,11 +919,12 @@
   .compact-file-row { flex-wrap: wrap; }
   .compact-file-name { width: 100%; margin-top: 6px; }
   .info-cards-container { flex-direction: column; gap: 8px; }
+  .data-status-items { flex-direction: column; }
 }
 @media print {
   @page { size: A4 portrait; margin: 10mm; }
   body { margin: 0; padding: 5mm; background: white; font-size: 10px; }
-  .input-bar, .toast-container, .submit-container, .upload-container, .info-cards-mobile { display: none !important; }
+  .input-bar, .toast-container, .submit-container, .upload-container, .info-cards-mobile, .data-status-bar, .validation-summary { display: none !important; }
   .distribution-hierarchy-container { flex-direction: row; gap: 8px; }
   .distribution-section, .hierarchy-section { flex: 0 0 48%; }
   table { font-size: 9px; margin-bottom: 8px; box-shadow: none; }
@@ -698,6 +948,19 @@
     </div>
   </div>
 
+  <!-- Confirmation Modal for Removing Files -->
+  <div class="confirm-overlay" id="confirmOverlay" style="display: none;">
+    <div class="confirm-modal">
+      <div class="confirm-icon">⚠️</div>
+      <h3 class="confirm-title" id="confirmTitle">Remove File?</h3>
+      <p class="confirm-message" id="confirmMessage">Are you sure you want to remove this file and upload a different one?</p>
+      <div class="confirm-buttons">
+        <button class="confirm-btn cancel" onclick="closeConfirmModal()">Cancel</button>
+        <button class="confirm-btn confirm" id="confirmBtn" onclick="">Remove</button>
+      </div>
+    </div>
+  </div>
+
   <div id="pdfContent">
     <h2 id="dashboardTitle">ROI Dashboard</h2>
 
@@ -710,6 +973,22 @@
     <div id="messageContainer" style="display: none;"></div>
 
     <div id="mainContent" style="display: none;">
+      
+      <!-- Data Status Bar -->
+      <div class="data-status-bar" id="dataStatusBar">
+        <div class="data-status-title">📋 Data Entry Status</div>
+        <div class="data-status-items" id="dataStatusItems">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Validation Summary -->
+      <div class="validation-summary" id="validationSummary">
+        <div class="validation-summary-title">⚠️ Missing Required Fields</div>
+        <ul class="validation-summary-list" id="validationList">
+        </ul>
+      </div>
+
       <form id="expensesForm">
         <div class="distribution-hierarchy-container">
           <div class="distribution-section">
@@ -795,7 +1074,7 @@
                       class="table-input"
                       placeholder="Enter Store Net Earnings"
                       min="0"
-                      oninput="validateInput(this); updateGrossEarningsTotal();"
+                      oninput="validateInput(this); updateGrossEarningsTotal(); updateDataStatus();"
                       required>
                   </td>
                 </tr>
@@ -876,10 +1155,10 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td class="serial-col">I</td><td>Rent:</td><td><input type="number" id="rentInput" name="RENT" placeholder="3000-60000" min="3000" max="60000" oninput="validateInput(this)" required></td></tr>
-                <tr><td class="serial-col">II</td><td>Electricity:</td><td><input type="number" id="electricityInput" name="ELECTRICITY" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this)" required></td></tr>
-                <tr><td class="serial-col">III</td><td>Misc:</td><td><input type="number" id="miscInput" name="MISC" placeholder="0-5000" min="0" max="5000" oninput="validateInput(this)" required></td></tr>
-                <tr><td class="serial-col">IV</td><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="ADDITIONAL_MIS_SALARY" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this)" required></td></tr>
+                <tr><td class="serial-col">I</td><td>Rent:</td><td><input type="number" id="rentInput" name="RENT" placeholder="3000-60000" min="3000" max="60000" oninput="validateInput(this); updateDataStatus();" required></td></tr>
+                <tr><td class="serial-col">II</td><td>Electricity:</td><td><input type="number" id="electricityInput" name="ELECTRICITY" placeholder="500-3000" min="500" max="3000" oninput="validateInput(this); updateDataStatus();" required></td></tr>
+                <tr><td class="serial-col">III</td><td>Misc:</td><td><input type="number" id="miscInput" name="MISC" placeholder="0-5000" min="0" max="5000" oninput="validateInput(this); updateDataStatus();" required></td></tr>
+                <tr><td class="serial-col">IV</td><td>MIS Salary:</td><td><input type="number" id="misSalaryInput" name="ADDITIONAL_MIS_SALARY" placeholder="0-15000" min="0" max="15000" oninput="validateInput(this); updateDataStatus();" required></td></tr>
                 <tr><td class="serial-col">V</td><td>Clawback/Penalty (as per circle avg):</td><td class="display-field" id="clawback">-</td></tr>
               </tbody>
             </table>
@@ -911,7 +1190,17 @@
               <span class="upload-item-status pending" id="ndcStatus">Pending</span>
             </div>
             
-            <div class="compact-file-row">
+            <!-- Uploaded File Preview (shown when uploaded) -->
+            <div class="uploaded-file-preview" id="ndcUploadedPreview" style="display: none;">
+              <span class="file-icon">📄</span>
+              <div class="file-details">
+                <div class="file-name" id="ndcUploadedName">filename.pdf</div>
+                <div class="file-time" id="ndcUploadedTime">Uploaded just now</div>
+              </div>
+              <span class="file-status">✓ Uploaded</span>
+            </div>
+            
+            <div class="compact-file-row" id="ndcFileRow">
               <label class="compact-file-btn" id="ndcFileLabel">
                 <span>📁</span> Choose File
                 <input type="file" id="ndcFileInput" accept=".pdf,application/pdf" onchange="handleNdcFileSelect(this)">
@@ -925,6 +1214,11 @@
             
             <button type="button" class="compact-action-btn upload" id="ndcUploadBtn" onclick="uploadNdcCertificate()" disabled>
               ⬆️ Upload NDC
+            </button>
+            
+            <!-- Remove/Replace Button (shown when uploaded) -->
+            <button type="button" class="compact-action-btn remove" id="ndcRemoveBtn" onclick="confirmRemoveFile('ndc')" style="display: none;">
+              🔄 Replace NDC Certificate
             </button>
             
             <div class="compact-message" id="ndcMessage"></div>
@@ -961,7 +1255,17 @@
               <span class="upload-item-status pending" id="roiStatus">Pending</span>
             </div>
             
-            <div class="compact-file-row">
+            <!-- Uploaded File Preview (shown when uploaded) -->
+            <div class="uploaded-file-preview" id="roiUploadedPreview" style="display: none;">
+              <span class="file-icon">📄</span>
+              <div class="file-details">
+                <div class="file-name" id="roiUploadedName">filename.pdf</div>
+                <div class="file-time" id="roiUploadedTime">Uploaded just now</div>
+              </div>
+              <span class="file-status">✓ Uploaded</span>
+            </div>
+            
+            <div class="compact-file-row" id="roiFileRow">
               <label class="compact-file-btn" id="roiFileLabel">
                 <span>📁</span> Choose File
                 <input type="file" id="roiFileInput" accept=".pdf,application/pdf" onchange="handleRoiFileSelect(this)">
@@ -975,6 +1279,11 @@
             
             <button type="button" class="compact-action-btn upload" id="roiUploadBtn" onclick="uploadSignedRoi()" disabled>
               ⬆️ Upload Signed ROI
+            </button>
+            
+            <!-- Remove/Replace Button (shown when uploaded) -->
+            <button type="button" class="compact-action-btn remove" id="roiRemoveBtn" onclick="confirmRemoveFile('roi')" style="display: none;">
+              🔄 Replace Signed ROI
             </button>
             
             <div class="compact-message" id="roiMessage"></div>
@@ -1009,6 +1318,13 @@
     let roiUploaded = false;
     let ndcFile = null;
     let roiFile = null;
+    
+    // Store upload timestamps
+    let ndcUploadTime = null;
+    let roiUploadTime = null;
+
+    // Confirmation modal callback
+    let confirmCallback = null;
 
     function refreshToHome() {
       window.location.reload();
@@ -1040,6 +1356,197 @@
 
     function getPreviousMonth() {
       return 'Jan 2026';
+    }
+
+    // ========== CONFIRMATION MODAL ==========
+    function showConfirmModal(title, message, callback) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      confirmCallback = callback;
+      document.getElementById('confirmOverlay').style.display = 'flex';
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmOverlay').style.display = 'none';
+      confirmCallback = null;
+    }
+
+    function executeConfirm() {
+      if (confirmCallback) {
+        confirmCallback();
+      }
+      closeConfirmModal();
+    }
+
+    document.getElementById('confirmBtn').onclick = executeConfirm;
+
+    // ========== DATA VALIDATION ==========
+    function validateAllFieldsFilled() {
+      const fields = [
+        { id: 'rentInput', name: 'Rent', min: 3000, max: 60000 },
+        { id: 'electricityInput', name: 'Electricity', min: 500, max: 3000 },
+        { id: 'miscInput', name: 'Misc', min: 0, max: 5000 },
+        { id: 'misSalaryInput', name: 'MIS Salary', min: 0, max: 15000 },
+        { id: 'storeNetEarningsInput', name: 'Store Net Earnings', min: 0, max: Infinity }
+      ];
+
+      const errors = [];
+      let allFilled = true;
+
+      fields.forEach(field => {
+        const input = document.getElementById(field.id);
+        const value = input.value.trim();
+        
+        if (value === '') {
+          errors.push(`${field.name} is required`);
+          allFilled = false;
+        } else {
+          const numVal = parseFloat(value);
+          if (numVal < field.min || numVal > field.max) {
+            if (field.max === Infinity) {
+              errors.push(`${field.name} must be at least ${field.min}`);
+            } else {
+              errors.push(`${field.name} must be between ${field.min} and ${field.max}`);
+            }
+            allFilled = false;
+          }
+        }
+      });
+
+      return { valid: allFilled, errors };
+    }
+
+    function showValidationErrors(errors) {
+      const summary = document.getElementById('validationSummary');
+      const list = document.getElementById('validationList');
+      
+      list.innerHTML = '';
+      errors.forEach(error => {
+        const li = document.createElement('li');
+        li.textContent = error;
+        list.appendChild(li);
+      });
+      
+      summary.className = 'validation-summary show error';
+    }
+
+    function hideValidationErrors() {
+      document.getElementById('validationSummary').className = 'validation-summary';
+    }
+
+    function updateDataStatus() {
+      const statusBar = document.getElementById('dataStatusBar');
+      const statusItems = document.getElementById('dataStatusItems');
+      
+      if (!currentDistributorData) {
+        statusBar.classList.remove('show');
+        return;
+      }
+      
+      statusBar.classList.add('show');
+      
+      const fields = [
+        { id: 'rentInput', name: 'Rent' },
+        { id: 'electricityInput', name: 'Electricity' },
+        { id: 'miscInput', name: 'Misc' },
+        { id: 'misSalaryInput', name: 'MIS Salary' },
+        { id: 'storeNetEarningsInput', name: 'Store Earnings' }
+      ];
+      
+      statusItems.innerHTML = '';
+      
+      fields.forEach(field => {
+        const input = document.getElementById(field.id);
+        const value = input.value.trim();
+        const isFilled = value !== '' && !isNaN(parseFloat(value));
+        
+        const item = document.createElement('div');
+        item.className = `data-status-item ${isFilled ? 'filled' : 'missing'}`;
+        item.innerHTML = `
+          <span class="status-icon">${isFilled ? '✓' : '○'}</span>
+          <span>${field.name}</span>
+        `;
+        statusItems.appendChild(item);
+      });
+      
+      // Add expenses submitted status
+      const submitStatus = document.createElement('div');
+      submitStatus.className = `data-status-item ${expensesSubmitted ? 'filled' : 'missing'}`;
+      submitStatus.innerHTML = `
+        <span class="status-icon">${expensesSubmitted ? '✓' : '○'}</span>
+        <span>Data Submitted</span>
+      `;
+      statusItems.appendChild(submitStatus);
+    }
+
+    // ========== REMOVE/REPLACE FILE FUNCTIONS ==========
+    function confirmRemoveFile(type) {
+      const title = type === 'ndc' ? 'Replace NDC Certificate?' : 'Replace Signed ROI?';
+      const message = `This will remove the currently uploaded ${type === 'ndc' ? 'NDC Certificate' : 'Signed ROI'} and allow you to upload a new file. The previous upload will be replaced in the system.`;
+      
+      showConfirmModal(title, message, () => removeFile(type));
+    }
+
+    function removeFile(type) {
+      if (type === 'ndc') {
+        ndcUploaded = false;
+        ndcFile = null;
+        ndcUploadTime = null;
+        
+        // Reset UI
+        document.getElementById('ndcUploadedPreview').style.display = 'none';
+        document.getElementById('ndcFileRow').style.display = 'flex';
+        document.getElementById('ndcUploadBtn').style.display = 'flex';
+        document.getElementById('ndcRemoveBtn').style.display = 'none';
+        document.getElementById('ndcFileInput').value = '';
+        document.getElementById('ndcFileInput').disabled = false;
+        document.getElementById('ndcFileName').textContent = 'No file selected';
+        document.getElementById('ndcFileName').classList.remove('has-file');
+        document.getElementById('ndcUploadBtn').disabled = true;
+        document.getElementById('ndcFileLabel').classList.remove('disabled');
+        document.getElementById('ndcLocation').textContent = '📍 Location will be captured on upload';
+        document.getElementById('ndcLocation').className = 'compact-location';
+        document.getElementById('ndcMessage').className = 'compact-message';
+        document.getElementById('ndcBadge').classList.remove('done');
+        document.getElementById('ndcBadge').textContent = '1';
+        document.getElementById('ndcStatus').textContent = 'Pending';
+        document.getElementById('ndcStatus').className = 'upload-item-status pending';
+        document.getElementById('ndcUploadItem').classList.remove('completed');
+        
+        // If NDC is removed, PDF download and ROI upload need to be reset too
+        pdfDownloaded = false;
+        roiUploaded = false;
+        
+        showToast('NDC Certificate removed. You can upload a new file.', 'warning');
+      } else if (type === 'roi') {
+        roiUploaded = false;
+        roiFile = null;
+        roiUploadTime = null;
+        
+        // Reset UI
+        document.getElementById('roiUploadedPreview').style.display = 'none';
+        document.getElementById('roiFileRow').style.display = 'flex';
+        document.getElementById('roiUploadBtn').style.display = 'flex';
+        document.getElementById('roiRemoveBtn').style.display = 'none';
+        document.getElementById('roiFileInput').value = '';
+        document.getElementById('roiFileInput').disabled = false;
+        document.getElementById('roiFileName').textContent = 'No file selected';
+        document.getElementById('roiFileName').classList.remove('has-file');
+        document.getElementById('roiUploadBtn').disabled = true;
+        document.getElementById('roiFileLabel').classList.remove('disabled');
+        document.getElementById('roiLocation').textContent = '📍 Location will be captured on upload';
+        document.getElementById('roiLocation').className = 'compact-location';
+        document.getElementById('roiMessage').className = 'compact-message';
+        document.getElementById('roiBadge').classList.remove('done');
+        document.getElementById('roiBadge').textContent = '3';
+        document.getElementById('roiStatus').textContent = 'Pending';
+        document.getElementById('roiStatus').className = 'upload-item-status pending';
+        document.getElementById('roiUploadItem').classList.remove('completed');
+        
+        showToast('Signed ROI removed. You can upload a new file.', 'warning');
+      }
+      
+      updateUIVisibility();
     }
 
     function captureLocation(locationElId) {
@@ -1458,6 +1965,21 @@
     }
 
     async function uploadNdcCertificate() {
+      // Validate that all data is entered first
+      if (!expensesSubmitted) {
+        showToast('⚠️ Please submit expenses data first!', 'error');
+        return;
+      }
+      
+      const validation = validateAllFieldsFilled();
+      if (!validation.valid) {
+        showValidationErrors(validation.errors);
+        showToast('⚠️ Please fill all required fields before uploading', 'error');
+        return;
+      }
+      
+      hideValidationErrors();
+      
       if (!ndcFile) { 
         showToast('⚠️ Select a file first', 'error'); 
         return; 
@@ -1466,10 +1988,20 @@
       const success = await uploadToGoogleSheets(ndcFile, 'ndc');
       if (success) {
         ndcUploaded = true;
-        showToast('✅ NDC uploaded! Download PDF now.');
-        document.getElementById('ndcUploadBtn').disabled = true;
-        document.getElementById('ndcFileLabel').classList.add('disabled');
+        ndcUploadTime = new Date();
+        
+        // Update UI to show uploaded state
+        document.getElementById('ndcUploadedPreview').style.display = 'flex';
+        document.getElementById('ndcUploadedName').textContent = ndcFile.name;
+        document.getElementById('ndcUploadedTime').textContent = 'Uploaded ' + ndcUploadTime.toLocaleTimeString();
+        
+        document.getElementById('ndcFileRow').style.display = 'none';
+        document.getElementById('ndcUploadBtn').style.display = 'none';
+        document.getElementById('ndcRemoveBtn').style.display = 'flex';
         document.getElementById('ndcFileInput').disabled = true;
+        document.getElementById('ndcFileLabel').classList.add('disabled');
+        
+        showToast('✅ NDC uploaded! Download PDF now.');
         updateUIVisibility();
         setTimeout(() => {
           document.getElementById('downloadPdfItem').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1486,10 +2018,22 @@
       const success = await uploadToGoogleSheets(roiFile, 'roi_signed');
       if (success) {
         roiUploaded = true;
-        document.getElementById('roiUploadBtn').disabled = true;
-        document.getElementById('roiFileLabel').classList.add('disabled');
+        roiUploadTime = new Date();
+        
+        // Update UI to show uploaded state
+        document.getElementById('roiUploadedPreview').style.display = 'flex';
+        document.getElementById('roiUploadedName').textContent = roiFile.name;
+        document.getElementById('roiUploadedTime').textContent = 'Uploaded ' + roiUploadTime.toLocaleTimeString();
+        
+        document.getElementById('roiFileRow').style.display = 'none';
+        document.getElementById('roiUploadBtn').style.display = 'none';
+        document.getElementById('roiRemoveBtn').style.display = 'flex';
         document.getElementById('roiFileInput').disabled = true;
+        document.getElementById('roiFileLabel').classList.add('disabled');
+        
         updateUIVisibility();
+        
+        // Show success overlay after a brief delay
         setTimeout(() => {
           showSuccessOverlay();
         }, 500);
@@ -1599,9 +2143,16 @@
       
       document.getElementById('mainContent').style.display = 'block';
       
+      // Reset upload states
       ndcUploaded = false; pdfDownloaded = false; roiUploaded = false;
       ndcFile = null; roiFile = null;
+      ndcUploadTime = null; roiUploadTime = null;
       
+      // Reset NDC upload UI
+      document.getElementById('ndcUploadedPreview').style.display = 'none';
+      document.getElementById('ndcFileRow').style.display = 'flex';
+      document.getElementById('ndcUploadBtn').style.display = 'flex';
+      document.getElementById('ndcRemoveBtn').style.display = 'none';
       document.getElementById('ndcFileInput').value = '';
       document.getElementById('ndcFileInput').disabled = false;
       document.getElementById('ndcFileName').textContent = 'No file selected';
@@ -1617,6 +2168,7 @@
       document.getElementById('ndcStatus').textContent = 'Pending';
       document.getElementById('ndcStatus').className = 'upload-item-status pending';
       
+      // Reset Download PDF UI
       document.getElementById('downloadBadge').classList.remove('done');
       document.getElementById('downloadBadge').textContent = '2';
       document.getElementById('downloadPdfItem').classList.remove('completed');
@@ -1624,6 +2176,11 @@
       document.getElementById('downloadStatus').textContent = 'Pending';
       document.getElementById('downloadStatus').className = 'upload-item-status pending';
       
+      // Reset ROI upload UI
+      document.getElementById('roiUploadedPreview').style.display = 'none';
+      document.getElementById('roiFileRow').style.display = 'flex';
+      document.getElementById('roiUploadBtn').style.display = 'flex';
+      document.getElementById('roiRemoveBtn').style.display = 'none';
       document.getElementById('roiFileInput').value = '';
       document.getElementById('roiFileInput').disabled = false;
       document.getElementById('roiFileName').textContent = 'No file selected';
@@ -1639,6 +2196,11 @@
       document.getElementById('roiStatus').textContent = 'Pending';
       document.getElementById('roiStatus').className = 'upload-item-status pending';
       
+      // Hide validation errors
+      hideValidationErrors();
+      
+      // Update data status and UI
+      updateDataStatus();
       updateUIVisibility();
     }
 
@@ -1719,6 +2281,16 @@
       const submitBtn = document.getElementById('submitExpensesBtn');
       const originalBtnText = submitBtn.innerHTML;
       
+      // Validate all fields
+      const validation = validateAllFieldsFilled();
+      if (!validation.valid) {
+        showValidationErrors(validation.errors);
+        showToast('⚠️ Please fill all required fields correctly!', 'error');
+        return;
+      }
+      
+      hideValidationErrors();
+      
       const allInputs = document.querySelectorAll('#expensesForm input[type="number"]');
       let isValid = true;
       allInputs.forEach(input => {
@@ -1756,6 +2328,7 @@
         populateData(currentDistributorData);
         
         showToast('✅ All expenses saved successfully! Upload NDC now.', 'success');
+        updateDataStatus();
         updateUIVisibility();
         
         setTimeout(() => {
@@ -1769,7 +2342,7 @@
       }
     });
 
-    // ========== FIXED PDF DOWNLOAD FUNCTION ==========
+    // ========== PDF DOWNLOAD FUNCTION ==========
     async function downloadPageAsPdf() {
       if (!currentDistributorData) { 
         showToast('⚠️ Load data first!', 'error'); 
@@ -2077,7 +2650,7 @@
         const dateStr = new Date().toISOString().slice(0, 10);
         const filename = `ROI_${distName}_${distNum}_${dateStr}.pdf`;
 
-        // Save the PDF - Direct download method
+        // Save the PDF
         pdf.save(filename);
 
         // Mark as downloaded and update UI
