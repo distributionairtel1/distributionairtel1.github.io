@@ -1003,7 +1003,7 @@
     let expensesSubmitted = false;
 
     // ⚠️ REPLACE WITH YOUR DEPLOYED WEB APP URL
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxR36Op9Y_8ehQ8HZfeHhQW4wlPrEYGutY-0pt1kSTUr0cNSdsAtuXazEWppmY3fNWY/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
 
     let ndcUploaded = false;
     let pdfDownloaded = false;
@@ -1772,10 +1772,340 @@
 
     // PDF DOWNLOAD FUNCTION (truncated for space - use the one from your original code)
     async function downloadPageAsPdf() {
-      // Your existing PDF generation code here
-      // (Copy from your original HTML - the function is too long to include here)
-      showToast('PDF generation - use your existing code');
+      if (!currentDistributorData) { showToast('⚠️ Load data first!', 'error'); return; }
+
+      const btn = document.getElementById('downloadPdfBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Generating...';
+      showMessage('downloadMessage', '⏳ Creating PDF...', 'loading');
+
+      const overlay = document.createElement('div');
+      overlay.className = 'pdf-overlay';
+      overlay.innerHTML = `<div class="pdf-overlay-content"><div class="pdf-spinner"></div><div style="font-weight:600;color:#2c3e50;">Generating PDF...</div></div>`;
+      document.body.appendChild(overlay);
+
+      try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('portrait', 'mm', 'a4');
+        const d = currentDistributorData;
+
+        const PW = 210, PH = 297, M = 8;
+        const CW = PW - 2 * M;
+        const COL_GAP = 4;
+        const LW = (CW - COL_GAP) / 2;
+        const RW = LW;
+        const LX = M;
+        const RX = M + LW + COL_GAP;
+        const ROW_H = 7;
+        const SEC_H = 12;
+        const GAP = 3;
+        const CARD_H = 18;
+
+        const C = {
+          headerBg: [26, 82, 118], primary: [41, 128, 185], accent: [243, 156, 18],
+          white: [255, 255, 255], dark: [44, 62, 80], border: [189, 195, 199],
+          green: [39, 174, 96], red: [231, 76, 60], lightGreen: [212, 239, 223],
+          altRow: [249, 251, 252], cardBg: [234, 244, 249], highlight: [52, 73, 94],
+          sumText: [253, 235, 171]   
+        };
+
+        const calculated = calculateAllValues(d);
+        const roiPercent = (calculated.ROI * 100).toFixed(2) + '%';
+        const isGood = calculated.ROI >= 0;
+        const RENT = parseFloat(d.RENT || 0);
+        const ELECTRICITY = parseFloat(d.ELECTRICITY || 0);
+        const MISC = parseFloat(d.MISC || 0);
+        const ADDITIONAL_MIS_SALARY = parseFloat(d.ADDITIONAL_MIS_SALARY || 0);
+        const STORE_NET_EARNINGS = parseFloat(d.STORE_NET_EARNINGS || 0);
+        const clawback = d['CLAWBACK/PENALTY'] || d['CLAWBACK_PENALTY'] || 0;
+
+        const fR = n => 'Rs. ' + new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(parseFloat(n || 0));
+        const fN = n => new Intl.NumberFormat('en-IN').format(parseFloat(n || 0));
+
+        function drawHeader() {
+          pdf.setFillColor(...C.headerBg);
+          pdf.rect(0, 0, PW, 22, 'F');
+          pdf.setFillColor(...C.accent);
+          pdf.rect(0, 22, PW, 1.5, 'F');
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(15);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('ROI DASHBOARD REPORT', PW / 2, 9, { align: 'center' });
+          pdf.setFontSize(9);
+          pdf.setFont('helvetica', 'normal');
+          pdf.text(String(d.DISTRIBUTOR_NAME || '-') + '  |  ' + String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), PW / 2, 16, { align: 'center' });
+          pdf.setFillColor(...(isGood ? C.green : C.red));
+          pdf.roundedRect(PW - M - 32, 4, 32, 10, 2, 2, 'F');
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(7.5);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('ROI: ' + roiPercent, PW - M - 16, 10.5, { align: 'center' });
+          const dateStr = getPreviousMonth();
+          pdf.setFillColor(...C.accent);
+          pdf.roundedRect(M, 5, 24, 8, 2, 2, 'F');
+          pdf.setTextColor(...C.dark);
+          pdf.setFontSize(6.5);
+          pdf.text(dateStr, M + 12, 10, { align: 'center' });
+          return 27;
+        }
+
+        function drawSectionWithTotal(title, total, sumFormula, y, x, w) {
+          pdf.setFillColor(...C.primary);
+          pdf.rect(x, y, w, SEC_H, 'F');
+          pdf.setFillColor(...C.accent);
+          pdf.rect(x, y, 2.5, SEC_H, 'F');
+          
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(String(title), x + 6, y + 5);
+          
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(total, x + w - 4, y + 5, { align: 'right' });
+          
+          pdf.setFontSize(5.5);
+          pdf.setTextColor(...C.sumText);
+          pdf.setFont('helvetica', 'italic');
+          pdf.text(sumFormula, x + w - 4, y + 9.5, { align: 'right' });
+          
+          return y + SEC_H;
+        }
+
+        function drawSection(text, y, x, w) {
+          pdf.setFillColor(...C.primary);
+          pdf.rect(x, y, w, 8, 'F');
+          pdf.setFillColor(...C.accent);
+          pdf.rect(x, y, 2.5, 8, 'F');
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(String(text), x + 6, y + 5.5);
+          return y + 8;
+        }
+
+        function drawRow(serial, label, value, y, x, w, isAlt, isHL) {
+          const serialW = 10;
+          const lblW = (w - serialW) * 0.55;
+          const valW = w - serialW - lblW;
+          
+          if (isHL) pdf.setFillColor(...C.lightGreen);
+          else if (isAlt) pdf.setFillColor(...C.altRow);
+          else pdf.setFillColor(255, 255, 255);
+          pdf.rect(x, y, w, ROW_H, 'F');
+          pdf.setDrawColor(...C.border);
+          pdf.setLineWidth(0.15);
+          pdf.rect(x, y, w, ROW_H, 'S');
+          pdf.line(x + serialW, y, x + serialW, y + ROW_H);
+          pdf.line(x + serialW + lblW, y, x + serialW + lblW, y + ROW_H);
+          
+          pdf.setFillColor(248, 249, 250);
+          pdf.rect(x, y, serialW, ROW_H, 'F');
+          pdf.setDrawColor(...C.border);
+          pdf.rect(x, y, serialW, ROW_H, 'S');
+          pdf.setFontSize(6);
+          pdf.setTextColor(127, 140, 141);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(String(serial), x + serialW/2, y + 5, { align: 'center' });
+          
+          pdf.setFontSize(7);
+          pdf.setTextColor(...C.dark);
+          pdf.setFont('helvetica', 'normal');
+          let lbl = String(label || '-');
+          while (pdf.getTextWidth(lbl) > lblW - 4 && lbl.length > 4) lbl = lbl.slice(0, -1);
+          if (lbl.length < String(label || '-').length) lbl += '..';
+          pdf.text(lbl, x + serialW + 2, y + 5);
+          
+          pdf.setFont('helvetica', 'bold');
+          if (isHL) pdf.setTextColor(...C.green);
+          else pdf.setTextColor(...C.highlight);
+          let val = String(value || '-');
+          while (pdf.getTextWidth(val) > valW - 4 && val.length > 4) val = val.slice(0, -1);
+          if (val.length < String(value || '-').length) val += '..';
+          pdf.text(val, x + serialW + lblW + 2, y + 5);
+          
+          return y + ROW_H;
+        }
+
+        function drawCard(title, value, x, y, w, h) {
+          pdf.setFillColor(...C.cardBg);
+          pdf.roundedRect(x, y, w, h, 2, 2, 'F');
+          pdf.setDrawColor(...C.border);
+          pdf.setLineWidth(0.2);
+          pdf.roundedRect(x, y, w, h, 2, 2, 'S');
+          pdf.setFillColor(...C.primary);
+          pdf.rect(x + 1, y + 1, w - 2, 2, 'F');
+          pdf.setTextColor(...C.highlight);
+          pdf.setFontSize(6);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(String(title), x + w / 2, y + 7, { align: 'center' });
+          pdf.setFontSize(6.5);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor(...C.dark);
+          let v = String(value || '-');
+          while (pdf.getTextWidth(v) > w - 6 && v.length > 4) v = v.slice(0, -1);
+          if (v.length < String(value || '-').length) v += '..';
+          pdf.text(v, x + w / 2, y + 13, { align: 'center' });
+        }
+
+        function drawSignatureBoxes(y) {
+          const boxW = (CW - 2 * GAP) / 3;
+          const boxH = 26;
+          pdf.setFillColor(...C.primary);
+          pdf.rect(M, y, CW, 8, 'F');
+          pdf.setFillColor(...C.accent);
+          pdf.rect(M, y, 2.5, 8, 'F');
+          pdf.setTextColor(...C.white);
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text('SIGNATURES & APPROVAL', M + 6, y + 5.5);
+          const startY = y + 10;
+          const boxes = [
+            { title: 'ZSM Signature', name: d.ZSM_NAME || '-' },
+            { title: 'TSM Signature', name: d.TSM_NAME || '-' },
+            { title: 'Distributor Signature', name: d.DISTRIBUTOR_NAME || '-' }
+          ];
+          boxes.forEach((box, idx) => {
+            const boxX = M + idx * (boxW + GAP);
+            pdf.setFillColor(255, 255, 255);
+            pdf.setDrawColor(...C.border);
+            pdf.setLineWidth(0.3);
+            pdf.roundedRect(boxX, startY, boxW, boxH, 2, 2, 'FD');
+            pdf.setFillColor(...C.headerBg);
+            pdf.rect(boxX + 1, startY + 1, boxW - 2, 5, 'F');
+            pdf.setTextColor(...C.white);
+            pdf.setFontSize(6);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(box.title, boxX + boxW / 2, startY + 4.5, { align: 'center' });
+            pdf.setTextColor(...C.dark);
+            pdf.setFontSize(5.5);
+            pdf.setFont('helvetica', 'normal');
+            let name = String(box.name);
+            while (pdf.getTextWidth(name) > boxW - 8 && name.length > 4) name = name.slice(0, -1);
+            if (name.length < String(box.name).length) name += '..';
+            pdf.text(name, boxX + boxW / 2, startY + 10, { align: 'center' });
+            pdf.setDrawColor(...C.dark);
+            pdf.setLineWidth(0.2);
+            pdf.line(boxX + 5, startY + boxH - 6, boxX + boxW - 5, startY + boxH - 6);
+            pdf.setFontSize(5);
+            pdf.setTextColor(130, 130, 130);
+            pdf.text('Date: _______________', boxX + boxW / 2, startY + boxH - 2, { align: 'center' });
+          });
+          return startY + boxH + GAP;
+        }
+
+        function drawFooter() {
+          const fY = PH - 10;
+          pdf.setFillColor(...C.accent);
+          pdf.rect(M, fY, CW, 0.5, 'F');
+          pdf.setFontSize(6);
+          pdf.setTextColor(130, 130, 130);
+          pdf.setFont('helvetica', 'normal');
+          pdf.text('Page 1 of 1', M, fY + 4);
+          pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), PW / 2, fY + 4, { align: 'center' });
+          pdf.text('ROI-' + Date.now().toString(36).toUpperCase(), PW - M, fY + 4, { align: 'right' });
+        }
+
+        let yL = drawHeader();
+        let yR = yL;
+
+        // LEFT COLUMN
+        yL = drawSection('DISTRIBUTOR SUMMARY', yL, LX, LW);
+        yL = drawRow('I', 'Distributor Number', String(d.DISTRIBUTOR_LAPU_NUMBER || '-'), yL, LX, LW, false, false);
+        yL = drawRow('II', 'Distributor Name', String(d.DISTRIBUTOR_NAME || '-'), yL, LX, LW, true, false);
+        yL = drawRow('III', 'Investment', fR(calculated.INVESTMENT), yL, LX, LW, false, false);
+        yL = drawRow('IV', 'Average Stock', fR(d.AVG_STOCK), yL, LX, LW, true, false);
+        yL = drawRow('V', 'Gross Earning', fR(calculated.GROSS_EARNING), yL, LX, LW, false, false);
+        yL = drawRow('VI', 'Expenses', fR(calculated.EXPENSES), yL, LX, LW, true, false);
+        yL = drawRow('VII', 'Take Home', fR(calculated.TAKE_HOME), yL, LX, LW, false, true);
+        yL = drawRow('VIII', 'ROI', roiPercent, yL, LX, LW, true, true);
+        yL += GAP;
+
+        yL = drawSectionWithTotal('INVESTMENT DETAILS', fR(calculated.INVESTMENT_SUM), 'Sum of I+II', yL, LX, LW);
+        yL = drawRow('I', 'LAPU/DTH LAPU (3 days)', fR(d.LAPU_DTH_LAPU_2DAYS), yL, LX, LW, false, false);
+        yL = drawRow('II', 'Actual Stock (Norm)', fR(d.AVG_STOCK), yL, LX, LW, true, false);
+        yL += GAP;
+
+        yL = drawSectionWithTotal('GROSS EARNINGS DETAILS', fR(calculated.TOTAL_GROSS_EARNINGS), 'Sum of I+II+III', yL, LX, LW);
+        yL = drawRow('I', 'LAPU Commission (Amount)', fR(d.LAPU_COMMISSION_A), yL, LX, LW, false, false);
+        yL = drawRow('II', 'PLI / DTH GPS (Avg)', fR(d.PLI_AVG), yL, LX, LW, true, false);
+        yL = drawRow('III', 'Dist Subsidy', fR(d.DIST_SUBSIDY), yL, LX, LW, false, false);
+        yL = drawRow('IV', 'Lapu Secondary per Month', fR(d.LAPU_SECONDARY_PER_MONTH), yL, LX, LW, true, false);
+        yL = drawRow('V', 'Store Net Earnings', fR(STORE_NET_EARNINGS), yL, LX, LW, false, false);
+        yL += GAP;
+
+        yL = drawSectionWithTotal('OPPORTUNITY LOST', fR(calculated.TOTAL_OPPORTUNITY_LOST), 'Sum of I+II', yL, LX, LW);
+        yL = drawRow('I', 'PLI Missed Opportunity', fR(d.PLI_MISSED_OPPORTUNITY), yL, LX, LW, false, false);
+        yL = drawRow('II', 'ASC Subsidy Missed', fR(d.ASC_SUBSIDY_OPPORTUNITY_MISSED), yL, LX, LW, true, false);
+        yL = drawRow('III', 'Addl Active ASC Required', fN(d.ADDITIONAL_ACTIVE_ASC), yL, LX, LW, false, false);
+
+        // RIGHT COLUMN
+        const cW = (RW - 4) / 3;
+        drawCard('TSM NAME', d.TSM_NAME, RX, yR, cW, CARD_H);
+        drawCard('ZSM NAME', d.ZSM_NAME, RX + cW + 2, yR, cW, CARD_H);
+        drawCard('ZONE', d.ZONE, RX + (cW + 2) * 2, yR, cW, CARD_H);
+        yR += CARD_H + GAP;
+
+        yR = drawSectionWithTotal('EXPENSES DETAILS', fR(calculated.TOTAL_EXPENSES), 'Sum of III', yR, RX, RW);
+        yR = drawRow('I', 'ASC Required', fN(d.ASC_REQUIRED), yR, RX, RW, false, false);
+        yR = drawRow('II', 'Active ASC Count (Norm)', fN(d.ACTIVE_ASC_COUNT_AS_PER_NORM), yR, RX, RW, true, false);
+        yR = drawRow('III', 'ASC (FOS) Salary @13000', fR(d.ASC_FOS_SALARY_13000), yR, RX, RW, false, false);
+        yR += GAP;
+
+        yR = drawSectionWithTotal('OTHER EXPENSES', fR(calculated.OTHER_EXPENSES_TOTAL), 'Sum of I+II+III+IV', yR, RX, RW);
+        yR = drawRow('I', 'Rent', fR(RENT), yR, RX, RW, false, false);
+        yR = drawRow('II', 'Electricity', fR(ELECTRICITY), yR, RX, RW, true, false);
+        yR = drawRow('III', 'Misc', fR(MISC), yR, RX, RW, false, false);
+        yR = drawRow('IV', 'MIS Salary', fR(ADDITIONAL_MIS_SALARY), yR, RX, RW, true, false);
+        yR = drawRow('V', 'Clawback / Penalty', fN(clawback), yR, RX, RW, false, false);
+
+        const maxY = Math.max(yL, yR);
+        drawSignatureBoxes(maxY + 5);
+        drawFooter();
+
+        const distName = String(d.DISTRIBUTOR_NAME || 'Dashboard');
+        const distNum = String(d.DISTRIBUTOR_LAPU_NUMBER || '');
+        const filename = ('ROI_' + distName + '_' + distNum + '_' + new Date().toISOString().slice(0, 10) + '.pdf').replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+
+        const pdfBlob = pdf.output('blob');
+        const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+        
+        const triggerDownload = (blob, name) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = name;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 100);
+        };
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share({ files: [file], title: 'ROI Report', text: 'ROI Report for ' + distName }); }
+          catch (err) { triggerDownload(pdfBlob, filename); }
+        } else { triggerDownload(pdfBlob, filename); }
+
+        pdfDownloaded = true;
+        updateUIVisibility();
+        showMessage('downloadMessage', '✅ PDF downloaded!', 'success');
+        showToast('✅ PDF ready! Sign and upload.');
+        
+        setTimeout(() => {
+          document.getElementById('roiUploadItem').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 500);
+
+      } catch (error) {
+        console.error('PDF error:', error);
+        showMessage('downloadMessage', '❌ PDF failed', 'error');
+        showToast('❌ PDF failed: ' + error.message, 'error');
+      } finally {
+        if (overlay.parentNode) overlay.remove();
+        btn.disabled = false;
+        btn.textContent = '📄 Download PDF';
+      }
     }
+
 
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('distributorNumberInput').addEventListener('keypress', (e) => {
