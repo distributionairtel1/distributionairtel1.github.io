@@ -364,7 +364,7 @@
         <img src="airtel_cropped.png" alt="Airtel" class="logo" id="airtelLogo"
              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23dc2626%22/><text x=%2250%22 y=%2265%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2240%22 font-weight=%22bold%22>A</text></svg>'">
       </div>
-      <h1> Airtel Onboarding Form</h1>
+      <h1>Airtel Onboarding Form</h1>
     </div>
   </div>
 
@@ -374,17 +374,17 @@
 
     <div class="field">
       <div class="label">Category <span class="req">*</span></div>
-      <select name="category" required>
+      <select name="category" id="category" required>
         <option value="" disabled selected>Select a category</option>
-        <option>DG/MT</option>
-        <option>Rural Promoter</option>
-        <option> ASC </option>
-        <option> AF Promoter </option>
+        <option value="DG/MT">DG/MT</option>
+        <option value="Rural Promoter">Rural Promoter</option>
+        <option value="ASC">ASC</option>
+        <option value="AF Promoter">AF Promoter</option>
       </select>
       <div class="error">Please select a category.</div>
     </div>
 
-    <div class="field">
+    <div class="field" id="joinee_type_field">
       <div class="label">Whether New Joinee or Rejoinee <span class="req">*</span></div>
       <select name="joinee_type" id="joinee_type" required>
         <option value="" disabled selected>Select an option</option>
@@ -681,11 +681,9 @@
 </div>
 
 <script type="module">
-  // ✅ Firebase imports
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
   import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-  // ✅ Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
     authDomain: "test-3eb90.firebaseapp.com",
@@ -696,7 +694,6 @@
     measurementId: "G-4H15CWG2FG"
   };
 
-  // ✅ Initialize Firebase
   let app, db;
   try {
     app = initializeApp(firebaseConfig);
@@ -704,7 +701,6 @@
     console.log('✅ Firebase initialized successfully');
   } catch (error) {
     console.error('❌ Firebase initialization error:', error);
-    alert('Firebase initialization failed: ' + error.message);
   }
 
   // ── Digits-only fields ──
@@ -799,9 +795,73 @@
   }
 
   // ══════════════════════════════════════════════════════
+  // ✅ Category → Hide joinee_type + lwd for ASC
+  // ══════════════════════════════════════════════════════
+  (function () {
+    const categorySelect = document.getElementById('category');
+    const joineeTypeField = document.getElementById('joinee_type_field');
+    const joineeTypeSelect = document.getElementById('joinee_type');
+    const lwdField = document.getElementById('lwd_field');
+    const lwdInput = document.getElementById('lwd_input');
+
+    if (!categorySelect || !joineeTypeField || !joineeTypeSelect) {
+      console.error('Category/joinee elements not found');
+      return;
+    }
+
+    function handleCategoryChange() {
+      const selectedCategory = categorySelect.value.trim();
+      const isASC = selectedCategory === 'ASC';
+
+      console.log('Category changed to:', selectedCategory, '| isASC:', isASC);
+
+      if (isASC) {
+        // ✅ Hide and disable joinee_type field
+        joineeTypeField.style.display = 'none';
+        joineeTypeSelect.removeAttribute('required');
+        joineeTypeSelect.value = '';
+        markNeutral(joineeTypeField);
+
+        // ✅ Hide and disable lwd field completely
+        lwdField.classList.remove('show');
+        lwdField.style.display = 'none';
+        if (lwdInput) {
+          lwdInput.removeAttribute('required');
+          lwdInput.value = '';
+          markNeutral(lwdField);
+        }
+
+        // Reset lwd hint
+        const lwdHint = document.getElementById('hint_lwd');
+        if (lwdHint) {
+          lwdHint.textContent = 'Enter your last working day from previous employment';
+          lwdHint.className = 'hint';
+        }
+
+      } else {
+        // ✅ Show joinee_type field
+        joineeTypeField.style.display = 'block';
+        joineeTypeSelect.setAttribute('required', 'required');
+
+        // ✅ Restore lwd field display control back to CSS classes
+        lwdField.style.display = '';
+      }
+    }
+
+    categorySelect.addEventListener('change', () => {
+      handleCategoryChange();
+      const wrap = categorySelect.closest('.field');
+      if (categorySelect.value) markValid(wrap);
+    });
+
+    // Run on page load
+    handleCategoryChange();
+  })();
+
+  // ══════════════════════════════════════════════════════
   // ✅ Joinee Type Conditional Logic
   // ══════════════════════════════════════════════════════
-  (function() {
+  (function () {
     const joineeSelect = document.getElementById('joinee_type');
     const lwdField = document.getElementById('lwd_field');
     const lwdInput = document.getElementById('lwd_input');
@@ -835,12 +895,9 @@
     joineeSelect.addEventListener('change', () => {
       toggleLWDField();
       const wrap = joineeSelect.closest('.field');
-      if (joineeSelect.value) {
-        markValid(wrap);
-      }
+      if (joineeSelect.value) markValid(wrap);
     });
 
-    // Validate LWD field
     lwdInput.addEventListener('change', () => {
       const wrap = lwdInput.closest('.field');
       const val = lwdInput.value;
@@ -909,7 +966,7 @@
   // ══════════════════════════════════════════════════════
   // ✅ AADHAAR NUMBER — XXXX-XXXX-XXXX format
   // ══════════════════════════════════════════════════════
-  (function() {
+  (function () {
     const inp = document.querySelector('[name="aadhaar"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
@@ -920,9 +977,7 @@
       const digits = value.replace(/\D/g, '').slice(0, MAX_DIGITS);
       let formatted = '';
       for (let i = 0; i < digits.length; i++) {
-        if (i > 0 && i % 4 === 0) {
-          formatted += '-';
-        }
+        if (i > 0 && i % 4 === 0) formatted += '-';
         formatted += digits[i];
       }
       return formatted;
@@ -935,7 +990,6 @@
     function updateAadhaarHint(digitCount) {
       if (!hint) return;
       hint.classList.remove('counting', 'complete');
-
       if (digitCount === MAX_DIGITS) {
         hint.textContent = '✓ 12 / 12 digits — Complete!';
         hint.classList.add('complete');
@@ -948,20 +1002,14 @@
     }
 
     inp.addEventListener('keypress', e => {
-      if (!/\d/.test(e.key)) {
-        e.preventDefault();
-        return;
-      }
-      if (getDigits(inp.value).length >= MAX_DIGITS) {
-        e.preventDefault();
-      }
+      if (!/\d/.test(e.key)) { e.preventDefault(); return; }
+      if (getDigits(inp.value).length >= MAX_DIGITS) e.preventDefault();
     });
 
     inp.addEventListener('paste', e => {
       e.preventDefault();
       const pasted = (e.clipboardData || window.clipboardData).getData('text');
-      const digits = pasted.replace(/\D/g, '').slice(0, MAX_DIGITS);
-      inp.value = formatAadhaar(digits);
+      inp.value = formatAadhaar(pasted.replace(/\D/g, '').slice(0, MAX_DIGITS));
       inp.dispatchEvent(new Event('input'));
     });
 
@@ -969,53 +1017,35 @@
       const cursorPos = inp.selectionStart;
       const oldValue = inp.value;
       const oldDigitsBeforeCursor = getDigits(oldValue.slice(0, cursorPos)).length;
-
       const formatted = formatAadhaar(inp.value);
       inp.value = formatted;
 
-      let newPos = 0;
-      let digitCount = 0;
+      let newPos = 0, digitCount = 0;
       for (let i = 0; i < formatted.length && digitCount < oldDigitsBeforeCursor; i++) {
         newPos = i + 1;
-        if (formatted[i] !== '-') {
-          digitCount++;
-        }
+        if (formatted[i] !== '-') digitCount++;
       }
-
-      if (formatted[newPos] === '-') {
-        newPos++;
-      }
-
+      if (formatted[newPos] === '-') newPos++;
       inp.setSelectionRange(newPos, newPos);
 
       const digits = getDigits(formatted);
-      const count = digits.length;
+      updateAadhaarHint(digits.length);
 
-      updateAadhaarHint(count);
-
-      if (!count) {
-        markNeutral(wrap);
-      } else if (count === MAX_DIGITS && validationRules.aadhaar(formatted)) {
-        markValid(wrap);
-      } else if (count === MAX_DIGITS) {
-        markInvalid(wrap);
-      } else {
-        markNeutral(wrap);
-      }
+      if (!digits.length) markNeutral(wrap);
+      else if (digits.length === MAX_DIGITS && validationRules.aadhaar(formatted)) markValid(wrap);
+      else if (digits.length === MAX_DIGITS) markInvalid(wrap);
+      else markNeutral(wrap);
     });
 
     inp.addEventListener('keydown', e => {
       if (e.key === 'Backspace') {
         const cursorPos = inp.selectionStart;
         const selectionEnd = inp.selectionEnd;
-
         if (cursorPos !== selectionEnd) return;
-
         if (cursorPos > 0 && inp.value[cursorPos - 1] === '-') {
           e.preventDefault();
           const newValue = inp.value.slice(0, cursorPos - 2) + inp.value.slice(cursorPos);
           inp.value = formatAadhaar(newValue);
-
           let newPos = cursorPos - 2;
           if (newPos < 0) newPos = 0;
           inp.setSelectionRange(newPos, newPos);
@@ -1026,21 +1056,14 @@
 
     inp.addEventListener('blur', () => {
       const digits = getDigits(inp.value);
-      if (!digits.length) {
-        markNeutral(wrap);
-        updateAadhaarHint(0);
-        return;
-      }
-      if (digits.length === MAX_DIGITS && validationRules.aadhaar(inp.value)) {
-        markValid(wrap);
-      } else {
-        markInvalid(wrap);
-      }
+      if (!digits.length) { markNeutral(wrap); updateAadhaarHint(0); return; }
+      digits.length === MAX_DIGITS && validationRules.aadhaar(inp.value)
+        ? markValid(wrap) : markInvalid(wrap);
     });
   })();
 
-  // ── POS ID — alphanumeric only ──
-  (function() {
+  // ── POS ID ──
+  (function () {
     const inp = document.querySelector('[name="pos_id"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
@@ -1049,11 +1072,7 @@
     function updatePosHint(val) {
       if (!hint) return;
       hint.classList.remove('counting', 'complete');
-      if (!val.length) {
-        hint.textContent = 'Only letters and numbers allowed';
-        hint.className = 'hint';
-        return;
-      }
+      if (!val.length) { hint.textContent = 'Only letters and numbers allowed'; hint.className = 'hint'; return; }
       hint.textContent = '✓ ' + val.length + ' characters entered';
       hint.className = 'hint complete';
     }
@@ -1071,31 +1090,26 @@
 
     inp.addEventListener('paste', e => {
       e.preventDefault();
-      inp.value = (e.clipboardData || window.clipboardData)
-        .getData('text').replace(/[^a-zA-Z0-9]/g, '');
+      inp.value = (e.clipboardData || window.clipboardData).getData('text').replace(/[^a-zA-Z0-9]/g, '');
       inp.dispatchEvent(new Event('input'));
     });
 
     inp.addEventListener('input', () => {
       inp.value = inp.value.replace(/[^a-zA-Z0-9]/g, '');
-      const val = inp.value;
-      updatePosHint(val);
-      if (!val.length) markNeutral(wrap);
+      updatePosHint(inp.value);
+      if (!inp.value.length) markNeutral(wrap);
       else markValid(wrap);
     });
 
     inp.addEventListener('blur', () => {
       const val = inp.value.trim();
-      if (!val.length) {
-        markNeutral(wrap);
-        return;
-      }
+      if (!val.length) { markNeutral(wrap); return; }
       validationRules.pos_id(val) ? markValid(wrap) : markInvalid(wrap);
     });
   })();
 
-  // ── Emergency Contact Person Name — alphabets only ──
-  (function() {
+  // ── Emergency Contact Person Name ──
+  (function () {
     const inp = document.querySelector('[name="emergency_person_name"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
@@ -1126,11 +1140,8 @@
 
     inp.addEventListener('paste', e => {
       e.preventDefault();
-      const cleaned = (e.clipboardData || window.clipboardData)
-        .getData('text')
-        .replace(/[^a-zA-Z\s]/g, '')
-        .replace(/\s+/g, ' ');
-      inp.value = cleaned;
+      inp.value = (e.clipboardData || window.clipboardData).getData('text')
+        .replace(/[^a-zA-Z\s]/g, '').replace(/\s+/g, ' ');
       inp.dispatchEvent(new Event('input'));
     });
 
@@ -1138,18 +1149,14 @@
       const pos = inp.selectionStart;
       const before = inp.value;
       const after = before.replace(/[^a-zA-Z\s]/g, '').replace(/\s+/g, ' ');
-
       if (before !== after) {
         inp.value = after;
         inp.setSelectionRange(Math.max(0, pos - (before.length - after.length)),
           Math.max(0, pos - (before.length - after.length)));
       }
-
       const val = inp.value.trim();
-
       if (!hint) return;
       hint.classList.remove('counting', 'complete');
-
       if (!val.length) {
         markNeutral(wrap);
         hint.textContent = 'Only alphabets and spaces allowed';
@@ -1165,57 +1172,41 @@
       const val = inp.value.trim();
       if (!val.length) {
         markNeutral(wrap);
-        if (hint) {
-          hint.textContent = 'Only alphabets and spaces allowed';
-          hint.className = 'hint';
-        }
+        if (hint) { hint.textContent = 'Only alphabets and spaces allowed'; hint.className = 'hint'; }
         return;
       }
       if (validationRules.emergency_person_name(val)) {
         markValid(wrap);
       } else {
         markInvalid(wrap);
-        if (hint) {
-          hint.textContent = '⚠️ Only letters and spaces are allowed';
-          hint.className = 'hint counting';
-        }
+        if (hint) { hint.textContent = '⚠️ Only letters and spaces are allowed'; hint.className = 'hint counting'; }
       }
     });
   })();
 
-  // ── DOB — 18+ ──
-  (function() {
+  // ── DOB ──
+  (function () {
     const inp = document.querySelector('[name="dob"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     const hint = document.getElementById('hint_dob');
-
     inp.setAttribute('max', getMax18Date());
 
     function validateDob() {
       const val = inp.value;
       if (!val) {
         markNeutral(wrap);
-        if (hint) {
-          hint.textContent = 'You must be at least 18 years old';
-          hint.className = 'hint';
-        }
+        if (hint) { hint.textContent = 'You must be at least 18 years old'; hint.className = 'hint'; }
         return;
       }
       const age = calcAge(val);
       if (age >= 18) {
         markValid(wrap);
-        if (hint) {
-          hint.textContent = '✓ Age ' + age + ' — Eligible to register';
-          hint.className = 'hint complete';
-        }
+        if (hint) { hint.textContent = '✓ Age ' + age + ' — Eligible to register'; hint.className = 'hint complete'; }
       } else {
         markInvalid(wrap);
         const need = 18 - age;
-        if (hint) {
-          hint.textContent = '✗ Age ' + age + ' — Need ' + need + ' more year' + (need > 1 ? 's' : '');
-          hint.className = 'hint counting';
-        }
+        if (hint) { hint.textContent = '✗ Age ' + age + ' — Need ' + need + ' more year' + (need > 1 ? 's' : ''); hint.className = 'hint counting'; }
       }
     }
 
@@ -1224,16 +1215,13 @@
   })();
 
   // ── Shared By OLM ID ──
-  (function() {
+  (function () {
     const inp = document.querySelector('[name="shared_by_olm"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
     inp.addEventListener('input', () => {
       const v = inp.value.trim();
-      if (!v) {
-        markNeutral(wrap);
-        return;
-      }
+      if (!v) { markNeutral(wrap); return; }
       validationRules.shared_by_olm(v) ? markValid(wrap) : markInvalid(wrap);
     });
     inp.addEventListener('blur', () => {
@@ -1244,7 +1232,7 @@
   })();
 
   // ── PAN ──
-  (function() {
+  (function () {
     const inp = document.querySelector('[name="pan"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
@@ -1253,16 +1241,9 @@
       let v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10);
       inp.value = v;
       if (hint) {
-        if (v.length === 10 && validationRules.pan(v)) {
-          hint.textContent = '✓ Valid PAN format';
-          hint.className = 'hint complete';
-        } else if (v.length > 0) {
-          hint.textContent = v.length + ' / 10 — Format: ABCDE1234F';
-          hint.className = 'hint counting';
-        } else {
-          hint.textContent = 'Format: ABCDE1234F';
-          hint.className = 'hint';
-        }
+        if (v.length === 10 && validationRules.pan(v)) { hint.textContent = '✓ Valid PAN format'; hint.className = 'hint complete'; }
+        else if (v.length > 0) { hint.textContent = v.length + ' / 10 — Format: ABCDE1234F'; hint.className = 'hint counting'; }
+        else { hint.textContent = 'Format: ABCDE1234F'; hint.className = 'hint'; }
       }
       if (!v.length) markNeutral(wrap);
       else if (v.length === 10 && validationRules.pan(v)) markValid(wrap);
@@ -1272,7 +1253,7 @@
   })();
 
   // ── IFSC ──
-  (function() {
+  (function () {
     const inp = document.querySelector('[name="ifsc"]');
     if (!inp) return;
     const wrap = inp.closest('.field');
@@ -1281,16 +1262,9 @@
       let v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 11);
       inp.value = v;
       if (hint) {
-        if (v.length === 11 && validationRules.ifsc(v)) {
-          hint.textContent = '✓ Valid IFSC format';
-          hint.className = 'hint complete';
-        } else if (v.length > 0) {
-          hint.textContent = v.length + ' / 11 — Format: ABCD0123456';
-          hint.className = 'hint counting';
-        } else {
-          hint.textContent = 'Format: ABCD0123456 (11 characters)';
-          hint.className = 'hint';
-        }
+        if (v.length === 11 && validationRules.ifsc(v)) { hint.textContent = '✓ Valid IFSC format'; hint.className = 'hint complete'; }
+        else if (v.length > 0) { hint.textContent = v.length + ' / 11 — Format: ABCD0123456'; hint.className = 'hint counting'; }
+        else { hint.textContent = 'Format: ABCD0123456 (11 characters)'; hint.className = 'hint'; }
       }
       if (!v.length) markNeutral(wrap);
       else if (v.length === 11 && validationRules.ifsc(v)) markValid(wrap);
@@ -1306,10 +1280,7 @@
     const wrap = inp.closest('.field');
     inp.addEventListener('input', () => {
       const v = inp.value.trim();
-      if (!v) {
-        markNeutral(wrap);
-        return;
-      }
+      if (!v) { markNeutral(wrap); return; }
       validationRules[name](v) ? markValid(wrap) : markNeutral(wrap);
     });
     inp.addEventListener('blur', () => {
@@ -1323,7 +1294,8 @@
   const handledFields = [
     ...Object.keys(digitsOnlyFields),
     'pan', 'ifsc', 'associate_email', 'manager_email',
-    'pos_id', 'shared_by_olm', 'dob', 'emergency_person_name', 'aadhaar', 'lwd', 'joinee_type', 'zone'
+    'pos_id', 'shared_by_olm', 'dob', 'emergency_person_name',
+    'aadhaar', 'lwd', 'joinee_type', 'zone', 'category'
   ];
 
   document.querySelectorAll('.field').forEach(wrap => {
@@ -1332,9 +1304,9 @@
       ['input', 'change'].forEach(ev => {
         inp.addEventListener(ev, () => {
           if (!wrap.classList.contains('invalid')) return;
-          const val = inp.type === 'radio' ?
-            (document.querySelector('input[name="' + inp.name + '"]:checked') ? 'yes' : '') :
-            inp.value.trim();
+          const val = inp.type === 'radio'
+            ? (document.querySelector('input[name="' + inp.name + '"]:checked') ? 'yes' : '')
+            : inp.value.trim();
           val ? markValid(wrap) : markNeutral(wrap);
         });
       });
@@ -1346,8 +1318,7 @@
     const lI = document.querySelector('[name="lapu_number"]');
     const aI = document.querySelector('[name="alternate_contact"]');
     if (!lI || !aI) return true;
-    const l = lI.value.trim(),
-      a = aI.value.trim();
+    const l = lI.value.trim(), a = aI.value.trim();
     if (/^\d{10}$/.test(l) && /^\d{10}$/.test(a) && l === a) {
       markInvalid(lI.closest('.field'));
       markInvalid(aI.closest('.field'));
@@ -1363,16 +1334,32 @@
   });
 
   // ══════════════════════════════════════════════════════
-  // ✅ validateAll - FIXED
+  // ✅ validateAll
   // ══════════════════════════════════════════════════════
   function validateAll() {
     console.log('🔍 Starting validation...');
-    let ok = true,
-      firstBad = null;
+    let ok = true, firstBad = null;
+
+    // Get category value once
+    const categoryVal = document.querySelector('[name="category"]')?.value.trim() || '';
+    const isASC = categoryVal === 'ASC';
 
     document.querySelectorAll('.field').forEach(wrap => {
-      // Skip hidden conditional fields
+
+      // ✅ Skip hidden conditional fields (like lwd_field when not shown)
       if (wrap.classList.contains('conditional') && !wrap.classList.contains('show')) {
+        return;
+      }
+
+      // ✅ Skip joinee_type field when ASC is selected
+      if (isASC && wrap.id === 'joinee_type_field') {
+        markNeutral(wrap);
+        return;
+      }
+
+      // ✅ Skip lwd_field when ASC is selected
+      if (isASC && wrap.id === 'lwd_field') {
+        markNeutral(wrap);
         return;
       }
 
@@ -1396,14 +1383,12 @@
         valid = validationRules[name](val);
       }
 
-      // Special validation for LWD - check date is not in future
+      // Special validation for LWD — check date is not in future
       if (name === 'lwd' && valid && inp.value) {
         const selectedDate = new Date(inp.value);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        if (selectedDate > today) {
-          valid = false;
-        }
+        if (selectedDate > today) valid = false;
       }
 
       if (valid) {
@@ -1425,27 +1410,26 @@
     }
 
     if (firstBad) firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
     console.log('🔍 Validation result:', ok ? '✅ PASSED' : '❌ FAILED');
     return ok;
   }
 
   // ══════════════════════════════════════════════════════
-  // ✅ collectData - FIXED: Properly collects ALL fields
+  // ✅ collectData
   // ══════════════════════════════════════════════════════
   function collectData() {
     console.log('📦 Collecting form data...');
     const data = {};
 
-    // Get joinee type first
+    const categoryVal = document.querySelector('[name="category"]')?.value.trim() || '';
+    const isASC = categoryVal === 'ASC';
     const joineeTypeSelect = document.querySelector('[name="joinee_type"]');
     const joineeType = joineeTypeSelect ? joineeTypeSelect.value : '';
 
-    // Collect all select fields FIRST (including joinee_type and zone)
+    // Collect all select fields
     document.querySelectorAll('select').forEach(s => {
       if (s.name && s.value) {
         data[s.name] = s.value;
-        console.log('  SELECT:', s.name, '=', s.value);
       }
     });
 
@@ -1453,36 +1437,34 @@
     document.querySelectorAll('input').forEach(i => {
       if (!i.name) return;
 
-      // Handle LWD based on joinee type
       if (i.name === 'lwd') {
-        if (joineeType === 'Rejoinee' && i.value.trim()) {
+        if (isASC) {
+          data[i.name] = 'N/A';
+        } else if (joineeType === 'Rejoinee' && i.value.trim()) {
           data[i.name] = i.value.trim();
         } else {
           data[i.name] = 'N/A';
         }
-        console.log('  INPUT (LWD):', i.name, '=', data[i.name]);
+        return;
+      }
+
+      if (i.name === 'joinee_type') {
+        data[i.name] = isASC ? 'N/A' : (joineeType || 'N/A');
         return;
       }
 
       if (i.type === 'radio') {
-        if (i.checked) {
-          data[i.name] = i.value;
-          console.log('  RADIO:', i.name, '=', i.value);
-        }
+        if (i.checked) data[i.name] = i.value;
       } else {
         let v = i.value.trim();
         if (i.name === 'pan' || i.name === 'ifsc') v = v.toUpperCase();
         data[i.name] = v;
-        console.log('  INPUT:', i.name, '=', v);
       }
     });
 
     // Collect all textarea fields
     document.querySelectorAll('textarea').forEach(t => {
-      if (t.name) {
-        data[t.name] = t.value.trim();
-        console.log('  TEXTAREA:', t.name, '=', t.value.trim());
-      }
+      if (t.name) data[t.name] = t.value.trim();
     });
 
     console.log('📦 Final collected data:', data);
@@ -1496,22 +1478,29 @@
       else if (el.tagName === 'SELECT') el.selectedIndex = 0;
       else el.value = '';
     });
+
     document.querySelectorAll('.field').forEach(w => markNeutral(w));
 
-    // Hide LWD field on reset
+    // ✅ Restore joinee_type field visibility on reset
+    const joineeTypeField = document.getElementById('joinee_type_field');
+    if (joineeTypeField) {
+      joineeTypeField.style.display = 'block';
+      const joineeTypeSelect = document.getElementById('joinee_type');
+      if (joineeTypeSelect) joineeTypeSelect.setAttribute('required', 'required');
+    }
+
+    // ✅ Hide LWD field on reset
     const lwdField = document.getElementById('lwd_field');
     if (lwdField) {
       lwdField.classList.remove('show');
+      lwdField.style.display = '';
       const lwdInput = document.getElementById('lwd_input');
       if (lwdInput) lwdInput.removeAttribute('required');
     }
 
-    // Reset LWD hint
+    // Reset hints
     const lwdHint = document.getElementById('hint_lwd');
-    if (lwdHint) {
-      lwdHint.textContent = 'Enter your last working day from previous employment';
-      lwdHint.className = 'hint';
-    }
+    if (lwdHint) { lwdHint.textContent = 'Enter your last working day from previous employment'; lwdHint.className = 'hint'; }
 
     Object.keys(digitsOnlyFields).forEach(n => updateDigitHint(n, 0, digitsOnlyFields[n]));
 
@@ -1537,9 +1526,7 @@
     console.log('🔄 Form reset complete');
   }
 
-  // ══════════════════════════════════════════════════════
-  // ✅ Button Event Listeners
-  // ══════════════════════════════════════════════════════
+  // ── Button listeners ──
   document.getElementById('clearBtn').addEventListener('click', () => {
     if (!confirm('Clear all answers?')) return;
     resetForm();
@@ -1548,7 +1535,6 @@
   document.getElementById('submitBtn').addEventListener('click', async () => {
     console.log('🚀 Submit button clicked');
 
-    // Validate form
     if (!validateAll()) {
       showToast('Please fix the errors above.', 'error');
       return;
@@ -1559,52 +1545,29 @@
     btn.innerHTML = '<span class="spinner"></span> Submitting...';
 
     try {
-      // Collect data
       const payload = collectData();
       payload.submitted_at = serverTimestamp();
 
       console.log('📤 Attempting to submit to Firebase...');
-      console.log('📤 Payload:', JSON.stringify(payload, null, 2));
 
-      // Check if Firebase is initialized
-      if (!db) {
-        throw new Error('Firebase database not initialized');
-      }
+      if (!db) throw new Error('Firebase database not initialized');
 
-      // Submit to Firebase
       const docRef = await addDoc(collection(db, 'promoters'), payload);
-
       console.log('✅ Document written with ID:', docRef.id);
       showToast('✅ Form submitted successfully!');
-
-      // Reset form after success
       setTimeout(() => resetForm(), 1200);
 
     } catch (err) {
       console.error('❌ Firebase error:', err);
-      console.error('❌ Error details:', err.message);
-      console.error('❌ Error stack:', err.stack);
-
       showToast('❌ Submission failed: ' + err.message, 'error');
-
-      // Also show an alert for debugging
-      alert('Submission failed!\n\nError: ' + err.message + '\n\nCheck browser console for details.');
-
     } finally {
       btn.disabled = false;
       btn.innerHTML = 'Submit';
     }
   });
 
-  // ✅ Log when script loads successfully
-  console.log('═══════════════════════════════════════════');
   console.log('✅ Form script loaded successfully');
-  console.log('✅ Firebase Project:', firebaseConfig.projectId);
-  console.log('✅ New fields: joinee_type, lwd, zone');
-  console.log('✅ LWD = "N/A" for New Joinee, actual date for Rejoinee');
-  console.log('═══════════════════════════════════════════');
 </script>
 
 </body>
-</html>
-
+</html>a
