@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AF Onboarding Registration</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== FILE 2: CSS STYLES ===== */
+    :root {
+      --bg: #faf5f5;
+      --card: #ffffff;
+      --accent: #dc2626;
+      --accent-600: #b91c1c;
+      --muted: #6b7280;
+      --radius: 10px;
+      --shadow: 0 6px 20px rgba(220,38,38,0.15);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      color: #0b1226;
+    }
+
+    .container { max-width: 980px; margin: 0 auto; padding: 20px; }
+
+    .form-header {
+      text-align: center;
+      background: var(--card);
+      padding: 28px 20px;
+      margin: 0 auto 30px;
+      max-width: 720px;
+      border-bottom: 5px solid var(--accent);
+      border-radius: 0 0 14px 14px;
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.15);
+    }
+
+    .header-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-wrapper { display: inline-block; margin-bottom: 10px; }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 15px rgba(220,38,38,0.5));
+      transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 20px rgba(220,38,38,0.7));
+    }
+
+    .form-header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle { color: var(--muted); margin: 10px 0 0; font-size: 15px; }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .stats-card { margin-bottom: 20px; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 16px;
+    }
+
+    .stats-grid div {
+      background: #f8f4f4;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #f0eaea;
+    }
+
+    .stats-grid span { display: block; margin-bottom: 8px; color: #586067; }
+    .stats-grid strong { display: block; font-size: 22px; color: var(--text); }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 12px 14px;
+      border: 1px solid #e9eef6;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .data-table th {
+      background: #f8f9fb;
+      color: #1f2937;
+      font-weight: 600;
+    }
+
+    .data-table tbody tr:nth-child(odd) { background: #fff; }
+    .data-table tbody tr:nth-child(even) { background: #fafbff; }
+    .data-table button { white-space: nowrap; }
+
+    .card {
+      background: var(--card);
+      padding: 20px;
+      margin-bottom: 18px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    fieldset {
+      border: 1px solid #e8eefc;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 0 0 12px;
+    }
+
+    legend { font-weight: 600; color: #0b1226; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+      color: #0b1226;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    .form-field:not(:last-child) { margin-bottom: 0; }
+    .form-field label { font-size: 13px; }
+
+    .label-text {
+      font-weight: 500;
+      margin-bottom: 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .required { color: red; font-size: 14px; line-height: 1; }
+
+    .form-input, select {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border: 1px solid #d7e0fb;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    input[type="date"] {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border: 1px solid #d7e0fb;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      filter: invert(0.3);
+    }
+
+    .form-input:focus, select:focus, input[type="date"]:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(220,38,38,0.08);
+      border-color: var(--accent-600);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid #e8eefc;
+    }
+
+    .btn {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-family: inherit;
+      font-size: 13px;
+      transition: all .2s ease;
+    }
+
+    .btn.clear { background: transparent; color: var(--muted); }
+    .btn.clear:hover { color: var(--accent); }
+    .btn.primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(220,38,38,0.25);
+    }
+    .btn.primary:hover { background: var(--accent-600); transform: translateY(-1px); }
+    .btn.primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn.secondary { background: #fff3f3; color: var(--accent); }
+    .btn.secondary:hover { background: #ffebee; }
+
+    @media (max-width: 780px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .container { padding: 10px; width: 95%; }
+      .form-header h1 { font-size: 20px; }
+      .logo { width: 40px; height: 40px; }
+      .form-input, select, input[type="date"] { font-size: 13px; padding: 10px 10px; }
+      .btn { width: 100%; padding: 12px 16px; font-size: 13px; }
+      .actions { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+
+<div class="form-header">
+  <div class="header-container">
+    <div class="logo-wrapper">
+       <img src="logo.png" 
+         alt="logo" 
+           class="logo">
+    </div>
+    <h1>AF Onboarding Registration</h1>
+    <p class="subtitle">Fill in the details below to register a new onboarding</p>
+  </div>
+</div>
+
+    <form id="onboardForm">
+
+      <!-- WORK DETAILS (Dynamic fields will load here from JS) -->
+      <fieldset id="fixedColumnsFieldset">
+        <legend>Work Details</legend>
+        <!-- JS will inject dropdowns here -->
+      </fieldset>
+
+      <!-- OTHER DETAILS -->
+      <fieldset>
+        <legend>Other Details</legend>
+
+        <div class="form-grid">
+
+          <label class="form-field">
+            <span class="label-text">TSM Name <span class="required">*</span></span>
+            <input class="form-input" name="tsmName" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">TSM Number <span class="required">*</span></span>
+            <input class="form-input" name="tsmNumber" type="tel" inputmode="numeric"
+              pattern="[0-9]{10}" maxlength="10" title="Enter 10 digit mobile number" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Candidate Name <span class="required">*</span></span>
+            <input class="form-input" name="candidateName" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Contact Number <span class="required">*</span></span>
+            <input class="form-input" name="contactNum" type="tel" inputmode="numeric"
+              pattern="[0-9]{10}" maxlength="10" title="Enter 10 digit mobile number" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Alternate Number <span class="required">*</span></span>
+            <input class="form-input" name="altNumber" type="tel" inputmode="numeric"
+              pattern="[0-9]{10}" maxlength="10" title="Enter 10 digit mobile number" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Lapu Number <span class="required">*</span></span>
+            <input class="form-input" name="LapuNumber" type="tel" inputmode="numeric"
+              pattern="[0-9]{10}" maxlength="10" title="Enter 10 digit mobile number" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Email <span class="required">*</span></span>
+            <input class="form-input" name="email" type="email" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Airtel Payments Bank No <span class="required">*</span></span>
+            <input class="form-input" name="apbNo" type="tel" inputmode="numeric"
+              pattern="[0-9]{10}" maxlength="10" title="Enter 10 digit mobile number" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">UAN <span class="required">*</span></span>
+            <input class="form-input" name="uan" type="tel" inputmode="numeric"
+              pattern="[0-9]{12}" maxlength="12" title="Enter 12 digit UAN number" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Father Name <span class="required">*</span></span>
+            <input class="form-input" name="fatherName" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Father DOB <span class="required">*</span></span>
+            <input class="form-input" name="fatherDob" type="date" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Mother Name <span class="required">*</span></span>
+            <input class="form-input" name="motherName" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label-text">Mother DOB <span class="required">*</span></span>
+            <input class="form-input" name="motherDob" type="date" required>
+          </label>
+
+        </div>
+      </fieldset>
+
+      <!-- ACTIONS -->
+      <div class="actions">
+        <button class="btn primary" type="submit">Save</button>
+        <button class="btn clear" type="button" id="clearBtn">Clear Form</button>
+      </div>
+
+    </form>
+
+  </main>
+
+  <script type="module">
+    // ===== FILE 3: JAVASCRIPT =====
+
+    // ✅ Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // ✅ Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCan4jCesl8xTYAceTCTlmvQn_HKR_cZYg",
+      authDomain: "af-onboard.firebaseapp.com",
+      projectId: "af-onboard",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ===== FILE 4: CONFIG DATA (Inlined from config.json) =====
+    const CONFIG = {
+      "fixedColumns": [
+        "Work-Location",
+        "Work-State",
+        "Civil",
+        "Circle",
+        "Circle-SPOC"
+      ],
+      "options": {
+        "Work-Location": [
+          "ADOOR", "ALAMCODE", "ALATHIYUR", "ALUVA", "AMBALAPUZHA",
+          "ANCHAL", "ANGAMALI", "AREEKODE", "AROOR", "ATHOLI",
+          "ATTINGAL", "AYUR", "BADIADKA", "BHARANIKAVU", "CHANGANACHERRY",
+          "CHATTANCHAL", "CHAVAKKAD", "CHAVARA", "CHELARI", "CHEMMAD",
+          "CHERAI", "CHERUPULASHERY", "CHIRAYINKEEZHU", "CHOCKLI", "Chungathara",
+          "EDAPPAL", "EDAVANNA", "EDAVANNAPPARA", "ETTUMANOOR", "HARIPPAD",
+          "IRINJALAKUDA", "IRITTY", "KADAKKAL", "KAKKODI", "KALADY",
+          "KALPETTA", "KANICHUKULANGARA", "KANJIKODE", "KANJIRAMKULAM",
+          "KARINGALATHANI", "KARUNAGAPALLI", "KATTANAM", "KATTAPPANA",
+          "KAVANAD", "KODAKARA", "KODAPANAKUNNU", "KODUNGALLUR", "KONDOTTY",
+          "KOOTANADU (TRITHALA)", "KOPPAM", "KOTHAMANGALAM", "KOTTARAKKARA",
+          "KOTTIYAM", "KOYILANDI", "KOZHENCHERY", "KOZHINJAMPARA", "KUNDARA",
+          "KUNNAMKULAM", "KUNNUMPURAM", "KURUPPANTHARA", "KUTTIPURAM", "MALA",
+          "MALAPPURAM", "MANANTHAVADY", "MANNar", "MANNARKAD", "MARANCHERI",
+          "MATTANCHERY", "MAVELIKKARA", "MAVOOR", "MUKKOM", "NEDUMANGAD",
+          "NEDUMBASSERY", "NEYYATTINKARA", "OLLUR", "ORKKATERY", "PANUR",
+          "PARAMBIL PEDIKA", "PARAPPUR", "PARASSALA", "PARAVOOR", "PARAVUR",
+          "PARIPPALLY", "PATHANAMTHITTA", "PATTAMBI", "PATTIMATTOM", "PAYYANUR",
+          "PAZHAYANGADI", "PERAMBRA", "PERINTHALMANNA", "PIRAVAM", "PONNANI",
+          "PUNALUR", "PURAKKUALAM", "PUTHANATHANI", "PUTHIYA THERUVU",
+          "PUTHUNAGARAM", "RANNI", "SHORANUR", "SULTHAN BATHERY", "TANUR",
+          "THALASSERY", "THALIPARAMPA", "THAMARASSERY", "THAZHE CHOVVA",
+          "THIRUVALLA", "THRIPRAYAR", "ULLIYerI", "UPPALA", "VAIKOM",
+          "VALANCHERRY", "VALIYAKUNNU", "VARKALA", "VELLARADA", "VENGARA",
+          "VENJARAMOODU", "VILLIAPPALLY", "VITHURA", "VIZHINJAM",
+          "WADAKKANCHERRY", "WANDOOR"
+        ],
+        "Work-State": ["Kerala"],
+        "Civil": ["Yes", "No"],
+        "Circle": ["KER"],
+        "Circle-SPOC": ["Mahesh M S"]
+      }
+    };
+
+    // ✅ LOAD CONFIG (Now uses inlined data instead of fetch)
+    function loadConfig() {
+      const raw = CONFIG;
+      if (raw.options && typeof raw.options === 'object') {
+        const sortedOptions = {};
+        Object.entries(raw.options).forEach(([key, values]) => {
+          if (Array.isArray(values)) {
+            sortedOptions[key] = [...values].sort((a, b) =>
+              String(a).localeCompare(String(b), undefined, { sensitivity: 'base' })
+            );
+          } else {
+            sortedOptions[key] = values;
+          }
+        });
+        return { ...raw, options: sortedOptions };
+      }
+      return raw;
+    }
+
+    // ✅ ADD RED STAR
+    function addStar(labelText) {
+      const star = document.createElement("span");
+      star.textContent = " *";
+      star.style.color = "red";
+      labelText.appendChild(star);
+    }
+
+    // ✅ CREATE FIELD
+    function createField(name, options) {
+      const label = document.createElement("label");
+      label.className = "form-field";
+
+      const title = document.createElement("span");
+      title.textContent = name;
+      addStar(title);
+      label.appendChild(title);
+
+      let input;
+
+      if (options && options.length) {
+        input = document.createElement("select");
+
+        const empty = document.createElement("option");
+        empty.value = "";
+        empty.textContent = "-- select --";
+        input.appendChild(empty);
+
+        options.forEach(opt => {
+          const o = document.createElement("option");
+          o.value = opt;
+          o.textContent = opt;
+          input.appendChild(o);
+        });
+
+      } else {
+        input = document.createElement("input");
+      }
+
+      input.className = "form-input";
+      input.name = name;
+      input.required = true;
+
+      label.appendChild(input);
+      return label;
+    }
+
+    // ✅ GET FORM DATA
+    function formToObject(form) {
+      const fd = new FormData(form);
+      const obj = {};
+      fd.forEach((v, k) => {
+        if (v && v.trim() !== "") {
+          obj[k] = v;
+        }
+      });
+      return obj;
+    }
+
+    // ✅ VALIDATION
+    function validate(data) {
+      function onlyDigits(val) {
+        return String(val ?? '').replace(/\D/g, '');
+      }
+      function isTenDigits(val) {
+        return onlyDigits(val).length === 10;
+      }
+
+      if (!isTenDigits(data.tsmNumber))   return "Invalid TSM Number — must be 10 digits";
+      if (!isTenDigits(data.contactNum))  return "Invalid Contact Number — must be 10 digits";
+      if (!isTenDigits(data.altNumber))   return "Invalid Alternate Number — must be 10 digits";
+      if (!isTenDigits(data.LapuNumber))  return "Invalid Lapu Number — must be 10 digits";
+      if (!data.email || !data.email.includes("@")) return "Invalid Email";
+
+      return null;
+    }
+
+    // ✅ GET GEO LOCATION
+    function getLocation() {
+      return new Promise(resolve => {
+        if (!navigator.geolocation) return resolve(null);
+        navigator.geolocation.getCurrentPosition(
+          pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          () => resolve(null)
+        );
+      });
+    }
+
+    // ✅ MAIN
+    document.addEventListener("DOMContentLoaded", async () => {
+
+      const config = loadConfig();
+      const fixedColumns = config.fixedColumns;
+
+      const fieldset = document.getElementById("fixedColumnsFieldset");
+      const grid = document.createElement("div");
+      grid.className = "form-grid";
+
+      fixedColumns.forEach(col => {
+        grid.appendChild(createField(col, config.options?.[col] || []));
+      });
+
+      fieldset.appendChild(grid);
+
+      const form = document.getElementById("onboardForm");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = formToObject(form);
+
+        // ✅ VALIDATION
+        const error = validate(data);
+        if (error) {
+          alert("❌ " + error);
+          return;
+        }
+
+        // ✅ TIMESTAMP
+        data.createdAt = new Date().toISOString();
+
+        // ✅ LOCATION
+        const loc = await getLocation();
+        if (loc) data.location = loc;
+
+        try {
+          await addDoc(collection(db, "onboardingData"), data);
+          alert("✅ Data saved successfully!");
+          form.reset();
+        } catch (err) {
+          console.error(err);
+          alert("❌ Failed saving to Firebase");
+        }
+      });
+
+      document.getElementById("clearBtn").addEventListener("click", () => form.reset());
+    });
+  </script>
+
+</body>
+</html>
