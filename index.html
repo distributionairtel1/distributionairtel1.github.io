@@ -14,11 +14,43 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    overflow-y: auto; /* ✅ FIXED SCROLL */
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #FFFFFF, #F5F5F5);
-    min-height: 100vh;
-    overflow-y: auto; /* ✅ FIXED SCROLL */
+}
+
+/* ✅ Animated Logo */
+.moving-logo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 110px;
+    height: 110px;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    transition: all 1.5s ease;
+}
+
+.moving-logo img {
+    width: 100%;
+    opacity: 0;
+    transition: 1s;
+}
+
+.moving-logo.reveal img {
+    opacity: 1;
+}
+
+.moving-logo.settled {
+    width: 45px;
+    height: 45px;
+    top: 20px;
+    transform: translateX(-50%);
 }
 
 /* Container */
@@ -26,6 +58,13 @@ body {
     padding: 20px 14px;
     max-width: 500px;
     margin: auto;
+    margin-top: 80px;
+    opacity: 0;
+    transition: 0.6s;
+}
+
+.container.reveal {
+    opacity: 1;
 }
 
 /* Header */
@@ -35,7 +74,7 @@ body {
 }
 
 h1 {
-    font-size: 1.3rem; /* ✅ smaller */
+    font-size: 1.3rem;
     color: #E2001A;
 }
 
@@ -49,14 +88,14 @@ ul {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* ✅ reduced gap */
+    gap: 10px;
 }
 
 a {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px; /* ✅ reduced */
+    padding: 14px;
     border-radius: 12px;
     text-decoration: none;
     color: black;
@@ -67,19 +106,19 @@ a {
 
 a:hover {
     border-color: #E2001A;
+    transform: translateY(-1px);
 }
 
 /* Icon */
 .icon {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 10px;
     background: #E2001A;
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
 }
 
 /* Text */
@@ -91,7 +130,6 @@ a:hover {
 /* Arrow */
 .arrow {
     margin-left: auto;
-    font-size: 1rem;
     color: #E2001A;
 }
 
@@ -107,7 +145,12 @@ a:hover {
 
 <body>
 
-<div class="container">
+<!-- ✅ Animated Logo -->
+<div class="moving-logo" id="movingLogo">
+    <img src="airtel_cropped.png">
+</div>
+
+<div class="container" id="mainContainer">
 
     <div class="header">
         <h1>Airtel Registration Portal</h1>
@@ -142,12 +185,12 @@ a:hover {
         <li>
             <a href="roipdf.html">
                 <div class="icon">📈</div>
-                <span class="link-title">ROI Dashboard</span>
+                <span class="link-title">ROI Distributor Dashboard</span>
                 <div class="arrow">›</div>
             </a>
         </li>
 
-        <!-- ✅ NEW LINK 1 -->
+        <!-- ✅ ADDED -->
         <li>
             <a href="af_unified.html">
                 <div class="icon">📝</div>
@@ -156,14 +199,14 @@ a:hover {
             </a>
         </li>
 
-        <!-- ✅ NEW LINK 2 -->
-        <!-- <li>
-            <a href="dist_reg.html">
+        <!-- ✅ ADDED -->
+        <li>
+            <a href="admin.html">
                 <div class="icon">📦</div>
-                <span class="link-title">Distributor Registration</span>
+                <span class="link-title">ADMIN</span>
                 <div class="arrow">›</div>
             </a>
-        </li> -->
+        </li>
 
     </ul>
 
@@ -172,6 +215,22 @@ a:hover {
     </div>
 
 </div>
+
+<script>
+window.addEventListener('load', function() {
+    const logo = document.getElementById('movingLogo');
+    const container = document.getElementById('mainContainer');
+
+    setTimeout(() => {
+        logo.classList.add('reveal');
+    }, 200);
+
+    setTimeout(() => {
+        logo.classList.add('settled');
+        container.classList.add('reveal');
+    }, 1500);
+});
+</script>
 
 </body>
 </html>
