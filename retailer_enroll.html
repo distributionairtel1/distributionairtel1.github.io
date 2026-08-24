@@ -891,9 +891,30 @@
 
         <!-- Additional Items -->
         <table class="form-table">
-            <tr><td class="left">WIFI</td><td><input type="number" id="wifiCount" placeholder="0" min="0"></td><td><input type="text" id="wifiAmount" readonly class="total-display"></td></tr>
-            <tr><td class="left">APB SBA</td><td><input type="number" id="apbCount" placeholder="0" min="0"></td><td><input type="text" id="apbAmount" readonly class="total-display"></td></tr>
-            <tr><td class="left">SIMEX</td><td><input type="number" id="simexCount" placeholder="0" min="0"></td><td><input type="text" id="simexAmount" readonly class="total-display"></td></tr>
+            <tr>
+                <td class="left">WIFI</td>
+                <td>
+                    <input type="number" id="wifiCount" placeholder="Min: 1" min="1">
+                    <div class="error-message" id="wifiCount-error">Required — enter at least 1</div>
+                </td>
+                <td><input type="text" id="wifiAmount" readonly class="total-display"></td>
+            </tr>
+            <tr>
+                <td class="left">APB SBA</td>
+                <td>
+                    <input type="number" id="apbCount" placeholder="Min: 1" min="1">
+                    <div class="error-message" id="apbCount-error">Required — enter at least 1</div>
+                </td>
+                <td><input type="text" id="apbAmount" readonly class="total-display"></td>
+            </tr>
+            <tr>
+                <td class="left">SIMEX</td>
+                <td>
+                    <input type="number" id="simexCount" placeholder="Min: 1" min="1">
+                    <div class="error-message" id="simexCount-error">Required — enter at least 1</div>
+                </td>
+                <td><input type="text" id="simexAmount" readonly class="total-display"></td>
+            </tr>
         </table>
 
         <!-- Margin Scheme -->
@@ -926,8 +947,22 @@
                 <tr class="section-title"><td colspan="3">COMMITMENT & COMMISSION</td></tr>
 
                 <tr><th>Items</th><th>Count</th><th>Amount</th></tr>
-                <tr><td class="left"><span id="dsrLabel">DSR OTF - Rs.135</span></td><td><input type="number" id="dsrCount" placeholder="0" min="0"></td><td><input type="text" id="dsrAmount" readonly class="total-display"></td></tr>
-                <tr><td class="left">MNP OTF - Rs.235</td><td><input type="number" id="mnpCount" placeholder="0" min="0"></td><td><input type="text" id="mnpAmount" readonly class="total-display"></td></tr>
+                <tr>
+                    <td class="left"><span id="dsrLabel">DSR OTF - Rs.135</span></td>
+                    <td>
+                        <input type="number" id="dsrCount" placeholder="Min: 1" min="1">
+                        <div class="error-message" id="dsrCount-error">Required — enter at least 1</div>
+                    </td>
+                    <td><input type="text" id="dsrAmount" readonly class="total-display"></td>
+                </tr>
+                <tr>
+                    <td class="left">MNP OTF - Rs.235</td>
+                    <td>
+                        <input type="number" id="mnpCount" placeholder="Min: 1" min="1">
+                        <div class="error-message" id="mnpCount-error">Required — enter at least 1</div>
+                    </td>
+                    <td><input type="text" id="mnpAmount" readonly class="total-display"></td>
+                </tr>
                 <tr class="gross-row slab-highlight" id="grossRow">
                     <td class="left">GROSS COMMITMENT & COMMISSION(DTR-Slab Incentive)</td>
                     <td><input type="text" id="grossCount" readonly class="auto-calc"></td>
@@ -944,6 +979,17 @@
                                 <div class="progress-bar" id="progressBar" style="width: 0%"></div>
                             </div>
                         </div>
+                        <div id="grossMinWarning" style="
+                            display: none;
+                            margin-top: 6px;
+                            padding: 6px 10px;
+                            background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(220,38,38,0.12));
+                            border-left: 3px solid #ef4444;
+                            border-radius: 4px;
+                            font-size: 10px;
+                            font-weight: 600;
+                            color: #fca5a5;
+                        "></div>
                     </td>
                 </tr>
             </table>
@@ -1910,14 +1956,56 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
     // MAIN CALCULATION FUNCTION
     // =============================================
     function calculateAll() {
-    const dsrCount = parseInt(document.getElementById('dsrCount').value) || 0;
-    const mnpCount = parseInt(document.getElementById('mnpCount').value) || 0;
-    const wifiCount = parseInt(document.getElementById('wifiCount').value) || 0;
-    const apbCount = parseInt(document.getElementById('apbCount').value) || 0;
-    const simexCount = parseInt(document.getElementById('simexCount').value) || 0;
+    // ── Read raw values (clamp negatives to 0 for display) ──
+    let dsrCount   = Math.max(0, parseInt(document.getElementById('dsrCount').value)   || 0);
+    let mnpCount   = Math.max(0, parseInt(document.getElementById('mnpCount').value)   || 0);
+    let wifiCount  = Math.max(0, parseInt(document.getElementById('wifiCount').value)  || 0);
+    let apbCount   = Math.max(0, parseInt(document.getElementById('apbCount').value)   || 0);
+    let simexCount = Math.max(0, parseInt(document.getElementById('simexCount').value) || 0);
     const lapuTertiary = parseInt(document.getElementById('lapuTertiary').value) || 0;
-    const mnpDays = parseInt(document.getElementById('mnpDays').value) || 0;
-    const wifiDays = parseInt(document.getElementById('wifiDays').value) || 0;
+    const mnpDays  = Math.max(0, parseInt(document.getElementById('mnpDays').value)    || 0);
+    const wifiDays = Math.max(0, parseInt(document.getElementById('wifiDays').value)   || 0);
+
+    // ── Live constraint feedback for min-1 fields ──
+    function markMinField(id, value) {
+        const el = document.getElementById(id);
+        const errEl = document.getElementById(id + '-error');
+        if (!el) return;
+        if (el.value === '' || value < 1) {
+            el.classList.add('invalid');
+            el.classList.remove('valid');
+            if (errEl) errEl.classList.add('show');
+        } else {
+            el.classList.remove('invalid');
+            el.classList.add('valid');
+            if (errEl) errEl.classList.remove('show');
+        }
+    }
+    markMinField('dsrCount',   dsrCount);
+    markMinField('mnpCount',   mnpCount);
+    markMinField('wifiCount',  wifiCount);
+    markMinField('apbCount',   apbCount);
+    markMinField('simexCount', simexCount);
+
+    // GROSS inline warning + border feedback (min 10 required)
+    const _grossPreCheck = dsrCount + mnpCount;
+    const grossWarningEl = document.getElementById('grossMinWarning');
+    const grossCountEl   = document.getElementById('grossCount');
+
+    if (_grossPreCheck < 10) {
+        // Red border on the readonly grossCount display
+        if (grossCountEl) { grossCountEl.classList.add('invalid'); grossCountEl.classList.remove('valid'); }
+        if (grossWarningEl) {
+            grossWarningEl.style.display = 'block';
+            grossWarningEl.textContent = _grossPreCheck === 0
+                ? '⚠️ Gross Commitment must be at least 10 (DSR + MNP combined).'
+                : `⚠️ Gross Commitment is ${_grossPreCheck} — minimum 10 required (DSR + MNP combined).`;
+        }
+    } else {
+        // Green border — requirement met
+        if (grossCountEl) { grossCountEl.classList.remove('invalid'); grossCountEl.classList.add('valid'); }
+        if (grossWarningEl) grossWarningEl.style.display = 'none';
+    }
 
     // Calculate DSR OTF with Platinum bonus (Rs.25 extra per DSR for Platinum tier)
     const platinumDsrBonus = (selectedTier === 'platinum') ? 50 : 0;
@@ -1979,6 +2067,13 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
                  wifiDaysAmount;
     
     document.getElementById('totalAmount').textContent = `Total Amount Rs. ${Math.round(total).toLocaleString('en-IN')}`;
+
+    // ── Sync hidden target fields with calculated actuals ──
+    // These mirror the entry counts so the sheet always receives real values.
+    document.getElementById('dsrTarget').value   = dsrCount;
+    document.getElementById('mnpTarget').value   = mnpCount;
+    document.getElementById('totalTarget').value = grossCount;   // DSR + MNP
+    document.getElementById('wifiTarget').value  = wifiCount;
 }
 
     // =============================================
@@ -2159,14 +2254,17 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
             }
         }
         
+        // ── Helper: ensure minimum 1 for fields that must not be 0 in the sheet ──
+        const min1 = (id) => String(Math.max(1, parseInt(document.getElementById(id).value) || 0));
+
         return {
             outletName: document.getElementById('outletName').value || '',
             lapuNo: document.getElementById('lapuNo').value || '',
             fseContact: document.getElementById('fseContact').value || '',
             tsmContact: document.getElementById('tsmContact').value || '',
-            dsrCount: document.getElementById('dsrCount').value || '0',
+            dsrCount:  min1('dsrCount'),           // min 1
             dsrAmount: document.getElementById('dsrAmount').value || '0',
-            mnpCount: document.getElementById('mnpCount').value || '0',
+            mnpCount:  min1('mnpCount'),           // min 1
             mnpAmount: document.getElementById('mnpAmount').value || '0',
             grossCount: document.getElementById('grossCount').value || '0',
             grossAmount: document.getElementById('grossAmount').value || '0',
@@ -2176,18 +2274,18 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
             mnpDaysAmount: document.getElementById('mnpDaysAmount').value || '0',
             wifiDays: document.getElementById('wifiDays').value || '0',
             wifiDaysAmount: document.getElementById('wifiDaysAmount').value || '0',
-            wifiCount: document.getElementById('wifiCount').value || '0',
+            wifiCount:  min1('wifiCount'),         // min 1
             wifiAmount: document.getElementById('wifiAmount').value || '0',
-            apbCount: document.getElementById('apbCount').value || '0',
-            apbAmount: document.getElementById('apbAmount').value || '0',
-            simexCount: document.getElementById('simexCount').value || '0',
+            apbCount:   min1('apbCount'),          // min 1
+            apbAmount:  document.getElementById('apbAmount').value || '0',
+            simexCount: min1('simexCount'),        // min 1
             simexAmount: document.getElementById('simexAmount').value || '0',
             totalAmount: document.getElementById('totalAmount').textContent.replace('Total Amount Rs. ', ''),
             tier: selectedTier || '',
-            dsrTarget: document.getElementById('dsrTarget').value || '0',
-            mnpTarget: document.getElementById('mnpTarget').value || '0',
-            totalTarget: document.getElementById('totalTarget').value || '0',
-            wifiTarget: document.getElementById('wifiTarget').value || '0',
+            dsrTarget:   min1('dsrTarget'),        // min 1
+            mnpTarget:   min1('mnpTarget'),        // min 1
+            totalTarget: String(Math.max(1, parseInt(document.getElementById('totalTarget').value) || 0)),
+            wifiTarget:  min1('wifiTarget'),       // min 1
             viMnp: document.getElementById('viMnp').value || '0',
             viDsr: document.getElementById('viDsr').value || '0',
             jioMnp: document.getElementById('jioMnp').value || '0',
