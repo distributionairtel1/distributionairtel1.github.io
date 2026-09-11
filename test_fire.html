@@ -424,6 +424,14 @@
     </div>
 
     <div class="field">
+      <div class="label">ASC (D2D number/Combing) <span class="req"></span></div>
+      <input type="tel" name="asc_number" placeholder="Enter 10-digit number"
+             maxlength="10"  />
+      <div class="hint" id="hint_asc_number">0 / 10 digits entered</div>
+      <div class="error">Please enter a valid 10-digit number.</div>
+    </div>
+
+    <div class="field">
       <div class="label">Associate's Email ID <span class="req">*</span></div>
       <input type="email" name="associate_email" placeholder="example@email.com" required />
       <div class="hint">Enter a valid email address</div>
@@ -682,17 +690,17 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-  import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
-    authDomain: "test-3eb90.firebaseapp.com",
-    projectId: "test-3eb90",
-    storageBucket: "test-3eb90.firebasestorage.app",
-    messagingSenderId: "941574915904",
-    appId: "1:941574915904:web:9002d0621c17f7f0cddca5",
-    measurementId: "G-4H15CWG2FG"
+const firebaseConfig = {
+  apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
+  authDomain: "test-3eb90.firebaseapp.com",
+  projectId: "test-3eb90",
+  storageBucket: "test-3eb90.firebasestorage.app",
+  messagingSenderId: "941574915904",
+  appId: "1:941574915904:web:9002d0621c17f7f0cddca5",
+  measurementId: "G-4H15CWG2FG"
   };
 
   let app, db;
@@ -707,6 +715,7 @@
   // ── Digits-only fields ──
   const digitsOnlyFields = {
     lapu_number: 10,
+    asc_number: 10,
     alternate_contact: 10,
     emergency_contact: 10,
     manager_contact: 10,
@@ -732,6 +741,7 @@
   // ── Validation Rules ──
   const validationRules = {
     lapu_number: v => /^\d{10}$/.test(v),
+    asc_number: v => /^\d{10}$/.test(v),
     alternate_contact: v => /^\d{10}$/.test(v),
     emergency_contact: v => /^\d{10}$/.test(v),
     manager_contact: v => /^\d{10}$/.test(v),
@@ -1571,4 +1581,4 @@
 </script>
 
 </body>
-</html>a
+</html>
