@@ -423,10 +423,11 @@
       <div class="error">Please enter a valid 10-digit number.</div>
     </div>
 
-    <div class="field">
-      <div class="label">ASC (D2D number/Combing) <span class="req"></span></div>
-      <input type="tel" name="asc_number" placeholder="Enter 10-digit number"
-             maxlength="10"  />
+    <!-- ASC Number (Only visible/required when Category === "ASC") -->
+    <div class="field conditional" id="asc_number_field">
+      <div class="label">ASC (D2D number/Combing) <span class="req">*</span></div>
+      <input type="tel" name="asc_number" id="asc_number_input" placeholder="Enter 10-digit number"
+             maxlength="10" />
       <div class="hint" id="hint_asc_number">0 / 10 digits entered</div>
       <div class="error">Please enter a valid 10-digit number.</div>
     </div>
@@ -690,17 +691,17 @@
 </div>
 
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
-  authDomain: "test-3eb90.firebaseapp.com",
-  projectId: "test-3eb90",
-  storageBucket: "test-3eb90.firebasestorage.app",
-  messagingSenderId: "941574915904",
-  appId: "1:941574915904:web:9002d0621c17f7f0cddca5",
-  measurementId: "G-4H15CWG2FG"
+  const firebaseConfig = {
+    apiKey: "AIzaSyAdFC8RGHyC4pRq-79kK3hq07jXSkmelRM",
+    authDomain: "test-3eb90.firebaseapp.com",
+    projectId: "test-3eb90",
+    storageBucket: "test-3eb90.firebasestorage.app",
+    messagingSenderId: "941574915904",
+    appId: "1:941574915904:web:9002d0621c17f7f0cddca5",
+    measurementId: "G-4H15CWG2FG"
   };
 
   let app, db;
@@ -806,7 +807,7 @@ const firebaseConfig = {
   }
 
   // ══════════════════════════════════════════════════════
-  // ✅ Category → Hide joinee_type + lwd for ASC
+  // ✅ Category → Hide/Show joinee_type, lwd, and asc_number
   // ══════════════════════════════════════════════════════
   (function () {
     const categorySelect = document.getElementById('category');
@@ -814,6 +815,8 @@ const firebaseConfig = {
     const joineeTypeSelect = document.getElementById('joinee_type');
     const lwdField = document.getElementById('lwd_field');
     const lwdInput = document.getElementById('lwd_input');
+    const ascNumberField = document.getElementById('asc_number_field');
+    const ascNumberInput = document.getElementById('asc_number_input');
 
     if (!categorySelect || !joineeTypeField || !joineeTypeSelect) {
       console.error('Category/joinee elements not found');
@@ -849,6 +852,12 @@ const firebaseConfig = {
           lwdHint.className = 'hint';
         }
 
+        // ✅ Show and require asc_number field
+        if (ascNumberField && ascNumberInput) {
+          ascNumberField.classList.add('show');
+          ascNumberInput.setAttribute('required', 'required');
+        }
+
       } else {
         // ✅ Show joinee_type field
         joineeTypeField.style.display = 'block';
@@ -856,6 +865,15 @@ const firebaseConfig = {
 
         // ✅ Restore lwd field display control back to CSS classes
         lwdField.style.display = '';
+
+        // ✅ Hide and disable asc_number field
+        if (ascNumberField && ascNumberInput) {
+          ascNumberField.classList.remove('show');
+          ascNumberInput.removeAttribute('required');
+          ascNumberInput.value = '';
+          markNeutral(ascNumberField);
+          updateDigitHint('asc_number', 0, 10);
+        }
       }
     }
 
@@ -1357,7 +1375,7 @@ const firebaseConfig = {
 
     document.querySelectorAll('.field').forEach(wrap => {
 
-      // ✅ Skip hidden conditional fields (like lwd_field when not shown)
+      // ✅ Skip hidden conditional fields (like lwd_field or asc_number_field when not shown)
       if (wrap.classList.contains('conditional') && !wrap.classList.contains('show')) {
         return;
       }
@@ -1464,6 +1482,11 @@ const firebaseConfig = {
         return;
       }
 
+      if (i.name === 'asc_number') {
+        data[i.name] = (isASC && i.value.trim()) ? i.value.trim() : 'N/A';
+        return;
+      }
+
       if (i.type === 'radio') {
         if (i.checked) data[i.name] = i.value;
       } else {
@@ -1507,6 +1530,14 @@ const firebaseConfig = {
       lwdField.style.display = '';
       const lwdInput = document.getElementById('lwd_input');
       if (lwdInput) lwdInput.removeAttribute('required');
+    }
+
+    // ✅ Hide ASC number field on reset
+    const ascNumberField = document.getElementById('asc_number_field');
+    if (ascNumberField) {
+      ascNumberField.classList.remove('show');
+      const ascNumberInput = document.getElementById('asc_number_input');
+      if (ascNumberInput) ascNumberInput.removeAttribute('required');
     }
 
     // Reset hints
