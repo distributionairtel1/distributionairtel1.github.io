@@ -573,11 +573,11 @@
       <div class="error">Please enter driving license details.</div>
     </div>
 
-    <!-- Telegram Chat ID (Only visible/required when Category === "ASC") -->
+    <!-- Telegram Chat ID (Visible/Required when Category === "ASC", "Rural Promoter", or "Urban Promoter") -->
     <div class="field conditional" id="telegram_chat_id_field">
       <div class="label">Telegram Chat ID <span class="req">*</span></div>
-      <input type="text" name="telegram_chat_id" id="telegram_chat_id_input" placeholder="Enter your Telegram Chat ID" />
-      <div class="hint" id="hint_telegram_chat_id">1. Install and Open Telegram <br>2. Search "userinfobot" and tap "/start" <br>3. It will return a Numeric CHAT_ID (e.g. 5829104052) </div>
+      <input type="text" name="telegram_chat_id" id="telegram_chat_id_input" placeholder="Enter your Telegram Chat ID or handle" />
+      <div class="hint" id="hint_telegram_chat_id">1. Install and Open Telegram <br>2. Search "userinfobot" and tap "/start" <br>3. It will return a Numeric CHAT_ID (e.g. 5829104052)</div>
       <div class="error">Please enter your Telegram Chat ID.</div>
     </div>
 
@@ -886,7 +886,6 @@
     if (e) e.style.display = 'none';
   }
 
-  // Used to clear validations silently on hidden blocks
   function markNeutral(wrap) {
     wrap.classList.remove('invalid', 'valid');
     const e = wrap.querySelector('.error');
@@ -1058,7 +1057,7 @@
   })();
 
   // ══════════════════════════════════════════════════════
-  // ✅ Category Toggle (Handles ASC Conditionals)
+  // ✅ Category Toggle (Telegram ID shown for ALL valid selections)
   // ══════════════════════════════════════════════════════
   (function () {
     const categorySelect = document.getElementById('category');
@@ -1109,9 +1108,20 @@
       const selectedCategory = categorySelect.value.trim();
       const isASC = selectedCategory === 'ASC';
       const isPromoter = selectedCategory === 'DG/MT' || selectedCategory === 'Rural Promoter';
+      const anySelected = selectedCategory !== '';
+
+      // Set up Telegram field conditional visibility (Shown and Required for ASC, Rural, and Urban Promoters)
+      if (anySelected && telegramChatIdField && telegramChatIdInput) {
+        telegramChatIdField.classList.add('show');
+        telegramChatIdInput.setAttribute('required', 'required');
+      } else if (telegramChatIdField && telegramChatIdInput) {
+        telegramChatIdField.classList.remove('show');
+        telegramChatIdInput.removeAttribute('required');
+        telegramChatIdInput.value = '';
+        markNeutral(telegramChatIdField);
+      }
 
       if (isASC) {
-        // Hide Joinee logic
         joineeTypeField.style.display = 'none';
         joineeTypeSelect.removeAttribute('required');
         joineeTypeSelect.value = '';
@@ -1125,16 +1135,10 @@
           markNeutral(lwdField);
         }
 
-        // Show ASC input wrapper (Keep input dynamic 'required' parameter REMOVED)
+        // Show ASC input (completely optional)
         if (ascNumberField && ascNumberInput) {
           ascNumberField.classList.add('show');
-          ascNumberInput.removeAttribute('required'); // Ensured completely optional
-        }
-
-        // Show Telegram Input wrapper and make required
-        if (telegramChatIdField && telegramChatIdInput) {
-          telegramChatIdField.classList.add('show');
-          telegramChatIdInput.setAttribute('required', 'required');
+          ascNumberInput.removeAttribute('required');
         }
 
         resetExperienceGroup();
@@ -1151,14 +1155,6 @@
           ascNumberInput.value = '';
           markNeutral(ascNumberField);
           updateDigitHint('asc_number', 0, 10);
-        }
-
-        // Hide Telegram Input
-        if (telegramChatIdField && telegramChatIdInput) {
-          telegramChatIdField.classList.remove('show');
-          telegramChatIdInput.removeAttribute('required');
-          telegramChatIdInput.value = '';
-          markNeutral(telegramChatIdField);
         }
 
         if (isPromoter && experienceGroup) {
@@ -1362,7 +1358,6 @@
 
     const categoryVal = document.querySelector('[name="category"]')?.value.trim() || '';
     const isASC = categoryVal === 'ASC';
-    const isPromoter = categoryVal === 'DG/MT' || categoryVal === 'Rural Promoter';
 
     document.querySelectorAll('.field').forEach(wrap => {
       if (wrap.classList.contains('conditional') && !wrap.classList.contains('show')) return;
@@ -1413,7 +1408,7 @@
   }
 
   // ══════════════════════════════════════════════════════
-  // ✅ collectData (Guaranteed No `undefined` values)
+  // ✅ collectData (Unified Conditional Parser Module)
   // ══════════════════════════════════════════════════════
   function collectData() {
     const data = {};
@@ -1446,13 +1441,11 @@
       data.previous_designation = 'N/A';
       data.years_of_experience = 'N/A';
       data.student_details = 'N/A';
-    } else {
+      // telegram_chat_id is collected normally from form input
+    } else if (isPromoter) {
       data.asc_number = 'N/A';
-      data.telegram_chat_id = 'N/A';
       if (joineeType !== 'Rejoinee') data.lwd = 'N/A';
-    }
 
-    if (isPromoter) {
       data.work_experience_status = workExpStatus;
       if (workExpStatus === 'Currently Working') {
         data.previous_designation = 'N/A';
@@ -1475,6 +1468,20 @@
         data.years_of_experience = 'N/A';
         data.student_details = 'N/A';
       }
+      // telegram_chat_id is collected normally from form input
+    } else {
+      // Fallback if no category selected
+      data.joinee_type = 'N/A';
+      data.lwd = 'N/A';
+      data.asc_number = 'N/A';
+      data.telegram_chat_id = 'N/A';
+      data.work_experience_status = 'N/A';
+      data.currently_working_with = 'N/A';
+      data.current_designation = 'N/A';
+      data.past_work_experience = 'N/A';
+      data.previous_designation = 'N/A';
+      data.years_of_experience = 'N/A';
+      data.student_details = 'N/A';
     }
 
     // SANITIZER: Replace any undefined or missing key with "N/A"
@@ -1494,7 +1501,20 @@
       else if (el.tagName === 'SELECT') el.selectedIndex = 0;
       else el.value = '';
     });
+    
     document.querySelectorAll('.field').forEach(w => markNeutral(w));
+
+    // Reset visibility of conditional fields
+    const telegramChatIdField = document.getElementById('telegram_chat_id_field');
+    if (telegramChatIdField) {
+      telegramChatIdField.classList.remove('show');
+      const telegramChatIdInput = document.getElementById('telegram_chat_id_input');
+      if (telegramChatIdInput) telegramChatIdInput.removeAttribute('required');
+    }
+
+    const experienceGroup = document.getElementById('experience_group');
+    if (experienceGroup) experienceGroup.classList.remove('show');
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
