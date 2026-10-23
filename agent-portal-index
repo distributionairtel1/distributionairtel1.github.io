@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0f0;
+    --card: #ffffff;
+    --border: #e7e0e0;
+    --text: #1f1f28;
+    --muted: #6b6b7a;
+    --primary: #c62828;
+    --primary-2: #b71c1c;
+    --primary-light: #ffebee;
+    --success: #2e7d32;
+    --success-light: #e8f5e9;
+    --info: #1565c0;
+    --info-light: #e3f2fd;
+    --warning: #f57f17;
+    --warning-light: #fff8e1;
+    --danger: #d93025;
+    --dark: #2b1a1a;
+    --shadow: 0 4px 20px rgba(20,20,30,.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Poppins", system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.6; min-height: 100vh;
+  }
+  .navbar {
+    position: sticky; top: 0; z-index: 100; height: 60px;
+    background: var(--dark);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; box-shadow: 0 2px 12px rgba(0,0,0,.2);
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    color: #fff; text-decoration: none;
+  }
+  .nav-brand span { font-size: 17px; font-weight: 600; }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .nav-badge {
+    background: var(--primary); color: #fff;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    border: none; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background .2s;
+  }
+  .nav-badge:hover { background: var(--primary-2); }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 40px 20px 60px; }
+  .page-header { text-align: center; margin-bottom: 30px; }
+  .page-header h1 { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+  .page-header p { color: var(--muted); font-size: 14px; }
+  .form-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; box-shadow: var(--shadow); padding: 28px;
+  }
+  .form-card h2 {
+    font-size: 16px; font-weight: 700; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+  .field label {
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .5px;
+  }
+  .field input {
+    padding: 12px 14px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-family: inherit; font-size: 14px;
+    outline: none; transition: border-color .2s; background: #fff; color: var(--text);
+  }
+  .field input:focus { border-color: var(--primary); }
+  .btn {
+    border: none; outline: none; cursor: pointer;
+    padding: 13px 20px; border-radius: 10px;
+    font-weight: 700; font-family: inherit; font-size: 14px;
+    transition: all .2s ease;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%;
+  }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+  .btn.primary {
+    background: var(--primary); color: #fff;
+    box-shadow: 0 4px 14px rgba(198,40,40,.25);
+  }
+  .btn.primary:hover:not(:disabled) { background: var(--primary-2); transform: translateY(-1px); }
+  .inline-spin {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+    border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .alert {
+    padding: 14px 18px; border-radius: 12px;
+    font-size: 13px; font-weight: 500; margin-top: 18px;
+    display: none; align-items: flex-start; gap: 10px;
+  }
+  .alert.show { display: flex; }
+  .alert.warning { background: var(--warning-light); border: 1px solid #ffe082; color: #e65100; }
+  .alert.danger  { background: #ffebee; border: 1px solid #ef9a9a; color: var(--danger); }
+  .alert.success { background: var(--success-light); border: 1px solid #a5d6a7; color: var(--success); }
+  .footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); margin-top: 20px; }
+  @media (max-width: 640px) {
+    .page-header h1 { font-size: 22px; }
+    .form-card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="/" class="nav-brand"><span>🧾 Agent Portal</span></a>
+  </nav>
+
+  <div class="wrap">
+    <div class="page-header">
+      <h1>Agent Registration</h1>
+      <p>Enter a TSM Name and Agent Number to create a new record.</p>
+    </div>
+
+    <div class="form-card">
+      <h2>📝 New Record</h2>
+      <form id="agentForm" autocomplete="off">
+        <div class="field">
+          <label for="tsm_name">TSM Name</label>
+          <input type="text" id="tsm_name" placeholder="Enter TSM Name" required>
+        </div>
+        <div class="field">
+          <label for="agent_number">Agent Number</label>
+          <input type="text" id="agent_number" placeholder="Enter Agent Number" required>
+        </div>
+        <button type="submit" id="submitBtn" class="btn primary">
+          <span id="btnText">Submit Record</span>
+          <span id="btnLoader" style="display:none"><span class="inline-spin"></span> Submitting...</span>
+        </button>
+        <div id="alert" class="alert"></div>
+      </form>
+    </div>
+
+    <div class="footer">© 2026 Agent Portal</div>
+  </div>
+
+<!-- Firebase SDK (modular v10) -->
+<script type="module">
+  // ============================================================
+  // 🔧 FIREBASE CONFIGURATION - Edit these values
+  // ============================================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyCTpm6yQlAmnuCQQxbH6boq721hS7SFAEY",
+    authDomain: "agent-portal-ebc7f.firebaseapp.com",
+    projectId: "agent-portal-ebc7f",
+    storageBucket: "agent-portal-ebc7f.firebasestorage.app",
+    messagingSenderId: "441204572360",
+    appId: "1:441204572360:web:e5faef48a2b62f96c065fd"
+  };
+
+  const FIRESTORE_COLLECTION = "agent-portal"; // Collection name
+  // ============================================================
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const form = document.getElementById('agentForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const btnText = document.getElementById('btnText');
+  const btnLoader = document.getElementById('btnLoader');
+  const alertBox = document.getElementById('alert');
+
+  function showAlert(msg, type) {
+    const icon = type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '❌';
+    alertBox.className = `alert ${type} show`;
+    alertBox.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+    if (type === 'success') setTimeout(() => alertBox.classList.remove('show'), 5000);
+  }
+
+  function setLoading(on) {
+    submitBtn.disabled = on;
+    btnText.style.display = on ? 'none' : 'inline';
+    btnLoader.style.display = on ? 'inline-flex' : 'none';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    alertBox.classList.remove('show');
+
+    const tsm = document.getElementById('tsm_name').value.trim();
+    const agt = document.getElementById('agent_number').value.trim();
+
+    if (!tsm || !agt) {
+      showAlert('Please fill in both fields.', 'warning');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await addDoc(collection(db, FIRESTORE_COLLECTION), {
+        tsm_name: tsm,
+        agent_number: agt,
+        created_at: serverTimestamp()
+      });
+      showAlert(`Record for '${tsm}' (Agent ${agt}) saved successfully.`, 'success');
+      form.reset();
+      document.getElementById('tsm_name').focus();
+    } catch (err) {
+      console.error('[FIRESTORE ERROR]', err);
+      showAlert('Database error: ' + err.message, 'danger');
+    } finally {
+      setLoading(false);
+    }
+  });
+</script>
+</body>
+</html>
