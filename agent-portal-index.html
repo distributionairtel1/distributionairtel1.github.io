@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent Registration</title>
+<title>Agent Deletion</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -37,21 +37,8 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 24px; box-shadow: 0 2px 12px rgba(0,0,0,.2);
   }
-  .nav-brand {
-    display: flex; align-items: center; gap: 10px;
-    color: #fff; text-decoration: none;
-  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
   .nav-brand span { font-size: 17px; font-weight: 600; }
-  .nav-right { display: flex; align-items: center; gap: 10px; }
-  .nav-badge {
-    background: var(--primary); color: #fff;
-    padding: 6px 14px; border-radius: 20px;
-    font-size: 12px; font-weight: 600;
-    border: none; cursor: pointer; text-decoration: none;
-    display: inline-flex; align-items: center; gap: 6px;
-    transition: background .2s;
-  }
-  .nav-badge:hover { background: var(--primary-2); }
   .wrap { max-width: 560px; margin: 0 auto; padding: 40px 20px 60px; }
   .page-header { text-align: center; margin-bottom: 30px; }
   .page-header h1 { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
@@ -61,20 +48,48 @@
     border-radius: 16px; box-shadow: var(--shadow); padding: 28px;
   }
   .form-card h2 {
-    font-size: 16px; font-weight: 700; margin-bottom: 20px;
+    font-size: 16px; font-weight: 700; margin-bottom: 6px;
     display: flex; align-items: center; gap: 8px;
   }
-  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+  .note {
+    font-size: 11px; color: var(--muted); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 18px; }
   .field label {
     font-size: 11px; font-weight: 700; color: var(--muted);
     text-transform: uppercase; letter-spacing: .5px;
+    display: flex; align-items: center; gap: 4px;
   }
+  .required { color: var(--primary); font-size: 13px; }
   .field input {
     padding: 12px 14px; border: 1.5px solid var(--border);
     border-radius: 10px; font-family: inherit; font-size: 14px;
-    outline: none; transition: border-color .2s; background: #fff; color: var(--text);
+    outline: none; transition: all .2s; background: #fff; color: var(--text);
   }
-  .field input:focus { border-color: var(--primary); }
+  .field input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(198,40,40,.08); }
+  .field input.valid { border-color: var(--success); }
+  .field input.invalid { border-color: var(--danger); }
+  .field-hint {
+    font-size: 10px; color: var(--muted); font-weight: 500;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .field-error {
+    font-size: 11px; color: var(--danger); font-weight: 600;
+    display: none; align-items: center; gap: 4px;
+    min-height: 16px;
+  }
+  .field-error.show { display: flex; }
+  .field-ok {
+    font-size: 11px; color: var(--success); font-weight: 600;
+    display: none; align-items: center; gap: 4px;
+    min-height: 16px;
+  }
+  .field-ok.show { display: flex; }
+  .char-count {
+    font-size: 10px; color: var(--muted); text-align: right;
+    margin-top: -2px;
+  }
   .btn {
     border: none; outline: none; cursor: pointer;
     padding: 13px 20px; border-radius: 10px;
@@ -104,6 +119,21 @@
   .alert.warning { background: var(--warning-light); border: 1px solid #ffe082; color: #e65100; }
   .alert.danger  { background: #ffebee; border: 1px solid #ef9a9a; color: var(--danger); }
   .alert.success { background: var(--success-light); border: 1px solid #a5d6a7; color: var(--success); }
+  .validation-summary {
+    background: var(--primary-light); border: 1px solid #ef9a9a;
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;
+    display: none;
+  }
+  .validation-summary.show { display: block; }
+  .validation-summary h4 {
+    font-size: 12px; color: var(--danger); margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .validation-summary ul { list-style: none; padding: 0; }
+  .validation-summary li {
+    font-size: 11px; color: var(--danger); padding: 2px 0;
+    display: flex; align-items: center; gap: 6px;
+  }
   .footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); margin-top: 20px; }
   @media (max-width: 640px) {
     .page-header h1 { font-size: 22px; }
@@ -119,21 +149,73 @@
 
   <div class="wrap">
     <div class="page-header">
-      <h1>Agent Registration</h1>
-      <p>Enter a TSM Name and Agent Number to create a new record.</p>
+      <h1>Agent Deletion</h1>
+      <p>Fill in all fields to create a new agent record.</p>
     </div>
 
     <div class="form-card">
       <h2>📝 New Record</h2>
-      <form id="agentForm" autocomplete="off">
+      <p class="note"><span class="required">*</span> All fields are required</p>
+
+      <div id="validationSummary" class="validation-summary">
+        <h4>⚠️ Please fix the following errors:</h4>
+        <ul id="errorList"></ul>
+      </div>
+
+      <form id="agentForm" autocomplete="off" novalidate>
+
+        <!-- TSM Name - Alphabets Only -->
         <div class="field">
-          <label for="tsm_name">TSM Name</label>
-          <input type="text" id="tsm_name" placeholder="Enter TSM Name" required>
+          <label for="tsm_name">TSM Name <span class="required">*</span></label>
+          <input type="text" id="tsm_name" placeholder="Enter TSM Name" required
+                 maxlength="50"
+                 oninput="validateField('tsm_name')"
+                 onblur="validateField('tsm_name')">
+          <div class="field-hint">💡 Only letters and spaces allowed (A-Z, a-z)</div>
+          <div class="field-error" id="err_tsm_name"><span>❌</span><span></span></div>
+          <div class="field-ok" id="ok_tsm_name"><span>✅</span><span>Looks good!</span></div>
+          <!-- <div class="char-count" id="count_tsm_name">0 / 50</div> -->
         </div>
+
+        <!-- TSM Number - Numbers Only -->
         <div class="field">
-          <label for="agent_number">Agent Number</label>
-          <input type="text" id="agent_number" placeholder="Enter Agent Number" required>
+          <label for="tsm_number">TSM Number <span class="required">*</span></label>
+          <input type="text" id="tsm_number" placeholder="Enter TSM Number" required
+                 maxlength="20" inputmode="numeric"
+                 oninput="validateField('tsm_number')"
+                 onblur="validateField('tsm_number')">
+          <div class="field-hint">💡 Only digits allowed (0-9)</div>
+          <div class="field-error" id="err_tsm_number"><span>❌</span><span></span></div>
+          <div class="field-ok" id="ok_tsm_number"><span>✅</span><span>Looks good!</span></div>
+          <!-- <div class="char-count" id="count_tsm_number">0 / 20</div> -->
         </div>
+
+        <!-- Distribution Number - Numbers Only -->
+        <div class="field">
+          <label for="distribution_number">Distribution Number <span class="required">*</span></label>
+          <input type="text" id="distribution_number" placeholder="Enter Distribution Number" required
+                 maxlength="20" inputmode="numeric"
+                 oninput="validateField('distribution_number')"
+                 onblur="validateField('distribution_number')">
+          <div class="field-hint">💡 Only digits allowed (0-9)</div>
+          <div class="field-error" id="err_distribution_number"><span>❌</span><span></span></div>
+          <div class="field-ok" id="ok_distribution_number"><span>✅</span><span>Looks good!</span></div>
+          <!-- <div class="char-count" id="count_distribution_number">0 / 20</div> -->
+        </div>
+
+        <!-- Agent Number - Numbers Only -->
+        <div class="field">
+          <label for="agent_number">Agent Number <span class="required">*</span></label>
+          <input type="text" id="agent_number" placeholder="Enter Agent Number" required
+                 maxlength="20" inputmode="numeric"
+                 oninput="validateField('agent_number')"
+                 onblur="validateField('agent_number')">
+          <div class="field-hint">💡 Only digits allowed (0-9)</div>
+          <div class="field-error" id="err_agent_number"><span>❌</span><span></span></div>
+          <div class="field-ok" id="ok_agent_number"><span>✅</span><span>Looks good!</span></div>
+          <!-- <div class="char-count" id="count_agent_number">0 / 20</div> -->
+        </div>
+
         <button type="submit" id="submitBtn" class="btn primary">
           <span id="btnText">Submit Record</span>
           <span id="btnLoader" style="display:none"><span class="inline-spin"></span> Submitting...</span>
@@ -145,21 +227,167 @@
     <div class="footer">© 2026 Agent Portal</div>
   </div>
 
+<script>
+  // ============================================================
+  // VALIDATION RULES
+  // ============================================================
+  const RULES = {
+    tsm_name: {
+      label: 'TSM Name',
+      pattern: /^[A-Za-z\s]+$/,
+      strip: /[^A-Za-z\s]/g,
+      minLen: 2,
+      maxLen: 50,
+      emptyMsg: 'TSM Name is required.',
+      invalidMsg: 'Only letters and spaces allowed.',
+      minMsg: 'Must be at least 2 characters.',
+    },
+    tsm_number: {
+      label: 'TSM Number',
+      pattern: /^[0-9]+$/,
+      strip: /[^0-9]/g,
+      minLen: 1,
+      maxLen: 20,
+      emptyMsg: 'TSM Number is required.',
+      invalidMsg: 'Only digits (0-9) allowed.',
+      minMsg: 'Must be at least 1 digit.',
+    },
+    distribution_number: {
+      label: 'Distribution Number',
+      pattern: /^[0-9]+$/,
+      strip: /[^0-9]/g,
+      minLen: 1,
+      maxLen: 20,
+      emptyMsg: 'Distribution Number is required.',
+      invalidMsg: 'Only digits (0-9) allowed.',
+      minMsg: 'Must be at least 1 digit.',
+    },
+    agent_number: {
+      label: 'Agent Number',
+      pattern: /^[0-9]+$/,
+      strip: /[^0-9]/g,
+      minLen: 1,
+      maxLen: 20,
+      emptyMsg: 'Agent Number is required.',
+      invalidMsg: 'Only digits (0-9) allowed.',
+      minMsg: 'Must be at least 1 digit.',
+    }
+  };
+
+  // ============================================================
+  // REAL-TIME VALIDATION
+  // ============================================================
+  function validateField(fieldId) {
+    const rule  = RULES[fieldId];
+    const input = document.getElementById(fieldId);
+    const errEl = document.getElementById('err_' + fieldId);
+    const okEl  = document.getElementById('ok_' + fieldId);
+    const countEl = document.getElementById('count_' + fieldId);
+
+    let val = input.value;
+
+    // Auto-strip invalid characters as user types
+    const cleaned = val.replace(rule.strip, '');
+    if (cleaned !== val) {
+      const pos = input.selectionStart - (val.length - cleaned.length);
+      input.value = cleaned;
+      input.setSelectionRange(pos, pos);
+      val = cleaned;
+    }
+
+    // Update char count
+    countEl.textContent = `${val.length} / ${rule.maxLen}`;
+
+    const trimmed = val.trim();
+
+    // Reset states
+    input.classList.remove('valid', 'invalid');
+    errEl.classList.remove('show');
+    okEl.classList.remove('show');
+
+    // Empty check
+    if (!trimmed) {
+      if (input === document.activeElement) return null; // don't show error while typing from empty
+      input.classList.add('invalid');
+      errEl.querySelector('span:last-child').textContent = rule.emptyMsg;
+      errEl.classList.add('show');
+      return rule.emptyMsg;
+    }
+
+    // Pattern check
+    if (!rule.pattern.test(trimmed)) {
+      input.classList.add('invalid');
+      errEl.querySelector('span:last-child').textContent = rule.invalidMsg;
+      errEl.classList.add('show');
+      return rule.invalidMsg;
+    }
+
+    // Min length check
+    if (trimmed.length < rule.minLen) {
+      input.classList.add('invalid');
+      errEl.querySelector('span:last-child').textContent = rule.minMsg;
+      errEl.classList.add('show');
+      return rule.minMsg;
+    }
+
+    // All good
+    input.classList.add('valid');
+    okEl.classList.add('show');
+    return null;
+  }
+
+  function validateAll() {
+    const errors = [];
+    for (const fieldId of Object.keys(RULES)) {
+      // Force blur-style validation
+      const input = document.getElementById(fieldId);
+      const rule  = RULES[fieldId];
+      const errEl = document.getElementById('err_' + fieldId);
+      const okEl  = document.getElementById('ok_' + fieldId);
+
+      const trimmed = input.value.trim();
+
+      input.classList.remove('valid', 'invalid');
+      errEl.classList.remove('show');
+      okEl.classList.remove('show');
+
+      let msg = null;
+      if (!trimmed) {
+        msg = rule.emptyMsg;
+      } else if (!rule.pattern.test(trimmed)) {
+        msg = rule.invalidMsg;
+      } else if (trimmed.length < rule.minLen) {
+        msg = rule.minMsg;
+      }
+
+      if (msg) {
+        input.classList.add('invalid');
+        errEl.querySelector('span:last-child').textContent = msg;
+        errEl.classList.add('show');
+        errors.push({ field: fieldId, label: rule.label, msg });
+      } else {
+        input.classList.add('valid');
+        okEl.classList.add('show');
+      }
+    }
+    return errors;
+  }
+</script>
+
 <!-- Firebase SDK (modular v10) -->
 <script type="module">
   // ============================================================
-  // 🔧 FIREBASE CONFIGURATION - Edit these values
+  // 🔧 FIREBASE CONFIGURATION
   // ============================================================
   const firebaseConfig = {
-    apiKey: "AIzaSyCTpm6yQlAmnuCQQxbH6boq721hS7SFAEY",
-    authDomain: "agent-portal-ebc7f.firebaseapp.com",
-    projectId: "agent-portal-ebc7f",
-    storageBucket: "agent-portal-ebc7f.firebasestorage.app",
-    messagingSenderId: "441204572360",
-    appId: "1:441204572360:web:e5faef48a2b62f96c065fd"
-  };
-
-  const FIRESTORE_COLLECTION = "agent-portal"; // Collection name
+  apiKey: "AIzaSyCTpm6yQlAmnuCQQxbH6boq721hS7SFAEY",
+  authDomain: "agent-portal-ebc7f.firebaseapp.com",
+  projectId: "agent-portal-ebc7f",
+  storageBucket: "agent-portal-ebc7f.firebasestorage.app",
+  messagingSenderId: "441204572360",
+  appId: "1:441204572360:web:e5faef48a2b62f96c065fd"
+};
+  const FIRESTORE_COLLECTION = "agent-portal";
   // ============================================================
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -168,13 +396,15 @@
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const db  = getFirestore(app);
 
-  const form = document.getElementById('agentForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const btnText = document.getElementById('btnText');
-  const btnLoader = document.getElementById('btnLoader');
-  const alertBox = document.getElementById('alert');
+  const form       = document.getElementById('agentForm');
+  const submitBtn  = document.getElementById('submitBtn');
+  const btnText    = document.getElementById('btnText');
+  const btnLoader  = document.getElementById('btnLoader');
+  const alertBox   = document.getElementById('alert');
+  const valSummary = document.getElementById('validationSummary');
+  const errorList  = document.getElementById('errorList');
 
   function showAlert(msg, type) {
     const icon = type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '❌';
@@ -185,31 +415,60 @@
 
   function setLoading(on) {
     submitBtn.disabled = on;
-    btnText.style.display = on ? 'none' : 'inline';
+    btnText.style.display  = on ? 'none' : 'inline';
     btnLoader.style.display = on ? 'inline-flex' : 'none';
   }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     alertBox.classList.remove('show');
+    valSummary.classList.remove('show');
 
-    const tsm = document.getElementById('tsm_name').value.trim();
-    const agt = document.getElementById('agent_number').value.trim();
+    // Run full validation
+    const errors = validateAll();
 
-    if (!tsm || !agt) {
-      showAlert('Please fill in both fields.', 'warning');
+    if (errors.length) {
+      // Show summary
+      errorList.innerHTML = errors.map(e =>
+        `<li><span>❌</span><strong>${e.label}:</strong> ${e.msg}</li>`
+      ).join('');
+      valSummary.classList.add('show');
+      valSummary.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // Focus first invalid field
+      document.getElementById(errors[0].field).focus();
       return;
     }
+
+    const tsmName  = document.getElementById('tsm_name').value.trim();
+    const tsmNum   = document.getElementById('tsm_number').value.trim();
+    const distNum  = document.getElementById('distribution_number').value.trim();
+    const agtNum   = document.getElementById('agent_number').value.trim();
 
     setLoading(true);
     try {
       await addDoc(collection(db, FIRESTORE_COLLECTION), {
-        tsm_name: tsm,
-        agent_number: agt,
+        tsm_name: tsmName,
+        tsm_number: tsmNum,
+        distribution_number: distNum,
+        agent_number: agtNum,
         created_at: serverTimestamp()
       });
-      showAlert(`Record for '${tsm}' (Agent ${agt}) saved successfully.`, 'success');
+      showAlert(`Record for '${tsmName}' (Agent ${agtNum}) saved successfully.`, 'success');
+
+      // Reset form + validation states
       form.reset();
+      document.querySelectorAll('.field input').forEach(inp => {
+        inp.classList.remove('valid', 'invalid');
+      });
+      document.querySelectorAll('.field-error, .field-ok').forEach(el => {
+        el.classList.remove('show');
+      });
+      document.querySelectorAll('.char-count').forEach(el => {
+        const max = el.textContent.split('/')[1].trim();
+        el.textContent = `0 / ${max}`;
+      });
+      valSummary.classList.remove('show');
       document.getElementById('tsm_name').focus();
     } catch (err) {
       console.error('[FIRESTORE ERROR]', err);
