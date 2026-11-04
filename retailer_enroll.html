@@ -956,7 +956,7 @@
                     <td><input type="text" id="dsrAmount" readonly class="total-display"></td>
                 </tr>
                 <tr>
-                    <td class="left">MNP OTF - Rs.235</td>
+                    <td class="left">MNP Margin - Rs.399</td>
                     <td>
                         <input type="number" id="mnpCount" placeholder="Min: 1" min="1">
                         <div class="error-message" id="mnpCount-error">Required — enter at least 1</div>
@@ -2023,8 +2023,8 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
         }
     }
     
-    // MNP OTF (no change)
-    const mnpAmount = mnpCount * 235;
+    // MNP Margin (no change)
+    const mnpAmount = mnpCount * 399;
     document.getElementById('mnpAmount').value = mnpAmount.toLocaleString('en-IN');
 
     // Gross Commitment (Slab based on Gross Count)
@@ -2733,7 +2733,7 @@ function updateGrossRowStyling(slabInfo, mnpCount) {
         yPos = addSectionTitle('OTF CALCULATIONS', yPos);
         yPos = addThreeColumnRow('Item', 'Count', 'Amount (Rs.)', yPos, true);
         yPos = addThreeColumnRow('DSR OTF (Rs.135)', document.getElementById('dsrCount').value || '0', document.getElementById('dsrAmount').value || '0', yPos);
-        yPos = addThreeColumnRow('MNP OTF (Rs.235)', document.getElementById('mnpCount').value || '0', document.getElementById('mnpAmount').value || '0', yPos);
+        yPos = addThreeColumnRow('MNP Margin (Rs.399)', document.getElementById('mnpCount').value || '0', document.getElementById('mnpAmount').value || '0', yPos);
         yPos = addGrossCommitmentRow('GROSS COMMITMENT(DTR-Slab Incentive)', document.getElementById('grossCount').value || '0', document.getElementById('grossAmount').value || '0', yPos);
         
         
